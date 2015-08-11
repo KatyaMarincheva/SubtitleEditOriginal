@@ -37,7 +37,7 @@ namespace Nikse.SubtitleEdit.Logic
         public Subtitle()
         {
             // Uncomment this to make tests pass :P
-            //_paragraphs = new List<Paragraph>();
+            _paragraphs = new List<Paragraph>();
             _history = new List<HistoryItem>();
             FileName = "Untitled";
         }
