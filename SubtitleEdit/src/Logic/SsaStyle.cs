@@ -86,54 +86,78 @@ namespace Nikse.SubtitleEdit.Logic
             for (int i = 0; i < format.Length; i++)
             {
                 string f = format[i].Trim().ToLower();
-                if (f == "name")
-                    sb.Append(Name);
-                else if (f == "fontname")
-                    sb.Append(FontName);
-                else if (f == "fontsize")
-                    sb.Append(FontSize);
-                else if (f == "primarycolour")
-                    sb.Append(ColorTranslator.ToWin32(Primary));
-                else if (f == "secondarycolour")
-                    sb.Append(ColorTranslator.ToWin32(Secondary));
-                else if (f == "tertiarycolour")
-                    sb.Append(ColorTranslator.ToWin32(Tertiary));
-                else if (f == "outlinecolour")
-                    sb.Append(ColorTranslator.ToWin32(Outline));
-                else if (f == "backcolour")
-                    sb.Append(ColorTranslator.ToWin32(Background));
-                else if (f == "bold")
-                    sb.Append(Convert.ToInt32(Bold));
-                else if (f == "italic")
-                    sb.Append(Convert.ToInt32(Italic));
-                else if (f == "underline")
-                    sb.Append(Convert.ToInt32(Underline));
-                else if (f == "outline")
-                    sb.Append(Outline);
-                else if (f == "shadow")
-                    sb.Append(OutlineWidth);
-                else if (f == "shadow")
-                    sb.Append(ShadowWidth);
-                else if (f == "marginl")
-                    sb.Append(MarginLeft);
-                else if (f == "marginr")
-                    sb.Append(MarginRight);
-                else if (f == "marginv")
-                    sb.Append(MarginVertical);
-                else if (f == "borderstyle")
-                    sb.Append(BorderStyle);
-                else if (f == "encoding")
-                    sb.Append('1');
-                else if (f == "strikeout")
-                    sb.Append('0');
-                else if (f == "scalex")
-                    sb.Append("100");
-                else if (f == "scaley")
-                    sb.Append("100");
-                else if (f == "spacing")
-                    sb.Append('0');
-                else if (f == "angle")
-                    sb.Append('0');
+                switch (f)
+                {
+                    case "name":
+                        sb.Append(this.Name);
+                        break;
+                    case "fontname":
+                        sb.Append(this.FontName);
+                        break;
+                    case "fontsize":
+                        sb.Append(this.FontSize);
+                        break;
+                    case "primarycolour":
+                        sb.Append(ColorTranslator.ToWin32(this.Primary));
+                        break;
+                    case "secondarycolour":
+                        sb.Append(ColorTranslator.ToWin32(this.Secondary));
+                        break;
+                    case "tertiarycolour":
+                        sb.Append(ColorTranslator.ToWin32(this.Tertiary));
+                        break;
+                    case "outlinecolour":
+                        sb.Append(ColorTranslator.ToWin32(this.Outline));
+                        break;
+                    case "backcolour":
+                        sb.Append(ColorTranslator.ToWin32(this.Background));
+                        break;
+                    case "bold":
+                        sb.Append(Convert.ToInt32(this.Bold));
+                        break;
+                    case "italic":
+                        sb.Append(Convert.ToInt32(this.Italic));
+                        break;
+                    case "underline":
+                        sb.Append(Convert.ToInt32(this.Underline));
+                        break;
+                    case "outline":
+                        sb.Append(this.Outline);
+                        break;
+                    case "shadow":
+                        sb.Append(this.OutlineWidth);
+                        break;
+                    case "marginl":
+                        sb.Append(this.MarginLeft);
+                        break;
+                    case "marginr":
+                        sb.Append(this.MarginRight);
+                        break;
+                    case "marginv":
+                        sb.Append(this.MarginVertical);
+                        break;
+                    case "borderstyle":
+                        sb.Append(this.BorderStyle);
+                        break;
+                    case "encoding":
+                        sb.Append('1');
+                        break;
+                    case "strikeout":
+                        sb.Append('0');
+                        break;
+                    case "scalex":
+                        sb.Append("100");
+                        break;
+                    case "scaley":
+                        sb.Append("100");
+                        break;
+                    case "spacing":
+                        sb.Append('0');
+                        break;
+                    case "angle":
+                        sb.Append('0');
+                        break;
+                }
                 sb.Append(',');
             }
             string s = sb.ToString().Trim();
@@ -148,54 +172,81 @@ namespace Nikse.SubtitleEdit.Logic
             for (int i = 0; i < format.Length; i++)
             {
                 string f = format[i].Trim().ToLower();
-                if (f == "name")
-                    sb.Append(Name);
-                else if (f == "fontname")
-                    sb.Append(FontName);
-                else if (f == "fontsize")
-                    sb.Append(FontSize);
-                else if (f == "primarycolour")
-                    sb.Append(AdvancedSubStationAlpha.GetSsaColorString(Primary));
-                else if (f == "secondarycolour")
-                    sb.Append(AdvancedSubStationAlpha.GetSsaColorString(Secondary));
-                else if (f == "tertiarycolour")
-                    sb.Append(AdvancedSubStationAlpha.GetSsaColorString(Tertiary));
-                else if (f == "outlinecolour")
-                    sb.Append(AdvancedSubStationAlpha.GetSsaColorString(Outline));
-                else if (f == "backcolour")
-                    sb.Append(AdvancedSubStationAlpha.GetSsaColorString(Background));
-                else if (f == "bold")
-                    sb.Append(Convert.ToInt32(Bold));
-                else if (f == "italic")
-                    sb.Append(Convert.ToInt32(Italic));
-                else if (f == "underline")
-                    sb.Append(Convert.ToInt32(Underline));
-                else if (f == "outline")
-                    sb.Append(OutlineWidth);
-                else if (f == "shadow")
-                    sb.Append(ShadowWidth);
-                else if (f == "alignment")
-                    sb.Append(Alignment);
-                else if (f == "marginl")
-                    sb.Append(MarginLeft);
-                else if (f == "marginr")
-                    sb.Append(MarginRight);
-                else if (f == "marginv")
-                    sb.Append(MarginVertical);
-                else if (f == "borderstyle")
-                    sb.Append(BorderStyle);
-                else if (f == "encoding")
-                    sb.Append('1');
-                else if (f == "strikeout")
-                    sb.Append('0');
-                else if (f == "scalex")
-                    sb.Append("100");
-                else if (f == "scaley")
-                    sb.Append("100");
-                else if (f == "spacing")
-                    sb.Append('0');
-                else if (f == "angle")
-                    sb.Append('0');
+                switch (f)
+                {
+                    case "name":
+                        sb.Append(this.Name);
+                        break;
+                    case "fontname":
+                        sb.Append(this.FontName);
+                        break;
+                    case "fontsize":
+                        sb.Append(this.FontSize);
+                        break;
+                    case "primarycolour":
+                        sb.Append(AdvancedSubStationAlpha.GetSsaColorString(this.Primary));
+                        break;
+                    case "secondarycolour":
+                        sb.Append(AdvancedSubStationAlpha.GetSsaColorString(this.Secondary));
+                        break;
+                    case "tertiarycolour":
+                        sb.Append(AdvancedSubStationAlpha.GetSsaColorString(this.Tertiary));
+                        break;
+                    case "outlinecolour":
+                        sb.Append(AdvancedSubStationAlpha.GetSsaColorString(this.Outline));
+                        break;
+                    case "backcolour":
+                        sb.Append(AdvancedSubStationAlpha.GetSsaColorString(this.Background));
+                        break;
+                    case "bold":
+                        sb.Append(Convert.ToInt32(this.Bold));
+                        break;
+                    case "italic":
+                        sb.Append(Convert.ToInt32(this.Italic));
+                        break;
+                    case "underline":
+                        sb.Append(Convert.ToInt32(this.Underline));
+                        break;
+                    case "outline":
+                        sb.Append(this.OutlineWidth);
+                        break;
+                    case "shadow":
+                        sb.Append(this.ShadowWidth);
+                        break;
+                    case "alignment":
+                        sb.Append(this.Alignment);
+                        break;
+                    case "marginl":
+                        sb.Append(this.MarginLeft);
+                        break;
+                    case "marginr":
+                        sb.Append(this.MarginRight);
+                        break;
+                    case "marginv":
+                        sb.Append(this.MarginVertical);
+                        break;
+                    case "borderstyle":
+                        sb.Append(this.BorderStyle);
+                        break;
+                    case "encoding":
+                        sb.Append('1');
+                        break;
+                    case "strikeout":
+                        sb.Append('0');
+                        break;
+                    case "scalex":
+                        sb.Append("100");
+                        break;
+                    case "scaley":
+                        sb.Append("100");
+                        break;
+                    case "spacing":
+                        sb.Append('0');
+                        break;
+                    case "angle":
+                        sb.Append('0');
+                        break;
+                }
                 sb.Append(',');
             }
             string s = sb.ToString().Trim();
