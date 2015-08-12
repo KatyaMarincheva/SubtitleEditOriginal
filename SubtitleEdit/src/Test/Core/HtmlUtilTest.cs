@@ -16,7 +16,8 @@ namespace Test.Core
         [TestMethod]
         public void TestRemoveOpenCloseTagFont()
         {
-            // TODO: Implement me
+            const string source = "<font color=\"#000\">SubtitleEdit</font>";
+            Assert.AreEqual("SubtitleEdit", HtmlUtil.RemoveOpenCloseTags(source, HtmlUtil.TagFont));
         }
     }
 }

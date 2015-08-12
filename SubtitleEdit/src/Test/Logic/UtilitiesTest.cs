@@ -23,7 +23,8 @@ namespace Test.Logic
         [TestMethod]
         public void AutoBreakLine2()
         {
-            // TODO: Implement me
+            var s = Utilities.AutoBreakLine("We're gonna lose him." + Environment.NewLine + "He's left him four signals in the last week.", 5, 33, string.Empty);
+            Assert.IsFalse(s == "We're gonna lose him." + Environment.NewLine + "He's left him four signals in the last week.");
         }
 
         [TestMethod]
@@ -98,7 +99,9 @@ namespace Test.Logic
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixInvalidItalicTags3()
         {
-            // TODO: Implement me
+            string s1 = "<i>Line 1.</i>" + Environment.NewLine + "<i>Line 2.";
+            string s2 = HtmlUtil.FixInvalidItalicTags(s1);
+            Assert.AreEqual(s2, "<i>Line 1." + Environment.NewLine + "Line 2.</i>");
         }
 
         [TestMethod]

@@ -82,13 +82,12 @@ namespace Test.Logic.SubtitleFormats
         {
             var target = new SubRip();
             var subtitle = new Subtitle();
-            string text =
-@"1
+            const string text = @"1
 00:00:02,001 --> 00:00:16,001  X1:000 X2:000 Y1:050 Y2:100
 Let us have some! Let us have some!";
             target.LoadSubtitle(subtitle, GetSrtLines(text), null);
             string actual = subtitle.Paragraphs[0].Text;
-            string expected = "Let us have some! Let us have some!";
+            const string expected = "Let us have some! Let us have some!";
             Assert.AreEqual(expected, actual);
         }
 
@@ -98,8 +97,7 @@ Let us have some! Let us have some!";
         {
             var target = new SubRip();
             var subtitle = new Subtitle();
-            string text =
-@"00:00:03,000 --> 00:00:08,000
+            const string text = @"00:00:03,000 --> 00:00:08,000
 Line1.
 
 00:00:08,000 --> 00:00:09,920
@@ -116,13 +114,12 @@ Line 2.";
         {
             var target = new SubRip();
             var subtitle = new Subtitle();
-            string text =
-@"2
+            const string text = @"2
 00:00:04.501 --> 00:00:08.500
 Dots instead of commas";
             target.LoadSubtitle(subtitle, GetSrtLines(text), null);
             string actual = subtitle.Paragraphs[0].Text;
-            string expected = "Dots instead of commas";
+            const string expected = "Dots instead of commas";
             Assert.AreEqual(expected, actual);
         }
 
@@ -132,8 +129,7 @@ Dots instead of commas";
         {
             var target = new SubRip();
             var subtitle = new Subtitle();
-            string text =
-@"2
+            const string text = @"2
 00:00:04.501 --> 00:00:08.500
 Line 1
 Line 2";
@@ -148,8 +144,7 @@ Line 2";
         {
             var target = new SubRip();
             var subtitle = new Subtitle();
-            string text =
-@"2
+            const string text = @"2
 00:00:04.501 --> 00:00:08.500
 Line 1
 Line 2
@@ -204,7 +199,7 @@ Dialogue: 0,0:00:16.84,0:00:18.16,rechts,,0000,0000,0000,," + lineOneText;
             var subtitle = new Subtitle();
             target.LoadSubtitle(subtitle, GetAssLines(@"{\i1}Italic{\i0}"), null);
             string actual = subtitle.Paragraphs[0].Text;
-            string expected = "<i>Italic</i>";
+            const string expected = "<i>Italic</i>";
             Assert.AreEqual(expected, actual);
         }
 
@@ -216,7 +211,7 @@ Dialogue: 0,0:00:16.84,0:00:18.16,rechts,,0000,0000,0000,," + lineOneText;
             var subtitle = new Subtitle();
             target.LoadSubtitle(subtitle, GetAssLines(@"{\b1}Bold{\b0}"), null);
             string actual = subtitle.Paragraphs[0].Text;
-            string expected = "<b>Bold</b>";
+            const string expected = "<b>Bold</b>";
             Assert.AreEqual(expected, actual);
         }
 
@@ -228,7 +223,7 @@ Dialogue: 0,0:00:16.84,0:00:18.16,rechts,,0000,0000,0000,," + lineOneText;
             var subtitle = new Subtitle();
             target.LoadSubtitle(subtitle, GetAssLines(@"{\u1}Underline{\u0}"), null);
             string actual = subtitle.Paragraphs[0].Text;
-            string expected = "<u>Underline</u>";
+            const string expected = "<u>Underline</u>";
             Assert.AreEqual(expected, actual);
         }
 
@@ -240,7 +235,7 @@ Dialogue: 0,0:00:16.84,0:00:18.16,rechts,,0000,0000,0000,," + lineOneText;
             var subtitle = new Subtitle();
             target.LoadSubtitle(subtitle, GetAssLines(@"{\fs28}Font"), null);
             string actual = subtitle.Paragraphs[0].Text;
-            string expected = "<font size=\"28\">Font</font>";
+            const string expected = "<font size=\"28\">Font</font>";
             Assert.AreEqual(expected, actual);
         }
 
@@ -264,7 +259,7 @@ Dialogue: 0,0:00:16.84,0:00:18.16,rechts,,0000,0000,0000,," + lineOneText;
             var subtitle = new Subtitle();
             target.LoadSubtitle(subtitle, GetAssLines(@"{\c&HFF&}Font"), null);
             string actual = subtitle.Paragraphs[0].Text;
-            string expected = "<font color=\"#ff0000\">Font</font>";
+            const string expected = "<font color=\"#ff0000\">Font</font>";
             Assert.AreEqual(expected, actual);
         }
 
@@ -312,7 +307,7 @@ Dialogue: 0,0:00:16.84,0:00:18.16,rechts,,0000,0000,0000,," + lineOneText;
             var subtitle = new Subtitle();
             target.LoadSubtitle(subtitle, GetAssLines(@"{\1c&HFFFF00&\i1}CYAN{\i0}"), null);
             string actual = subtitle.Paragraphs[0].Text;
-            string expected = "<font color=\"#00ffff\"><i>CYAN</i></font>";
+            const string expected = "<font color=\"#00ffff\"><i>CYAN</i></font>";
             Assert.AreEqual(expected, actual);
         }
 
@@ -485,8 +480,7 @@ Dialogue: Marked=0,0:00:01.00,0:00:03.00,Default,NTP,0000,0000,0000,!Effect," + 
         {
             var target = new MicroDvd();
             var subtitle = new Subtitle();
-            List<string> list = new List<string>();
-            list.Add("{0}{0}{y:i,b}Hello!");
+            var list = new List<string> { "{0}{0}{y:i,b}Hello!" };
             target.LoadSubtitle(subtitle, list, null);
             string text = subtitle.Paragraphs[0].Text;
             Assert.IsTrue(text == "<i><b>Hello!</b></i>");
@@ -498,8 +492,7 @@ Dialogue: Marked=0,0:00:01.00,0:00:03.00,Default,NTP,0000,0000,0000,!Effect," + 
         {
             var target = new MicroDvd();
             var subtitle = new Subtitle();
-            var list = new List<string>();
-            list.Add("{0}{0}{C:$FF0000}Blue");
+            var list = new List<string> { "{0}{0}{C:$FF0000}Blue" };
             target.LoadSubtitle(subtitle, list, null);
             string text = subtitle.Paragraphs[0].Text;
             Assert.IsTrue(text == "<font color=\"#0000FF\">Blue</font>" || text == "<font color=\"blue\">Blue</font>");
@@ -511,8 +504,7 @@ Dialogue: Marked=0,0:00:01.00,0:00:03.00,Default,NTP,0000,0000,0000,!Effect," + 
         {
             var target = new MicroDvd();
             var subtitle = new Subtitle();
-            var list = new List<string>();
-            list.Add("{0}{25}{c:$0000ff}{y:b,u}{f:DeJaVuSans}{s:12}Hello!");
+            var list = new List<string> { "{0}{25}{c:$0000ff}{y:b,u}{f:DeJaVuSans}{s:12}Hello!" };
             target.LoadSubtitle(subtitle, list, null);
             string text = subtitle.Paragraphs[0].Text;
             Assert.IsTrue(text == "<font color=\"#ff0000\"><b><u><font face=\"DeJaVuSans\"><font size=\"12\">Hello!</font></font></u></b></font>");
@@ -524,8 +516,7 @@ Dialogue: Marked=0,0:00:01.00,0:00:03.00,Default,NTP,0000,0000,0000,!Effect," + 
         {
             var target = new MicroDvd();
             var subtitle = new Subtitle();
-            List<string> list = new List<string>();
-            list.Add("{0}{0}{y:i}Hello!|Hello!");
+            var list = new List<string> { "{0}{0}{y:i}Hello!|Hello!" };
             target.LoadSubtitle(subtitle, list, null);
             string text = subtitle.Paragraphs[0].Text;
             Assert.IsTrue(text == "<i>Hello!</i>" + Environment.NewLine + "Hello!");
@@ -537,8 +528,7 @@ Dialogue: Marked=0,0:00:01.00,0:00:03.00,Default,NTP,0000,0000,0000,!Effect," + 
         {
             var target = new MicroDvd();
             var subtitle = new Subtitle();
-            var list = new List<string>();
-            list.Add("{0}{0}Hello!|{y:i}Hello!");
+            var list = new List<string> { "{0}{0}Hello!|{y:i}Hello!" };
             target.LoadSubtitle(subtitle, list, null);
             string text = subtitle.Paragraphs[0].Text;
             Assert.IsTrue(text == "Hello!" + Environment.NewLine + "<i>Hello!</i>");
@@ -550,8 +540,7 @@ Dialogue: Marked=0,0:00:01.00,0:00:03.00,Default,NTP,0000,0000,0000,!Effect," + 
         {
             var target = new MicroDvd();
             var subtitle = new Subtitle();
-            var list = new List<string>();
-            list.Add("{0}{0}{Y:i}Hello!|Hello!");
+            var list = new List<string> { "{0}{0}{Y:i}Hello!|Hello!" };
             target.LoadSubtitle(subtitle, list, null);
             string text = subtitle.Paragraphs[0].Text;
             Assert.IsTrue(text == "<i>Hello!" + Environment.NewLine + "Hello!</i>" ||
@@ -564,8 +553,7 @@ Dialogue: Marked=0,0:00:01.00,0:00:03.00,Default,NTP,0000,0000,0000,!Effect," + 
         {
             var target = new MicroDvd();
             var subtitle = new Subtitle();
-            var list = new List<string>();
-            list.Add("{0}{0}{Y:b}{y:i}Hello!|Hello!");
+            var list = new List<string> { "{0}{0}{Y:b}{y:i}Hello!|Hello!" };
             target.LoadSubtitle(subtitle, list, null);
             string text = subtitle.Paragraphs[0].Text;
             Assert.IsTrue(text == "<b><i>Hello!</i>" + Environment.NewLine + "Hello!</b>" ||
@@ -642,8 +630,8 @@ Dialogue: Marked=0,0:00:01.00,0:00:03.00,Default,NTP,0000,0000,0000,!Effect," + 
             }
             for (int i = 0; i < copy.Paragraphs.Count; i++)
             {
-                Assert.IsTrue(copy.Paragraphs[i].StartTime.TotalMilliseconds + 1000 == sub2.Paragraphs[i].StartTime.TotalMilliseconds);
-                Assert.IsTrue(copy.Paragraphs[i].EndTime.TotalMilliseconds + 1000 == sub2.Paragraphs[i].EndTime.TotalMilliseconds);
+                Assert.IsTrue(Math.Abs(copy.Paragraphs[i].StartTime.TotalMilliseconds + 1000 - sub2.Paragraphs[i].StartTime.TotalMilliseconds) < 0.001);
+                Assert.IsTrue(Math.Abs(copy.Paragraphs[i].EndTime.TotalMilliseconds + 1000 - sub2.Paragraphs[i].EndTime.TotalMilliseconds) < 0.001);
             }
         }
 

@@ -17,7 +17,8 @@ namespace Test.Logic
         [TestMethod]
         public void TestMethodNumberOfLinesThreeLines()
         {
-            // TODO: Implement me            
+            var p = new Paragraph { Text = "Hallo!" + Environment.NewLine + Environment.NewLine + "How are you?" };
+            Assert.AreEqual(3, p.NumberOfLines);
         }
 
         [TestMethod]
