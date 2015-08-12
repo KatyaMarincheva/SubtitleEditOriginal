@@ -10,28 +10,6 @@ namespace Nikse.SubtitleEdit.Controls
 {
     public sealed class VideoPlayerContainer : Panel
     {
-        public class RichTextBoxViewOnly : RichTextBox
-        {
-            public RichTextBoxViewOnly()
-            {
-                ReadOnly = true;
-                BorderStyle = BorderStyle.None;
-                TabStop = false;
-                SetStyle(ControlStyles.Selectable, false);
-                SetStyle(ControlStyles.UserMouse, true);
-                MouseEnter += delegate { Cursor = Cursors.Default; };
-                ScrollBars = RichTextBoxScrollBars.None;
-                Margin = new Padding(0);
-            }
-
-            protected override void WndProc(ref Message m)
-            {
-                if (m.Msg == 0x204) return; // WM_RBUTTONDOWN
-                if (m.Msg == 0x205) return; // WM_RBUTTONUP
-                base.WndProc(ref m);
-            }
-        }
-
         public event EventHandler OnButtonClicked;
         public Panel PanelPlayer { get; private set; }
         private Panel _panelSubtitle;
