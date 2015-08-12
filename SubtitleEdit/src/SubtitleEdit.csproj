@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Controls\MouseDownParagraphType.cs" />
     <Compile Include="Controls\ParagraphEventArgs.cs" />
+    <Compile Include="Controls\RichTextBoxViewOnly.cs" />
     <Compile Include="Controls\SETextBox.cs">
       <SubType>Component</SubType>
     </Compile>

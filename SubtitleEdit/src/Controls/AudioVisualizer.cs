@@ -203,7 +203,7 @@ namespace Nikse.SubtitleEdit.Controls
                         Bitmap bmp = _spectrogramBitmaps[i];
                         bmp.Dispose();
                     }
-                    catch
+                    catch (ObjectDisposedException)
                     {
                     }
                 }
