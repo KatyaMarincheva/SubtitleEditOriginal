@@ -595,7 +595,7 @@ namespace Nikse.SubtitleEdit.Forms
             return Encoding.UTF8;
         }
 
-        private void AudioWaveform_OnNonParagraphRightClicked(object sender, Nikse.SubtitleEdit.Controls.AudioVisualizer.ParagraphEventArgs e)
+        private void AudioWaveform_OnNonParagraphRightClicked(object sender, Nikse.SubtitleEdit.Controls.ParagraphEventArgs e)
         {
             addParagraphHereToolStripMenuItem.Visible = false;
             addParagraphAndPasteToolStripMenuItem.Visible = false;
@@ -610,7 +610,7 @@ namespace Nikse.SubtitleEdit.Forms
             contextMenuStripWaveform.Show(MousePosition.X, MousePosition.Y);
         }
 
-        private void AudioWaveform_OnDoubleClickNonParagraph(object sender, Nikse.SubtitleEdit.Controls.AudioVisualizer.ParagraphEventArgs e)
+        private void AudioWaveform_OnDoubleClickNonParagraph(object sender, Nikse.SubtitleEdit.Controls.ParagraphEventArgs e)
         {
             if (mediaPlayer.VideoPlayer != null)
             {
@@ -632,7 +632,7 @@ namespace Nikse.SubtitleEdit.Forms
             SelectZoomTextInComboBox();
         }
 
-        private void AudioWaveform_OnTimeChangedAndOffsetRest(object sender, Nikse.SubtitleEdit.Controls.AudioVisualizer.ParagraphEventArgs e)
+        private void AudioWaveform_OnTimeChangedAndOffsetRest(object sender, Nikse.SubtitleEdit.Controls.ParagraphEventArgs e)
         {
             if (mediaPlayer.VideoPlayer == null)
                 return;
@@ -673,7 +673,7 @@ namespace Nikse.SubtitleEdit.Forms
                 mediaPlayer.Pause();
         }
 
-        private void AudioWaveform_OnSingleClick(object sender, Nikse.SubtitleEdit.Controls.AudioVisualizer.ParagraphEventArgs e)
+        private void AudioWaveform_OnSingleClick(object sender, Nikse.SubtitleEdit.Controls.ParagraphEventArgs e)
         {
             timerWaveform.Stop();
             _endSeconds = -1;
@@ -689,7 +689,7 @@ namespace Nikse.SubtitleEdit.Forms
             timerWaveform.Start();
         }
 
-        private void AudioWaveform_OnParagraphRightClicked(object sender, AudioVisualizer.ParagraphEventArgs e)
+        private void AudioWaveform_OnParagraphRightClicked(object sender, ParagraphEventArgs e)
         {
             SubtitleListview1.SelectIndexAndEnsureVisible(_subtitle.GetIndex(e.Paragraph));
 
@@ -708,7 +708,7 @@ namespace Nikse.SubtitleEdit.Forms
             contextMenuStripWaveform.Show(MousePosition.X, MousePosition.Y);
         }
 
-        private void AudioWaveform_OnNewSelectionRightClicked(object sender, AudioVisualizer.ParagraphEventArgs e)
+        private void AudioWaveform_OnNewSelectionRightClicked(object sender, ParagraphEventArgs e)
         {
             SubtitleListview1.SelectIndexAndEnsureVisible(_subtitle.GetIndex(e.Paragraph));
 
@@ -724,7 +724,7 @@ namespace Nikse.SubtitleEdit.Forms
             contextMenuStripWaveform.Show(MousePosition.X, MousePosition.Y);
         }
 
-        private void AudioWaveform_OnTimeChanged(object sender, AudioVisualizer.ParagraphEventArgs e)
+        private void AudioWaveform_OnTimeChanged(object sender, ParagraphEventArgs e)
         {
             var paragraph = e.Paragraph;
             var beforeParagraph = e.BeforeParagraph;
@@ -864,11 +864,11 @@ namespace Nikse.SubtitleEdit.Forms
             _makeHistoryPaused = false;
         }
 
-        private void MovePrevNext(AudioVisualizer.ParagraphEventArgs e, Paragraph beforeParagraph, int index)
+        private void MovePrevNext(ParagraphEventArgs e, Paragraph beforeParagraph, int index)
         {
             if (e.MovePreviousOrNext)
             {
-                if (e.MouseDownParagraphType == AudioVisualizer.MouseDownParagraphType.Start)
+                if (e.MouseDownParagraphType == MouseDownParagraphType.Start)
                 {
                     var prev = _subtitle.GetParagraphOrDefault(index - 1);
                     if (prev != null)
@@ -887,7 +887,7 @@ namespace Nikse.SubtitleEdit.Forms
                         }
                     }
                 }
-                else if (e.MouseDownParagraphType == AudioVisualizer.MouseDownParagraphType.End)
+                else if (e.MouseDownParagraphType == MouseDownParagraphType.End)
                 {
                     var next = _subtitle.GetParagraphOrDefault(index + 1);
                     if (next != null)
@@ -909,7 +909,7 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
-        private void AudioWaveform_OnPositionSelected(object sender, Nikse.SubtitleEdit.Controls.AudioVisualizer.ParagraphEventArgs e)
+        private void AudioWaveform_OnPositionSelected(object sender, Nikse.SubtitleEdit.Controls.ParagraphEventArgs e)
         {
             mediaPlayer.CurrentPosition = e.Seconds;
             if (e.Paragraph != null)
