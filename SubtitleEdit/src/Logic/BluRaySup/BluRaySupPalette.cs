@@ -1,4 +1,22 @@
-﻿namespace Nikse.SubtitleEdit.Logic.BluRaySup
+﻿/*
+ * Copyright 2009 Volker Oth (0xdeadbeef)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * NOTE: Converted to C# and modified by Nikse.dk@gmail.com
+ */
+
+namespace Nikse.SubtitleEdit.Logic.BluRaySup
 {
     using System.Drawing;
 
@@ -195,64 +213,6 @@
         }
 
         /**
-         * Convert RGB color info to YCBCr
-         * @param r 8 bit red component
-         * @param g 8 bit green component
-         * @param b 8 bit blue component
-         * @return Integer array with luminance (Y), chrominance blue (Cb), chrominance red (Cr) (in this order)
-         */
-        private static int[] Rgb2YCbCr(int r, int g, int b, bool useBt601)
-        {
-            int[] yCbCr = new int[3];
-            double y, cb, cr;
-
-            if (useBt601)
-            {
-                /* BT.601 for RGB 0..255 (PC) -> YCbCr 16..235 */
-                y = r * 0.299 * 219 / 255 + g * 0.587 * 219 / 255 + b * 0.114 * 219 / 255;
-                cb = -r * 0.168736 * 224 / 255 - g * 0.331264 * 224 / 255 + b * 0.5 * 224 / 255;
-                cr = r * 0.5 * 224 / 255 - g * 0.418688 * 224 / 255 - b * 0.081312 * 224 / 255;
-            }
-            else
-            {
-                /* BT.709 for RGB 0..255 (PC) -> YCbCr 16..235 */
-                y = r * 0.2126 * 219 / 255 + g * 0.7152 * 219 / 255 + b * 0.0722 * 219 / 255;
-                cb = -r * 0.2126 / 1.8556 * 224 / 255 - g * 0.7152 / 1.8556 * 224 / 255 + b * 0.5 * 224 / 255;
-                cr = r * 0.5 * 224 / 255 - g * 0.7152 / 1.5748 * 224 / 255 - b * 0.0722 / 1.5748 * 224 / 255;
-            }
-
-            yCbCr[0] = 16 + (int)(y + 0.5);
-            yCbCr[1] = 128 + (int)(cb + 0.5);
-            yCbCr[2] = 128 + (int)(cr + 0.5);
-            for (int i = 0; i < 3; i++)
-            {
-                if (yCbCr[i] < 16)
-                {
-                    yCbCr[i] = 16;
-                }
-                else
-                {
-                    if (i == 0)
-                    {
-                        if (yCbCr[i] > 235)
-                        {
-                            yCbCr[i] = 235;
-                        }
-                    }
-                    else
-                    {
-                        if (yCbCr[i] > 240)
-                        {
-                            yCbCr[i] = 240;
-                        }
-                    }
-                }
-            }
-
-            return yCbCr;
-        }
-
-        /**
          * Set palette index "index" to color "c" in ARGB format
          * @param index Palette index
          * @param c Color in ARGB format
@@ -275,12 +235,6 @@
         public int GetArgb(int index)
         {
             return ((this.a[index] & 0xff) << 24) | ((this.r[index] & 0xff) << 16) | ((this.g[index] & 0xff) << 8) | (this.b[index] & 0xff);
-        }
-
-        internal void SetColor(int index, Color color)
-        {
-            this.SetRgb(index, color.R, color.G, color.B);
-            this.SetAlpha(index, color.A);
         }
 
         /**
@@ -475,6 +429,70 @@
         public bool UsesBt601()
         {
             return this.useBT601;
+        }
+
+        internal void SetColor(int index, Color color)
+        {
+            this.SetRgb(index, color.R, color.G, color.B);
+            this.SetAlpha(index, color.A);
+        }
+
+        /**
+         * Convert RGB color info to YCBCr
+         * @param r 8 bit red component
+         * @param g 8 bit green component
+         * @param b 8 bit blue component
+         * @return Integer array with luminance (Y), chrominance blue (Cb), chrominance red (Cr) (in this order)
+         */
+        private static int[] Rgb2YCbCr(int r, int g, int b, bool useBt601)
+        {
+            int[] yCbCr = new int[3];
+            double y, cb, cr;
+
+            if (useBt601)
+            {
+                /* BT.601 for RGB 0..255 (PC) -> YCbCr 16..235 */
+                y = r * 0.299 * 219 / 255 + g * 0.587 * 219 / 255 + b * 0.114 * 219 / 255;
+                cb = -r * 0.168736 * 224 / 255 - g * 0.331264 * 224 / 255 + b * 0.5 * 224 / 255;
+                cr = r * 0.5 * 224 / 255 - g * 0.418688 * 224 / 255 - b * 0.081312 * 224 / 255;
+            }
+            else
+            {
+                /* BT.709 for RGB 0..255 (PC) -> YCbCr 16..235 */
+                y = r * 0.2126 * 219 / 255 + g * 0.7152 * 219 / 255 + b * 0.0722 * 219 / 255;
+                cb = -r * 0.2126 / 1.8556 * 224 / 255 - g * 0.7152 / 1.8556 * 224 / 255 + b * 0.5 * 224 / 255;
+                cr = r * 0.5 * 224 / 255 - g * 0.7152 / 1.5748 * 224 / 255 - b * 0.0722 / 1.5748 * 224 / 255;
+            }
+
+            yCbCr[0] = 16 + (int)(y + 0.5);
+            yCbCr[1] = 128 + (int)(cb + 0.5);
+            yCbCr[2] = 128 + (int)(cr + 0.5);
+            for (int i = 0; i < 3; i++)
+            {
+                if (yCbCr[i] < 16)
+                {
+                    yCbCr[i] = 16;
+                }
+                else
+                {
+                    if (i == 0)
+                    {
+                        if (yCbCr[i] > 235)
+                        {
+                            yCbCr[i] = 235;
+                        }
+                    }
+                    else
+                    {
+                        if (yCbCr[i] > 240)
+                        {
+                            yCbCr[i] = 240;
+                        }
+                    }
+                }
+            }
+
+            return yCbCr;
         }
     }
 }

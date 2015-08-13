@@ -1,6 +1,4 @@
-﻿#region #Disclaimer
-
-// Author: Adalberto L. Simeone (Taranto, Italy)
+﻿// Author: Adalberto L. Simeone (Taranto, Italy)
 // E-Mail: avengerdragon@gmail.com
 // Website: http://www.avengersutd.com/blog
 //
@@ -13,22 +11,15 @@
 // projects, without the express and written consent of
 // the Author.
 
-#endregion #Disclaimer
-
-#region Using directives
-
-using System;
-using System.Drawing;
-
-#endregion Using directives
-
 namespace Nikse.SubtitleEdit.Logic.ColorChooser
 {
+    using System;
+    using System.Drawing;
+
     public class ColorHandler
     {
         // Handle conversions between RGB and HSV
         // (and Color types, as well).
-
         public static ARGB HSVtoRGB(int a, int h, int s, int v)
         {
             // H, S, and V must all be between 0 and 255.
@@ -55,16 +46,15 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             // to be scaled from 0 to 360 (it//s the angle of the selected
             // point within the circle). HSV.Saturation and HSV.value must be
             // scaled to be between 0 and 1.
-
             double r = 0;
             double g = 0;
             double b = 0;
 
             // Scale Hue to be between 0 and 360. Saturation
             // and value scale to be between 0 and 1.
-            var h = ((double)HSV.Hue / 255 * 360) % 360;
-            var s = (double)HSV.Saturation / 255;
-            var v = (double)HSV.Value / 255;
+            double h = ((double)HSV.Hue / 255 * 360) % 360;
+            double s = (double)HSV.Saturation / 255;
+            double v = (double)HSV.Value / 255;
 
             if (s == 0)
             {
@@ -79,7 +69,7 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
                 // The color wheel consists of 6 sectors.
                 // Figure out which sector you//re in.
                 double sectorPos = h / 60;
-                int sectorNumber = (int)(Math.Floor(sectorPos));
+                int sectorNumber = (int)Math.Floor(sectorPos);
 
                 // get the fractional part of the sector.
                 // That is, how many degrees into the sector
@@ -133,6 +123,7 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
                         break;
                 }
             }
+
             // return an RGB structure, with values scaled
             // to be between 0 and 255.
             return new ARGB(HSV.Alpha, (int)(r * 255), (int)(g * 255), (int)(b * 255));
@@ -146,7 +137,6 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             // HSV.Saturation and value are between 0 and 1.
             // The code must scale these to be between 0 and 255 for
             // the purposes of this application.
-
             double r = (double)argb.Red / 255;
             double g = (double)argb.Green / 255;
             double b = (double)argb.Blue / 255;
@@ -156,7 +146,7 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
 
             double h;
             double s;
-            var v = max;
+            double v = max;
 
             double delta = max - min;
             if (max == 0 || delta == 0)
@@ -186,6 +176,7 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
                     h = 4 + (r - g) / delta;
                 }
             }
+
             // Scale h to be between 0 and 360.
             // This may require adding 360, if the value
             // is negative.
@@ -208,20 +199,23 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             public ARGB(int a, int r, int g, int b)
                 : this()
             {
-                Alpha = a;
-                Red = r;
-                Green = g;
-                Blue = b;
+                this.Alpha = a;
+                this.Red = r;
+                this.Green = g;
+                this.Blue = b;
             }
 
             public int Alpha { get; set; }
+
             public int Red { get; set; }
+
             public int Green { get; set; }
+
             public int Blue { get; set; }
 
             public override string ToString()
             {
-                return String.Format("({0}, {1}, {2} {3})", Alpha, Red, Green, Blue);
+                return string.Format("({0}, {1}, {2} {3})", this.Alpha, this.Red, this.Green, this.Blue);
             }
         }
 
@@ -235,20 +229,23 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             public HSV(int a, int h, int s, int v)
                 : this()
             {
-                Alpha = a;
-                Hue = h;
-                Saturation = s;
-                Value = v;
+                this.Alpha = a;
+                this.Hue = h;
+                this.Saturation = s;
+                this.Value = v;
             }
 
             public int Alpha { get; set; }
+
             public int Hue { get; set; }
+
             public int Saturation { get; set; }
+
             public int Value { get; set; }
 
             public override string ToString()
             {
-                return String.Format("({0}, {1}, {2})", Hue, Saturation, Value);
+                return string.Format("({0}, {1}, {2})", this.Hue, this.Saturation, this.Value);
             }
         }
 

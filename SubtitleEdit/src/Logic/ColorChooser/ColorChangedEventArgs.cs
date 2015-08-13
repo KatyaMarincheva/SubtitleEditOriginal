@@ -1,6 +1,4 @@
-﻿#region #Disclaimer
-
-// Author: Adalberto L. Simeone (Taranto, Italy)
+﻿// Author: Adalberto L. Simeone (Taranto, Italy)
 // E-Mail: avengerdragon@gmail.com
 // Website: http://www.avengersutd.com/blog
 //
@@ -13,21 +11,15 @@
 // projects, without the express and written consent of
 // the Author.
 
-#endregion #Disclaimer
-
-#region Using directives
-
-using System;
-
-#endregion Using directives
-
 namespace Nikse.SubtitleEdit.Logic.ColorChooser
 {
+    using System;
+
     public class ColorChangedEventArgs : EventArgs
     {
         public ColorChangedEventArgs(ColorHandler.ARGB argb, ColorHandler.HSV hsv)
         {
-            ARGB = argb;
+            this.ARGB = argb;
             this.HSV = hsv;
         }
 

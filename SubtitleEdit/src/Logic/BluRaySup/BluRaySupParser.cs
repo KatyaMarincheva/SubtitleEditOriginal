@@ -1,4 +1,22 @@
-﻿namespace Nikse.SubtitleEdit.Logic.BluRaySup
+﻿/*
+ * Copyright 2009 Volker Oth (0xdeadbeef)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * NOTE: Converted to C# and modified by Nikse.dk@gmail.com
+ */
+
+namespace Nikse.SubtitleEdit.Logic.BluRaySup
 {
     using System;
     using System.Collections.Generic;
@@ -55,188 +73,6 @@
             {
                 return ParseBluRaySup(fs, log, false);
             }
-        }
-
-        private static SupSegment ParseSegmentHeader(byte[] buffer, StringBuilder log)
-        {
-            SupSegment segment = new SupSegment();
-            if (buffer[0] == 0x50 && buffer[1] == 0x47)
-            {
-                // 80 + 71 - P G
-                segment.PtsTimestamp = BigEndianInt32(buffer, 2); // read PTS
-                segment.DtsTimestamp = BigEndianInt32(buffer, 6); // read PTS
-                segment.Type = buffer[10];
-                segment.Size = BigEndianInt16(buffer, 11);
-            }
-            else
-            {
-                log.AppendLine("Unable to read segment - PG missing!");
-            }
-
-            return segment;
-        }
-
-        private static SupSegment ParseSegmentHeaderFromMatroska(byte[] buffer)
-        {
-            SupSegment segment = new SupSegment();
-            segment.Type = buffer[0];
-            segment.Size = BigEndianInt16(buffer, 1);
-            return segment;
-        }
-
-        /// <summary>
-        ///     Parse an PCS packet which contains width/height info
-        /// </summary>
-        /// <param name="buffer">Raw data buffer, starting right after segment</param>
-        private static PcsObject ParsePcs(byte[] buffer, int offset)
-        {
-            PcsObject pcs = new PcsObject();
-
-            // composition_object:
-            pcs.ObjectId = BigEndianInt16(buffer, 11 + offset); // 16bit object_id_ref
-            pcs.WindowId = buffer[13 + offset];
-
-            // skipped:  8bit  window_id_ref
-            // object_cropped_flag: 0x80, forced_on_flag = 0x040, 6bit reserved
-            int forcedCropped = buffer[14 + offset];
-            pcs.IsForced = (forcedCropped & 0x40) == 0x40;
-            pcs.Origin = new Point(BigEndianInt16(buffer, 15 + offset), BigEndianInt16(buffer, 17 + offset));
-            return pcs;
-        }
-
-        private static PcsData ParsePicture(byte[] buffer, SupSegment segment)
-        {
-            StringBuilder sb = new StringBuilder();
-            PcsData pcs = new PcsData();
-            pcs.Size = new Size(BigEndianInt16(buffer, 0), BigEndianInt16(buffer, 2));
-            pcs.FramesPerSecondType = buffer[4]; // hi nibble: frame_rate, lo nibble: reserved
-            pcs.CompNum = BigEndianInt16(buffer, 5);
-            pcs.CompositionState = GetCompositionState(buffer[7]);
-            pcs.StartTime = segment.PtsTimestamp;
-
-            // 8bit  palette_update_flag (0x80), 7bit reserved
-            pcs.PaletteUpdate = buffer[8] == 0x80;
-            pcs.PaletteId = buffer[9]; // 8bit  palette_id_ref
-            int compositionObjectCount = buffer[10]; // 8bit  number_of_composition_objects (0..2)
-
-            sb.AppendFormat("CompNum: {0}, Pts: {1}, State: {2}, PalUpdate: {3}, PalId {4}", pcs.CompNum, ToolBox.PtsToTimeString(pcs.StartTime), pcs.CompositionState, pcs.PaletteUpdate, pcs.PaletteId);
-
-            if (pcs.CompositionState == CompositionState.Invalid)
-            {
-                sb.Append("Illegal composition state Invalid");
-            }
-            else
-            {
-                int offset = 0;
-                pcs.PcsObjects = new List<PcsObject>();
-                for (int compObjIndex = 0; compObjIndex < compositionObjectCount; compObjIndex++)
-                {
-                    PcsObject pcsObj = ParsePcs(buffer, offset);
-                    pcs.PcsObjects.Add(pcsObj);
-                    sb.AppendLine();
-                    sb.AppendFormat("ObjId: {0}, WinId: {1}, Forced: {2}, X: {3}, Y: {4}", pcsObj.ObjectId, pcsObj.WindowId, pcsObj.IsForced, pcsObj.Origin.X, pcsObj.Origin.Y);
-                    offset += 8;
-                }
-            }
-
-            pcs.Message = sb.ToString();
-            return pcs;
-        }
-
-        private static bool CompletePcs(PcsData pcs, Dictionary<int, List<OdsData>> bitmapObjects, Dictionary<int, List<PaletteInfo>> palettes)
-        {
-            if (pcs == null || pcs.PcsObjects == null || palettes == null)
-            {
-                return false;
-            }
-
-            if (pcs.PcsObjects.Count == 0)
-            {
-                return true;
-            }
-
-            if (!palettes.ContainsKey(pcs.PaletteId))
-            {
-                return false;
-            }
-
-            pcs.PaletteInfos = new List<PaletteInfo>(palettes[pcs.PaletteId]);
-            pcs.BitmapObjects = new List<List<OdsData>>();
-            for (int index = 0; index < pcs.PcsObjects.Count; index++)
-            {
-                int objId = pcs.PcsObjects[index].ObjectId;
-                if (!bitmapObjects.ContainsKey(objId))
-                {
-                    return false;
-                }
-
-                pcs.BitmapObjects.Add(bitmapObjects[objId]);
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        ///     parse an PDS packet which contain palette info
-        /// </summary>
-        /// <param name="buffer">Buffer of raw byte data, starting right after segment</param>
-        /// <param name="segment">object containing info about the current segment</param>
-        /// <returns>number of valid palette entries (-1 for fault)</returns>
-        private static PdsData ParsePds(byte[] buffer, SupSegment segment)
-        {
-            int paletteId = buffer[0]; // 8bit palette ID (0..7)
-
-            // 8bit palette version number (incremented for each palette change)
-            int paletteUpdate = buffer[1];
-
-            PaletteInfo p = new PaletteInfo();
-            p.PaletteSize = (segment.Size - 2) / 5;
-
-            if (p.PaletteSize <= 0)
-            {
-                return new PdsData { Message = "Empty palette" };
-            }
-
-            p.PaletteBuffer = new byte[p.PaletteSize * 5];
-            Buffer.BlockCopy(buffer, 2, p.PaletteBuffer, 0, p.PaletteSize * 5); // save palette buffer in palette object
-
-            return new PdsData { Message = "PalId: " + paletteId + ", update: " + paletteUpdate + ", " + p.PaletteSize + " entries", PaletteId = paletteId, PaletteVersion = paletteUpdate, PaletteInfo = p };
-        }
-
-        /// <summary>
-        ///     parse an ODS packet which contain the image data
-        /// </summary>
-        /// <param name="buffer">raw byte date, starting right after segment</param>
-        /// <param name="segment">object containing info about the current segment</param>
-        /// <returns>true if this is a valid new object (neither invalid nor a fragment)</returns>
-        private static OdsData ParseOds(byte[] buffer, SupSegment segment, bool forceFirst)
-        {
-            int objId = BigEndianInt16(buffer, 0); // 16bit object_id
-            int objVer = buffer[2]; // 16bit object_id nikse - index 2 or 1???
-            int objSeq = buffer[3]; // 8bit  first_in_sequence (0x80),
-
-            // last_in_sequence (0x40), 6bits reserved
-            bool first = ((objSeq & 0x80) == 0x80) || forceFirst;
-            bool last = (objSeq & 0x40) == 0x40;
-
-            ImageObjectFragment info = new ImageObjectFragment();
-            if (first)
-            {
-                int width = BigEndianInt16(buffer, 7); // object_width
-                int height = BigEndianInt16(buffer, 9); // object_height
-
-                info.ImagePacketSize = segment.Size - 11; // Image packet size (image bytes)
-                info.ImageBuffer = new byte[info.ImagePacketSize];
-                Buffer.BlockCopy(buffer, 11, info.ImageBuffer, 0, info.ImagePacketSize);
-
-                return new OdsData { IsFirst = true, Size = new Size(width, height), ObjectId = objId, ObjectVersion = objVer, Fragment = info, Message = "ObjId: " + objId + ", ver: " + objVer + ", seq: first" + (last ? "/" : string.Empty) + (last ? string.Empty + "last" : string.Empty) + ", width: " + width + ", height: " + height };
-            }
-
-            info.ImagePacketSize = segment.Size - 4;
-            info.ImageBuffer = new byte[info.ImagePacketSize];
-            Buffer.BlockCopy(buffer, 4, info.ImageBuffer, 0, info.ImagePacketSize);
-
-            return new OdsData { IsFirst = false, ObjectId = objId, ObjectVersion = objVer, Fragment = info, Message = "Continued ObjId: " + objId + ", ver: " + objVer + ", seq: " + (last ? string.Empty + "last" : string.Empty) };
         }
 
         public static List<PcsData> ParseBluRaySup(Stream ms, StringBuilder log, bool fromMatroskaFile)
@@ -482,6 +318,188 @@
             }
 
             return pcsList;
+        }
+
+        private static SupSegment ParseSegmentHeader(byte[] buffer, StringBuilder log)
+        {
+            SupSegment segment = new SupSegment();
+            if (buffer[0] == 0x50 && buffer[1] == 0x47)
+            {
+                // 80 + 71 - P G
+                segment.PtsTimestamp = BigEndianInt32(buffer, 2); // read PTS
+                segment.DtsTimestamp = BigEndianInt32(buffer, 6); // read PTS
+                segment.Type = buffer[10];
+                segment.Size = BigEndianInt16(buffer, 11);
+            }
+            else
+            {
+                log.AppendLine("Unable to read segment - PG missing!");
+            }
+
+            return segment;
+        }
+
+        private static SupSegment ParseSegmentHeaderFromMatroska(byte[] buffer)
+        {
+            SupSegment segment = new SupSegment();
+            segment.Type = buffer[0];
+            segment.Size = BigEndianInt16(buffer, 1);
+            return segment;
+        }
+
+        /// <summary>
+        ///     Parse an PCS packet which contains width/height info
+        /// </summary>
+        /// <param name="buffer">Raw data buffer, starting right after segment</param>
+        private static PcsObject ParsePcs(byte[] buffer, int offset)
+        {
+            PcsObject pcs = new PcsObject();
+
+            // composition_object:
+            pcs.ObjectId = BigEndianInt16(buffer, 11 + offset); // 16bit object_id_ref
+            pcs.WindowId = buffer[13 + offset];
+
+            // skipped:  8bit  window_id_ref
+            // object_cropped_flag: 0x80, forced_on_flag = 0x040, 6bit reserved
+            int forcedCropped = buffer[14 + offset];
+            pcs.IsForced = (forcedCropped & 0x40) == 0x40;
+            pcs.Origin = new Point(BigEndianInt16(buffer, 15 + offset), BigEndianInt16(buffer, 17 + offset));
+            return pcs;
+        }
+
+        private static PcsData ParsePicture(byte[] buffer, SupSegment segment)
+        {
+            StringBuilder sb = new StringBuilder();
+            PcsData pcs = new PcsData();
+            pcs.Size = new Size(BigEndianInt16(buffer, 0), BigEndianInt16(buffer, 2));
+            pcs.FramesPerSecondType = buffer[4]; // hi nibble: frame_rate, lo nibble: reserved
+            pcs.CompNum = BigEndianInt16(buffer, 5);
+            pcs.CompositionState = GetCompositionState(buffer[7]);
+            pcs.StartTime = segment.PtsTimestamp;
+
+            // 8bit  palette_update_flag (0x80), 7bit reserved
+            pcs.PaletteUpdate = buffer[8] == 0x80;
+            pcs.PaletteId = buffer[9]; // 8bit  palette_id_ref
+            int compositionObjectCount = buffer[10]; // 8bit  number_of_composition_objects (0..2)
+
+            sb.AppendFormat("CompNum: {0}, Pts: {1}, State: {2}, PalUpdate: {3}, PalId {4}", pcs.CompNum, ToolBox.PtsToTimeString(pcs.StartTime), pcs.CompositionState, pcs.PaletteUpdate, pcs.PaletteId);
+
+            if (pcs.CompositionState == CompositionState.Invalid)
+            {
+                sb.Append("Illegal composition state Invalid");
+            }
+            else
+            {
+                int offset = 0;
+                pcs.PcsObjects = new List<PcsObject>();
+                for (int compObjIndex = 0; compObjIndex < compositionObjectCount; compObjIndex++)
+                {
+                    PcsObject pcsObj = ParsePcs(buffer, offset);
+                    pcs.PcsObjects.Add(pcsObj);
+                    sb.AppendLine();
+                    sb.AppendFormat("ObjId: {0}, WinId: {1}, Forced: {2}, X: {3}, Y: {4}", pcsObj.ObjectId, pcsObj.WindowId, pcsObj.IsForced, pcsObj.Origin.X, pcsObj.Origin.Y);
+                    offset += 8;
+                }
+            }
+
+            pcs.Message = sb.ToString();
+            return pcs;
+        }
+
+        private static bool CompletePcs(PcsData pcs, Dictionary<int, List<OdsData>> bitmapObjects, Dictionary<int, List<PaletteInfo>> palettes)
+        {
+            if (pcs == null || pcs.PcsObjects == null || palettes == null)
+            {
+                return false;
+            }
+
+            if (pcs.PcsObjects.Count == 0)
+            {
+                return true;
+            }
+
+            if (!palettes.ContainsKey(pcs.PaletteId))
+            {
+                return false;
+            }
+
+            pcs.PaletteInfos = new List<PaletteInfo>(palettes[pcs.PaletteId]);
+            pcs.BitmapObjects = new List<List<OdsData>>();
+            for (int index = 0; index < pcs.PcsObjects.Count; index++)
+            {
+                int objId = pcs.PcsObjects[index].ObjectId;
+                if (!bitmapObjects.ContainsKey(objId))
+                {
+                    return false;
+                }
+
+                pcs.BitmapObjects.Add(bitmapObjects[objId]);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        ///     parse an PDS packet which contain palette info
+        /// </summary>
+        /// <param name="buffer">Buffer of raw byte data, starting right after segment</param>
+        /// <param name="segment">object containing info about the current segment</param>
+        /// <returns>number of valid palette entries (-1 for fault)</returns>
+        private static PdsData ParsePds(byte[] buffer, SupSegment segment)
+        {
+            int paletteId = buffer[0]; // 8bit palette ID (0..7)
+
+            // 8bit palette version number (incremented for each palette change)
+            int paletteUpdate = buffer[1];
+
+            PaletteInfo p = new PaletteInfo();
+            p.PaletteSize = (segment.Size - 2) / 5;
+
+            if (p.PaletteSize <= 0)
+            {
+                return new PdsData { Message = "Empty palette" };
+            }
+
+            p.PaletteBuffer = new byte[p.PaletteSize * 5];
+            Buffer.BlockCopy(buffer, 2, p.PaletteBuffer, 0, p.PaletteSize * 5); // save palette buffer in palette object
+
+            return new PdsData { Message = "PalId: " + paletteId + ", update: " + paletteUpdate + ", " + p.PaletteSize + " entries", PaletteId = paletteId, PaletteVersion = paletteUpdate, PaletteInfo = p };
+        }
+
+        /// <summary>
+        ///     parse an ODS packet which contain the image data
+        /// </summary>
+        /// <param name="buffer">raw byte date, starting right after segment</param>
+        /// <param name="segment">object containing info about the current segment</param>
+        /// <returns>true if this is a valid new object (neither invalid nor a fragment)</returns>
+        private static OdsData ParseOds(byte[] buffer, SupSegment segment, bool forceFirst)
+        {
+            int objId = BigEndianInt16(buffer, 0); // 16bit object_id
+            int objVer = buffer[2]; // 16bit object_id nikse - index 2 or 1???
+            int objSeq = buffer[3]; // 8bit  first_in_sequence (0x80),
+
+            // last_in_sequence (0x40), 6bits reserved
+            bool first = ((objSeq & 0x80) == 0x80) || forceFirst;
+            bool last = (objSeq & 0x40) == 0x40;
+
+            ImageObjectFragment info = new ImageObjectFragment();
+            if (first)
+            {
+                int width = BigEndianInt16(buffer, 7); // object_width
+                int height = BigEndianInt16(buffer, 9); // object_height
+
+                info.ImagePacketSize = segment.Size - 11; // Image packet size (image bytes)
+                info.ImageBuffer = new byte[info.ImagePacketSize];
+                Buffer.BlockCopy(buffer, 11, info.ImageBuffer, 0, info.ImagePacketSize);
+
+                return new OdsData { IsFirst = true, Size = new Size(width, height), ObjectId = objId, ObjectVersion = objVer, Fragment = info, Message = "ObjId: " + objId + ", ver: " + objVer + ", seq: first" + (last ? "/" : string.Empty) + (last ? string.Empty + "last" : string.Empty) + ", width: " + width + ", height: " + height };
+            }
+
+            info.ImagePacketSize = segment.Size - 4;
+            info.ImageBuffer = new byte[info.ImagePacketSize];
+            Buffer.BlockCopy(buffer, 4, info.ImageBuffer, 0, info.ImagePacketSize);
+
+            return new OdsData { IsFirst = false, ObjectId = objId, ObjectVersion = objVer, Fragment = info, Message = "Continued ObjId: " + objId + ", ver: " + objVer + ", seq: " + (last ? string.Empty + "last" : string.Empty) };
         }
 
         private static bool ByteArraysEqual(byte[] b1, byte[] b2)
