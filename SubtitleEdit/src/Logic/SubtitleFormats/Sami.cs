@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using  System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -129,7 +130,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             text.Substring(i).StartsWith("<s") ||
                             text.Substring(i).StartsWith("</"))
                         {
-                            total.Append(EncodeText(partial.ToString()));
+                            total.Append(HtmlUtil.EncodeText(partial.ToString()));
                             partial = new StringBuilder();
                             tagOn = true;
                             total.Append('<');
@@ -149,12 +150,12 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         }
                     }
 
-                    total.Append(EncodeText(partial.ToString()));
+                    total.Append(HtmlUtil.EncodeText(partial.ToString()));
                     text = total.ToString();
                 }
                 else
                 {
-                    text = EncodeText(text);
+                    text = HtmlUtil.EncodeText(text);
                 }
 
                 if (Name == new SamiModern().Name)
@@ -174,17 +175,6 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             sb.AppendLine("</BODY>");
             sb.AppendLine("</SAMI>");
             return sb.ToString().Trim();
-        }
-
-        private static string EncodeText(string text)
-        {
-            if (Configuration.Settings.SubtitleSettings.SamiHtmlEncodeMode == 1)
-                return WebUtility.HtmlEncode(text);
-            if (Configuration.Settings.SubtitleSettings.SamiHtmlEncodeMode == 2)
-                return HtmlUtil.EncodeNamed(text);
-            if (Configuration.Settings.SubtitleSettings.SamiHtmlEncodeMode == 3)
-                return HtmlUtil.EncodeNumeric(text);
-            return text;
         }
 
         public static List<string> GetStylesFromHeader(string header)
