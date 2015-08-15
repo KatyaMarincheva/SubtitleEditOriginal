@@ -1,266 +1,269 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-
-namespace Nikse.SubtitleEdit.Logic.Networking
+﻿namespace Nikse.SubtitleEdit.Logic.Networking
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Net;
+    using System.Text;
+    using System.Threading;
+
+    using Nikse.SubtitleEdit.SeNetworkService;
+
+    using Timer = System.Windows.Forms.Timer;
+
     public class NikseWebServiceSession : IDisposable
     {
-        public class ChatEntry
+        public List<ChatEntry> ChatLog = new List<ChatEntry>();
+
+        public string FileName;
+
+        public Subtitle LastSubtitle;
+
+        public StringBuilder Log;
+
+        public Subtitle OriginalSubtitle;
+
+        public string SessionId;
+
+        public Subtitle Subtitle;
+
+        public List<UpdateLogEntry> UpdateLog = new List<UpdateLogEntry>();
+
+        public string UserName;
+
+        public List<SeUser> Users;
+
+        private SeService _seWs;
+
+        private DateTime _seWsLastUpdate = DateTime.Now.AddYears(-1);
+
+        private Timer _timerWebService;
+
+        public NikseWebServiceSession(Subtitle subtitle, Subtitle originalSubtitle, EventHandler onUpdateTimerTick, EventHandler onUpdateUserLogEntries)
         {
-            public SeNetworkService.SeUser User { get; set; }
-            public string Message { get; set; }
+            this.Subtitle = subtitle;
+            this.OriginalSubtitle = originalSubtitle;
+            this._timerWebService = new Timer();
+            if (Configuration.Settings.NetworkSettings.PollIntervalSeconds < 1)
+            {
+                Configuration.Settings.NetworkSettings.PollIntervalSeconds = 1;
+            }
+
+            this._timerWebService.Interval = Configuration.Settings.NetworkSettings.PollIntervalSeconds * 1000;
+            this._timerWebService.Tick += this.TimerWebServiceTick;
+            this.Log = new StringBuilder();
+            this.OnUpdateTimerTick = onUpdateTimerTick;
+            this.OnUpdateUserLogEntries = onUpdateUserLogEntries;
         }
 
         public event EventHandler OnUpdateTimerTick;
+
         public event EventHandler OnUpdateUserLogEntries;
 
-        private System.Windows.Forms.Timer _timerWebService;
-        public List<UpdateLogEntry> UpdateLog = new List<UpdateLogEntry>();
-        public List<ChatEntry> ChatLog = new List<ChatEntry>();
-        private SeNetworkService.SeService _seWs;
-        private DateTime _seWsLastUpdate = DateTime.Now.AddYears(-1);
-        public SeNetworkService.SeUser CurrentUser { get; set; }
-        public Subtitle LastSubtitle;
-        public Subtitle Subtitle;
-        public Subtitle OriginalSubtitle;
-        public string SessionId;
-        public string UserName;
-        public string FileName;
-        public List<SeNetworkService.SeUser> Users;
-        public StringBuilder Log;
+        public SeUser CurrentUser { get; set; }
 
         public string WebServiceUrl
         {
             get
             {
-                return _seWs.Url;
+                return this._seWs.Url;
             }
         }
 
-        public NikseWebServiceSession(Subtitle subtitle, Subtitle originalSubtitle, EventHandler onUpdateTimerTick, EventHandler onUpdateUserLogEntries)
+        public void Dispose()
         {
-            Subtitle = subtitle;
-            OriginalSubtitle = originalSubtitle;
-            _timerWebService = new System.Windows.Forms.Timer();
-            if (Configuration.Settings.NetworkSettings.PollIntervalSeconds < 1)
-                Configuration.Settings.NetworkSettings.PollIntervalSeconds = 1;
-            _timerWebService.Interval = Configuration.Settings.NetworkSettings.PollIntervalSeconds * 1000;
-            _timerWebService.Tick += TimerWebServiceTick;
-            Log = new StringBuilder();
-            OnUpdateTimerTick = onUpdateTimerTick;
-            OnUpdateUserLogEntries = onUpdateUserLogEntries;
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
-
+        
         public void StartServer(string webServiceUrl, string sessionKey, string userName, string fileName, out string message)
         {
-            SessionId = sessionKey;
-            UserName = userName;
-            FileName = fileName;
-            var list = new List<SeNetworkService.SeSequence>();
-            foreach (Paragraph p in Subtitle.Paragraphs)
+            this.SessionId = sessionKey;
+            this.UserName = userName;
+            this.FileName = fileName;
+            List<SeSequence> list = new List<SeSequence>();
+            foreach (Paragraph p in this.Subtitle.Paragraphs)
             {
-                list.Add(new SeNetworkService.SeSequence
-                {
-                    StartMilliseconds = (int)p.StartTime.TotalMilliseconds,
-                    EndMilliseconds = (int)p.EndTime.TotalMilliseconds,
-                    Text = WebUtility.HtmlEncode(p.Text.Replace(Environment.NewLine, "<br />"))
-                });
+                list.Add(new SeSequence { StartMilliseconds = (int)p.StartTime.TotalMilliseconds, EndMilliseconds = (int)p.EndTime.TotalMilliseconds, Text = WebUtility.HtmlEncode(p.Text.Replace(Environment.NewLine, "<br />")) });
             }
 
-            var originalSubtitle = new List<SeNetworkService.SeSequence>();
-            if (OriginalSubtitle != null)
+            List<SeSequence> originalSubtitle = new List<SeSequence>();
+            if (this.OriginalSubtitle != null)
             {
-                foreach (Paragraph p in OriginalSubtitle.Paragraphs)
+                foreach (Paragraph p in this.OriginalSubtitle.Paragraphs)
                 {
-                    originalSubtitle.Add(new SeNetworkService.SeSequence
-                    {
-                        StartMilliseconds = (int)p.StartTime.TotalMilliseconds,
-                        EndMilliseconds = (int)p.EndTime.TotalMilliseconds,
-                        Text = WebUtility.HtmlEncode(p.Text.Replace(Environment.NewLine, "<br />"))
-                    });
+                    originalSubtitle.Add(new SeSequence { StartMilliseconds = (int)p.StartTime.TotalMilliseconds, EndMilliseconds = (int)p.EndTime.TotalMilliseconds, Text = WebUtility.HtmlEncode(p.Text.Replace(Environment.NewLine, "<br />")) });
                 }
             }
 
-            _seWs = new SeNetworkService.SeService();
-            _seWs.Url = webServiceUrl;
-            _seWs.Proxy = Utilities.GetProxy();
-            SeNetworkService.SeUser user = _seWs.Start(sessionKey, userName, list.ToArray(), originalSubtitle.ToArray(), fileName, out message);
-            CurrentUser = user;
-            Users = new List<SeNetworkService.SeUser>();
-            Users.Add(user);
+            this._seWs = new SeService();
+            this._seWs.Url = webServiceUrl;
+            this._seWs.Proxy = Utilities.GetProxy();
+            SeUser user = this._seWs.Start(sessionKey, userName, list.ToArray(), originalSubtitle.ToArray(), fileName, out message);
+            this.CurrentUser = user;
+            this.Users = new List<SeUser>();
+            this.Users.Add(user);
             if (message == "OK")
-                _timerWebService.Start();
+            {
+                this._timerWebService.Start();
+            }
         }
 
         public bool Join(string webServiceUrl, string userName, string sessionKey, out string message)
         {
-            SessionId = sessionKey;
-            _seWs = new SeNetworkService.SeService();
-            _seWs.Url = webServiceUrl;
-            _seWs.Proxy = Utilities.GetProxy();
-            Users = new List<SeNetworkService.SeUser>();
-            var users = _seWs.Join(sessionKey, userName, out message);
+            this.SessionId = sessionKey;
+            this._seWs = new SeService();
+            this._seWs.Url = webServiceUrl;
+            this._seWs.Proxy = Utilities.GetProxy();
+            this.Users = new List<SeUser>();
+            SeUser[] users = this._seWs.Join(sessionKey, userName, out message);
             if (message != "OK")
+            {
                 return false;
+            }
 
             string tempFileName;
             DateTime updateTime;
-            Subtitle = new Subtitle();
-            foreach (var sequence in _seWs.GetSubtitle(sessionKey, out tempFileName, out updateTime))
-                Subtitle.Paragraphs.Add(new Paragraph(WebUtility.HtmlDecode(sequence.Text).Replace("<br />", Environment.NewLine), sequence.StartMilliseconds, sequence.EndMilliseconds));
-            FileName = tempFileName;
-
-            OriginalSubtitle = new Subtitle();
-            var sequences = _seWs.GetOriginalSubtitle(sessionKey);
-            if (sequences != null)
+            this.Subtitle = new Subtitle();
+            foreach (SeSequence sequence in this._seWs.GetSubtitle(sessionKey, out tempFileName, out updateTime))
             {
-                foreach (var sequence in sequences)
-                    OriginalSubtitle.Paragraphs.Add(new Paragraph(WebUtility.HtmlDecode(sequence.Text).Replace("<br />", Environment.NewLine), sequence.StartMilliseconds, sequence.EndMilliseconds));
+                this.Subtitle.Paragraphs.Add(new Paragraph(WebUtility.HtmlDecode(sequence.Text).Replace("<br />", Environment.NewLine), sequence.StartMilliseconds, sequence.EndMilliseconds));
             }
 
-            SessionId = sessionKey;
-            CurrentUser = users[users.Length - 1]; // me
-            foreach (var user in users)
-                Users.Add(user);
-            ReloadFromWs();
-            _timerWebService.Start();
-            return true;
-        }
+            this.FileName = tempFileName;
 
-        private void TimerWebServiceTick(object sender, EventArgs e)
-        {
-            if (OnUpdateTimerTick != null)
-                OnUpdateTimerTick.Invoke(sender, e);
+            this.OriginalSubtitle = new Subtitle();
+            SeSequence[] sequences = this._seWs.GetOriginalSubtitle(sessionKey);
+            if (sequences != null)
+            {
+                foreach (SeSequence sequence in sequences)
+                {
+                    this.OriginalSubtitle.Paragraphs.Add(new Paragraph(WebUtility.HtmlDecode(sequence.Text).Replace("<br />", Environment.NewLine), sequence.StartMilliseconds, sequence.EndMilliseconds));
+                }
+            }
+
+            this.SessionId = sessionKey;
+            this.CurrentUser = users[users.Length - 1]; // me
+            foreach (SeUser user in users)
+            {
+                this.Users.Add(user);
+            }
+
+            this.ReloadFromWs();
+            this._timerWebService.Start();
+            return true;
         }
 
         public void TimerStop()
         {
-            _timerWebService.Stop();
+            this._timerWebService.Stop();
         }
 
         public void TimerStart()
         {
-            _timerWebService.Start();
+            this._timerWebService.Start();
         }
 
-        public List<SeNetworkService.SeUpdate> GetUpdates(out string message, out int numberOfLines)
+        public List<SeUpdate> GetUpdates(out string message, out int numberOfLines)
         {
-            List<SeNetworkService.SeUpdate> list = new List<SeNetworkService.SeUpdate>();
+            List<SeUpdate> list = new List<SeUpdate>();
             DateTime newUpdateTime;
-            var updates = _seWs.GetUpdates(SessionId, CurrentUser.UserName, _seWsLastUpdate, out message, out newUpdateTime, out numberOfLines);
+            SeUpdate[] updates = this._seWs.GetUpdates(this.SessionId, this.CurrentUser.UserName, this._seWsLastUpdate, out message, out newUpdateTime, out numberOfLines);
             if (updates != null)
             {
-                foreach (var update in updates)
+                foreach (SeUpdate update in updates)
+                {
                     list.Add(update);
+                }
             }
-            _seWsLastUpdate = newUpdateTime;
+
+            this._seWsLastUpdate = newUpdateTime;
             return list;
         }
 
         public Subtitle ReloadSubtitle()
         {
-            Subtitle.Paragraphs.Clear();
+            this.Subtitle.Paragraphs.Clear();
             string tempFileName;
             DateTime updateTime;
-            var sequences = _seWs.GetSubtitle(SessionId, out tempFileName, out updateTime);
-            FileName = tempFileName;
-            _seWsLastUpdate = updateTime;
+            SeSequence[] sequences = this._seWs.GetSubtitle(this.SessionId, out tempFileName, out updateTime);
+            this.FileName = tempFileName;
+            this._seWsLastUpdate = updateTime;
             if (sequences != null)
             {
-                foreach (var sequence in sequences)
-                    Subtitle.Paragraphs.Add(new Paragraph(WebUtility.HtmlDecode(sequence.Text).Replace("<br />", Environment.NewLine), sequence.StartMilliseconds, sequence.EndMilliseconds));
-            }
-            return Subtitle;
-        }
-
-        private void ReloadFromWs()
-        {
-            if (_seWs != null)
-            {
-                Subtitle = new Subtitle();
-                var sequences = _seWs.GetSubtitle(SessionId, out FileName, out _seWsLastUpdate);
-                foreach (var sequence in sequences)
+                foreach (SeSequence sequence in sequences)
                 {
-                    Paragraph p = new Paragraph(WebUtility.HtmlDecode(sequence.Text).Replace("<br />", Environment.NewLine), sequence.StartMilliseconds, sequence.EndMilliseconds);
-                    Subtitle.Paragraphs.Add(p);
+                    this.Subtitle.Paragraphs.Add(new Paragraph(WebUtility.HtmlDecode(sequence.Text).Replace("<br />", Environment.NewLine), sequence.StartMilliseconds, sequence.EndMilliseconds));
                 }
-                Subtitle.Renumber();
-                LastSubtitle = new Subtitle(Subtitle);
             }
+
+            return this.Subtitle;
         }
 
         public void AppendToLog(string text)
         {
             string timestamp = DateTime.Now.ToLongTimeString();
-            Log.AppendLine(timestamp + ": " + text.TrimEnd().Replace(Environment.NewLine, Configuration.Settings.General.ListViewLineSeparatorString));
+            this.Log.AppendLine(timestamp + ": " + text.TrimEnd().Replace(Environment.NewLine, Configuration.Settings.General.ListViewLineSeparatorString));
         }
 
         public string GetLog()
         {
-            return Log.ToString();
+            return this.Log.ToString();
         }
 
         public void SendChatMessage(string message)
         {
-            _seWs.SendMessage(SessionId, WebUtility.HtmlEncode(message.Replace(Environment.NewLine, "<br />")), CurrentUser);
-        }
-
-        internal void UpdateLine(int index, Paragraph paragraph)
-        {
-            _seWs.UpdateLine(SessionId, index, new SeNetworkService.SeSequence
-            {
-                StartMilliseconds = (int)paragraph.StartTime.TotalMilliseconds,
-                EndMilliseconds = (int)paragraph.EndTime.TotalMilliseconds,
-                Text = WebUtility.HtmlEncode(paragraph.Text.Replace(Environment.NewLine, "<br />"))
-            }, CurrentUser);
-            AddToWsUserLog(CurrentUser, index, "UPD", true);
+            this._seWs.SendMessage(this.SessionId, WebUtility.HtmlEncode(message.Replace(Environment.NewLine, "<br />")), this.CurrentUser);
         }
 
         public void CheckForAndSubmitUpdates()
         {
             // check for changes in text/time codes (not insert/delete)
-            if (LastSubtitle != null)
+            if (this.LastSubtitle != null)
             {
-                for (int i = 0; i < Subtitle.Paragraphs.Count; i++)
+                for (int i = 0; i < this.Subtitle.Paragraphs.Count; i++)
                 {
-                    Paragraph last = LastSubtitle.GetParagraphOrDefault(i);
-                    Paragraph current = Subtitle.GetParagraphOrDefault(i);
+                    Paragraph last = this.LastSubtitle.GetParagraphOrDefault(i);
+                    Paragraph current = this.Subtitle.GetParagraphOrDefault(i);
                     if (last != null && current != null)
                     {
-                        if (last.StartTime.TotalMilliseconds != current.StartTime.TotalMilliseconds ||
-                            last.EndTime.TotalMilliseconds != current.EndTime.TotalMilliseconds ||
-                            last.Text != current.Text)
+                        if (last.StartTime.TotalMilliseconds != current.StartTime.TotalMilliseconds || last.EndTime.TotalMilliseconds != current.EndTime.TotalMilliseconds || last.Text != current.Text)
                         {
-                            UpdateLine(i, current);
+                            this.UpdateLine(i, current);
                         }
                     }
                 }
             }
         }
 
-        public void AddToWsUserLog(SeNetworkService.SeUser user, int pos, string action, bool updateUI)
+        public void AddToWsUserLog(SeUser user, int pos, string action, bool updateUI)
         {
-            for (int i = 0; i < UpdateLog.Count; i++)
+            for (int i = 0; i < this.UpdateLog.Count; i++)
             {
-                if (UpdateLog[i].Index == pos)
+                if (this.UpdateLog[i].Index == pos)
                 {
-                    UpdateLog.RemoveAt(i);
+                    this.UpdateLog.RemoveAt(i);
                     break;
                 }
             }
 
-            UpdateLog.Add(new UpdateLogEntry(0, user.UserName, pos, action));
-            if (updateUI && OnUpdateUserLogEntries != null)
-                OnUpdateUserLogEntries.Invoke(null, null);
+            this.UpdateLog.Add(new UpdateLogEntry(0, user.UserName, pos, action));
+            if (updateUI && this.OnUpdateUserLogEntries != null)
+            {
+                this.OnUpdateUserLogEntries.Invoke(null, null);
+            }
+        }
+
+        internal void UpdateLine(int index, Paragraph paragraph)
+        {
+            this._seWs.UpdateLine(this.SessionId, index, new SeSequence { StartMilliseconds = (int)paragraph.StartTime.TotalMilliseconds, EndMilliseconds = (int)paragraph.EndTime.TotalMilliseconds, Text = WebUtility.HtmlEncode(paragraph.Text.Replace(Environment.NewLine, "<br />")) }, this.CurrentUser);
+            this.AddToWsUserLog(this.CurrentUser, index, "UPD", true);
         }
 
         internal void Leave()
         {
             try
             {
-                _seWs.Leave(SessionId, CurrentUser.UserName);
+                this._seWs.Leave(this.SessionId, this.CurrentUser.UserName);
             }
             catch
             {
@@ -269,43 +272,52 @@ namespace Nikse.SubtitleEdit.Logic.Networking
 
         internal void DeleteLines(List<int> indices)
         {
-            _seWs.DeleteLines(SessionId, indices.ToArray(), CurrentUser);
+            this._seWs.DeleteLines(this.SessionId, indices.ToArray(), this.CurrentUser);
             StringBuilder sb = new StringBuilder();
             foreach (int index in indices)
             {
                 sb.Append(index + ", ");
-                AdjustUpdateLogToDelete(index);
-                AppendToLog(string.Format(Configuration.Settings.Language.Main.NetworkDelete, CurrentUser.UserName, CurrentUser.Ip, index));
+                this.AdjustUpdateLogToDelete(index);
+                this.AppendToLog(string.Format(Configuration.Settings.Language.Main.NetworkDelete, this.CurrentUser.UserName, this.CurrentUser.Ip, index));
             }
         }
 
         internal void InsertLine(int index, Paragraph newParagraph)
         {
-            _seWs.InsertLine(SessionId, index, (int)newParagraph.StartTime.TotalMilliseconds, (int)newParagraph.EndTime.TotalMilliseconds, newParagraph.Text, CurrentUser);
-            AppendToLog(string.Format(Configuration.Settings.Language.Main.NetworkInsert, CurrentUser.UserName, CurrentUser.Ip, index, newParagraph.Text.Replace(Environment.NewLine, Configuration.Settings.General.ListViewLineSeparatorString)));
+            this._seWs.InsertLine(this.SessionId, index, (int)newParagraph.StartTime.TotalMilliseconds, (int)newParagraph.EndTime.TotalMilliseconds, newParagraph.Text, this.CurrentUser);
+            this.AppendToLog(string.Format(Configuration.Settings.Language.Main.NetworkInsert, this.CurrentUser.UserName, this.CurrentUser.Ip, index, newParagraph.Text.Replace(Environment.NewLine, Configuration.Settings.General.ListViewLineSeparatorString)));
         }
 
         internal void AdjustUpdateLogToInsert(int index)
         {
-            foreach (var logEntry in UpdateLog)
+            foreach (UpdateLogEntry logEntry in this.UpdateLog)
             {
                 if (logEntry.Index >= index)
+                {
                     logEntry.Index++;
+                }
             }
         }
 
         internal void AdjustUpdateLogToDelete(int index)
         {
             UpdateLogEntry removeThis = null;
-            foreach (var logEntry in UpdateLog)
+            foreach (UpdateLogEntry logEntry in this.UpdateLog)
             {
                 if (logEntry.Index == index)
+                {
                     removeThis = logEntry;
+                }
                 else if (logEntry.Index > index)
+                {
                     logEntry.Index--;
+                }
             }
+
             if (removeThis != null)
-                UpdateLog.Remove(removeThis);
+            {
+                this.UpdateLog.Remove(removeThis);
+            }
         }
 
         internal string Restart()
@@ -317,21 +329,22 @@ namespace Nikse.SubtitleEdit.Logic.Networking
             {
                 try
                 {
-                    System.Threading.Thread.Sleep(200);
-                    StartServer(_seWs.Url, SessionId, UserName, FileName, out message);
+                    Thread.Sleep(200);
+                    this.StartServer(this._seWs.Url, this.SessionId, this.UserName, this.FileName, out message);
                     retries = maxRetries;
                 }
                 catch
                 {
-                    System.Threading.Thread.Sleep(200);
+                    Thread.Sleep(200);
                     retries++;
                 }
             }
 
             if (message == "Session is already running")
             {
-                return ReJoin();
+                return this.ReJoin();
             }
+
             return message;
         }
 
@@ -344,14 +357,17 @@ namespace Nikse.SubtitleEdit.Logic.Networking
             {
                 try
                 {
-                    System.Threading.Thread.Sleep(200);
-                    if (Join(_seWs.Url, UserName, SessionId, out message))
+                    Thread.Sleep(200);
+                    if (this.Join(this._seWs.Url, this.UserName, this.SessionId, out message))
+                    {
                         message = "Reload";
+                    }
+
                     retries = maxRetries;
                 }
                 catch
                 {
-                    System.Threading.Thread.Sleep(200);
+                    Thread.Sleep(200);
                     retries++;
                 }
             }
@@ -359,28 +375,54 @@ namespace Nikse.SubtitleEdit.Logic.Networking
             return message;
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                if (_timerWebService != null)
+                if (this._timerWebService != null)
                 {
-                    _timerWebService.Dispose();
-                    _timerWebService = null;
+                    this._timerWebService.Dispose();
+                    this._timerWebService = null;
                 }
-                if (_seWs != null)
+
+                if (this._seWs != null)
                 {
-                    _seWs.Dispose();
-                    _seWs = null;
+                    this._seWs.Dispose();
+                    this._seWs = null;
                 }
             }
         }
 
+        private void TimerWebServiceTick(object sender, EventArgs e)
+        {
+            if (this.OnUpdateTimerTick != null)
+            {
+                this.OnUpdateTimerTick.Invoke(sender, e);
+            }
+        }
+
+        private void ReloadFromWs()
+        {
+            if (this._seWs != null)
+            {
+                this.Subtitle = new Subtitle();
+                SeSequence[] sequences = this._seWs.GetSubtitle(this.SessionId, out this.FileName, out this._seWsLastUpdate);
+                foreach (SeSequence sequence in sequences)
+                {
+                    Paragraph p = new Paragraph(WebUtility.HtmlDecode(sequence.Text).Replace("<br />", Environment.NewLine), sequence.StartMilliseconds, sequence.EndMilliseconds);
+                    this.Subtitle.Paragraphs.Add(p);
+                }
+
+                this.Subtitle.Renumber();
+                this.LastSubtitle = new Subtitle(this.Subtitle);
+            }
+        }
+
+        public class ChatEntry
+        {
+            public SeUser User { get; set; }
+
+            public string Message { get; set; }
+        }
     }
 }

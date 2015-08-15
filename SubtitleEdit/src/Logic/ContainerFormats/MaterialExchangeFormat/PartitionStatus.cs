@@ -2,10 +2,14 @@
 {
     public enum PartitionStatus
     {
-        Unknown = 0,
-        OpenAndIncomplete = 1,
-        ClosedAndIncomplete = 2,
-        OpenAndComplete = 3,
-        ClosedAndComplete = 4,
+        Unknown = 0, 
+
+        OpenAndIncomplete = 1, 
+
+        ClosedAndIncomplete = 2, 
+
+        OpenAndComplete = 3, 
+
+        ClosedAndComplete = 4
     }
 }

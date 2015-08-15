@@ -1,17 +1,14 @@
-﻿using System.Collections.Generic;
-
-namespace Nikse.SubtitleEdit.Logic.Ocr
+﻿namespace Nikse.SubtitleEdit.Logic.Ocr
 {
+    using System.Collections.Generic;
+
     public class ModiLanguage
     {
-        public int Id { get; set; }
-        public string Text { get; set; }
-        public override string ToString()
-        {
-            return Text;
-        }
-
         public const int DefaultLanguageId = 2048;
+
+        public int Id { get; set; }
+
+        public string Text { get; set; }
 
         public static IEnumerable<ModiLanguage> AllLanguages
         {
@@ -42,6 +39,11 @@ namespace Nikse.SubtitleEdit.Logic.Ocr
                 list.Add(new ModiLanguage { Id = 31, Text = "Turkish" });
                 return list;
             }
+        }
+
+        public override string ToString()
+        {
+            return this.Text;
         }
     }
 }

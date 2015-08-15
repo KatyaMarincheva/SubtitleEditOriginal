@@ -7,6 +7,7 @@
     {
         [FieldOffset(0)]
         public int hInproc;
+
         [FieldOffset(0)]
         public int hRemote;
     }

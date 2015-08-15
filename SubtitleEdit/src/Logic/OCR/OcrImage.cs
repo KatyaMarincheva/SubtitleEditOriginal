@@ -1,21 +1,22 @@
-﻿using System.Drawing;
-
-namespace Nikse.SubtitleEdit.Logic.Ocr
+﻿namespace Nikse.SubtitleEdit.Logic.Ocr
 {
+    using System.Drawing;
+
     public class OcrImage
     {
         public bool Italic { get; set; }
+
         public Bitmap Bmp { get; set; }
 
         public double[] GetTrainingData(int size)
         {
             int i = 0;
-            var data = new double[size];
-            for (int y = 0; y < Bmp.Height; y++)
+            double[] data = new double[size];
+            for (int y = 0; y < this.Bmp.Height; y++)
             {
-                for (int x = 0; x < Bmp.Width; x++)
+                for (int x = 0; x < this.Bmp.Width; x++)
                 {
-                    Color c = Bmp.GetPixel(x, y);
+                    Color c = this.Bmp.GetPixel(x, y);
                     if (i < size)
                     {
                         if (c == Color.Transparent)
@@ -28,9 +29,11 @@ namespace Nikse.SubtitleEdit.Logic.Ocr
                             data[i] = value / 766.0;
                         }
                     }
+
                     i++;
                 }
             }
+
             return data;
         }
     }

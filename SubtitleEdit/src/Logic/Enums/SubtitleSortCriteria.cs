@@ -2,16 +2,26 @@
 {
     public enum SubtitleSortCriteria
     {
-        Number,
-        StartTime,
-        EndTime,
-        Duration,
-        Text,
-        TextMaxLineLength,
-        TextTotalLength,
-        TextNumberOfLines,
-        TextCharactersPerSeconds,
-        WordsPerMinute,
-        Style,
+        Number, 
+
+        StartTime, 
+
+        EndTime, 
+
+        Duration, 
+
+        Text, 
+
+        TextMaxLineLength, 
+
+        TextTotalLength, 
+
+        TextNumberOfLines, 
+
+        TextCharactersPerSeconds, 
+
+        WordsPerMinute, 
+
+        Style
     }
 }

@@ -2,8 +2,10 @@
 {
     public enum SelectionChoice
     {
-        SelectionOnly,
-        AllLines,
-        SelectionAndForward,
+        SelectionOnly, 
+
+        AllLines, 
+
+        SelectionAndForward
     }
 }

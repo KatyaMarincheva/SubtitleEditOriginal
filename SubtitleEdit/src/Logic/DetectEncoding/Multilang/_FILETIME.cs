@@ -6,6 +6,7 @@
     public struct _FILETIME
     {
         public uint dwLowDateTime;
+
         public uint dwHighDateTime;
     }
 }

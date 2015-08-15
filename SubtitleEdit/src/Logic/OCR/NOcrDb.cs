@@ -1,58 +1,74 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.IO.Compression;
-
-namespace Nikse.SubtitleEdit.Logic.Ocr
+﻿namespace Nikse.SubtitleEdit.Logic.Ocr
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.IO;
+    using System.IO.Compression;
+
     public class NOcrDb
     {
-        public string FileName { get; private set; }
         public List<NOcrChar> OcrCharacters = new List<NOcrChar>();
+
         public List<NOcrChar> OcrCharactersExpanded = new List<NOcrChar>();
 
         public NOcrDb(string fileName)
         {
-            FileName = fileName;
-            LoadOcrCharacters();
+            this.FileName = fileName;
+            this.LoadOcrCharacters();
+        }
+
+        public string FileName { get; private set; }
+
+        public static int FindExactMatch()
+        {
+            return -1;
         }
 
         public void Save()
         {
-            using (Stream gz = new GZipStream(File.OpenWrite(FileName), CompressionMode.Compress))
+            using (Stream gz = new GZipStream(File.OpenWrite(this.FileName), CompressionMode.Compress))
             {
-                foreach (var ocrChar in OcrCharacters)
+                foreach (NOcrChar ocrChar in this.OcrCharacters)
+                {
                     ocrChar.Save(gz);
-                foreach (var ocrChar in OcrCharactersExpanded)
+                }
+
+                foreach (NOcrChar ocrChar in this.OcrCharactersExpanded)
+                {
                     ocrChar.Save(gz);
+                }
             }
         }
 
         public void LoadOcrCharacters()
         {
-            var list = new List<NOcrChar>();
-            var listExpanded = new List<NOcrChar>();
+            List<NOcrChar> list = new List<NOcrChar>();
+            List<NOcrChar> listExpanded = new List<NOcrChar>();
 
-            if (!File.Exists(FileName))
+            if (!File.Exists(this.FileName))
             {
-                OcrCharacters = list;
-                OcrCharactersExpanded = listExpanded;
+                this.OcrCharacters = list;
+                this.OcrCharactersExpanded = listExpanded;
                 return;
             }
 
-            using (Stream gz = new GZipStream(File.OpenRead(FileName), CompressionMode.Decompress))
+            using (Stream gz = new GZipStream(File.OpenRead(this.FileName), CompressionMode.Decompress))
             {
                 bool done = false;
                 while (!done)
                 {
-                    var ocrChar = new NOcrChar(gz);
+                    NOcrChar ocrChar = new NOcrChar(gz);
                     if (ocrChar.LoadedOk)
                     {
                         if (ocrChar.ExpandCount > 0)
+                        {
                             listExpanded.Add(ocrChar);
+                        }
                         else
+                        {
                             list.Add(ocrChar);
+                        }
                     }
                     else
                     {
@@ -60,21 +76,21 @@ namespace Nikse.SubtitleEdit.Logic.Ocr
                     }
                 }
             }
-            OcrCharacters = list;
-            OcrCharactersExpanded = listExpanded;
-        }
 
-        public static int FindExactMatch()
-        {
-            return -1;
+            this.OcrCharacters = list;
+            this.OcrCharactersExpanded = listExpanded;
         }
 
         public void Add(NOcrChar ocrChar)
         {
             if (ocrChar.ExpandCount > 0)
-                OcrCharactersExpanded.Insert(0, ocrChar);
+            {
+                this.OcrCharactersExpanded.Insert(0, ocrChar);
+            }
             else
-                OcrCharacters.Insert(0, ocrChar);
+            {
+                this.OcrCharacters.Insert(0, ocrChar);
+            }
         }
 
         public NOcrChar GetMatch(NikseBitmap nbmp)
@@ -83,13 +99,13 @@ namespace Nikse.SubtitleEdit.Logic.Ocr
             const int topMargin = 1;
             double widthPercent = nbmp.Height * 100.0 / nbmp.Width;
 
-            foreach (NOcrChar oc in OcrCharacters)
+            foreach (NOcrChar oc in this.OcrCharacters)
             {
                 if (Math.Abs(widthPercent - oc.WidthPercent) < 20 && Math.Abs(oc.MarginTop - topMargin) < 5)
                 { // only very accurate matches
 
                     bool ok = true;
-                    var index = 0;
+                    int index = 0;
                     while (index < oc.LinesForeground.Count && ok)
                     {
                         NOcrPoint op = oc.LinesForeground[index];
@@ -105,7 +121,10 @@ namespace Nikse.SubtitleEdit.Logic.Ocr
                                 {
                                     Point p = new Point(point.X - 1, point.Y);
                                     if (p.X < 0)
+                                    {
                                         p.X = 1;
+                                    }
+
                                     c = nbmp.GetPixel(p.X, p.Y);
                                     if (nbmp.Width > 20 && c.A > 150 && c.R + c.G + c.B > NocrMinColor)
                                     {
@@ -118,8 +137,10 @@ namespace Nikse.SubtitleEdit.Logic.Ocr
                                 }
                             }
                         }
+
                         index++;
                     }
+
                     index = 0;
                     while (index < oc.LinesBackground.Count && ok)
                     {
@@ -133,7 +154,10 @@ namespace Nikse.SubtitleEdit.Logic.Ocr
                                 {
                                     Point p = new Point(point.X, point.Y);
                                     if (oc.Width > 19 && point.X > 0)
+                                    {
                                         p.X = p.X - 1;
+                                    }
+
                                     c = nbmp.GetPixel(p.X, p.Y);
                                     if (c.A > 150 && c.R + c.G + c.B > NocrMinColor)
                                     {
@@ -143,14 +167,18 @@ namespace Nikse.SubtitleEdit.Logic.Ocr
                                 }
                             }
                         }
+
                         index++;
                     }
+
                     if (ok)
+                    {
                         return oc;
+                    }
                 }
             }
+
             return null;
         }
-
     }
 }

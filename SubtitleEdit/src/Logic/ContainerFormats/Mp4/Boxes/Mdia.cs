@@ -1,70 +1,94 @@
-﻿using System;
-using System.IO;
-
-namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
+﻿namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
 {
+    using System.IO;
+
     public class Mdia : Box
     {
-        public Mdhd Mdhd;
-        public Minf Minf;
-        public readonly string HandlerType = null;
         public readonly string HandlerName = string.Empty;
+
+        public readonly string HandlerType;
+
+        public Mdhd Mdhd;
+
+        public Minf Minf;
+
+        public Mdia(FileStream fs, ulong maximumLength)
+        {
+            this.Position = (ulong)fs.Position;
+            while (fs.Position < (long)maximumLength)
+            {
+                if (!this.InitializeSizeAndName(fs))
+                {
+                    return;
+                }
+
+                if (this.Name == "minf" && this.IsTextSubtitle || this.IsVobSubSubtitle || this.IsClosedCaption || this.IsVideo)
+                {
+                    uint timeScale = 90000;
+                    if (this.Mdhd != null)
+                    {
+                        timeScale = this.Mdhd.TimeScale;
+                    }
+
+                    this.Minf = new Minf(fs, this.Position, timeScale, this.HandlerType, this);
+                }
+                else if (this.Name == "hdlr")
+                {
+                    this.Buffer = new byte[this.Size - 4];
+                    fs.Read(this.Buffer, 0, this.Buffer.Length);
+                    this.HandlerType = this.GetString(8, 4);
+                    if (this.Size > 25)
+                    {
+                        this.HandlerName = this.GetString(24, this.Buffer.Length - (24 + 5)); // TODO: How to find this?
+                    }
+                }
+                else if (this.Name == "mdhd")
+                {
+                    this.Mdhd = new Mdhd(fs, this.Size);
+                }
+
+                fs.Seek((long)this.Position, SeekOrigin.Begin);
+            }
+        }
 
         public bool IsTextSubtitle
         {
-            get { return HandlerType == "sbtl" || HandlerType == "text"; }
+            get
+            {
+                return this.HandlerType == "sbtl" || this.HandlerType == "text";
+            }
         }
 
         public bool IsVobSubSubtitle
         {
-            get { return HandlerType == "subp"; }
+            get
+            {
+                return this.HandlerType == "subp";
+            }
         }
 
         public bool IsClosedCaption
         {
-            get { return HandlerType == "clcp"; }
+            get
+            {
+                return this.HandlerType == "clcp";
+            }
         }
 
         public bool IsVideo
         {
-            get { return HandlerType == "vide"; }
+            get
+            {
+                return this.HandlerType == "vide";
+            }
         }
 
         public bool IsAudio
         {
-            get { return HandlerType == "soun"; }
-        }
-
-        public Mdia(FileStream fs, ulong maximumLength)
-        {
-            Position = (ulong)fs.Position;
-            while (fs.Position < (long)maximumLength)
+            get
             {
-                if (!InitializeSizeAndName(fs))
-                    return;
-
-                if (Name == "minf" && IsTextSubtitle || IsVobSubSubtitle || IsClosedCaption || IsVideo)
-                {
-                    UInt32 timeScale = 90000;
-                    if (Mdhd != null)
-                        timeScale = Mdhd.TimeScale;
-                    Minf = new Minf(fs, Position, timeScale, HandlerType, this);
-                }
-                else if (Name == "hdlr")
-                {
-                    Buffer = new byte[Size - 4];
-                    fs.Read(Buffer, 0, Buffer.Length);
-                    HandlerType = GetString(8, 4);
-                    if (Size > 25)
-                        HandlerName = GetString(24, Buffer.Length - (24 + 5)); // TODO: How to find this?
-                }
-                else if (Name == "mdhd")
-                {
-                    Mdhd = new Mdhd(fs, Size);
-                }
-                fs.Seek((long)Position, SeekOrigin.Begin);
+                return this.HandlerType == "soun";
             }
         }
-
     }
 }

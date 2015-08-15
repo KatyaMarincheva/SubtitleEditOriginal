@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-
-namespace Nikse.SubtitleEdit.Logic.Ocr
+﻿namespace Nikse.SubtitleEdit.Logic.Ocr
 {
+    using System.Collections.Generic;
+
     public class OcrAlphabet
     {
         public OcrAlphabet()
         {
-            OcrCharacters = new List<OcrCharacter>();
+            this.OcrCharacters = new List<OcrCharacter>();
         }
 
         public List<OcrCharacter> OcrCharacters { get; private set; }
@@ -14,34 +14,39 @@ namespace Nikse.SubtitleEdit.Logic.Ocr
         public int CalculateMaximumSize()
         {
             int max = 0;
-            foreach (OcrCharacter c in OcrCharacters)
+            foreach (OcrCharacter c in this.OcrCharacters)
             {
                 foreach (OcrImage img in c.OcrImages)
                 {
                     int size = img.Bmp.Width * img.Bmp.Height;
                     if (size > max)
+                    {
                         max = size;
+                    }
                 }
             }
+
             return max;
         }
 
         public OcrCharacter GetOcrCharacter(string text, bool addIfNotExists)
         {
-            foreach (var ocrCharacter in OcrCharacters)
+            foreach (OcrCharacter ocrCharacter in this.OcrCharacters)
             {
                 if (ocrCharacter.Text == text)
+                {
                     return ocrCharacter;
+                }
             }
 
             if (addIfNotExists)
             {
                 OcrCharacter ch = new OcrCharacter(text);
-                OcrCharacters.Add(ch);
+                this.OcrCharacters.Add(ch);
                 return ch;
             }
+
             return null;
         }
-
     }
 }

@@ -1,28 +1,35 @@
-﻿using System.Collections.Generic;
-using System.IO;
-
-namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
+﻿namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
 {
+    using System.Collections.Generic;
+    using System.IO;
+
     public class Moov : Box
     {
         public Mvhd Mvhd;
+
         public List<Trak> Tracks;
 
         public Moov(FileStream fs, ulong maximumLength)
         {
-            Tracks = new List<Trak>();
-            Position = (ulong)fs.Position;
+            this.Tracks = new List<Trak>();
+            this.Position = (ulong)fs.Position;
             while (fs.Position < (long)maximumLength)
             {
-                if (!InitializeSizeAndName(fs))
+                if (!this.InitializeSizeAndName(fs))
+                {
                     return;
+                }
 
-                if (Name == "trak")
-                    Tracks.Add(new Trak(fs, Position));
-                else if (Name == "mvhd")
-                    Mvhd = new Mvhd(fs);
+                if (this.Name == "trak")
+                {
+                    this.Tracks.Add(new Trak(fs, this.Position));
+                }
+                else if (this.Name == "mvhd")
+                {
+                    this.Mvhd = new Mvhd(fs);
+                }
 
-                fs.Seek((long)Position, SeekOrigin.Begin);
+                fs.Seek((long)this.Position, SeekOrigin.Begin);
             }
         }
     }

@@ -2,8 +2,10 @@
 {
     public enum FindType
     {
-        Normal,
-        CaseSensitive,
+        Normal, 
+
+        CaseSensitive, 
+
         RegEx
     }
 }

@@ -1,30 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Nikse.SubtitleEdit.Logic.SpellCheck
+﻿namespace Nikse.SubtitleEdit.Logic.SpellCheck
 {
+    using System;
+    using System.Collections.Generic;
+
     public class WindowsHunspell : Hunspell
     {
         private NHunspell.Hunspell _hunspell;
 
         public WindowsHunspell(string affDictionary, string dicDictionary)
         {
-            _hunspell = new NHunspell.Hunspell(affDictionary, dicDictionary);
+            this._hunspell = new NHunspell.Hunspell(affDictionary, dicDictionary);
         }
 
         public override bool Spell(string word)
         {
-            return _hunspell.Spell(word);
+            return this._hunspell.Spell(word);
         }
 
         public override List<string> Suggest(string word)
         {
-            return _hunspell.Suggest(word);
+            return this._hunspell.Suggest(word);
         }
 
         public override void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -32,11 +32,13 @@ namespace Nikse.SubtitleEdit.Logic.SpellCheck
         {
             if (disposing)
             {
-                if (_hunspell != null && !_hunspell.IsDisposed)
-                    _hunspell.Dispose();
-                _hunspell = null;
+                if (this._hunspell != null && !this._hunspell.IsDisposed)
+                {
+                    this._hunspell.Dispose();
+                }
+
+                this._hunspell = null;
             }
         }
-
     }
 }

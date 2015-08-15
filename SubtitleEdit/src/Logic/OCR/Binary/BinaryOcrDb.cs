@@ -1,59 +1,69 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-
-namespace Nikse.SubtitleEdit.Logic.Ocr.Binary
+﻿namespace Nikse.SubtitleEdit.Logic.Ocr.Binary
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Windows.Forms;
+
     public class BinaryOcrDb
     {
-        public string FileName { get; private set; }
         public List<BinaryOcrBitmap> CompareImages = new List<BinaryOcrBitmap>();
+
         public List<BinaryOcrBitmap> CompareImagesExpanded = new List<BinaryOcrBitmap>();
 
         public BinaryOcrDb(string fileName)
         {
-            FileName = fileName;
+            this.FileName = fileName;
         }
 
         public BinaryOcrDb(string fileName, bool loadCompareImages)
         {
-            FileName = fileName;
+            this.FileName = fileName;
             if (loadCompareImages)
-                LoadCompareImages();
+            {
+                this.LoadCompareImages();
+            }
         }
+
+        public string FileName { get; private set; }
 
         public void Save()
         {
-            using (Stream gz = new GZipStream(File.OpenWrite(FileName), CompressionMode.Compress))
+            using (Stream gz = new GZipStream(File.OpenWrite(this.FileName), CompressionMode.Compress))
             {
-                foreach (var bob in CompareImages)
-                    bob.Save(gz);
-                foreach (var bob in CompareImagesExpanded)
+                foreach (BinaryOcrBitmap bob in this.CompareImages)
                 {
                     bob.Save(gz);
-                    foreach (var expandedBob in bob.ExpandedList)
+                }
+
+                foreach (BinaryOcrBitmap bob in this.CompareImagesExpanded)
+                {
+                    bob.Save(gz);
+                    foreach (BinaryOcrBitmap expandedBob in bob.ExpandedList)
+                    {
                         expandedBob.Save(gz);
+                    }
                 }
             }
         }
 
         public void LoadCompareImages()
         {
-            var list = new List<BinaryOcrBitmap>();
-            var expandList = new List<BinaryOcrBitmap>();
+            List<BinaryOcrBitmap> list = new List<BinaryOcrBitmap>();
+            List<BinaryOcrBitmap> expandList = new List<BinaryOcrBitmap>();
 
-            if (!File.Exists(FileName))
+            if (!File.Exists(this.FileName))
             {
-                CompareImages = list;
+                this.CompareImages = list;
                 return;
             }
 
-            using (Stream gz = new GZipStream(File.OpenRead(FileName), CompressionMode.Decompress))
+            using (Stream gz = new GZipStream(File.OpenRead(this.FileName), CompressionMode.Decompress))
             {
                 bool done = false;
                 while (!done)
                 {
-                    var bob = new BinaryOcrBitmap(gz);
+                    BinaryOcrBitmap bob = new BinaryOcrBitmap(gz);
                     if (bob.LoadedOk)
                     {
                         if (bob.ExpandCount > 0)
@@ -62,11 +72,15 @@ namespace Nikse.SubtitleEdit.Logic.Ocr.Binary
                             bob.ExpandedList = new List<BinaryOcrBitmap>();
                             for (int i = 1; i < bob.ExpandCount; i++)
                             {
-                                var expandedBob = new BinaryOcrBitmap(gz);
+                                BinaryOcrBitmap expandedBob = new BinaryOcrBitmap(gz);
                                 if (expandedBob.LoadedOk)
+                                {
                                     bob.ExpandedList.Add(expandedBob);
+                                }
                                 else
+                                {
                                     break;
+                                }
                             }
                         }
                         else
@@ -80,29 +94,36 @@ namespace Nikse.SubtitleEdit.Logic.Ocr.Binary
                     }
                 }
             }
-            CompareImages = list;
-            CompareImagesExpanded = expandList;
+
+            this.CompareImages = list;
+            this.CompareImagesExpanded = expandList;
         }
 
         public int FindExactMatch(BinaryOcrBitmap bob)
         {
-            for (int i = 0; i < CompareImages.Count; i++)
+            for (int i = 0; i < this.CompareImages.Count; i++)
             {
-                var b = CompareImages[i];
+                BinaryOcrBitmap b = this.CompareImages[i];
                 if (bob.Hash == b.Hash && bob.Width == b.Width && bob.Height == b.Height && bob.NumberOfColoredPixels == b.NumberOfColoredPixels)
+                {
                     return i;
+                }
             }
+
             return -1;
         }
 
         public int FindExactMatchExpanded(BinaryOcrBitmap bob)
         {
-            for (int i = 0; i < CompareImagesExpanded.Count; i++)
+            for (int i = 0; i < this.CompareImagesExpanded.Count; i++)
             {
-                var b = CompareImagesExpanded[i];
+                BinaryOcrBitmap b = this.CompareImagesExpanded[i];
                 if (bob.Hash == b.Hash && bob.Width == b.Width && bob.Height == b.Height && bob.NumberOfColoredPixels == b.NumberOfColoredPixels)
+                {
                     return i;
+                }
             }
+
             return -1;
         }
 
@@ -111,35 +132,46 @@ namespace Nikse.SubtitleEdit.Logic.Ocr.Binary
             int index;
             if (bob.ExpandCount > 0)
             {
-                index = FindExactMatchExpanded(bob);
-                if (index == -1 || CompareImagesExpanded[index].ExpandCount != bob.ExpandCount)
+                index = this.FindExactMatchExpanded(bob);
+                if (index == -1 || this.CompareImagesExpanded[index].ExpandCount != bob.ExpandCount)
                 {
-                    CompareImagesExpanded.Add(bob);
+                    this.CompareImagesExpanded.Add(bob);
                 }
                 else
                 {
                     bool allAlike = true;
                     for (int i = 0; i < bob.ExpandCount - 1; i++)
                     {
-                        if (bob.ExpandedList[i].Hash != CompareImagesExpanded[index].ExpandedList[i].Hash)
+                        if (bob.ExpandedList[i].Hash != this.CompareImagesExpanded[index].ExpandedList[i].Hash)
+                        {
                             allAlike = false;
+                        }
                     }
+
                     if (!allAlike)
-                        CompareImages.Add(bob);
+                    {
+                        this.CompareImages.Add(bob);
+                    }
                     else
-                        System.Windows.Forms.MessageBox.Show("Expanded image already in db!");
+                    {
+                        MessageBox.Show("Expanded image already in db!");
+                    }
                 }
             }
             else
             {
-                index = FindExactMatch(bob);
+                index = this.FindExactMatch(bob);
                 if (index == -1)
-                    CompareImages.Add(bob);
+                {
+                    this.CompareImages.Add(bob);
+                }
                 else
-                    System.Windows.Forms.MessageBox.Show("Image already in db!");
+                {
+                    MessageBox.Show("Image already in db!");
+                }
             }
+
             return index;
         }
-
     }
 }

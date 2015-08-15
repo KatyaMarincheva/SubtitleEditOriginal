@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
-
-namespace Nikse.SubtitleEdit.Logic.Ocr
+﻿namespace Nikse.SubtitleEdit.Logic.Ocr
 {
+    using System.Collections.Generic;
+
     public class OcrCharacter
     {
-        public string Text { get; private set; }
-        public List<OcrImage> OcrImages { get; set; }
-
         public OcrCharacter(string text)
         {
-            Text = text;
-            OcrImages = new List<OcrImage>();
+            this.Text = text;
+            this.OcrImages = new List<OcrImage>();
         }
+
+        public string Text { get; private set; }
+
+        public List<OcrImage> OcrImages { get; set; }
     }
 }

@@ -6,6 +6,7 @@
     public struct tagUNICODERANGE
     {
         public ushort wcFrom;
+
         public ushort wcTo;
     }
 }
