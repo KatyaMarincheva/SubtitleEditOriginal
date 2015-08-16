@@ -1,61 +1,71 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     public class UnknownSubtitle41 : SubtitleFormat
     {
         private static readonly Regex regexTimeCodes1 = new Regex(@"^\d+.\d$", RegexOptions.Compiled);
+
         private static readonly Regex regexTimeCodes2 = new Regex(@"^\d+.\d\d$", RegexOptions.Compiled);
 
         public override string Extension
         {
-            get { return ".txt"; }
+            get
+            {
+                return ".txt";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 41"; }
+            get
+            {
+                return "Unknown 41";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
             const string paragraphWriteFormat = "{0}\r\n{1}\r\n{2}\r\n";
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 sb.AppendLine(string.Format(paragraphWriteFormat, EncodeTimeCode(p.StartTime), p.Text, EncodeTimeCode(p.EndTime)));
             }
+
             return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            //911.2
-            //C’est l’enfant qui l’a tuée ?
-            //915.8/
+            // 911.2
+            // C’est l’enfant qui l’a tuée ?
+            // 915.8/
 
-            //921.8
-            //Comment elle s’appelait ?
-            //924.6/
-
-            _errorCount = 0;
+            // 921.8
+            // Comment elle s’appelait ?
+            // 924.6/
+            this._errorCount = 0;
             Paragraph p = null;
             bool textOn = false;
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             foreach (string line in lines)
             {
                 try
@@ -77,7 +87,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             sb.AppendLine(line);
                             if (sb.Length > 500)
                             {
-                                _errorCount += 10;
+                                this._errorCount += 10;
                                 return;
                             }
                         }
@@ -96,14 +106,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 catch
                 {
                     textOn = false;
-                    _errorCount++;
+                    this._errorCount++;
                 }
             }
+
             if (textOn && sb.Length > 0)
             {
                 p.Text = sb.ToString().TrimEnd();
                 subtitle.Paragraphs.Add(p);
             }
+
             subtitle.Renumber();
         }
 
@@ -119,10 +131,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
         private static TimeCode DecodeTimeCode(string[] parts)
         {
             Configuration.Settings.General.CurrentFrameRate = 24.0;
-            var frames16 = int.Parse(parts[0]);
-            var frames = int.Parse(parts[1]);
+            int frames16 = int.Parse(parts[0]);
+            int frames = int.Parse(parts[1]);
             return new TimeCode(0, 0, 0, FramesToMilliseconds(16 * frames16 + frames));
         }
-
     }
 }

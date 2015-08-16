@@ -1,64 +1,71 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     public class UnknownSubtitle46 : SubtitleFormat
     {
-        //7:00:01:27AM
+        // 7:00:01:27AM
         private static readonly Regex regexTimeCodesAM = new Regex(@"^\d\:\d\d\:\d\d\:\d\dAM", RegexOptions.Compiled);
+
         private static readonly Regex regexTimeCodesPM = new Regex(@"^\d\:\d\d\:\d\d\:\d\dPM", RegexOptions.Compiled);
+
         public override string Extension
         {
-            get { return ".pst"; }
+            get
+            {
+                return ".pst";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 46"; }
+            get
+            {
+                return "Unknown 46";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //OFF THE RECORD STARTS RIGHT NOW.   7:00:01:27AM
-            //HERE IS THE RUNDOWN.               7:00:05:03AM
-            var sb = new StringBuilder();
+            // OFF THE RECORD STARTS RIGHT NOW.   7:00:01:27AM
+            // HERE IS THE RUNDOWN.               7:00:05:03AM
+            StringBuilder sb = new StringBuilder();
             const string format = "{0}{1}";
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 sb.AppendLine(string.Format(format, p.Text.Replace(Environment.NewLine, " ").PadRight(35), EncodeTimeCode(p.StartTime)));
             }
-            return sb.ToString().Trim();
-        }
 
-        private static string EncodeTimeCode(TimeCode timeCode)
-        {
-            return string.Format("{0}:{1:00}:{2:00}:{3:00}AM", timeCode.Hours, timeCode.Minutes, timeCode.Seconds, MillisecondsToFramesMaxFrameRate(timeCode.Milliseconds));
+            return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
             Paragraph p = null;
             foreach (string line in lines)
             {
                 string s = line.Trim();
                 string[] arr = line.Split();
-                var timeCode = arr[arr.Length - 1];
+                string timeCode = arr[arr.Length - 1];
                 if (regexTimeCodesAM.Match(timeCode).Success || regexTimeCodesPM.Match(timeCode).Success)
                 {
                     try
@@ -78,12 +85,12 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     }
                     catch
                     {
-                        _errorCount++;
+                        this._errorCount++;
                     }
                 }
                 else if (s.Length > 0)
                 {
-                    _errorCount++;
+                    this._errorCount++;
                 }
             }
 
@@ -95,15 +102,22 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     paragraph.EndTime.TotalMilliseconds = next.StartTime.TotalMilliseconds - 1;
                 }
+
                 if (paragraph.Duration.TotalMilliseconds > Configuration.Settings.General.SubtitleMaximumDisplayMilliseconds)
                 {
                     paragraph.EndTime.TotalMilliseconds = paragraph.StartTime.TotalMilliseconds + Utilities.GetOptimalDisplayMilliseconds(p.Text);
                 }
+
                 index++;
             }
+
             subtitle.RemoveEmptyLines();
             subtitle.Renumber();
         }
 
+        private static string EncodeTimeCode(TimeCode timeCode)
+        {
+            return string.Format("{0}:{1:00}:{2:00}:{3:00}AM", timeCode.Hours, timeCode.Minutes, timeCode.Seconds, MillisecondsToFramesMaxFrameRate(timeCode.Milliseconds));
+        }
     }
 }

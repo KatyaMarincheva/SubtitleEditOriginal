@@ -1,41 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Text;
+    using System.Xml;
+
     public class UnknownSubtitle5 : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 5"; }
+            get
+            {
+                return "Unknown 5";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
             return subtitle.Paragraphs.Count > 0;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<transcript/>";
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<transcript/>";
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
 
             foreach (Paragraph p in subtitle.Paragraphs)
@@ -60,16 +69,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
             string allText = sb.ToString();
             if (!allText.Contains("<text") || !allText.Contains("start="))
+            {
                 return;
+            }
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             try
             {
@@ -77,8 +88,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
-                _errorCount = 1;
+                Debug.WriteLine(exception.Message);
+                this._errorCount = 1;
                 return;
             }
 
@@ -88,22 +99,28 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     string start = node.Attributes["start"].InnerText;
                     if (!string.IsNullOrEmpty(start))
+                    {
                         start = start.Replace(",", ".");
+                    }
+
                     string end = node.Attributes["dur"].InnerText;
                     if (!string.IsNullOrEmpty(end))
+                    {
                         end = end.Replace(",", ".");
+                    }
+
                     string text = node.InnerText;
 
-                    subtitle.Paragraphs.Add(new Paragraph(text, Convert.ToDouble(start, System.Globalization.CultureInfo.InvariantCulture) * TimeCode.BaseUnit, TimeCode.BaseUnit * (Convert.ToDouble(start, System.Globalization.CultureInfo.InvariantCulture) + Convert.ToDouble(end, System.Globalization.CultureInfo.InvariantCulture))));
+                    subtitle.Paragraphs.Add(new Paragraph(text, Convert.ToDouble(start, CultureInfo.InvariantCulture) * TimeCode.BaseUnit, TimeCode.BaseUnit * (Convert.ToDouble(start, CultureInfo.InvariantCulture) + Convert.ToDouble(end, CultureInfo.InvariantCulture))));
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
-
     }
 }

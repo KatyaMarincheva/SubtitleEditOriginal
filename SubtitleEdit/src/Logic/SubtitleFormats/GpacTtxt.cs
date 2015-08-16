@@ -1,52 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Xml;
+
     public class GpacTtxt : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".ttxt"; }
+            get
+            {
+                return ".ttxt";
+            }
         }
 
         public override string Name
         {
-            get { return "GPAC TTXT"; }
+            get
+            {
+                return "GPAC TTXT";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
             return subtitle.Paragraphs.Count > 0;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + Environment.NewLine +
-                "<!-- GPAC 3GPP Text Stream -->" + Environment.NewLine +
-                "<TextStream version=\"1.1\">" + Environment.NewLine +
-                "  <TextStreamHeader translation_y=\"0\" translation_x=\"0\" layer=\"0\" height=\"60\" width=\"400\">" + Environment.NewLine +
-                "    <TextSampleDescription scroll=\"None\" continuousKaraoke=\"no\" fillTextRegion=\"no\" verticalText=\"no\" backColor=\"0 0 0 0\" verticalJustification=\"bottom\" horizontalJustification=\"center\">" + Environment.NewLine +
-                "      <FontTable>" + Environment.NewLine +
-                "        <FontTableEntry fontID=\"1\" fontName=\"Serif\"/>" + Environment.NewLine +
-                "      </FontTable>" + Environment.NewLine +
-                "      <TextBox right=\"400\" bottom=\"60\" left=\"0\" top=\"0\"/>" + Environment.NewLine +
-                "      <Style fontID=\"1\" color=\"ff ff ff ff\" fontSize=\"18\" styles=\"Normal\"/>" + Environment.NewLine +
-                "    </TextSampleDescription>" + Environment.NewLine +
-                "  </TextStreamHeader>" + Environment.NewLine +
-                "</TextStream>";
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + Environment.NewLine + "<!-- GPAC 3GPP Text Stream -->" + Environment.NewLine + "<TextStream version=\"1.1\">" + Environment.NewLine + "  <TextStreamHeader translation_y=\"0\" translation_x=\"0\" layer=\"0\" height=\"60\" width=\"400\">" + Environment.NewLine + "    <TextSampleDescription scroll=\"None\" continuousKaraoke=\"no\" fillTextRegion=\"no\" verticalText=\"no\" backColor=\"0 0 0 0\" verticalJustification=\"bottom\" horizontalJustification=\"center\">" + Environment.NewLine + "      <FontTable>" + Environment.NewLine + "        <FontTableEntry fontID=\"1\" fontName=\"Serif\"/>" + Environment.NewLine + "      </FontTable>" + Environment.NewLine + "      <TextBox right=\"400\" bottom=\"60\" left=\"0\" top=\"0\"/>" + Environment.NewLine + "      <Style fontID=\"1\" color=\"ff ff ff ff\" fontSize=\"18\" styles=\"Normal\"/>" + Environment.NewLine + "    </TextSampleDescription>" + Environment.NewLine + "  </TextStreamHeader>" + Environment.NewLine + "</TextStream>";
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
 
             foreach (Paragraph p in subtitle.Paragraphs)
@@ -80,15 +76,17 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
             Paragraph last = null;
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
             if (!sb.ToString().Contains("<TextStream"))
+            {
                 return;
+            }
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             try
             {
@@ -97,37 +95,41 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 foreach (XmlNode node in xml.DocumentElement.SelectNodes("TextSample"))
                 {
                     if (last != null && last.EndTime.TotalMilliseconds < 1)
+                    {
                         last.EndTime = GetTimeCode(node.Attributes["sampleTime"].Value);
+                    }
 
-                    var p = new Paragraph();
+                    Paragraph p = new Paragraph();
                     p.Text = node.InnerText;
                     p.StartTime = GetTimeCode(node.Attributes["sampleTime"].Value);
                     if (string.IsNullOrEmpty(p.Text))
                     {
-                        var text = node.Attributes["text"];
+                        XmlAttribute text = node.Attributes["text"];
                         if (text != null)
+                        {
                             p.Text = text.Value;
+                        }
                     }
+
                     if (!string.IsNullOrEmpty(p.Text))
                     {
                         subtitle.Paragraphs.Add(p);
                         last = p;
                     }
                 }
+
                 subtitle.Renumber();
             }
             catch
             {
-                _errorCount = 1;
-                return;
+                this._errorCount = 1;
             }
         }
 
         private static TimeCode GetTimeCode(string timeString)
         {
-            string[] timeParts = timeString.Split(new[] { ':', '.' });
+            string[] timeParts = timeString.Split(':', '.');
             return new TimeCode(int.Parse(timeParts[0]), int.Parse(timeParts[1]), int.Parse(timeParts[2]), int.Parse(timeParts[3]));
         }
-
     }
 }

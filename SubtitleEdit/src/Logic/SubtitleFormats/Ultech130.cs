@@ -1,39 +1,58 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Core;
+
     /// <summary>
-    /// The ULTECH caption file format (ULT/ULD file) is a compact binary file that stores captions with embedded EIA-608 control codes
-    /// http://en.wikipedia.org/wiki/EIA-608
+    ///     The ULTECH caption file format (ULT/ULD file) is a compact binary file that stores captions with embedded EIA-608
+    ///     control codes
+    ///     http://en.wikipedia.org/wiki/EIA-608
     /// </summary>
     public class Ultech130 : SubtitleFormat
     {
+        public const string NameOfFormat = "Ultech 1.30 Caption";
+
         private const string UltechId = "ULTECH\01.30";
 
         public override string Extension
         {
-            get { return ".ult"; }
+            get
+            {
+                return ".ult";
+            }
         }
-
-        public const string NameOfFormat = "Ultech 1.30 Caption";
 
         public override string Name
         {
-            get { return NameOfFormat; }
+            get
+            {
+                return NameOfFormat;
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
+        }
+
+        public override List<string> AlternateExtensions
+        {
+            get
+            {
+                return new List<string> { ".uld" }; // Ultech drop frame
+            }
         }
 
         public static void Save(string fileName, Subtitle subtitle)
         {
-            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
                 byte[] buffer = Encoding.ASCII.GetBytes(UltechId);
                 fs.Write(buffer, 0, buffer.Length);
@@ -52,14 +71,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 fs.Write(buffer, 0, buffer.Length);
 
                 while (fs.Length < 512)
+                {
                     fs.WriteByte(0);
+                }
 
                 // paragraphs
                 foreach (Paragraph p in subtitle.Paragraphs)
                 {
                     // convert line breaks
-                    var sb = new StringBuilder();
-                    var line = new StringBuilder();
+                    StringBuilder sb = new StringBuilder();
+                    StringBuilder line = new StringBuilder();
                     int skipCount = 0;
                     int numberOfNewLines = Utilities.CountTagInText(p.Text, Environment.NewLine);
                     bool italic = p.Text.StartsWith("<i>") && p.Text.EndsWith("</i>");
@@ -69,6 +90,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         sb.Append(Convert.ToChar(0x11));
                         sb.Append(Convert.ToChar(0x2E));
                     }
+
                     int y = 0x74 - (numberOfNewLines * 0x20);
                     for (int j = 0; j < text.Length; j++)
                     {
@@ -76,13 +98,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         {
                             y += 0x20;
                             if (line.Length > 0)
+                            {
                                 sb.Append(line);
+                            }
+
                             line = new StringBuilder();
                             skipCount = Environment.NewLine.Length - 1;
                             sb.Append(Convert.ToChar(0x14));
-                            sb.Append(Convert.ToChar((byte)(y)));
+                            sb.Append(Convert.ToChar((byte)y));
 
-                            //center
+                            // center
                             sb.Append(Convert.ToChar(0x17));
                             sb.Append(Convert.ToChar(0x21));
 
@@ -101,55 +126,50 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             skipCount--;
                         }
                     }
+
                     if (line.Length > 0)
+                    {
                         sb.Append(line);
+                    }
+
                     text = sb.ToString();
 
                     // codes?
-                    buffer = new byte[] {
-                        0x14,
-                        0x20,
-                        0x14,
-                        0x2E,
-                        0x14,
-                        (byte)(0x74 - (numberOfNewLines * 0x20)),
+                    buffer = new byte[] { 0x14, 0x20, 0x14, 0x2E, 0x14, (byte)(0x74 - (numberOfNewLines * 0x20)), 0x17, 0x21 // 0x1721=center, 0x1722=right ?
+                                        };
 
-                        0x17, 0x21, // 0x1721=center, 0x1722=right ?
-                    };
-
-                    //if (text.StartsWith("{\\a6}"))
-                    //{
-                    //    text = p.Text.Remove(0, 5);
-                    //    buffer[7] = 1; // align top
-                    //}
-                    //else if (text.StartsWith("{\\a1}"))
-                    //{
-                    //    text = p.Text.Remove(0, 5);
-                    //    buffer[8] = 0x0A; // align left
-                    //}
-                    //else if (text.StartsWith("{\\a3}"))
-                    //{
-                    //    text = p.Text.Remove(0, 5);
-                    //    buffer[8] = 0x1E; // align right
-                    //}
-                    //else if (text.StartsWith("{\\a5}"))
-                    //{
-                    //    text = p.Text.Remove(0, 5);
-                    //    buffer[7] = 1; // align top
-                    //    buffer[8] = 05; // align left
-                    //}
-                    //else if (text.StartsWith("{\\a7}"))
-                    //{
-                    //    text = p.Text.Remove(0, 5);
-                    //    buffer[7] = 1; // align top
-                    //    buffer[8] = 0xc; // align right
-                    //}
-
-                    fs.WriteByte(0xF1); //ID of start record
+                    // if (text.StartsWith("{\\a6}"))
+                    // {
+                    // text = p.Text.Remove(0, 5);
+                    // buffer[7] = 1; // align top
+                    // }
+                    // else if (text.StartsWith("{\\a1}"))
+                    // {
+                    // text = p.Text.Remove(0, 5);
+                    // buffer[8] = 0x0A; // align left
+                    // }
+                    // else if (text.StartsWith("{\\a3}"))
+                    // {
+                    // text = p.Text.Remove(0, 5);
+                    // buffer[8] = 0x1E; // align right
+                    // }
+                    // else if (text.StartsWith("{\\a5}"))
+                    // {
+                    // text = p.Text.Remove(0, 5);
+                    // buffer[7] = 1; // align top
+                    // buffer[8] = 05; // align left
+                    // }
+                    // else if (text.StartsWith("{\\a7}"))
+                    // {
+                    // text = p.Text.Remove(0, 5);
+                    // buffer[7] = 1; // align top
+                    // buffer[8] = 0xc; // align right
+                    // }
+                    fs.WriteByte(0xF1); // ID of start record
 
                     // length
                     int length = text.Length + 15;
-                    fs.WriteByte((byte)(length));
+                    fs.WriteByte((byte)length);
                     fs.WriteByte(0);
 
                     // start time
@@ -178,40 +198,30 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
         }
 
-        private static void WriteTime(FileStream fs, TimeCode timeCode)
-        {
-            fs.WriteByte((byte)timeCode.Hours);
-            fs.WriteByte((byte)timeCode.Minutes);
-            fs.WriteByte((byte)timeCode.Seconds);
-            fs.WriteByte((byte)MillisecondsToFramesMaxFrameRate(timeCode.Milliseconds));
-        }
-
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
             {
-                var fi = new FileInfo(fileName);
-                if (fi.Length >= 200 && fi.Length < 1024000) // not too small or too big
+                FileInfo fi = new FileInfo(fileName);
+                if (fi.Length >= 200 && fi.Length < 1024000)
                 {
-                    if (fileName.EndsWith(".ult", StringComparison.OrdinalIgnoreCase) || fileName.EndsWith(".uld", StringComparison.OrdinalIgnoreCase)) //  drop frame is often named uld, and ult for non-drop
+                    // not too small or too big
+                    if (fileName.EndsWith(".ult", StringComparison.OrdinalIgnoreCase) || fileName.EndsWith(".uld", StringComparison.OrdinalIgnoreCase))
                     {
+                        // drop frame is often named uld, and ult for non-drop
                         byte[] buffer = FileUtil.ReadAllBytesShared(fileName);
                         string id = Encoding.ASCII.GetString(buffer, 0, UltechId.Length);
                         return id == UltechId;
                     }
                 }
             }
+
             return false;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
             return "Not supported!";
-        }
-
-        private static TimeCode DecodeTimestamp(byte[] buffer, int index)
-        {
-            return new TimeCode(buffer[index], buffer[index + 1], buffer[index + 2], FramesToMillisecondsMax999(buffer[index + 3]));
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
@@ -224,20 +234,23 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             Paragraph last = null;
             while (i < buffer.Length - 25)
             {
-                var p = new Paragraph();
+                Paragraph p = new Paragraph();
                 int length = buffer[i + 1];
 
                 p.StartTime = DecodeTimestamp(buffer, i + 3);
                 if (last != null && last.EndTime.TotalMilliseconds == 0)
+                {
                     last.EndTime.TotalMilliseconds = p.StartTime.TotalMilliseconds - 1;
+                }
 
                 if (length > 22)
                 {
                     int start = i + 7;
-                    var sb = new StringBuilder();
+                    StringBuilder sb = new StringBuilder();
                     int skipCount = 0;
                     bool italics = false;
-                    //bool font = false;
+
+                    // bool font = false;
                     for (int k = start; k < length + i; k++)
                     {
                         byte b = buffer[k];
@@ -251,151 +264,155 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             skipCount = 1;
                             if (sb.Length > 0 && !sb.ToString().EndsWith(Environment.NewLine) && !sb.EndsWith('>'))
                             {
-                                //if (font)
-                                //    sb.Append("</font>");
+                                // if (font)
+                                // sb.Append("</font>");
                                 if (italics)
+                                {
                                     sb.Append("</i>");
+                                }
+
                                 sb.AppendLine();
-                                //font = false;
+
+                                // font = false;
                                 italics = false;
                             }
-                            //string code = VobSub.Helper.IntToBin(buffer[k] * 256 + buffer[k+1], 16);
-                            //var codeBytes = new List<char>();
-                            //if (b == 0x11 && b2 == 0x28)
-                            //{
-                            //    sb.Append("<font color=\"red\">");
-                            //    font = true;
-                            //}
-                            //else
 
+                            // string code = VobSub.Helper.IntToBin(buffer[k] * 256 + buffer[k+1], 16);
+                            // var codeBytes = new List<char>();
+                            // if (b == 0x11 && b2 == 0x28)
+                            // {
+                            // sb.Append("<font color=\"red\">");
+                            // font = true;
+                            // }
+                            // else
                             if (b == 0x11 && b2 == 0x2e)
                             {
                                 sb.Append("<i>");
                                 italics = true;
                             }
 
-                            //foreach (char ch in code)
-                            //    codeBytes.Insert(0, ch);
-                            //if (codeBytes[13] == '0' && codeBytes[14] == '0' && codeBytes[12] == '1' && codeBytes[6] == '1')
-                            //{ // preamble address code
-                            //    if (code.Substring(11, 4) == "1000")
-                            //    {
-                            //        sb.Append("<font color=\"green\">");
-                            //        font = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0010")
-                            //    {
-                            //        sb.Append("<font color=\"blue\">");
-                            //        font = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0011")
-                            //    {
-                            //        sb.Append("<font color=\"cyan\">");
-                            //        font = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0100")
-                            //    {
-                            //        sb.Append("<font color=\"red\">");
-                            //        font = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0101")
-                            //    {
-                            //        sb.Append("<font color=\"yellow\">");
-                            //        font = true;
-                            //    }
-                            //    //else if (code.Substring(11, 4) == "0110")
-                            //    //{
-                            //    //    sb.Append("<font color=\"magenta\">");
-                            //    //    font = true;
-                            //    //}
-                            //}
-                            //else if (codeBytes[14] == '0' && codeBytes[13] == '0' && codeBytes[10] == '0' && codeBytes[9] == '0' && codeBytes[6] == '0' &&
-                            //         codeBytes[12] == '1' && codeBytes[8] == '1' && codeBytes[6] == '1')
-                            //{ // midrow code
+                            // foreach (char ch in code)
+                            // codeBytes.Insert(0, ch);
+                            // if (codeBytes[13] == '0' && codeBytes[14] == '0' && codeBytes[12] == '1' && codeBytes[6] == '1')
+                            // { // preamble address code
+                            // if (code.Substring(11, 4) == "1000")
+                            // {
+                            // sb.Append("<font color=\"green\">");
+                            // font = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0010")
+                            // {
+                            // sb.Append("<font color=\"blue\">");
+                            // font = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0011")
+                            // {
+                            // sb.Append("<font color=\"cyan\">");
+                            // font = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0100")
+                            // {
+                            // sb.Append("<font color=\"red\">");
+                            // font = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0101")
+                            // {
+                            // sb.Append("<font color=\"yellow\">");
+                            // font = true;
+                            // }
+                            // //else if (code.Substring(11, 4) == "0110")
+                            // //{
+                            // //    sb.Append("<font color=\"magenta\">");
+                            // //    font = true;
+                            // //}
+                            // }
+                            // else if (codeBytes[14] == '0' && codeBytes[13] == '0' && codeBytes[10] == '0' && codeBytes[9] == '0' && codeBytes[6] == '0' &&
+                            // codeBytes[12] == '1' && codeBytes[8] == '1' && codeBytes[6] == '1')
+                            // { // midrow code
 
-                            //    if (code.Substring(11, 4) == "1000")
-                            //    {
-                            //        sb.Append("<font color=\"green\">");
-                            //        font = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0010")
-                            //    {
-                            //        sb.Append("<font color=\"blue\">");
-                            //        font = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0011")
-                            //    {
-                            //        sb.Append("<font color=\"cyan\">");
-                            //        font = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0100")
-                            //    {
-                            //        sb.Append("<font color=\"red\">");
-                            //        font = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0101")
-                            //    {
-                            //        sb.Append("<font color=\"yellow\">");
-                            //        font = true;
-                            //    }
-                            //    //else if (code.Substring(11, 4) == "0110")
-                            //    //{
-                            //    //    sb.Append("<font color=\"magenta\">");
-                            //    //    font = true;
-                            //    //}
-                            //}
-                            //else if ((codeBytes[14] == '0' && codeBytes[13] == '0' && codeBytes[9] == '0' && codeBytes[6] == '0' && codeBytes[4] == '0' &&
-                            //         codeBytes[12] == '1' && codeBytes[10] == '1' && codeBytes[5] == '1') || b == 0x11)
-                            //{ // codeBytes[10]  == 0 ???
-                            //    //control codes
-                            //    if (code.Substring(11, 4) == "0111" && buffer[k] == 0x11)
-                            //    {
-                            //        sb.Append("<i>");
-                            //        italics = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "1000")
-                            //    {
-                            //        sb.Append("<font color=\"green\">");
-                            //        font = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0010")
-                            //    {
-                            //        sb.Append("<font color=\"blue\">");
-                            //        font = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0011")
-                            //    {
-                            //        sb.Append("<font color=\"cyan\">");
-                            //        font = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0100")
-                            //    {
-                            //        sb.Append("<font color=\"red\">");
-                            //        font = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0101")
-                            //    {
-                            //        sb.Append("<font color=\"yellow\">");
-                            //        font = true;
-                            //    }
-                            //    //else if (code.Substring(11, 4) == "0110")
-                            //    //{
-                            //    //    sb.Append("<font color=\"magenta\">");
-                            //    //    font = true;
-                            //    //}
-                            //}
-                            //else
-                            //{
-                            //    if (code.Substring(11, 4) == "0111" && buffer[k] == 0x11)
-                            //    {
-                            //        sb.Append("<i>");
-                            //        italics = true;
-                            //    }
-                            //    else if (code.Substring(11, 4) == "0101" && b == 0x11)
-                            //    {
-                            //        sb.Append("<font color=\"yellow\">");
-                            //        font = true;
-                            //    }
+                            // if (code.Substring(11, 4) == "1000")
+                            // {
+                            // sb.Append("<font color=\"green\">");
+                            // font = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0010")
+                            // {
+                            // sb.Append("<font color=\"blue\">");
+                            // font = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0011")
+                            // {
+                            // sb.Append("<font color=\"cyan\">");
+                            // font = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0100")
+                            // {
+                            // sb.Append("<font color=\"red\">");
+                            // font = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0101")
+                            // {
+                            // sb.Append("<font color=\"yellow\">");
+                            // font = true;
+                            // }
+                            // //else if (code.Substring(11, 4) == "0110")
+                            // //{
+                            // //    sb.Append("<font color=\"magenta\">");
+                            // //    font = true;
+                            // //}
+                            // }
+                            // else if ((codeBytes[14] == '0' && codeBytes[13] == '0' && codeBytes[9] == '0' && codeBytes[6] == '0' && codeBytes[4] == '0' &&
+                            // codeBytes[12] == '1' && codeBytes[10] == '1' && codeBytes[5] == '1') || b == 0x11)
+                            // { // codeBytes[10]  == 0 ???
+                            // //control codes
+                            // if (code.Substring(11, 4) == "0111" && buffer[k] == 0x11)
+                            // {
+                            // sb.Append("<i>");
+                            // italics = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "1000")
+                            // {
+                            // sb.Append("<font color=\"green\">");
+                            // font = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0010")
+                            // {
+                            // sb.Append("<font color=\"blue\">");
+                            // font = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0011")
+                            // {
+                            // sb.Append("<font color=\"cyan\">");
+                            // font = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0100")
+                            // {
+                            // sb.Append("<font color=\"red\">");
+                            // font = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0101")
+                            // {
+                            // sb.Append("<font color=\"yellow\">");
+                            // font = true;
+                            // }
+                            // //else if (code.Substring(11, 4) == "0110")
+                            // //{
+                            // //    sb.Append("<font color=\"magenta\">");
+                            // //    font = true;
+                            // //}
+                            // }
+                            // else
+                            // {
+                            // if (code.Substring(11, 4) == "0111" && buffer[k] == 0x11)
+                            // {
+                            // sb.Append("<i>");
+                            // italics = true;
+                            // }
+                            // else if (code.Substring(11, 4) == "0101" && b == 0x11)
+                            // {
+                            // sb.Append("<font color=\"yellow\">");
+                            // font = true;
+                            // }
                             ////    if (code.Substring(11, 4) == "0111")
                             ////    {
                             ////        //System.Windows.Forms.MessageBox.Show(code);
@@ -403,34 +420,39 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             ////    }
                             ////    else if (code.Substring(11, 4) == "0101")
                             ////        sb.Append("<font color=\"yellow\">");
-                            //}
+                            // }
                         }
                         else if (b == 0x80)
                         {
-                            //if (sb.Length == 0)
-                            //    break;
+                            // if (sb.Length == 0)
+                            // break;
 
-                            //if (sb.Length > 0 && !sb.ToString().EndsWith(Environment.NewLine))
-                            //{
-                            //    if (font)
-                            //        sb.Append("</font>");
-                            //    if (italics)
-                            //        sb.Append("</i>");
-                            //    sb.AppendLine();
-                            //    font = false;
-                            //    italics = false;
-                            //}
+                            // if (sb.Length > 0 && !sb.ToString().EndsWith(Environment.NewLine))
+                            // {
+                            // if (font)
+                            // sb.Append("</font>");
+                            // if (italics)
+                            // sb.Append("</i>");
+                            // sb.AppendLine();
+                            // font = false;
+                            // italics = false;
+                            // }
                         }
                         else
                         {
                             sb.Append(Encoding.GetEncoding(1252).GetString(buffer, k, 1));
                         }
                     }
+
                     p.Text = sb.ToString().Trim();
-                    //if (font)
-                    //    p.Text += "</font>";
+
+                    // if (font)
+                    // p.Text += "</font>";
                     if (italics)
+                    {
                         p.Text += "</i>";
+                    }
+
                     p.Text = p.Text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
                     p.Text = p.Text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
                     p.Text = p.Text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
@@ -440,28 +462,39 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     last.EndTime.TotalMilliseconds = p.StartTime.TotalMilliseconds;
                 }
+
                 last = p;
 
                 i += length + 3;
             }
+
             if (last != null)
             {
                 if (last.EndTime.TotalMilliseconds == 0)
+                {
                     last.EndTime.TotalMilliseconds = last.StartTime.TotalMilliseconds + 2500;
+                }
+
                 if (last.Duration.TotalMilliseconds > Configuration.Settings.General.SubtitleMaximumDisplayMilliseconds)
+                {
                     last.EndTime.TotalMilliseconds = last.StartTime.TotalMilliseconds + Utilities.GetOptimalDisplayMilliseconds(last.Text);
+                }
             }
 
             subtitle.Renumber();
         }
 
-        public override List<string> AlternateExtensions
+        private static void WriteTime(FileStream fs, TimeCode timeCode)
         {
-            get
-            {
-                return new List<string>() { ".uld" }; // Ultech drop frame
-            }
+            fs.WriteByte((byte)timeCode.Hours);
+            fs.WriteByte((byte)timeCode.Minutes);
+            fs.WriteByte((byte)timeCode.Seconds);
+            fs.WriteByte((byte)MillisecondsToFramesMaxFrameRate(timeCode.Milliseconds));
         }
 
+        private static TimeCode DecodeTimestamp(byte[] buffer, int index)
+        {
+            return new TimeCode(buffer[index], buffer[index + 1], buffer[index + 2], FramesToMillisecondsMax999(buffer[index + 3]));
+        }
     }
 }

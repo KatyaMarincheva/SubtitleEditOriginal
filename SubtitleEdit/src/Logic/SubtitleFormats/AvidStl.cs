@@ -1,42 +1,40 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class AvidStl : SubtitleFormat
     {
+        public const string NameOfFormat = "Avid STL";
+
         private const int TextLength = 112;
 
-        private static Paragraph ReadSubtitleBlock(byte[] buffer, int index)
+        public override string Extension
         {
-            index += 5;
-            Paragraph p = new Paragraph();
-            p.StartTime = ReadTimeCode(buffer, ref index);
-            p.EndTime = ReadTimeCode(buffer, ref index);
-            index += 3;
-            for (int i = index; i < index + TextLength; i++)
+            get
             {
-                if (buffer[i] == 0x8f || buffer[i] == 0)
-                    buffer[i] = 32;
-                else if (buffer[i] == 0x8a)
-                    buffer[i] = 0xa;
+                return ".stl";
             }
-            p.Text = Encoding.GetEncoding(1252).GetString(buffer, index, TextLength).Trim();
-            p.Text = p.Text.Replace("\n", Environment.NewLine);
-            return p;
         }
 
-        private static TimeCode ReadTimeCode(byte[] buffer, ref int index)
+        public override string Name
         {
-            int hours = buffer[index];
-            int minutes = buffer[index + 1];
-            int seconds = buffer[index + 2];
-            int milliseconds = FramesToMillisecondsMax999(buffer[index + 3]);
-            index += 4;
-            return new TimeCode(hours, minutes, seconds, milliseconds);
+            get
+            {
+                return NameOfFormat;
+            }
+        }
+
+        public override bool IsTimeBased
+        {
+            get
+            {
+                return true;
+            }
         }
 
         public static void WriteSubtitleBlock(FileStream fs, Paragraph p, int number)
@@ -51,7 +49,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             fs.WriteByte(1);
             fs.WriteByte(2);
             fs.WriteByte(0);
-            var buffer = Encoding.GetEncoding(1252).GetBytes(p.Text.Replace(Environment.NewLine, "Š"));
+            byte[] buffer = Encoding.GetEncoding(1252).GetBytes(p.Text.Replace(Environment.NewLine, "Š"));
             if (buffer.Length <= 128)
             {
                 fs.Write(buffer, 0, buffer.Length);
@@ -69,49 +67,32 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
         }
 
-        private static void WriteTimeCode(FileStream fs, TimeCode tc)
-        {
-            fs.WriteByte((byte)(tc.Hours));
-            fs.WriteByte((byte)(tc.Minutes));
-            fs.WriteByte((byte)(tc.Seconds));
-            fs.WriteByte((byte)(MillisecondsToFramesMaxFrameRate(tc.Milliseconds)));
-        }
-
-        public override string Extension
-        {
-            get { return ".stl"; }
-        }
-
-        public const string NameOfFormat = "Avid STL";
-
-        public override string Name
-        {
-            get { return NameOfFormat; }
-        }
-
-        public override bool IsTimeBased
-        {
-            get { return true; }
-        }
-
         public static void Save(string fileName, Subtitle subtitle)
         {
-            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
                 byte[] buffer = { 0x38, 0x35, 0x30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x30, 0x30, 0x30, 0x39 };
                 fs.Write(buffer, 0, buffer.Length);
                 for (int i = 0; i < 0xde; i++)
+                {
                     fs.WriteByte(0);
+                }
+
                 string numberOfLines = subtitle.Paragraphs.Count.ToString("D5");
 
                 buffer = Encoding.ASCII.GetBytes(numberOfLines + numberOfLines + "001");
                 fs.Write(buffer, 0, buffer.Length);
                 for (int i = 0; i < 0x15; i++)
+                {
                     fs.WriteByte(0);
+                }
+
                 buffer = Encoding.ASCII.GetBytes("11");
                 fs.Write(buffer, 0, buffer.Length);
                 while (fs.Length < 1024)
+                {
                     fs.WriteByte(0);
+                }
 
                 int subtitleNumber = 0;
                 foreach (Paragraph p in subtitle.Paragraphs)
@@ -128,35 +109,17 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 try
                 {
-                    var fi = new FileInfo(fileName);
-                    if (fi.Length > 1150 && fi.Length < 1024000) // not too small or too big
+                    FileInfo fi = new FileInfo(fileName);
+                    if (fi.Length > 1150 && fi.Length < 1024000)
                     {
+                        // not too small or too big
                         byte[] buffer = FileUtil.ReadAllBytesShared(fileName);
-                        if (buffer[0] == 0x38 &&
-                            buffer[1] == 0x35 &&
-                            buffer[2] == 0x30 &&
-                            buffer[1024] == 0 &&
-                            buffer[1025] == 0 &&
-                            buffer[1026] == 0 &&
-                            buffer[1027] == 0xff)
+                        if (buffer[0] == 0x38 && buffer[1] == 0x35 && buffer[2] == 0x30 && buffer[1024] == 0 && buffer[1025] == 0 && buffer[1026] == 0 && buffer[1027] == 0xff)
                         {
                             return true;
                         }
 
-                        if (fileName.EndsWith(".stl", StringComparison.OrdinalIgnoreCase) &&
-                            buffer.Length > 1283 &&
-                            buffer[1024] == 0 &&
-                            buffer[1025] == 1 &&
-                            buffer[1026] == 0 &&
-                            buffer[1027] == 0xff &&
-                            buffer[1152] == 0 &&
-                            buffer[1153] == 2 &&
-                            buffer[1154] == 0 &&
-                            buffer[1155] == 0xff &&
-                            buffer[1280] == 0 &&
-                            buffer[1281] == 3 &&
-                            buffer[1282] == 0 &&
-                            buffer[1283] == 0xff)
+                        if (fileName.EndsWith(".stl", StringComparison.OrdinalIgnoreCase) && buffer.Length > 1283 && buffer[1024] == 0 && buffer[1025] == 1 && buffer[1026] == 0 && buffer[1027] == 0xff && buffer[1152] == 0 && buffer[1153] == 2 && buffer[1154] == 0 && buffer[1155] == 0xff && buffer[1280] == 0 && buffer[1281] == 3 && buffer[1282] == 0 && buffer[1283] == 0xff)
                         {
                             return true;
                         }
@@ -167,6 +130,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     return false;
                 }
             }
+
             return false;
         }
 
@@ -188,8 +152,50 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 subtitle.Paragraphs.Add(p);
                 index += 128;
             }
+
             subtitle.Renumber();
         }
 
+        private static Paragraph ReadSubtitleBlock(byte[] buffer, int index)
+        {
+            index += 5;
+            Paragraph p = new Paragraph();
+            p.StartTime = ReadTimeCode(buffer, ref index);
+            p.EndTime = ReadTimeCode(buffer, ref index);
+            index += 3;
+            for (int i = index; i < index + TextLength; i++)
+            {
+                if (buffer[i] == 0x8f || buffer[i] == 0)
+                {
+                    buffer[i] = 32;
+                }
+                else if (buffer[i] == 0x8a)
+                {
+                    buffer[i] = 0xa;
+                }
+            }
+
+            p.Text = Encoding.GetEncoding(1252).GetString(buffer, index, TextLength).Trim();
+            p.Text = p.Text.Replace("\n", Environment.NewLine);
+            return p;
+        }
+
+        private static TimeCode ReadTimeCode(byte[] buffer, ref int index)
+        {
+            int hours = buffer[index];
+            int minutes = buffer[index + 1];
+            int seconds = buffer[index + 2];
+            int milliseconds = FramesToMillisecondsMax999(buffer[index + 3]);
+            index += 4;
+            return new TimeCode(hours, minutes, seconds, milliseconds);
+        }
+
+        private static void WriteTimeCode(FileStream fs, TimeCode tc)
+        {
+            fs.WriteByte((byte)tc.Hours);
+            fs.WriteByte((byte)tc.Minutes);
+            fs.WriteByte((byte)tc.Seconds);
+            fs.WriteByte((byte)MillisecondsToFramesMaxFrameRate(tc.Milliseconds));
+        }
     }
 }

@@ -1,50 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using Nikse.SubtitleEdit.Forms;
-using System.Windows.Forms;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Windows.Forms;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Forms;
+    using Nikse.SubtitleEdit.Logic.Enums;
+
     public class YouTubeAnnotations : SubtitleFormat
     {
         private bool _promtForStyles = true;
 
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "YouTube Annotations"; }
+            get
+            {
+                return "YouTube Annotations";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            _promtForStyles = false;
-            LoadSubtitle(subtitle, lines, fileName);
-            _promtForStyles = true;
+            Subtitle subtitle = new Subtitle();
+            this._promtForStyles = false;
+            this.LoadSubtitle(subtitle, lines, fileName);
+            this._promtForStyles = true;
             return subtitle.Paragraphs.Count > 0;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + Environment.NewLine +
-                "<document>" + Environment.NewLine +
-                "   <requestheader video_id=\"X\"/>" + Environment.NewLine +
-                "  <annotations/>" + Environment.NewLine +
-                "</document>";
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + Environment.NewLine + "<document>" + Environment.NewLine + "   <requestheader video_id=\"X\"/>" + Environment.NewLine + "  <annotations/>" + Environment.NewLine + "</document>";
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
 
             XmlNode annotations = xml.DocumentElement.SelectSingleNode("annotations");
@@ -52,16 +59,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             int count = 1;
             foreach (Paragraph p in subtitle.Paragraphs)
             {
-                //<annotation id="annotation_126995" author="StopFear" type="text" style="speech">
-                //  <TEXT>BUT now something inside is BROKEN!</TEXT>
-                //  <segment>
-                //    <movingRegion type="anchored">
-                //      <anchoredRegion x="6.005" y="9.231" w="26.328" h="18.154" sx="40.647" sy="14.462" t="0:01:08.0" d="0"/>
-                //      <anchoredRegion x="6.005" y="9.231" w="26.328" h="18.154" sx="40.647" sy="14.462" t="0:01:13.0" d="0"/>
-                //    </movingRegion>
-                //  </segment>
-                //</annotation>
-
+                // <annotation id="annotation_126995" author="StopFear" type="text" style="speech">
+                // <TEXT>BUT now something inside is BROKEN!</TEXT>
+                // <segment>
+                // <movingRegion type="anchored">
+                // <anchoredRegion x="6.005" y="9.231" w="26.328" h="18.154" sx="40.647" sy="14.462" t="0:01:08.0" d="0"/>
+                // <anchoredRegion x="6.005" y="9.231" w="26.328" h="18.154" sx="40.647" sy="14.462" t="0:01:13.0" d="0"/>
+                // </movingRegion>
+                // </segment>
+                // </annotation>
                 XmlNode annotation = xml.CreateElement("annotation");
 
                 XmlAttribute att = xml.CreateAttribute("id");
@@ -121,13 +127,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
             if (!sb.ToString().Contains("</annotations>") || !sb.ToString().Contains("</TEXT>"))
+            {
                 return;
-            var xml = new XmlDocument();
+            }
+
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             try
             {
@@ -135,9 +144,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 xml.LoadXml(xmlText);
                 List<string> styles = new List<string> { "speech" };
 
-                if (_promtForStyles)
+                if (this._promtForStyles)
                 {
-                    var stylesWithCount = new Dictionary<string, int>();
+                    Dictionary<string, int> stylesWithCount = new Dictionary<string, int>();
                     foreach (XmlNode node in xml.SelectNodes("//annotation"))
                     {
                         try
@@ -150,22 +159,29 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                 XmlNodeList regions = node.SelectNodes("segment/movingRegion/anchoredRegion");
 
                                 if (regions.Count != 2)
+                                {
                                     regions = node.SelectNodes("segment/movingRegion/rectRegion");
+                                }
 
                                 if (textNode != null && regions.Count == 2)
                                 {
                                     if (stylesWithCount.ContainsKey(style))
+                                    {
                                         stylesWithCount[style]++;
+                                    }
                                     else
+                                    {
                                         stylesWithCount.Add(style, 1);
+                                    }
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
-                            System.Diagnostics.Debug.WriteLine(ex.Message);
+                            Debug.WriteLine(ex.Message);
                         }
                     }
+
                     if (stylesWithCount.Count > 1)
                     {
                         YouTubeAnnotationsImport import = new YouTubeAnnotationsImport(stylesWithCount);
@@ -177,8 +193,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     else
                     {
                         styles.Clear();
-                        foreach (var k in stylesWithCount.Keys)
+                        foreach (string k in stylesWithCount.Keys)
+                        {
                             styles.Add(k);
+                        }
                     }
                 }
                 else
@@ -197,13 +215,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             XmlNodeList regions = node.SelectNodes("segment/movingRegion/anchoredRegion");
 
                             if (regions.Count != 2)
+                            {
                                 regions = node.SelectNodes("segment/movingRegion/rectRegion");
+                            }
 
                             if (textNode != null && regions.Count == 2)
                             {
                                 string startTime = regions[0].Attributes["t"].Value;
                                 string endTime = regions[1].Attributes["t"].Value;
-                                var p = new Paragraph();
+                                Paragraph p = new Paragraph();
                                 p.StartTime = DecodeTimeCode(startTime);
                                 p.EndTime = DecodeTimeCode(endTime);
                                 p.Text = textNode.InnerText;
@@ -213,18 +233,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Debug.WriteLine(ex.Message);
-                        _errorCount++;
+                        Debug.WriteLine(ex.Message);
+                        this._errorCount++;
                     }
                 }
-                subtitle.Sort(Enums.SubtitleSortCriteria.StartTime); // force order by start time
+
+                subtitle.Sort(SubtitleSortCriteria.StartTime); // force order by start time
                 subtitle.Renumber();
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                _errorCount = 1;
-                return;
+                Debug.WriteLine(ex.Message);
+                this._errorCount = 1;
             }
         }
 
@@ -232,15 +252,17 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
         {
             string[] arr = time.Split(new[] { '.', ':' }, StringSplitOptions.RemoveEmptyEntries);
             if (arr.Length == 3)
+            {
                 return new TimeCode(0, int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]));
+            }
+
             return new TimeCode(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]), int.Parse(arr[3]));
         }
 
         private static string EncodeTime(TimeCode timeCode)
         {
-            //0:01:08.0
+            // 0:01:08.0
             return string.Format("{0}:{1:00}:{2:00}.{3}", timeCode.Hours, timeCode.Minutes, timeCode.Seconds, timeCode.Milliseconds);
         }
-
     }
 }

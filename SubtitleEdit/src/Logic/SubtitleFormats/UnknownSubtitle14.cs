@@ -1,26 +1,37 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class UnknownSubtitle14 : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 14"; }
+            get
+            {
+                return "Unknown 14";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
@@ -32,15 +43,12 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //<Phrase TimeStart="4020" TimeEnd="6020">
-            //  <Text>XYZ PRESENTS</Text>
-            //</Phrase>
+            // <Phrase TimeStart="4020" TimeEnd="6020">
+            // <Text>XYZ PRESENTS</Text>
+            // </Phrase>
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<Subtitle xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"></Subtitle>";
 
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<Subtitle xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"></Subtitle>";
-
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
 
             int id = 1;
@@ -69,14 +77,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
             StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
             string allText = sb.ToString();
             if (!allText.Contains("<Subtitle") || !allText.Contains("TimeStart="))
+            {
                 return;
+            }
 
             XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
@@ -86,8 +96,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
-                _errorCount = 1;
+                Debug.WriteLine(exception.Message);
+                this._errorCount = 1;
                 return;
             }
 
@@ -103,10 +113,11 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
 
@@ -114,6 +125,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
         {
             return new TimeCode(long.Parse(timeCode));
         }
-
     }
 }

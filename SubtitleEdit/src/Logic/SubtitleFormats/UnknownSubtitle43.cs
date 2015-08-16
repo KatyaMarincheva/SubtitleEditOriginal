@@ -1,36 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class UnknownSubtitle43 : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 43"; }
+            get
+            {
+                return "Unknown 43";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
+        }
+
+        public static TimeCode GetTimeCode(string s)
+        {
+            string[] arr = s.Split(':');
+            if (arr.Length == 2)
+            {
+                return new TimeCode(0, int.Parse(arr[0]), int.Parse(arr[1]), 0);
+            }
+
+            if (arr.Length == 3)
+            {
+                return new TimeCode(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]), 0);
+            }
+
+            return new TimeCode(0, 0, int.Parse(s), 0);
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
             string xmlAsString = sb.ToString().Trim();
             if (xmlAsString.Contains("<subtitle"))
             {
-                var xml = new XmlDocument();
+                XmlDocument xml = new XmlDocument();
                 xml.XmlResolver = null;
                 try
                 {
@@ -42,20 +69,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.Message);
                 }
             }
-            return false;
-        }
 
-        internal static string ConvertToTimeString(TimeCode time)
-        {
-            return string.Format("{0}:{1:00}", (int)(time.TotalSeconds / 60), (int)(time.TotalSeconds % 60));
+            return false;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\" ?><parfums></parfums>");
 
             int no = 0;
@@ -72,7 +95,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         XmlNode br = xml.CreateElement("br");
                         paragraph.AppendChild(br);
                     }
-                    var textNode = xml.CreateTextNode(string.Empty);
+
+                    XmlText textNode = xml.CreateTextNode(string.Empty);
                     textNode.InnerText = line;
                     paragraph.AppendChild(textNode);
                     first = false;
@@ -95,11 +119,11 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             xml.LoadXml(sb.ToString().Trim());
 
@@ -107,7 +131,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 try
                 {
-                    var pText = new StringBuilder();
+                    StringBuilder pText = new StringBuilder();
                     foreach (XmlNode innerNode in node.ChildNodes)
                     {
                         switch (innerNode.Name)
@@ -127,16 +151,22 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
                     string start = node.Attributes["start"].InnerText;
                     string end = node.Attributes["end"].InnerText;
-                    var p = new Paragraph(GetTimeCode(start), GetTimeCode(end), pText.ToString().Replace("   ", " ").Replace("  ", " "));
+                    Paragraph p = new Paragraph(GetTimeCode(start), GetTimeCode(end), pText.ToString().Replace("   ", " ").Replace("  ", " "));
                     subtitle.Paragraphs.Add(p);
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
+        }
+
+        internal static string ConvertToTimeString(TimeCode time)
+        {
+            return string.Format("{0}:{1:00}", (int)(time.TotalSeconds / 60), (int)(time.TotalSeconds % 60));
         }
 
         private static void ReadSpan(StringBuilder pText, XmlNode innerNode)
@@ -164,17 +194,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 pText.Append(innerNode.InnerText);
             }
         }
-
-        public static TimeCode GetTimeCode(string s)
-        {
-            string[] arr = s.Split(':');
-            if (arr.Length == 2)
-                return new TimeCode(0, int.Parse(arr[0]), int.Parse(arr[1]), 0);
-            if (arr.Length == 3)
-                return new TimeCode(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]), 0);
-
-            return new TimeCode(0, 0, int.Parse(s), 0);
-        }
-
     }
 }

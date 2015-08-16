@@ -1,154 +1,191 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
-    //  - Mom, when you were my age&#13;what did you want to do?
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
+    // - Mom, when you were my age&#13;what did you want to do?
     public class FinalCutProXml : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Final Cut Pro Xml"; }
+            get
+            {
+                return "Final Cut Pro Xml";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
-        }
-
-        public override bool IsMine(List<string> lines, string fileName)
-        {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > 0;
+            get
+            {
+                return true;
+            }
         }
 
         public static string GetFrameRateAsString()
         {
             if (Configuration.Settings.General.CurrentFrameRate < 24)
+            {
                 return "24"; // ntsc 23.976
+            }
+
             if (Configuration.Settings.General.CurrentFrameRate < 25)
+            {
                 return "24";
+            }
+
             if (Configuration.Settings.General.CurrentFrameRate < 29)
+            {
                 return "25";
+            }
+
             if (Configuration.Settings.General.CurrentFrameRate < 29)
+            {
                 return "25";
+            }
+
             if (Configuration.Settings.General.CurrentFrameRate < 30)
+            {
                 return "30"; // ntsc 29.97
+            }
+
             if (Configuration.Settings.General.CurrentFrameRate < 40)
+            {
                 return "30";
+            }
+
             if (Configuration.Settings.General.CurrentFrameRate < 40)
+            {
                 return "30";
+            }
+
             if (Configuration.Settings.General.CurrentFrameRate < 60)
+            {
                 return "60"; // ntsc 59.94
+            }
+
             return "60";
         }
 
         public static string GetNtsc()
         {
             if (Configuration.Settings.General.CurrentFrameRate < 24)
+            {
                 return "TRUE"; // ntsc 23.976
+            }
+
             if (Configuration.Settings.General.CurrentFrameRate < 25)
+            {
                 return "FALSE";
+            }
+
             return "TRUE";
+        }
+
+        public override bool IsMine(List<string> lines, string fileName)
+        {
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > 0;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
             int duration = 0;
             if (subtitle.Paragraphs.Count > 0)
+            {
                 duration = (int)Math.Round(subtitle.Paragraphs[subtitle.Paragraphs.Count - 1].EndTime.TotalSeconds * Configuration.Settings.General.CurrentFrameRate);
+            }
 
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<xmeml version=\"5\">" + Environment.NewLine +
-                "<sequence id=\"X\">" + Environment.NewLine +
-  @"    <uuid>5B3B0C07-9A9D-42AA-872C-C953923F97D8</uuid>
-    <updatebehavior>add</updatebehavior>
-    <name>X</name>
-    <duration>" + duration + @"</duration>
-    <rate>
-      <ntsc>" + GetNtsc() + @"</ntsc>
-      <timebase>" + GetFrameRateAsString() + @"</timebase>
-    </rate>
-    <timecode>
-      <rate>
-        <ntsc>" + GetNtsc() + @"</ntsc>
-        <timebase>" + GetFrameRateAsString() + @"</timebase>
-      </rate>
-      <string>00:00:00:00</string>
-      <frame>0</frame>
-      <source>source</source>
-      <displayformat>NDF</displayformat>
-    </timecode>
-    <in>0</in>
-    <out>" + duration + @"</out>
-    <media>
-      <video>
-        <format>
-          <samplecharacteristics>
-            <width>1920</width>
-            <height>1080</height>
-            <anamorphic>FALSE</anamorphic>
-            <pixelaspectratio>Square</pixelaspectratio>
-            <fielddominance>none</fielddominance>
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<xmeml version=\"5\">" + Environment.NewLine + "<sequence id=\"X\">" + Environment.NewLine + @"    <uuid>5B3B0C07-9A9D-42AA-872C-C953923F97D8</uuid>
+            <updatebehavior>add</updatebehavior>
+            <name>X</name>
+            <duration>" + duration + @"</duration>
             <rate>
               <ntsc>" + GetNtsc() + @"</ntsc>
               <timebase>" + GetFrameRateAsString() + @"</timebase>
             </rate>
-            <colordepth>24</colordepth>
-            <codec>
-              <name>Apple ProRes 422</name>
-              <appspecificdata>
-                <appname>Final Cut Pro</appname>
-                <appmanufacturer>Apple Inc.</appmanufacturer>
-                <appversion>7.0</appversion>
-                <data>
-                  <qtcodec>
-                    <codecname>Apple ProRes 422</codecname>
-                    <codectypename>Apple ProRes 422 (HQ)</codectypename>
-                    <codectypecode>apch</codectypecode>
-                    <codecvendorcode>appl</codecvendorcode>
-                    <spatialquality>1024</spatialquality>
-                    <temporalquality>0</temporalquality>
-                    <keyframerate>0</keyframerate>
-                    <datarate>0</datarate>
-                  </qtcodec>
-                </data>
-              </appspecificdata>
-            </codec>
-          </samplecharacteristics>
-          <appspecificdata>
-            <appname>Final Cut Pro</appname>
-            <appmanufacturer>Apple Inc.</appmanufacturer>
-            <appversion>7.0</appversion>
-            <data>
-              <fcpimageprocessing>
-                <useyuv>TRUE</useyuv>
-                <usesuperwhite>FALSE</usesuperwhite>
-                <rendermode>Float10BPP</rendermode>
-              </fcpimageprocessing>
-            </data>
-          </appspecificdata>
-        </format>
-        <track>
-        </track>
-      </video>
-    </media>
-  </sequence>
-</xmeml>";
+            <timecode>
+              <rate>
+                <ntsc>" + GetNtsc() + @"</ntsc>
+                <timebase>" + GetFrameRateAsString() + @"</timebase>
+              </rate>
+              <string>00:00:00:00</string>
+              <frame>0</frame>
+              <source>source</source>
+              <displayformat>NDF</displayformat>
+            </timecode>
+            <in>0</in>
+            <out>" + duration + @"</out>
+            <media>
+              <video>
+                <format>
+                  <samplecharacteristics>
+                    <width>1920</width>
+                    <height>1080</height>
+                    <anamorphic>FALSE</anamorphic>
+                    <pixelaspectratio>Square</pixelaspectratio>
+                    <fielddominance>none</fielddominance>
+                    <rate>
+                      <ntsc>" + GetNtsc() + @"</ntsc>
+                      <timebase>" + GetFrameRateAsString() + @"</timebase>
+                    </rate>
+                    <colordepth>24</colordepth>
+                    <codec>
+                      <name>Apple ProRes 422</name>
+                      <appspecificdata>
+                        <appname>Final Cut Pro</appname>
+                        <appmanufacturer>Apple Inc.</appmanufacturer>
+                        <appversion>7.0</appversion>
+                        <data>
+                          <qtcodec>
+                            <codecname>Apple ProRes 422</codecname>
+                            <codectypename>Apple ProRes 422 (HQ)</codectypename>
+                            <codectypecode>apch</codectypecode>
+                            <codecvendorcode>appl</codecvendorcode>
+                            <spatialquality>1024</spatialquality>
+                            <temporalquality>0</temporalquality>
+                            <keyframerate>0</keyframerate>
+                            <datarate>0</datarate>
+                          </qtcodec>
+                        </data>
+                      </appspecificdata>
+                    </codec>
+                  </samplecharacteristics>
+                  <appspecificdata>
+                    <appname>Final Cut Pro</appname>
+                    <appmanufacturer>Apple Inc.</appmanufacturer>
+                    <appversion>7.0</appversion>
+                    <data>
+                      <fcpimageprocessing>
+                        <useyuv>TRUE</useyuv>
+                        <usesuperwhite>FALSE</usesuperwhite>
+                        <rendermode>Float10BPP</rendermode>
+                      </fcpimageprocessing>
+                    </data>
+                  </appspecificdata>
+                </format>
+                <track>
+                </track>
+              </video>
+            </media>
+          </sequence>
+        </xmeml>";
 
-            string xmlTrackStructure =
-                @"          <generatoritem id='Outline Text[NUMBER]'>
+            string xmlTrackStructure = @"          <generatoritem id='Outline Text[NUMBER]'>
             <name>Outline Text</name>
             <duration>3000</duration>
             <rate>
@@ -375,22 +412,26 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
           </generatoritem>";
 
             if (string.IsNullOrEmpty(title))
+            {
                 title = "Subtitle Edit subtitle";
+            }
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
             xml.DocumentElement.SelectSingleNode("sequence").Attributes["id"].Value = title;
             xml.DocumentElement.SelectSingleNode("sequence/name").InnerText = title;
             xml.DocumentElement.SelectSingleNode("sequence/uuid").InnerText = Guid.NewGuid().ToString().ToUpper();
             if (!string.IsNullOrEmpty(subtitle.Header))
             {
-                var header = new XmlDocument();
+                XmlDocument header = new XmlDocument();
                 try
                 {
                     header.LoadXml(subtitle.Header);
-                    var node = header.DocumentElement.SelectSingleNode("sequence/uuid");
+                    XmlNode node = header.DocumentElement.SelectSingleNode("sequence/uuid");
                     if (node != null)
+                    {
                         xml.DocumentElement.SelectSingleNode("sequence/uuid").InnerText = node.InnerText;
+                    }
                 }
                 catch
                 {
@@ -404,16 +445,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 XmlNode generatorItem = xml.CreateElement("generatoritem");
-                string fontStyle = "1"; //1==plain
-                var s = HtmlUtil.RemoveOpenCloseTags(p.Text, HtmlUtil.TagFont).Trim();
+                string fontStyle = "1"; // 1==plain
+                string s = HtmlUtil.RemoveOpenCloseTags(p.Text, HtmlUtil.TagFont).Trim();
                 if ((s.StartsWith("<i><b>") && s.EndsWith("</b></i>")) || (s.StartsWith("<b><i>") && s.EndsWith("</i></b>")))
-                    fontStyle = "4"; //4==bold/italic
+                {
+                    fontStyle = "4"; // 4==bold/italic
+                }
                 else if (s.StartsWith("<i>") && s.EndsWith("</i>"))
-                    fontStyle = "3"; //3==italic
-                generatorItem.InnerXml = xmlTrackStructure.Replace("[NUMBER]", number.ToString()).Replace("[FONTSTYLE]", fontStyle).
-                    Replace("[FONTSIZE]", Configuration.Settings.SubtitleSettings.FcpFontSize.ToString(CultureInfo.InvariantCulture)).
-                    Replace("[FONTNAME]", Configuration.Settings.SubtitleSettings.FcpFontName).
-                    Replace("[NUMBER]", number.ToString(CultureInfo.InvariantCulture));
+                {
+                    fontStyle = "3"; // 3==italic
+                }
+
+                generatorItem.InnerXml = xmlTrackStructure.Replace("[NUMBER]", number.ToString()).Replace("[FONTSTYLE]", fontStyle).Replace("[FONTSIZE]", Configuration.Settings.SubtitleSettings.FcpFontSize.ToString(CultureInfo.InvariantCulture)).Replace("[FONTNAME]", Configuration.Settings.SubtitleSettings.FcpFontName).Replace("[NUMBER]", number.ToString(CultureInfo.InvariantCulture));
 
                 double frameRate = Configuration.Settings.General.CurrentFrameRate;
                 XmlNode start = generatorItem.SelectSingleNode("generatoritem/start");
@@ -438,21 +481,24 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
-            var frameRate = Configuration.Settings.General.CurrentFrameRate;
+            this._errorCount = 0;
+            double frameRate = Configuration.Settings.General.CurrentFrameRate;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             try
             {
                 xml.LoadXml(sb.ToString().Trim());
-                var header = new XmlDocument();
+                XmlDocument header = new XmlDocument();
                 header.XmlResolver = null;
                 header.LoadXml(sb.ToString());
                 if (header.SelectSingleNode("sequence/media/video/track") != null)
+                {
                     header.RemoveChild(header.SelectSingleNode("sequence/media/video/track"));
+                }
+
                 subtitle.Header = header.OuterXml;
 
                 if (xml.DocumentElement.SelectSingleNode("sequence/rate") != null && xml.DocumentElement.SelectSingleNode("sequence/rate/timebase") != null)
@@ -478,60 +524,80 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             {
                                 XmlNode timebase = rate.SelectSingleNode("timebase");
                                 if (timebase != null)
+                                {
                                     frameRate = double.Parse(timebase.InnerText);
+                                }
                             }
 
                             double startFrame = 0;
                             double endFrame = 0;
                             XmlNode startNode = generatorItemNode.SelectSingleNode("start");
                             if (startNode != null)
+                            {
                                 startFrame = double.Parse(startNode.InnerText);
+                            }
 
                             XmlNode endNode = generatorItemNode.SelectSingleNode("end");
                             if (endNode != null)
+                            {
                                 endFrame = double.Parse(endNode.InnerText);
+                            }
 
                             string text = string.Empty;
                             foreach (XmlNode parameterNode in generatorItemNode.SelectNodes("effect/parameter[parameterid='str']"))
                             {
                                 XmlNode valueNode = parameterNode.SelectSingleNode("value");
                                 if (valueNode != null)
+                                {
                                     text += valueNode.InnerText;
+                                }
                             }
+
                             if (text.Length == 0)
                             {
                                 foreach (XmlNode parameterNode in generatorItemNode.SelectNodes("effect/parameter[parameterid='str1']"))
                                 {
                                     XmlNode valueNode = parameterNode.SelectSingleNode("value");
                                     if (valueNode != null)
+                                    {
                                         text += valueNode.InnerText;
+                                    }
                                 }
                             }
+
                             if (text.Length == 0)
                             {
                                 foreach (XmlNode parameterNode in generatorItemNode.SelectNodes("effect/parameter[parameterid='str2']"))
                                 {
                                     XmlNode valueNode = parameterNode.SelectSingleNode("value");
                                     if (valueNode != null)
+                                    {
                                         text += valueNode.InnerText;
+                                    }
                                 }
                             }
+
                             if (text.Length == 0)
                             {
                                 foreach (XmlNode parameterNode in generatorItemNode.SelectNodes("effect/parameter[parameterid='sourcetext']"))
                                 {
                                     XmlNode valueNode = parameterNode.SelectSingleNode("value");
                                     if (valueNode != null)
+                                    {
                                         text += valueNode.InnerText;
+                                    }
                                 }
                             }
+
                             if (text.Length == 0)
                             {
                                 foreach (XmlNode parameterNode in generatorItemNode.SelectNodes("effect/parameter[parameterid='text']"))
                                 {
                                     XmlNode valueNode = parameterNode.SelectSingleNode("value");
                                     if (valueNode != null)
+                                    {
                                         text += valueNode.InnerText;
+                                    }
                                 }
                             }
 
@@ -540,7 +606,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             foreach (XmlNode parameterNode in generatorItemNode.SelectNodes("effect/parameter[parameterid='style']"))
                             {
                                 XmlNode valueNode = parameterNode.SelectSingleNode("value");
-                                var valueEntries = parameterNode.SelectNodes("valuelist/valueentry");
+                                XmlNodeList valueEntries = parameterNode.SelectNodes("valuelist/valueentry");
                                 if (valueNode != null)
                                 {
                                     int no;
@@ -549,7 +615,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                         no--;
                                         if (no < valueEntries.Count)
                                         {
-                                            var styleNameNode = valueEntries[no].SelectSingleNode("name");
+                                            XmlNode styleNameNode = valueEntries[no].SelectSingleNode("name");
                                             if (styleNameNode != null)
                                             {
                                                 string styleName = styleNameNode.InnerText.ToLower().Trim();
@@ -560,12 +626,13 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                     }
                                 }
                             }
+
                             if (!bold && !italic)
                             {
                                 foreach (XmlNode parameterNode in generatorItemNode.SelectNodes("effect/parameter[parameterid='fontstyle']"))
                                 {
                                     XmlNode valueNode = parameterNode.SelectSingleNode("value");
-                                    var valueEntries = parameterNode.SelectNodes("valuelist/valueentry");
+                                    XmlNodeList valueEntries = parameterNode.SelectNodes("valuelist/valueentry");
                                     if (valueNode != null)
                                     {
                                         int no;
@@ -574,7 +641,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                             no--;
                                             if (no < valueEntries.Count)
                                             {
-                                                var styleNameNode = valueEntries[no].SelectSingleNode("name");
+                                                XmlNode styleNameNode = valueEntries[no].SelectSingleNode("name");
                                                 if (styleNameNode != null)
                                                 {
                                                     string styleName = styleNameNode.InnerText.ToLower().Trim();
@@ -590,29 +657,39 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             if (text.Length > 0)
                             {
                                 if (!text.Contains(Environment.NewLine))
+                                {
                                     text = text.Replace("\r", Environment.NewLine);
+                                }
+
                                 if (bold)
+                                {
                                     text = "<b>" + text + "</b>";
+                                }
+
                                 if (italic)
+                                {
                                     text = "<i>" + text + "</i>";
+                                }
+
                                 subtitle.Paragraphs.Add(new Paragraph(text, Convert.ToDouble((startFrame / frameRate) * 1000), Convert.ToDouble((endFrame / frameRate) * 1000)));
                             }
                         }
                     }
                     catch
                     {
-                        _errorCount++;
+                        this._errorCount++;
                     }
                 }
+
                 subtitle.Renumber();
             }
             catch
             {
-                _errorCount = 1;
+                this._errorCount = 1;
                 return;
             }
+
             Configuration.Settings.General.CurrentFrameRate = frameRate;
         }
-
     }
 }

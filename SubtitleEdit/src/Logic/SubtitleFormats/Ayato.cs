@@ -1,43 +1,57 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class Ayato : SubtitleFormat
     {
         public override string Extension
         {
-            get { return "aya"; }
+            get
+            {
+                return "aya";
+            }
         }
 
         public override string Name
         {
-            get { return "Ayato"; }
+            get
+            {
+                return "Ayato";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
             {
-                var fi = new FileInfo(fileName);
-                if (fi.Length >= 3000 && fi.Length < 1024000) // not too small or too big
+                FileInfo fi = new FileInfo(fileName);
+                if (fi.Length >= 3000 && fi.Length < 1024000)
                 {
+                    // not too small or too big
                     if (!fileName.EndsWith(".aya", StringComparison.OrdinalIgnoreCase))
+                    {
                         return false;
+                    }
 
-                    var sub = new Subtitle();
-                    LoadSubtitle(sub, lines, fileName);
+                    Subtitle sub = new Subtitle();
+                    this.LoadSubtitle(sub, lines, fileName);
                     return sub.Paragraphs.Count > 0;
                 }
             }
+
             return false;
         }
 
@@ -51,10 +65,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             const int startPosition = 0xa99;
             const int textPosition = 72;
 
-            _errorCount = 0;
+            this._errorCount = 0;
             subtitle.Paragraphs.Clear();
             subtitle.Header = null;
-            var buffer = FileUtil.ReadAllBytesShared(fileName);
+            byte[] buffer = FileUtil.ReadAllBytesShared(fileName);
             int index = startPosition;
             if (buffer[index] != 1)
             {
@@ -74,8 +88,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         subtitle.Paragraphs.Add(new Paragraph(text, FramesToMilliseconds(startFrames), FramesToMilliseconds(endFrames)));
                     }
                 }
+
                 index += textPosition + textLength;
             }
+
             subtitle.Renumber();
         }
 
@@ -107,7 +123,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             const string newline1 = ""; // unicode chars
             const string newline2 = ""; // unicode char
-            var s = Encoding.UTF8.GetString(buffer, index + offset, length - offset);
+            string s = Encoding.UTF8.GetString(buffer, index + offset, length - offset);
             s = s.Replace(newline1, Environment.NewLine);
             s = s.Replace(newline2, Environment.NewLine);
             return s;
@@ -117,6 +133,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
         {
             return (buffer[index + 2] << 16) + (buffer[index + 1] << 8) + buffer[index];
         }
-
     }
 }

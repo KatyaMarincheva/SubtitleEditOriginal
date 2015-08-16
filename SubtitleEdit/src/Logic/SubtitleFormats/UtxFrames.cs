@@ -1,66 +1,75 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class UtxFrames : SubtitleFormat
     {
-
         public override string Extension
         {
-            get { return ".utx"; }
+            get
+            {
+                return ".utx";
+            }
         }
 
         public override string Name
         {
-            get { return "UTX (frames)"; }
+            get
+            {
+                return "UTX (frames)";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //I'd forgotten.
-            //#2060,2188
+            // I'd forgotten.
+            // #2060,2188
 
-            //Were you somewhere far away?
-            //- Yes, four years in Switzerland.
-            //#3885,3926
-
+            // Were you somewhere far away?
+            // - Yes, four years in Switzerland.
+            // #3885,3926
             const string paragraphWriteFormat = "{0}{1}#{2},{3}{1}";
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 sb.AppendLine(string.Format(paragraphWriteFormat, p.Text, Environment.NewLine, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime)));
             }
+
             return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
             subtitle.Paragraphs.Clear();
-            var text = new StringBuilder();
+            StringBuilder text = new StringBuilder();
             for (int i = 0; i < lines.Count; i++)
             {
                 string line = lines[i].Trim();
 
                 if (line.StartsWith('#'))
                 {
-                    var timeParts = line.Split(new[] { '#', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] timeParts = line.Split(new[] { '#', ',' }, StringSplitOptions.RemoveEmptyEntries);
                     if (timeParts.Length == 2)
                     {
                         try
@@ -71,7 +80,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         }
                         catch
                         {
-                            _errorCount++;
+                            this._errorCount++;
                         }
                     }
                 }
@@ -79,13 +88,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     text.AppendLine(line.Trim());
                     if (text.Length > 5000)
+                    {
                         return;
+                    }
                 }
                 else
                 {
                     text = new StringBuilder();
                 }
             }
+
             subtitle.Renumber();
         }
 
@@ -100,6 +112,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             int milliseconds = (int)((TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate) * int.Parse(timePart));
             return new TimeCode(milliseconds);
         }
-
     }
 }

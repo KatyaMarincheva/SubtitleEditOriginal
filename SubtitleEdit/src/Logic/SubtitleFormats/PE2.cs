@@ -1,80 +1,96 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     public class PE2 : SubtitleFormat
     {
-
         private static readonly Regex RegexTimeCode = new Regex(@"^\d\d:\d\d:\d\d:\d\d ", RegexOptions.Compiled);
+
         private static readonly Regex RegexTimeCodeEnd = new Regex(@"^\d\d:\d\d:\d\d:\d\d$", RegexOptions.Compiled);
 
         private enum ExpectingLine
         {
             TimeStart,
+
             Text,
-            TimeEndOrText,
+
+            TimeEndOrText
         }
 
         public override string Extension
         {
-            get { return ".txt"; }
+            get
+            {
+                return ".txt";
+            }
         }
 
         public override string Name
         {
-            get { return "PE2"; }
+            get
+            {
+                return "PE2";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             foreach (string line in lines)
+            {
                 sb.AppendLine(line);
+            }
+
             string s = sb.ToString();
             if (s.Contains("[HEADER]") && s.Contains("[BODY]"))
+            {
                 return false; // UnknownSubtitle17
+            }
 
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //#PE2 Format file
-            //10:00:05:16 You will get a loan of//Rs 1.5 million in 15 minutes.
-            //10:00:08:19
-            //10:00:09:01 What have you brought//as the guarantee?
-            //10:00:12:01
-            //10:00:12:11 What?//I didn't get you.
-            //10:00:14:11
-            //10:00:14:15 We will sanction your loan.
-            //10:00:16:00
-
+            // #PE2 Format file
+            // 10:00:05:16 You will get a loan of//Rs 1.5 million in 15 minutes.
+            // 10:00:08:19
+            // 10:00:09:01 What have you brought//as the guarantee?
+            // 10:00:12:01
+            // 10:00:12:11 What?//I didn't get you.
+            // 10:00:14:11
+            // 10:00:14:15 We will sanction your loan.
+            // 10:00:16:00
             const string paragraphWriteFormat = "{0} {2}{3}{1}";
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.AppendLine("#PE2 Format file");
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 string text = p.Text.Replace(Environment.NewLine, "//");
                 sb.AppendLine(string.Format(paragraphWriteFormat, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), text, Environment.NewLine));
             }
+
             return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            var paragraph = new Paragraph();
+            Paragraph paragraph = new Paragraph();
             ExpectingLine expecting = ExpectingLine.TimeStart;
-            _errorCount = 0;
+            this._errorCount = 0;
 
             subtitle.Paragraphs.Clear();
             foreach (string line in lines)
@@ -86,19 +102,21 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     {
                         try
                         {
-                            var tc = DecodeTimeCode(parts);
+                            TimeCode tc = DecodeTimeCode(parts);
                             if (expecting == ExpectingLine.TimeStart)
                             {
                                 paragraph = new Paragraph();
                                 paragraph.StartTime = tc;
                                 expecting = ExpectingLine.Text;
                                 if (line.Length > 12)
+                                {
                                     paragraph.Text = line.Substring(12).Trim().Replace("//", Environment.NewLine);
+                                }
                             }
                         }
                         catch
                         {
-                            _errorCount++;
+                            this._errorCount++;
                             expecting = ExpectingLine.TimeStart;
                         }
                     }
@@ -108,11 +126,14 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     string[] parts = line.Substring(0, 11).Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length == 4)
                     {
-                        var tc = DecodeTimeCode(parts);
+                        TimeCode tc = DecodeTimeCode(parts);
                         paragraph.EndTime = tc;
                         subtitle.Paragraphs.Add(paragraph);
                         if (paragraph.StartTime.TotalMilliseconds < 0.001)
-                            _errorCount++;
+                        {
+                            this._errorCount++;
+                        }
+
                         paragraph = new Paragraph();
                         expecting = ExpectingLine.TimeStart;
                     }
@@ -129,17 +150,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
                             if (paragraph.Text.Length > 2000)
                             {
-                                _errorCount += 100;
+                                this._errorCount += 100;
                                 return;
                             }
                         }
                     }
                     else if (!string.IsNullOrWhiteSpace(line) && line != "#PE2 Format file")
                     {
-                        _errorCount++;
+                        this._errorCount++;
                     }
                 }
             }
+
             subtitle.Renumber();
         }
 
@@ -157,6 +179,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             return new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), FramesToMillisecondsMax999(int.Parse(frames)));
         }
-
     }
 }

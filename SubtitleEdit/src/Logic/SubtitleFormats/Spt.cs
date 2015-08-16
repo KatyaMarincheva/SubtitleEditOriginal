@@ -1,28 +1,38 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class Spt : SubtitleFormat
     {
+        public const string NameOfFormat = "spt";
+
         public override string Extension
         {
-            get { return ".spt"; }
+            get
+            {
+                return ".spt";
+            }
         }
-
-        public const string NameOfFormat = "spt";
 
         public override string Name
         {
-            get { return NameOfFormat; }
+            get
+            {
+                return NameOfFormat;
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public static void Save(string fileName, Subtitle subtitle)
@@ -32,7 +42,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             // header
             fs.WriteByte(1);
             for (int i = 1; i < 23; i++)
+            {
                 fs.WriteByte(0);
+            }
+
             fs.WriteByte(0x60);
 
             // paragraphs
@@ -46,37 +59,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             // footer
             fs.WriteByte(0xff);
             for (int i = 0; i < 11; i++)
+            {
                 fs.WriteByte(0);
+            }
+
             fs.WriteByte(0x11);
             byte[] footerBuffer = Encoding.ASCII.GetBytes("dummy end of file");
             fs.Write(footerBuffer, 0, footerBuffer.Length);
 
             fs.Close();
-        }
-
-        private static void WriteParagraph(Paragraph p)
-        {
-            WriteTimeCode();
-            WriteTimeCode();
-
-            string text = p.Text;
-            if (Utilities.GetNumberOfLines(text) > 2)
-                text = Utilities.AutoBreakLine(p.Text);
-
-            var lines = text.SplitToLines();
-            int textLengthFirstLine = 0;
-            int textLengthSecondLine = 0;
-            if (lines.Length > 0)
-            {
-                textLengthFirstLine = lines[0].Length;
-                if (lines.Length > 1)
-                    textLengthSecondLine = lines[1].Length;
-            }
-        }
-
-        private static void WriteTimeCode()
-        {
-            // write 8 bytes time code
         }
 
         public override bool IsMine(List<string> lines, string fileName)
@@ -86,14 +77,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 try
                 {
                     FileInfo fi = new FileInfo(fileName);
-                    if (fi.Length > 100 && fi.Length < 1024000) // not too small or too big
+                    if (fi.Length > 100 && fi.Length < 1024000)
                     {
+                        // not too small or too big
                         byte[] buffer = FileUtil.ReadAllBytesShared(fileName);
 
-                        if (buffer[00] > 10 &&
-                            buffer[01] == 0 &&
-                            fileName.EndsWith(".spt", StringComparison.OrdinalIgnoreCase))
+                        if (buffer[00] > 10 && buffer[01] == 0 && fileName.EndsWith(".spt", StringComparison.OrdinalIgnoreCase))
+                        {
                             return true;
+                        }
                     }
                 }
                 catch
@@ -101,6 +93,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     return false;
                 }
             }
+
             return false;
         }
 
@@ -117,11 +110,59 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             int index = buffer[0]; // go to first subtitle paragraph
             while (index < buffer.Length)
             {
-                Paragraph p = GetSptParagraph(ref index, buffer);
+                Paragraph p = this.GetSptParagraph(ref index, buffer);
                 if (p != null)
+                {
                     subtitle.Paragraphs.Add(p);
+                }
             }
+
             subtitle.Renumber();
+        }
+
+        private static void WriteParagraph(Paragraph p)
+        {
+            WriteTimeCode();
+            WriteTimeCode();
+
+            string text = p.Text;
+            if (Utilities.GetNumberOfLines(text) > 2)
+            {
+                text = Utilities.AutoBreakLine(p.Text);
+            }
+
+            string[] lines = text.SplitToLines();
+            int textLengthFirstLine = 0;
+            int textLengthSecondLine = 0;
+            if (lines.Length > 0)
+            {
+                textLengthFirstLine = lines[0].Length;
+                if (lines.Length > 1)
+                {
+                    textLengthSecondLine = lines[1].Length;
+                }
+            }
+        }
+
+        private static void WriteTimeCode()
+        {
+            // write 8 bytes time code
+        }
+
+        private static TimeCode GetTimeCode(string timeCode)
+        {
+            int hour = int.Parse(timeCode.Substring(0, 2));
+            int minute = int.Parse(timeCode.Substring(2, 2));
+            int second = int.Parse(timeCode.Substring(4, 2));
+            int frames = int.Parse(timeCode.Substring(6, 2));
+
+            int milliseconds = (int)((1000 / Configuration.Settings.General.CurrentFrameRate) * frames);
+            if (milliseconds > 999)
+            {
+                milliseconds = 999;
+            }
+
+            return new TimeCode(hour, minute, second, milliseconds);
         }
 
         private Paragraph GetSptParagraph(ref int index, byte[] buffer)
@@ -137,46 +178,33 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             if (textLengthFirstLine == 0 && textLengthSecondLine == 0)
             {
-                index += (16 + 20 + 16);
-                _errorCount++;
+                index += 16 + 20 + 16;
+                this._errorCount++;
                 return null;
             }
 
             try
             {
-                var p = new Paragraph();
+                Paragraph p = new Paragraph();
                 p.StartTime = GetTimeCode(Encoding.Default.GetString(buffer, index, 8));
                 p.EndTime = GetTimeCode(Encoding.Default.GetString(buffer, index + 8, 8));
 
                 p.Text = Encoding.Default.GetString(buffer, index + 16 + 20 + 16, textLengthFirstLine);
 
                 if (textLengthSecondLine > 0)
+                {
                     p.Text += Environment.NewLine + Encoding.Default.GetString(buffer, index + 16 + 20 + 16 + textLengthFirstLine, textLengthSecondLine);
+                }
 
-                index += (16 + 20 + 16 + textLengthFirstLine + textLengthSecondLine);
+                index += 16 + 20 + 16 + textLengthFirstLine + textLengthSecondLine;
                 return p;
             }
             catch
             {
-                index += (16 + 20 + 16 + textLengthFirstLine + textLengthSecondLine);
-                _errorCount++;
+                index += 16 + 20 + 16 + textLengthFirstLine + textLengthSecondLine;
+                this._errorCount++;
                 return null;
             }
         }
-
-        private static TimeCode GetTimeCode(string timeCode)
-        {
-            int hour = int.Parse(timeCode.Substring(0, 2));
-            int minute = int.Parse(timeCode.Substring(2, 2));
-            int second = int.Parse(timeCode.Substring(4, 2));
-            int frames = int.Parse(timeCode.Substring(6, 2));
-
-            int milliseconds = (int)((1000 / Configuration.Settings.General.CurrentFrameRate) * frames);
-            if (milliseconds > 999)
-                milliseconds = 999;
-
-            return new TimeCode(hour, minute, second, milliseconds);
-        }
-
     }
 }

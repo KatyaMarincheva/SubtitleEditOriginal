@@ -1,56 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Text;
+    using System.Xml;
+
     public class CaraokeXml : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".crk"; }
+            get
+            {
+                return ".crk";
+            }
         }
 
         public override string Name
         {
-            get { return "Caraoke Xml"; }
+            get
+            {
+                return "Caraoke Xml";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
             return subtitle.Paragraphs.Count > 0;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<caraoke name=\"\" filename=\"\"><paragraph attr=\"\" /></caraoke>";
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<caraoke name=\"\" filename=\"\"><paragraph attr=\"\" /></caraoke>";
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
-            var paragraph = xml.DocumentElement.SelectSingleNode("paragraph");
+            XmlNode paragraph = xml.DocumentElement.SelectSingleNode("paragraph");
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 XmlNode item = xml.CreateElement("item");
 
-                var start = xml.CreateAttribute("tc1");
-                start.InnerText = p.StartTime.TotalMilliseconds.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                XmlAttribute start = xml.CreateAttribute("tc1");
+                start.InnerText = p.StartTime.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
                 item.Attributes.Append(start);
 
-                var end = xml.CreateAttribute("tc2");
-                end.InnerText = p.EndTime.TotalMilliseconds.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                XmlAttribute end = xml.CreateAttribute("tc2");
+                end.InnerText = p.EndTime.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
                 item.Attributes.Append(end);
 
-                var attr = xml.CreateAttribute("attr");
+                XmlAttribute attr = xml.CreateAttribute("attr");
                 attr.InnerText = string.Empty;
                 item.Attributes.Append(attr);
 
@@ -64,19 +73,21 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
             string xmlAsText = sb.ToString();
 
             if (!xmlAsText.Contains("<caraoke"))
+            {
                 return;
+            }
 
             xmlAsText = xmlAsText.Replace("< /", "</");
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             try
             {
@@ -84,8 +95,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch (Exception ex)
             {
-                _errorCount = 1;
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                this._errorCount = 1;
+                Debug.WriteLine(ex.Message);
                 return;
             }
 
@@ -97,16 +108,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     string end = node.Attributes["tc2"].InnerText;
                     string text = node.InnerText;
 
-                    subtitle.Paragraphs.Add(new Paragraph(text, Convert.ToDouble(start, System.Globalization.CultureInfo.InvariantCulture), Convert.ToDouble(end, System.Globalization.CultureInfo.InvariantCulture)));
+                    subtitle.Paragraphs.Add(new Paragraph(text, Convert.ToDouble(start, CultureInfo.InvariantCulture), Convert.ToDouble(end, CultureInfo.InvariantCulture)));
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
-
     }
 }

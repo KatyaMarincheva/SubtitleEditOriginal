@@ -1,58 +1,57 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class UnknownSubtitle19 : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 19"; }
+            get
+            {
+                return "Unknown 19";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
             return subtitle.Paragraphs.Count > 0;
-        }
-
-        private static string ToTimeCode(TimeCode time)
-        {
-            return string.Format("{0:0.0}", time.TotalSeconds);
-        }
-
-        private static TimeCode DecodeTimeCode(string s)
-        {
-            return TimeCode.FromSeconds(double.Parse(s));
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //<Subtitle version="1.0" timeline="ee_disc1" name="Subtitle 1:" language="English" type="image">
-            //  <Clip start="121.888" end="125.092" fileName="ee_disc1_subtitle_1/Subtitle_1.png" text="Hello.My name is Laura Knight-Jadcyzk" x="155" y="364" width="328" height="77"/>
-            //  <Clip start="125.125" end="129.262" fileName="ee_disc1_subtitle_1/Subtitle_2.png" text="and welcome to the Éiriú Eolasbreathing and meditation program" x="145" y="364" width="348" height="77"/>
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<Subtitle version=\"1.0\" timeline=\"ee_disc1\" name=\"Subtitle 1:\" language=\"English\" type=\"text\"></Subtitle>";
+            // <Subtitle version="1.0" timeline="ee_disc1" name="Subtitle 1:" language="English" type="image">
+            // <Clip start="121.888" end="125.092" fileName="ee_disc1_subtitle_1/Subtitle_1.png" text="Hello.My name is Laura Knight-Jadcyzk" x="155" y="364" width="328" height="77"/>
+            // <Clip start="125.125" end="129.262" fileName="ee_disc1_subtitle_1/Subtitle_2.png" text="and welcome to the Éiriú Eolasbreathing and meditation program" x="145" y="364" width="348" height="77"/>
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<Subtitle version=\"1.0\" timeline=\"ee_disc1\" name=\"Subtitle 1:\" language=\"English\" type=\"text\"></Subtitle>";
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
 
-            //  int count = 1;
+            // int count = 1;
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 XmlNode paragraph = xml.CreateElement("Clip");
@@ -65,16 +64,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 attr.InnerText = ToTimeCode(p.EndTime);
                 paragraph.Attributes.Append(attr);
 
-                //attr = xml.CreateAttribute("fileName");
-                //attr.InnerText = "ee_disc1_subtitle_1/Subtitle_" + count + ".png";
-                //paragraph.Attributes.Append(attr);
-
+                // attr = xml.CreateAttribute("fileName");
+                // attr.InnerText = "ee_disc1_subtitle_1/Subtitle_" + count + ".png";
+                // paragraph.Attributes.Append(attr);
                 attr = xml.CreateAttribute("text");
                 attr.InnerText = HtmlUtil.RemoveHtmlTags(p.Text);
                 paragraph.Attributes.Append(attr);
 
                 xml.DocumentElement.AppendChild(paragraph);
-                //    count++;
+
+                // count++;
             }
 
             return ToUtf8XmlString(xml);
@@ -82,16 +81,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
             string allText = sb.ToString();
             if (!allText.Contains("</Subtitle>") || !allText.Contains("<Clip "))
+            {
                 return;
+            }
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             try
             {
@@ -99,14 +100,14 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
-                _errorCount = 1;
+                Debug.WriteLine(exception.Message);
+                this._errorCount = 1;
                 return;
             }
 
             if (xml.DocumentElement == null)
             {
-                _errorCount = 1;
+                this._errorCount = 1;
                 return;
             }
 
@@ -124,12 +125,22 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
 
+        private static string ToTimeCode(TimeCode time)
+        {
+            return string.Format("{0:0.0}", time.TotalSeconds);
+        }
+
+        private static TimeCode DecodeTimeCode(string s)
+        {
+            return TimeCode.FromSeconds(double.Parse(s));
+        }
     }
 }

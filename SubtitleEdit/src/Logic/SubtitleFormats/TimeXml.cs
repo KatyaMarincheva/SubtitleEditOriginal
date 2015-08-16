@@ -1,26 +1,38 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class TimeXml : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Xml"; }
+            get
+            {
+                return "Xml";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
@@ -32,9 +44,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<Subtitle/>";
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<Subtitle/>";
 
             XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
@@ -48,11 +58,11 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 paragraph.AppendChild(number);
 
                 XmlNode start = xml.CreateElement("StartMilliseconds");
-                start.InnerText = p.StartTime.TotalMilliseconds.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                start.InnerText = p.StartTime.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
                 paragraph.AppendChild(start);
 
                 XmlNode end = xml.CreateElement("EndMilliseconds");
-                end.InnerText = p.EndTime.TotalMilliseconds.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                end.InnerText = p.EndTime.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
                 paragraph.AppendChild(end);
 
                 XmlNode text = xml.CreateElement("Text");
@@ -67,14 +77,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
             StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
             string xmlString = sb.ToString();
             if (!xmlString.Contains("<Paragraph>") || !xmlString.Contains("<Text>"))
+            {
                 return;
+            }
 
             XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
@@ -84,7 +96,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch
             {
-                _errorCount = 1;
+                this._errorCount = 1;
                 return;
             }
 
@@ -96,16 +108,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     string end = node.SelectSingleNode("EndMilliseconds").InnerText;
                     string text = node.SelectSingleNode("Text").InnerText;
 
-                    subtitle.Paragraphs.Add(new Paragraph(text, Convert.ToDouble(start, System.Globalization.CultureInfo.InvariantCulture), Convert.ToDouble(end, System.Globalization.CultureInfo.InvariantCulture)));
+                    subtitle.Paragraphs.Add(new Paragraph(text, Convert.ToDouble(start, CultureInfo.InvariantCulture), Convert.ToDouble(end, CultureInfo.InvariantCulture)));
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
-
     }
 }

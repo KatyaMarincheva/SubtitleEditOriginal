@@ -1,44 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class Utx : SubtitleFormat
     {
-
         public override string Extension
         {
-            get { return ".utx"; }
+            get
+            {
+                return ".utx";
+            }
         }
 
         public override string Name
         {
-            get { return "UTX"; }
+            get
+            {
+                return "UTX";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //I'd forgotten.
-            //#0:02:58.21,0:03:00.16
+            // I'd forgotten.
+            // #0:02:58.21,0:03:00.16
 
-            //Were you somewhere far away?
-            //- Yes, four years in Switzerland.
-            //#0:03:02.15,0:03:06.14
-
+            // Were you somewhere far away?
+            // - Yes, four years in Switzerland.
+            // #0:03:02.15,0:03:06.14
             const string paragraphWriteFormat = "{0}{1}#{2},{3}{1}";
 
             StringBuilder sb = new StringBuilder();
@@ -47,21 +55,22 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 string text = p.Text;
                 sb.AppendLine(string.Format(paragraphWriteFormat, p.Text, Environment.NewLine, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime)));
             }
+
             return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
             subtitle.Paragraphs.Clear();
-            var text = new StringBuilder();
+            StringBuilder text = new StringBuilder();
             for (int i = 0; i < lines.Count; i++)
             {
                 string line = lines[i].Trim();
 
                 if (line.StartsWith('#'))
                 {
-                    var timeParts = line.Split(new[] { '#', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] timeParts = line.Split(new[] { '#', ',' }, StringSplitOptions.RemoveEmptyEntries);
                     if (timeParts.Length == 2)
                     {
                         try
@@ -72,7 +81,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         }
                         catch
                         {
-                            _errorCount++;
+                            this._errorCount++;
                         }
                     }
                 }
@@ -80,26 +89,29 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     text.AppendLine(line.Trim());
                     if (text.Length > 5000)
+                    {
                         return;
+                    }
                 }
                 else
                 {
                     text = new StringBuilder();
                 }
             }
+
             subtitle.Renumber();
         }
 
         private static string EncodeTimeCode(TimeCode time)
         {
-            //0:03:02.15
+            // 0:03:02.15
             return string.Format("{0}:{1:00}:{2:00}.{3:00}", time.Hours, time.Minutes, time.Seconds, MillisecondsToFramesMaxFrameRate(time.Milliseconds));
         }
 
         private static TimeCode DecodeTimeCode(string timePart)
         {
-            //0:03:02.15
-            var parts = timePart.Split(new[] { ':', '.' }, StringSplitOptions.RemoveEmptyEntries);
+            // 0:03:02.15
+            string[] parts = timePart.Split(new[] { ':', '.' }, StringSplitOptions.RemoveEmptyEntries);
 
             int hours = int.Parse(parts[0]);
             int minutes = int.Parse(parts[1]);
@@ -107,6 +119,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             int milliseconds = (int)((TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate) * int.Parse(parts[3]));
             return new TimeCode(hours, minutes, seconds, milliseconds);
         }
-
     }
 }

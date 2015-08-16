@@ -1,39 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Windows.Forms;
+
     public class UnknownSubtitle24 : UnknownSubtitle18
     {
         public override string Extension
         {
-            get { return ".rtf"; }
+            get
+            {
+                return ".rtf";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 24"; }
+            get
+            {
+                return "Unknown 24";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            if (fileName != null && !fileName.EndsWith(Extension, StringComparison.OrdinalIgnoreCase))
+            if (fileName != null && !fileName.EndsWith(this.Extension, StringComparison.OrdinalIgnoreCase))
+            {
                 return false;
+            }
 
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            System.Windows.Forms.RichTextBox rtBox = new System.Windows.Forms.RichTextBox();
+            RichTextBox rtBox = new RichTextBox();
             rtBox.Text = base.ToText(subtitle, title);
             string rtf = rtBox.Rtf;
             rtBox.Dispose();
@@ -42,17 +55,21 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
-            var sb = new StringBuilder();
+            this._errorCount = 0;
+            StringBuilder sb = new StringBuilder();
             foreach (string line in lines)
+            {
                 sb.AppendLine(line);
+            }
 
             string rtf = sb.ToString().Trim();
             if (!rtf.StartsWith("{\\rtf"))
+            {
                 return;
+            }
 
             string[] arr = null;
-            var rtBox = new System.Windows.Forms.RichTextBox();
+            RichTextBox rtBox = new RichTextBox();
             try
             {
                 rtBox.Rtf = rtf;
@@ -60,7 +77,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
+                Debug.WriteLine(exception.Message);
                 return;
             }
             finally
@@ -70,7 +87,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             lines = new List<string>();
             foreach (string s in arr)
+            {
                 lines.Add(s);
+            }
+
             base.LoadSubtitle(subtitle, lines, fileName);
         }
     }

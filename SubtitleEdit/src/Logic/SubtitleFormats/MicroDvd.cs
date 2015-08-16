@@ -1,36 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class MicroDvd : SubtitleFormat
     {
         private static readonly Regex _regexMicroDvdLine = new Regex(@"^\{-?\d+}\{-?\d+}.*$", RegexOptions.Compiled);
-        public string Errors { get; private set; }
+
         private StringBuilder _errors;
+
         private int _lineNumber;
+
+        public string Errors { get; private set; }
 
         public override string Extension
         {
-            get { return ".sub"; }
+            get
+            {
+                return ".sub";
+            }
         }
 
         public override string Name
         {
-            get { return "MicroDVD"; }
+            get
+            {
+                return "MicroDVD";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return false; }
+            get
+            {
+                return false;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var trimmedLines = new List<string>();
+            List<string> trimmedLines = new List<string>();
             int errors = 0;
             foreach (string line in lines)
             {
@@ -40,9 +53,13 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     {
                         string s = RemoveIllegalSpacesAndFixEmptyCodes(line);
                         if (_regexMicroDvdLine.IsMatch(s))
+                        {
                             trimmedLines.Add(s);
+                        }
                         else
+                        {
                             errors++;
+                        }
                     }
                     else
                     {
@@ -50,40 +67,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     }
                 }
             }
-            Errors = null;
+
+            this.Errors = null;
             return trimmedLines.Count > errors;
-        }
-
-        private static string RemoveIllegalSpacesAndFixEmptyCodes(string line)
-        {
-            int index = line.IndexOf('}');
-            if (index >= 0 && index + 1 < line.Length)
-            {
-                index = line.IndexOf('}', index + 1);
-                if (index >= 0 && index + 1 < line.Length)
-                {
-                    var indexOfBrackets = line.IndexOf("{}", StringComparison.Ordinal);
-                    if (indexOfBrackets >= 0 && indexOfBrackets < index)
-                    {
-                        line = line.Insert(indexOfBrackets + 1, "0"); // set empty time codes to zero
-                        index++;
-                    }
-
-                    while (line.Contains(' ') && line.IndexOf(' ') < index)
-                    {
-                        line = line.Remove(line.IndexOf(' '), 1);
-                        index--;
-                    }
-                }
-            }
-            return line;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            var sb = new StringBuilder();
-            var lineSb = new StringBuilder();
-            var pre = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
+            StringBuilder lineSb = new StringBuilder();
+            StringBuilder pre = new StringBuilder();
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 sb.Append('{');
@@ -92,10 +85,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 sb.Append(p.EndFrame);
                 sb.Append('}');
 
-                //{y:b} is italics for single line
-                //{Y:b} is italics for both lines
-
-                var parts = p.Text.SplitToLines();
+                // {y:b} is italics for single line
+                // {Y:b} is italics for both lines
+                string[] parts = p.Text.SplitToLines();
                 int count = 0;
                 bool italicOn = false;
                 bool boldOn = false;
@@ -104,7 +96,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 foreach (string line in parts)
                 {
                     if (count > 0)
+                    {
                         lineSb.Append('|');
+                    }
 
                     bool alreadyItalic = italicOn;
                     bool alreadyBold = boldOn;
@@ -128,7 +122,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             boldOn = false;
                             underlineOn = false;
                             if (pre.ToString() != "{y:i}")
+                            {
                                 pre.Append("{y:i}"); // italic single line
+                            }
+
                             s = s.Remove(0, 3);
                         }
                         else if (alreadyBold && i == 0)
@@ -144,7 +141,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             boldOn = true;
                             underlineOn = false;
                             if (pre.ToString() != "{y:b}")
+                            {
                                 pre.Append("{y:b}"); // bold single line
+                            }
+
                             s = s.Remove(0, 3);
                         }
                         else if (alreadyUnderline && i == 0)
@@ -160,13 +160,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             boldOn = false;
                             underlineOn = true;
                             if (pre.ToString() != "{y:u}")
+                            {
                                 pre.Append("{y:u}"); // underline single line
+                            }
+
                             s = s.Remove(0, 3);
                         }
 
                         if (s.StartsWith("<font ", StringComparison.Ordinal))
                         {
-                            var end = s.IndexOf('>');
+                            int end = s.IndexOf('>');
                             if (end > 0)
                             {
                                 string tag = s.Substring(0, end);
@@ -184,16 +187,21 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                         if (color.Length == 6)
                                         {
                                             if (s.Contains(Environment.NewLine) && s.Contains("</font>" + Environment.NewLine))
+                                            {
                                                 pre.Append("{c:$" + color.Substring(4, 2) + color.Substring(2, 2) + color.Substring(0, 2) + "}");
+                                            }
                                             else
+                                            {
                                                 pre.Append("{C:$" + color.Substring(4, 2) + color.Substring(2, 2) + color.Substring(0, 2) + "}");
+                                            }
                                         }
                                     }
                                 }
+
                                 if (tag.Contains(" face="))
                                 {
-                                    var faceStart = tag.IndexOf(" face=", StringComparison.Ordinal);
-                                    var faceEnd = tag.IndexOf('"', faceStart + " face=".Length + 1);
+                                    int faceStart = tag.IndexOf(" face=", StringComparison.Ordinal);
+                                    int faceEnd = tag.IndexOf('"', faceStart + " face=".Length + 1);
                                     if (faceEnd > 0)
                                     {
                                         string fontName = tag.Substring(faceStart, faceEnd - faceStart);
@@ -203,16 +211,21 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                         if (fontName.Length > 0)
                                         {
                                             if (s.Contains(Environment.NewLine) && s.Contains("</font>" + Environment.NewLine))
+                                            {
                                                 pre.Append("{f:" + fontName + "}");
+                                            }
                                             else
+                                            {
                                                 pre.Append("{F:" + fontName + "}");
+                                            }
                                         }
                                     }
                                 }
+
                                 if (tag.Contains(" size="))
                                 {
-                                    var sizeStart = tag.IndexOf(" size=", StringComparison.Ordinal);
-                                    var sizeEnd = tag.IndexOf('"', sizeStart + " size=".Length + 1);
+                                    int sizeStart = tag.IndexOf(" size=", StringComparison.Ordinal);
+                                    int sizeEnd = tag.IndexOf('"', sizeStart + " size=".Length + 1);
                                     if (sizeEnd > 0)
                                     {
                                         string fontSize = tag.Substring(sizeStart, sizeEnd - sizeStart);
@@ -222,73 +235,112 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                         if (fontSize.Length > 0)
                                         {
                                             if (s.Contains(Environment.NewLine) && s.Contains("</font>" + Environment.NewLine))
+                                            {
                                                 pre.Append("{s:" + fontSize + "}");
+                                            }
                                             else
+                                            {
                                                 pre.Append("{S:" + fontSize + "}");
+                                            }
                                         }
                                     }
                                 }
+
                                 s = s.Remove(0, end + 1);
                             }
                         }
                     }
 
                     if (s.Contains("</i>"))
+                    {
                         italicOn = false;
+                    }
 
                     if (s.Contains("</b>"))
+                    {
                         boldOn = false;
+                    }
 
                     if (s.Contains("</u>"))
+                    {
                         underlineOn = false;
+                    }
 
                     lineSb.Append(HtmlUtil.RemoveHtmlTags(pre + line));
                     count++;
                 }
+
                 string text = lineSb.ToString();
                 int noOfLines = Utilities.CountTagInText(text, '|') + 1;
                 if (Utilities.CountTagInText(text, "{y:i}") == noOfLines && text.StartsWith("{y:i}"))
+                {
                     text = "{Y:i}" + text.Replace("{y:i}", string.Empty);
+                }
                 else if (Utilities.CountTagInText(text, "{y:b}") == noOfLines && text.StartsWith("{y:b}"))
+                {
                     text = "{Y:b}" + text.Replace("{y:b}", string.Empty);
+                }
                 else if (Utilities.CountTagInText(text, "{y:u}") == noOfLines && text.StartsWith("{y:u}"))
+                {
                     text = "{Y:u}" + text.Replace("{y:u}", string.Empty);
+                }
                 else if (Utilities.CountTagInText(text, "{y:u}{y:i}") == noOfLines && text.StartsWith("{y:u}{y:i}"))
+                {
                     text = "{Y:u}{Y:i}" + text.Replace("{y:u}", string.Empty).Replace("{y:i}", string.Empty);
+                }
                 else if (Utilities.CountTagInText(text, "{y:i}{y:u}") == noOfLines && text.StartsWith("{y:i}{y:u}"))
+                {
                     text = "{Y:i}{Y:u}" + text.Replace("{y:i}", string.Empty).Replace("{y:u}", string.Empty);
+                }
                 else if (Utilities.CountTagInText(text, "{y:i}{y:b}") == noOfLines && text.StartsWith("{y:i}{y:b}"))
+                {
                     text = "{Y:i}{Y:b}" + text.Replace("{y:i}", string.Empty).Replace("{y:b}", string.Empty);
+                }
                 else if (Utilities.CountTagInText(text, "{y:b}{y:i}") == noOfLines && text.StartsWith("{y:b}{y:i}"))
+                {
                     text = "{Y:b}{Y:i}" + text.Replace("{y:i}", string.Empty).Replace("{y:b}", string.Empty);
+                }
                 else if (Utilities.CountTagInText(text, "{y:b}{y:u}") == noOfLines && text.StartsWith("{y:b}{y:u}"))
+                {
                     text = "{Y:b}{Y:u}" + text.Replace("{y:b}", string.Empty).Replace("{y:u}", string.Empty);
+                }
                 else if (Utilities.CountTagInText(text, "{y:u}{y:b}") == noOfLines && text.StartsWith("{y:u}{y:b}"))
+                {
                     text = "{Y:u}{Y:b}" + text.Replace("{y:u}", string.Empty).Replace("{y:b}", string.Empty);
+                }
 
                 if (Utilities.CountTagInText(text, "{y:i}") == 1 && noOfLines == 1)
+                {
                     text = text.Replace("{y:i}", "{Y:i}");
+                }
+
                 if (Utilities.CountTagInText(text, "{y:b}") == 1 && noOfLines == 1)
+                {
                     text = text.Replace("{y:b}", "{Y:b}");
+                }
+
                 if (Utilities.CountTagInText(text, "{y:u}") == 1 && noOfLines == 1)
+                {
                     text = text.Replace("{y:u}", "{Y:u}");
+                }
 
                 sb.AppendLine(HtmlUtil.RemoveHtmlTags(text));
             }
+
             return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
-            _errors = new StringBuilder();
-            Errors = null;
-            _lineNumber = 0;
-            var lineSb = new StringBuilder();
-            var pre = new StringBuilder();
+            this._errorCount = 0;
+            this._errors = new StringBuilder();
+            this.Errors = null;
+            this._lineNumber = 0;
+            StringBuilder lineSb = new StringBuilder();
+            StringBuilder pre = new StringBuilder();
             foreach (string line in lines)
             {
-                _lineNumber++;
+                this._lineNumber++;
                 string s = RemoveIllegalSpacesAndFixEmptyCodes(line);
                 if (_regexMicroDvdLine.IsMatch(s))
                 {
@@ -312,7 +364,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             foreach (string s2 in parts)
                             {
                                 if (count > 0)
+                                {
                                     lineSb.AppendLine();
+                                }
 
                                 s = s2.Trim();
                                 pre.Clear();
@@ -425,8 +479,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                             }
                                         }
                                     }
-                                    else if (s.Contains("{C:$")) // uppercase=all lines
+                                    else if (s.Contains("{C:$"))
                                     {
+                                        // uppercase=all lines
                                         int start = s.IndexOf("{C:$", StringComparison.Ordinal);
                                         int end = s.IndexOf('}', start);
                                         if (end > start)
@@ -457,8 +512,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                             }
                                         }
                                     }
-                                    else if (s.Contains("{F:")) // uppercase=all lines
+                                    else if (s.Contains("{F:"))
                                     {
+                                        // uppercase=all lines
                                         int start = s.IndexOf("{F:", StringComparison.Ordinal);
                                         int end = s.IndexOf('}', start);
                                         if (end > start)
@@ -489,8 +545,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                             }
                                         }
                                     }
-                                    else if (s.Contains("{S:")) // uppercase=all lines
+                                    else if (s.Contains("{S:"))
                                     {
+                                        // uppercase=all lines
                                         int start = s.IndexOf("{S:", StringComparison.Ordinal);
                                         int end = s.IndexOf('}', start);
                                         if (end > start)
@@ -513,22 +570,27 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                 lineSb.Append(pre + s + singlePost);
                                 count++;
                             }
+
                             text = lineSb + post;
                             subtitle.Paragraphs.Add(new Paragraph(startFrame, endFrame, text));
                         }
                     }
                     catch
                     {
-                        _errorCount++;
-                        if (_errors.Length < 2000)
-                            _errors.AppendLine(string.Format(Configuration.Settings.Language.Main.LineNumberXErrorReadingFromSourceLineY, _lineNumber, line));
+                        this._errorCount++;
+                        if (this._errors.Length < 2000)
+                        {
+                            this._errors.AppendLine(string.Format(Configuration.Settings.Language.Main.LineNumberXErrorReadingFromSourceLineY, this._lineNumber, line));
+                        }
                     }
                 }
                 else
                 {
-                    _errorCount++;
-                    if (_errors.Length < 2000)
-                        _errors.AppendLine(string.Format(Configuration.Settings.Language.Main.LineNumberXErrorReadingFromSourceLineY, _lineNumber, line));
+                    this._errorCount++;
+                    if (this._errors.Length < 2000)
+                    {
+                        this._errors.AppendLine(string.Format(Configuration.Settings.Language.Main.LineNumberXErrorReadingFromSourceLineY, this._lineNumber, line));
+                    }
                 }
             }
 
@@ -540,15 +602,43 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     p.StartFrame = previous.EndFrame + 1;
                 }
+
                 if (p.EndFrame == 0)
                 {
                     p.EndFrame = p.StartFrame;
                 }
+
                 j++;
             }
 
             subtitle.Renumber();
-            Errors = _errors.ToString();
+            this.Errors = this._errors.ToString();
+        }
+
+        private static string RemoveIllegalSpacesAndFixEmptyCodes(string line)
+        {
+            int index = line.IndexOf('}');
+            if (index >= 0 && index + 1 < line.Length)
+            {
+                index = line.IndexOf('}', index + 1);
+                if (index >= 0 && index + 1 < line.Length)
+                {
+                    int indexOfBrackets = line.IndexOf("{}", StringComparison.Ordinal);
+                    if (indexOfBrackets >= 0 && indexOfBrackets < index)
+                    {
+                        line = line.Insert(indexOfBrackets + 1, "0"); // set empty time codes to zero
+                        index++;
+                    }
+
+                    while (line.Contains(' ') && line.IndexOf(' ') < index)
+                    {
+                        line = line.Remove(line.IndexOf(' '), 1);
+                        index--;
+                    }
+                }
+            }
+
+            return line;
         }
 
         private static int GetTextStartIndex(string line)
@@ -558,9 +648,13 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             while (i < line.Length && tagCount < 4)
             {
                 if (line[i] == '{' || line[i] == '}')
+                {
                     tagCount++;
+                }
+
                 i++;
             }
+
             return i;
         }
     }

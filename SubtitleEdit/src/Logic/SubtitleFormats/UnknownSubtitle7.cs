@@ -1,53 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     /// <summary>
-    /// Reported by dipa nuswantara
+    ///     Reported by dipa nuswantara
     /// </summary>
     public class UnknownSubtitle7 : SubtitleFormat
     {
-
         private enum ExpectingLine
         {
             TimeStart,
+
             Text,
-            TimeEndOrText,
+
+            TimeEndOrText
         }
 
         public override string Extension
         {
-            get { return ".txt"; }
+            get
+            {
+                return ".txt";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 7"; }
+            get
+            {
+                return "Unknown 7";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //00:00:54:16 Bisakah kalian diam,Tolong!
-            //00:00:56:07
-            //00:00:57:16 Benar, tepatnya saya tidak memiliki "Anda
-            //sudah mendapat 24 jam" adegan... tapi
-            //00:01:02:03
-
+            // 00:00:54:16 Bisakah kalian diam,Tolong!
+            // 00:00:56:07
+            // 00:00:57:16 Benar, tepatnya saya tidak memiliki "Anda
+            // sudah mendapat 24 jam" adegan... tapi
+            // 00:01:02:03
             const string paragraphWriteFormat = "{0} {2}{3}{1}\t";
 
             StringBuilder sb = new StringBuilder();
@@ -55,17 +64,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 sb.AppendLine(string.Format(paragraphWriteFormat, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), p.Text, Environment.NewLine));
             }
+
             return sb.ToString();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            var regexTimeCode = new Regex(@"^\d\d:\d\d:\d\d:\d\d ", RegexOptions.Compiled);
-            var regexTimeCodeEnd = new Regex(@"^\d\d:\d\d:\d\d:\d\d\t$", RegexOptions.Compiled);
+            Regex regexTimeCode = new Regex(@"^\d\d:\d\d:\d\d:\d\d ", RegexOptions.Compiled);
+            Regex regexTimeCodeEnd = new Regex(@"^\d\d:\d\d:\d\d:\d\d\t$", RegexOptions.Compiled);
 
-            var paragraph = new Paragraph();
+            Paragraph paragraph = new Paragraph();
             ExpectingLine expecting = ExpectingLine.TimeStart;
-            _errorCount = 0;
+            this._errorCount = 0;
 
             subtitle.Paragraphs.Clear();
             int count = 0;
@@ -79,7 +89,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     {
                         try
                         {
-                            var tc = DecodeTimeCode(parts);
+                            TimeCode tc = DecodeTimeCode(parts);
                             if (expecting == ExpectingLine.TimeStart)
                             {
                                 paragraph = new Paragraph();
@@ -94,7 +104,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         }
                         catch
                         {
-                            _errorCount++;
+                            this._errorCount++;
                             expecting = ExpectingLine.TimeStart;
                         }
                     }
@@ -104,7 +114,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     string[] parts = line.Substring(0, 11).Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length == 4)
                     {
-                        var tc = DecodeTimeCode(parts);
+                        TimeCode tc = DecodeTimeCode(parts);
                         paragraph.EndTime = tc;
                         subtitle.Paragraphs.Add(paragraph);
                         paragraph = new Paragraph();
@@ -123,17 +133,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
                             if (paragraph.Text.Length > 2000)
                             {
-                                _errorCount += 100;
+                                this._errorCount += 100;
                                 return;
                             }
                         }
                     }
                     else
                     {
-                        _errorCount++;
+                        this._errorCount++;
                     }
                 }
             }
+
             subtitle.Renumber();
         }
 
@@ -152,6 +163,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             TimeCode tc = new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), FramesToMillisecondsMax999(int.Parse(frames)));
             return tc;
         }
-
     }
 }

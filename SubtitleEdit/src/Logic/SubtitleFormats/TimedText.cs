@@ -1,88 +1,93 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class TimedText : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Timed Text draft 2006-10"; }
+            get
+            {
+                return "Timed Text draft 2006-10";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
+        }
+
+        public override List<string> AlternateExtensions
+        {
+            get
+            {
+                return new List<string> { ".tt" };
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
             string xmlAsString = sb.ToString().Trim();
 
             if (xmlAsString.Contains("xmlns:tts=\"http://www.w3.org/2006/04"))
-                return false;
-
-            if (xmlAsString.Contains("http://www.w3.org/") &&
-                xmlAsString.Contains("/ttaf1"))
             {
-                var xml = new XmlDocument { XmlResolver = null };
+                return false;
+            }
+
+            if (xmlAsString.Contains("http://www.w3.org/") && xmlAsString.Contains("/ttaf1"))
+            {
+                XmlDocument xml = new XmlDocument { XmlResolver = null };
                 try
                 {
                     xml.LoadXml(xmlAsString);
 
-                    var nsmgr = new XmlNamespaceManager(xml.NameTable);
+                    XmlNamespaceManager nsmgr = new XmlNamespaceManager(xml.NameTable);
                     nsmgr.AddNamespace("ttaf1", xml.DocumentElement.NamespaceURI);
                     XmlNode div = xml.DocumentElement.SelectSingleNode("//ttaf1:body", nsmgr).SelectSingleNode("ttaf1:div", nsmgr);
                     if (div == null)
+                    {
                         div = xml.DocumentElement.SelectSingleNode("//ttaf1:body", nsmgr).FirstChild;
+                    }
+
                     int numberOfParagraphs = div.ChildNodes.Count;
                     return numberOfParagraphs > 0;
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.Message);
                     return false;
                 }
             }
-            return false;
-        }
 
-        private static string ConvertToTimeString(TimeCode time)
-        {
-            return string.Format("{0:00}:{1:00}:{2:00}.{3:000}", time.Hours, time.Minutes, time.Seconds, time.Milliseconds);
+            return false;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<tt xmlns=\"http://www.w3.org/2006/10/ttaf1\" xmlns:ttp=\"http://www.w3.org/2006/10/ttaf1#parameter\" ttp:timeBase=\"media\" xmlns:tts=\"http://www.w3.org/2006/10/ttaf1#style\" xml:lang=\"en\" xmlns:ttm=\"http://www.w3.org/2006/10/ttaf1#metadata\">" + Environment.NewLine +
-                "   <head>" + Environment.NewLine +
-                "       <metadata>" + Environment.NewLine +
-                "           <ttm:title></ttm:title>" + Environment.NewLine +
-                "      </metadata>" + Environment.NewLine +
-                "       <styling>" + Environment.NewLine +
-                "         <style id=\"s0\" tts:backgroundColor=\"black\" tts:fontStyle=\"normal\" tts:fontSize=\"16\" tts:fontFamily=\"sansSerif\" tts:color=\"white\" />" + Environment.NewLine +
-                "      </styling>" + Environment.NewLine +
-                "   </head>" + Environment.NewLine +
-                "   <body tts:textAlign=\"center\" style=\"s0\">" + Environment.NewLine +
-                "       <div />" + Environment.NewLine +
-                "   </body>" + Environment.NewLine +
-                "</tt>";
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<tt xmlns=\"http://www.w3.org/2006/10/ttaf1\" xmlns:ttp=\"http://www.w3.org/2006/10/ttaf1#parameter\" ttp:timeBase=\"media\" xmlns:tts=\"http://www.w3.org/2006/10/ttaf1#style\" xml:lang=\"en\" xmlns:ttm=\"http://www.w3.org/2006/10/ttaf1#metadata\">" + Environment.NewLine + "   <head>" + Environment.NewLine + "       <metadata>" + Environment.NewLine + "           <ttm:title></ttm:title>" + Environment.NewLine + "      </metadata>" + Environment.NewLine + "       <styling>" + Environment.NewLine + "         <style id=\"s0\" tts:backgroundColor=\"black\" tts:fontStyle=\"normal\" tts:fontSize=\"16\" tts:fontFamily=\"sansSerif\" tts:color=\"white\" />" + Environment.NewLine + "      </styling>" + Environment.NewLine + "   </head>" + Environment.NewLine + "   <body tts:textAlign=\"center\" style=\"s0\">" + Environment.NewLine + "       <div />" + Environment.NewLine + "   </body>" + Environment.NewLine + "</tt>";
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
-            var nsmgr = new XmlNamespaceManager(xml.NameTable);
+            XmlNamespaceManager nsmgr = new XmlNamespaceManager(xml.NameTable);
             nsmgr.AddNamespace("ttaf1", "http://www.w3.org/2006/10/ttaf1");
             nsmgr.AddNamespace("ttp", "http://www.w3.org/2006/10/ttaf1#parameter");
             nsmgr.AddNamespace("tts", "http://www.w3.org/2006/10/ttaf1#style");
@@ -93,20 +98,22 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             XmlNode div = xml.DocumentElement.SelectSingleNode("//ttaf1:body", nsmgr).SelectSingleNode("ttaf1:div", nsmgr);
             if (div == null)
+            {
                 div = xml.DocumentElement.SelectSingleNode("//ttaf1:body", nsmgr).FirstChild;
+            }
 
             int no = 0;
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 XmlNode paragraph = xml.CreateElement("p", "http://www.w3.org/2006/10/ttaf1");
 
-                //string text = p.Text.Replace("<i>", "@iSTART__").Replace("</i>", "@iEND__");
+                // string text = p.Text.Replace("<i>", "@iSTART__").Replace("</i>", "@iEND__");
                 string text = p.Text.Replace(Environment.NewLine, "\n").Replace("\n", "@iNEWLINE__");
                 text = HtmlUtil.RemoveHtmlTags(text);
                 paragraph.InnerText = text;
                 paragraph.InnerXml = paragraph.InnerXml.Replace("@iNEWLINE__", "<br />");
-                //paragraph.InnerXml = paragraph.InnerXml.Replace("@iSTART__", "<i>").Replace("@iEND__", "</i>");
 
+                // paragraph.InnerXml = paragraph.InnerXml.Replace("@iSTART__", "<i>").Replace("@iEND__", "</i>");
                 XmlAttribute start = xml.CreateAttribute("begin");
                 start.InnerText = ConvertToTimeString(p.StartTime);
                 paragraph.Attributes.Append(start);
@@ -130,21 +137,23 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
-            var xml = new XmlDocument { XmlResolver = null };
+            XmlDocument xml = new XmlDocument { XmlResolver = null };
             xml.LoadXml(sb.ToString().Trim());
 
-            var nsmgr = new XmlNamespaceManager(xml.NameTable);
+            XmlNamespaceManager nsmgr = new XmlNamespaceManager(xml.NameTable);
             nsmgr.AddNamespace("ttaf1", xml.DocumentElement.NamespaceURI);
 
             XmlNode div = xml.DocumentElement.SelectSingleNode("//ttaf1:body", nsmgr).SelectSingleNode("ttaf1:div", nsmgr);
             if (div == null)
+            {
                 div = xml.DocumentElement.SelectSingleNode("//ttaf1:body", nsmgr).FirstChild;
+            }
 
-            var styleDic = new Dictionary<string, string>();
+            Dictionary<string, string> styleDic = new Dictionary<string, string>();
             foreach (XmlNode node in xml.DocumentElement.SelectNodes("//ttaf1:style", nsmgr))
             {
                 if (node.Attributes["tts:fontStyle"] != null && node.Attributes["xml:id"] != null)
@@ -157,7 +166,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 try
                 {
-                    var pText = new StringBuilder();
+                    StringBuilder pText = new StringBuilder();
                     foreach (XmlNode innerNode in node.ChildNodes)
                     {
                         switch (innerNode.Name)
@@ -175,15 +184,17 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                         pText.Append("<i>");
                                     }
                                 }
+
                                 if (!italic && innerNode.Attributes != null)
                                 {
-                                    var fs = innerNode.Attributes.GetNamedItem("tts:fontStyle");
+                                    XmlNode fs = innerNode.Attributes.GetNamedItem("tts:fontStyle");
                                     if (fs != null && fs.Value == "italic")
                                     {
                                         italic = true;
                                         pText.Append("<i>");
                                     }
                                 }
+
                                 if (innerNode.HasChildNodes)
                                 {
                                     foreach (XmlNode innerInnerNode in innerNode.ChildNodes)
@@ -202,8 +213,12 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                 {
                                     pText.Append(innerNode.InnerText);
                                 }
+
                                 if (italic)
+                                {
                                     pText.Append("</i>");
+                                }
+
                                 break;
                             case "i":
                                 pText.Append("<i>" + innerNode.InnerText + "</i>");
@@ -223,35 +238,39 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     foreach (XmlAttribute attr in node.Attributes)
                     {
                         if (attr.Name.EndsWith("begin", StringComparison.Ordinal))
+                        {
                             start = attr.InnerText;
+                        }
                         else if (attr.Name.EndsWith("end", StringComparison.Ordinal))
+                        {
                             end = attr.InnerText;
+                        }
                         else if (attr.Name.EndsWith("duration", StringComparison.Ordinal))
+                        {
                             dur = attr.InnerText;
+                        }
                     }
-                    //string start = node.Attributes["begin"].InnerText;
+
+                    // string start = node.Attributes["begin"].InnerText;
                     string text = pText.ToString();
                     text = text.Replace(Environment.NewLine + "</i>", "</i>" + Environment.NewLine);
                     text = text.Replace("<i></i>", string.Empty).Trim();
                     if (end != null)
                     {
-                        //string end = node.Attributes["end"].InnerText;
+                        // string end = node.Attributes["end"].InnerText;
                         double dBegin, dEnd;
-                        if (!start.Contains(':') && Utilities.CountTagInText(start, '.') == 1 &&
-                            !end.Contains(':') && Utilities.CountTagInText(end, '.') == 1 &&
-                            double.TryParse(start, out dBegin) && double.TryParse(end, out dEnd))
+                        if (!start.Contains(':') && Utilities.CountTagInText(start, '.') == 1 && !end.Contains(':') && Utilities.CountTagInText(end, '.') == 1 && double.TryParse(start, out dBegin) && double.TryParse(end, out dEnd))
                         {
                             subtitle.Paragraphs.Add(new Paragraph(text, dBegin * TimeCode.BaseUnit, dEnd * TimeCode.BaseUnit));
                         }
                         else
                         {
-                            if (start.Length == 8 && start[2] == ':' && start[5] == ':' &&
-                                end.Length == 8 && end[2] == ':' && end[5] == ':')
+                            if (start.Length == 8 && start[2] == ':' && start[5] == ':' && end.Length == 8 && end[2] == ':' && end[5] == ':')
                             {
-                                var p = new Paragraph();
-                                var parts = start.Split(new[] { ':' });
+                                Paragraph p = new Paragraph();
+                                string[] parts = start.Split(':');
                                 p.StartTime = new TimeCode(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), 0);
-                                parts = end.Split(new[] { ':' });
+                                parts = end.Split(':');
                                 p.EndTime = new TimeCode(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), 0);
                                 p.Text = text;
                                 subtitle.Paragraphs.Add(p);
@@ -266,27 +285,24 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     {
                         TimeCode duration = TimedText10.GetTimeCode(dur, false);
                         TimeCode startTime = TimedText10.GetTimeCode(start, false);
-                        var endTime = new TimeCode(startTime.TotalMilliseconds + duration.TotalMilliseconds);
+                        TimeCode endTime = new TimeCode(startTime.TotalMilliseconds + duration.TotalMilliseconds);
                         subtitle.Paragraphs.Add(new Paragraph(startTime, endTime, text));
                     }
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.RemoveEmptyLines();
             subtitle.Renumber();
         }
 
-        public override List<string> AlternateExtensions
+        private static string ConvertToTimeString(TimeCode time)
         {
-            get
-            {
-                return new List<string> { ".tt" };
-            }
+            return string.Format("{0:00}:{1:00}:{2:00}.{3:000}", time.Hours, time.Minutes, time.Seconds, time.Milliseconds);
         }
-
     }
 }

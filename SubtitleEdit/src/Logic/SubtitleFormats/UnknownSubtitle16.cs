@@ -1,36 +1,46 @@
-﻿using System.Collections.Generic;
-using System.Text;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Windows.Forms;
+
     public class UnknownSubtitle16 : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".cip"; }
+            get
+            {
+                return ".cip";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 16"; }
+            get
+            {
+                return "Unknown 16";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            var u52 = new UnknownSubtitle52();
-            using (var rtBox = new System.Windows.Forms.RichTextBox { Text = u52.ToText(subtitle, title) })
+            UnknownSubtitle52 u52 = new UnknownSubtitle52();
+            using (RichTextBox rtBox = new RichTextBox { Text = u52.ToText(subtitle, title) })
             {
                 return rtBox.Rtf;
             }
@@ -38,24 +48,32 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
             if (lines.Count == 0 || !lines[0].TrimStart().StartsWith("{\\rtf1"))
+            {
                 return;
+            }
 
             // load as text via RichTextBox
-            var text = new StringBuilder();
+            StringBuilder text = new StringBuilder();
             foreach (string s in lines)
+            {
                 text.AppendLine(s);
-            using (var rtBox = new System.Windows.Forms.RichTextBox())
+            }
+
+            using (RichTextBox rtBox = new RichTextBox())
             {
                 rtBox.Rtf = text.ToString();
-                var lines2 = new List<string>();
+                List<string> lines2 = new List<string>();
                 foreach (string line in rtBox.Lines)
+                {
                     lines2.Add(line);
-                var u52 = new UnknownSubtitle52();
+                }
+
+                UnknownSubtitle52 u52 = new UnknownSubtitle52();
                 u52.LoadSubtitle(subtitle, lines2, fileName);
-                _errorCount = u52.ErrorCount;
+                this._errorCount = u52.ErrorCount;
             }
         }
     }

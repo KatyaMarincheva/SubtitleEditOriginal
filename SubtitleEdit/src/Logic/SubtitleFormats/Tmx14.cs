@@ -1,25 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Xml;
+
     public class Tmx14 : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".tmx"; }
+            get
+            {
+                return ".tmx";
+            }
         }
 
         public override string Name
         {
-            get { return "Translation Memory xml"; }
+            get
+            {
+                return "Translation Memory xml";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
@@ -31,29 +41,21 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<tmx version=\"1.4\">" + Environment.NewLine +
-                "  <header creationtool=\"Subtitle Edit\" creationtoolversion=\"3.3\" datatype=\"html\" segtype=\"sentence\" adminlang=\"en-us\" srclang=\"EN\" o-encoding=\"utf-8\">" + Environment.NewLine +
-                "    <note>This is a subtitle</note>" + Environment.NewLine +
-                "  </header>" + Environment.NewLine +
-                "  <body />" + Environment.NewLine +
-                "</tmx>";
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<tmx version=\"1.4\">" + Environment.NewLine + "  <header creationtool=\"Subtitle Edit\" creationtoolversion=\"3.3\" datatype=\"html\" segtype=\"sentence\" adminlang=\"en-us\" srclang=\"EN\" o-encoding=\"utf-8\">" + Environment.NewLine + "    <note>This is a subtitle</note>" + Environment.NewLine + "  </header>" + Environment.NewLine + "  <body />" + Environment.NewLine + "</tmx>";
 
             string lang = Utilities.AutoDetectLanguageName("en_US", subtitle);
             if (lang.StartsWith("en_"))
+            {
                 lang = "EN";
+            }
             else if (lang.Length == 5)
+            {
                 lang = lang.Substring(3);
+            }
 
-            string paragraphInnerXml =
-                "  <prop type=\"start\">[START]</prop>" + Environment.NewLine +
-                "  <prop type=\"end\">[END]</prop>" + Environment.NewLine +
-                "  <tuv xml:lang=\"" + lang + "\">" + Environment.NewLine +
-                "    <seg>[TEXT]</seg>" + Environment.NewLine +
-                "  </tuv>";
+            string paragraphInnerXml = "  <prop type=\"start\">[START]</prop>" + Environment.NewLine + "  <prop type=\"end\">[END]</prop>" + Environment.NewLine + "  <tuv xml:lang=\"" + lang + "\">" + Environment.NewLine + "    <seg>[TEXT]</seg>" + Environment.NewLine + "  </tuv>";
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
 
             XmlNode body = xml.DocumentElement.SelectSingleNode("body");
@@ -85,16 +87,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
             string xmlString = sb.ToString();
             if (!xmlString.Contains("<tmx") || !xmlString.Contains("<seg>"))
+            {
                 return;
+            }
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             try
             {
                 xml.XmlResolver = null; // skip any DTD
@@ -102,8 +106,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
-                _errorCount = 1;
+                Debug.WriteLine(exception.Message);
+                this._errorCount = 1;
                 return;
             }
 
@@ -128,23 +132,24 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
 
         private static TimeCode DecodeTimeCode(XmlNode node)
         {
-            var tc = new TimeCode(0, 0, 0, 0);
+            TimeCode tc = new TimeCode(0, 0, 0, 0);
             if (node != null)
             {
                 string[] arr = node.InnerText.Split(new[] { ':', '.', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
                 tc = new TimeCode(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]), int.Parse(arr[3]));
             }
+
             return tc;
         }
-
     }
 }

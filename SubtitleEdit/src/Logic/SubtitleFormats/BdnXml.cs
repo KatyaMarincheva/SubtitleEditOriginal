@@ -1,44 +1,53 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.IO;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class BdnXml : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "BDN Xml"; }
+            get
+            {
+                return "BDN Xml";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
             return subtitle.Paragraphs.Count > 0;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<Subtitle/>";
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<Subtitle/>";
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             xml.LoadXml(xmlStructure);
 
@@ -65,8 +74,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 xml.DocumentElement.AppendChild(paragraph);
             }
 
-            var ms = new MemoryStream();
-            var writer = new XmlTextWriter(ms, Encoding.UTF8);
+            MemoryStream ms = new MemoryStream();
+            XmlTextWriter writer = new XmlTextWriter(ms, Encoding.UTF8);
             writer.Formatting = Formatting.Indented;
             xml.Save(writer);
             return Encoding.UTF8.GetString(ms.ToArray()).Trim();
@@ -74,16 +83,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
             string xmlString = sb.ToString();
             if (!xmlString.Contains("<BDN"))
+            {
                 return;
+            }
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             try
             {
@@ -91,7 +102,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch
             {
-                _errorCount = 1;
+                this._errorCount = 1;
                 return;
             }
 
@@ -101,20 +112,27 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     string start = node.Attributes["InTC"].InnerText;
                     string end = node.Attributes["OutTC"].InnerText;
-                    var textBuilder = new StringBuilder();
+                    StringBuilder textBuilder = new StringBuilder();
                     foreach (XmlNode graphic in node.SelectNodes("Graphic"))
+                    {
                         textBuilder.AppendLine(graphic.InnerText);
-                    var p = new Paragraph(textBuilder.ToString().Trim(), GetMillisecondsFromTimeCode(start), GetMillisecondsFromTimeCode(end));
+                    }
+
+                    Paragraph p = new Paragraph(textBuilder.ToString().Trim(), GetMillisecondsFromTimeCode(start), GetMillisecondsFromTimeCode(end));
                     if (node.Attributes["Forced"] != null && node.Attributes["Forced"].Value.Equals("true", StringComparison.OrdinalIgnoreCase))
+                    {
                         p.Forced = true;
+                    }
+
                     subtitle.Paragraphs.Add(p);
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
 
@@ -122,13 +140,12 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
         {
             string[] parts = time.Split(new[] { ':', ';' }, StringSplitOptions.RemoveEmptyEntries);
 
-            var hour = int.Parse(parts[0]);
-            var minutes = int.Parse(parts[1]);
-            var seconds = int.Parse(parts[2]);
-            var frames = int.Parse(parts[3]);
+            int hour = int.Parse(parts[0]);
+            int minutes = int.Parse(parts[1]);
+            int seconds = int.Parse(parts[2]);
+            int frames = int.Parse(parts[3]);
 
             return new TimeCode(hour, minutes, seconds, FramesToMillisecondsMax999(frames)).TotalMilliseconds;
         }
-
     }
 }

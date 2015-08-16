@@ -1,31 +1,40 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Text;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Core;
+
     /// <summary>
-    /// UniPac
+    ///     UniPac
     /// </summary>
     public class PacUnicode : SubtitleFormat
     {
-
         public override string Extension
         {
-            get { return ".fpc"; }
+            get
+            {
+                return ".fpc";
+            }
         }
 
         public override string Name
         {
-            get { return "PAC Unicode (UniPac)"; }
+            get
+            {
+                return "PAC Unicode (UniPac)";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
@@ -34,34 +43,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 try
                 {
-                    var fi = new FileInfo(fileName);
-                    if (fi.Length > 100 && fi.Length < 1024000) // not too small or too big
+                    FileInfo fi = new FileInfo(fileName);
+                    if (fi.Length > 100 && fi.Length < 1024000)
                     {
+                        // not too small or too big
                         byte[] buffer = FileUtil.ReadAllBytesShared(fileName);
 
-                        if (buffer[00] == 1 &&
-                            buffer[01] == 0 &&
-                            buffer[02] == 0 &&
-                            buffer[03] == 0 &&
-                            buffer[04] == 0 &&
-                            buffer[05] == 0 &&
-                            buffer[06] == 0 &&
-                            buffer[07] == 0 &&
-                            buffer[08] == 0 &&
-                            buffer[09] == 0 &&
-                            buffer[10] == 0 &&
-                            buffer[11] == 0 &&
-                            buffer[12] == 0 &&
-                            buffer[13] == 0 &&
-                            buffer[14] == 0 &&
-                            buffer[15] == 0 &&
-                            buffer[16] == 0 &&
-                            buffer[17] == 0 &&
-                            buffer[18] == 0 &&
-                            buffer[19] == 0 &&
-                            buffer[20] == 0 &&
-                            fileName.EndsWith(".fpc", StringComparison.OrdinalIgnoreCase))
+                        if (buffer[00] == 1 && buffer[01] == 0 && buffer[02] == 0 && buffer[03] == 0 && buffer[04] == 0 && buffer[05] == 0 && buffer[06] == 0 && buffer[07] == 0 && buffer[08] == 0 && buffer[09] == 0 && buffer[10] == 0 && buffer[11] == 0 && buffer[12] == 0 && buffer[13] == 0 && buffer[14] == 0 && buffer[15] == 0 && buffer[16] == 0 && buffer[17] == 0 && buffer[18] == 0 && buffer[19] == 0 && buffer[20] == 0 && fileName.EndsWith(".fpc", StringComparison.OrdinalIgnoreCase))
+                        {
                             return true;
+                        }
                     }
                 }
                 catch
@@ -69,6 +60,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     return false;
                 }
             }
+
             return false;
         }
 
@@ -88,12 +80,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 Paragraph p = GetPacParagraph(ref index, buffer);
                 if (p != null)
+                {
                     subtitle.Paragraphs.Add(p);
+                }
             }
+
             if (subtitle.Paragraphs.Count > 2 && subtitle.Paragraphs[0].StartTime.TotalMilliseconds < 0.001 && subtitle.Paragraphs[1].StartTime.TotalMilliseconds < 0.001)
             {
                 subtitle.Paragraphs.RemoveAt(0);
             }
+
             subtitle.Renumber();
         }
 
@@ -103,21 +99,26 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 index++;
             }
+
             bool con = true;
             while (con)
             {
                 index++;
                 if (index + 20 >= buffer.Length)
+                {
                     return null;
+                }
 
                 if (buffer[index] == 0xFE && buffer[index - 1] == 0x80)
+                {
                     con = false;
+                }
             }
 
             int feIndex = index;
             byte alignment = buffer[feIndex + 1];
             byte verticalAlignment = buffer[feIndex - 1];
-            var p = new Paragraph();
+            Paragraph p = new Paragraph();
 
             int timeStartIndex = feIndex - 15;
             p.StartTime = Pac.GetTimeCode(timeStartIndex + 1, buffer);
@@ -125,10 +126,13 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             int textLength = buffer[timeStartIndex + 9] + buffer[timeStartIndex + 10] * 256;
             if (textLength > 500)
+            {
                 return null; // probably not correct index
+            }
+
             int maxIndex = timeStartIndex + 10 + textLength;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             index = feIndex + 3;
 
             int textIndex = index;
@@ -148,12 +152,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     sb.Append(' ');
                 }
+
                 textIndex++;
             }
+
             if (textIndex > textBegin)
             {
                 sb.Append(Encoding.UTF8.GetString(buffer, textBegin, textIndex - textBegin - 1));
             }
+
             p.Text = sb.ToString().Trim();
             for (int k = 0; k < p.Text.Length; k++)
             {
@@ -165,7 +172,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             index += textLength;
             if (index + 20 >= buffer.Length)
+            {
                 return null;
+            }
 
             p.Text = p.Text.Replace(Environment.NewLine + " ", Environment.NewLine);
             p.Text = p.Text.Replace(Environment.NewLine + " ", Environment.NewLine);
@@ -174,28 +183,50 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             if (verticalAlignment < 5)
             {
-                if (alignment == 1) // left
+                if (alignment == 1)
+                {
+                    // left
                     p.Text = "{\\an7}" + p.Text;
-                else if (alignment == 0) // right
+                }
+                else if (alignment == 0)
+                {
+                    // right
                     p.Text = "{\\an9}" + p.Text;
+                }
                 else
+                {
                     p.Text = "{\\an8}" + p.Text;
+                }
             }
             else if (verticalAlignment < 9)
             {
-                if (alignment == 1) // left
+                if (alignment == 1)
+                {
+                    // left
                     p.Text = "{\\an4}" + p.Text;
-                else if (alignment == 0) // right
+                }
+                else if (alignment == 0)
+                {
+                    // right
                     p.Text = "{\\an6}" + p.Text;
+                }
                 else
+                {
                     p.Text = "{\\an5}" + p.Text;
+                }
             }
             else
             {
-                if (alignment == 1) // left
+                if (alignment == 1)
+                {
+                    // left
                     p.Text = "{\\an1}" + p.Text;
-                else if (alignment == 0) // right
+                }
+                else if (alignment == 0)
+                {
+                    // right
                     p.Text = "{\\an3}" + p.Text;
+                }
             }
 
             p.Text = p.Text.Replace(Convert.ToChar(0).ToString(CultureInfo.InvariantCulture), string.Empty);
@@ -212,6 +243,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             return p;
         }
-
     }
 }

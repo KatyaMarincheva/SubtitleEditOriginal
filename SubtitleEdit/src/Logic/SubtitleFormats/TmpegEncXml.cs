@@ -1,52 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
-    //<TMPGEncVMESubtitleTextFormat>
-    //  ...
-    //  <Subtitle>
-    //    <SubtitleItem layoutindex="0" enable="1" starttime="00:01:57,269" endtime="00:01:59,169">
-    //        <Text>
-    //            <![CDATA[These hills here are full of Apaches.]]>
-    //        </Text>
-    //    </SubtitleItem>
-    //    ...
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Xml;
 
+    using Nikse.SubtitleEdit.Core;
+
+    // <TMPGEncVMESubtitleTextFormat>
+    // ...
+    // <Subtitle>
+    // <SubtitleItem layoutindex="0" enable="1" starttime="00:01:57,269" endtime="00:01:59,169">
+    // <Text>
+    // <![CDATA[These hills here are full of Apaches.]]>
+    // </Text>
+    // </SubtitleItem>
+    // ...
     public class TmpegEncXml : SubtitleFormat
     {
-        public override string Extension
-        {
-            get { return ".xsubtitle"; }
-        }
-
-        public override string Name
-        {
-            get { return "TMPGEnc VME"; }
-        }
-
-        public override bool IsTimeBased
-        {
-            get { return true; }
-        }
-
-        public override bool IsMine(List<string> lines, string fileName)
-        {
-            var sb = new StringBuilder();
-            lines.ForEach(line => sb.AppendLine(line));
-            string xmlAsString = sb.ToString().Trim();
-            if ((xmlAsString.Contains("<TMPGEncVMESubtitleTextFormat>") || xmlAsString.Contains("<SubtitleItem ")) && (xmlAsString.Contains("<Subtitle")))
-            {
-                var subtitle = new Subtitle();
-                LoadSubtitle(subtitle, lines, fileName);
-                return subtitle.Paragraphs.Count > _errorCount;
-            }
-            return false;
-        }
-
         internal const string Layout = @"<?xml version='1.0' encoding='UTF-8'?>
 <TMPGEncVMESubtitleTextFormat>
     <Layout>
@@ -221,11 +193,50 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
     </Subtitle>
 </TMPGEncVMESubtitleTextFormat>";
 
+        public override string Extension
+        {
+            get
+            {
+                return ".xsubtitle";
+            }
+        }
+
+        public override string Name
+        {
+            get
+            {
+                return "TMPGEnc VME";
+            }
+        }
+
+        public override bool IsTimeBased
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool IsMine(List<string> lines, string fileName)
+        {
+            StringBuilder sb = new StringBuilder();
+            lines.ForEach(line => sb.AppendLine(line));
+            string xmlAsString = sb.ToString().Trim();
+            if ((xmlAsString.Contains("<TMPGEncVMESubtitleTextFormat>") || xmlAsString.Contains("<SubtitleItem ")) && xmlAsString.Contains("<Subtitle"))
+            {
+                Subtitle subtitle = new Subtitle();
+                this.LoadSubtitle(subtitle, lines, fileName);
+                return subtitle.Paragraphs.Count > this._errorCount;
+            }
+
+            return false;
+        }
+
         public override string ToText(Subtitle subtitle, string title)
         {
-            var xmlStructure = Layout.Replace('\'', '"');
+            string xmlStructure = Layout.Replace('\'', '"');
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
             XmlNode div = xml.DocumentElement.SelectSingleNode("Subtitle");
             div.InnerXml = string.Empty;
@@ -234,15 +245,19 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 XmlNode paragraph = xml.CreateElement("SubtitleItem");
 
-                var text = HtmlUtil.RemoveHtmlTags(p.Text, true);
+                string text = HtmlUtil.RemoveHtmlTags(p.Text, true);
                 paragraph.InnerText = text;
                 paragraph.InnerXml = "<Text><![CDATA[" + paragraph.InnerXml.Replace(Environment.NewLine, "\\n") + "]]></Text>";
 
                 XmlAttribute layoutIndex = xml.CreateAttribute("layoutindex");
                 if (p.Text.TrimStart().StartsWith("<i>", StringComparison.OrdinalIgnoreCase) && p.Text.TrimEnd().EndsWith("</i>", StringComparison.OrdinalIgnoreCase))
+                {
                     layoutIndex.InnerText = "4";
+                }
                 else
+                {
                     layoutIndex.InnerText = "0";
+                }
 
                 paragraph.Attributes.Append(layoutIndex);
 
@@ -263,42 +278,46 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
 
             string s = ToUtf8XmlString(xml);
-            var startPos = s.IndexOf("<Subtitle>", StringComparison.Ordinal) + 10;
+            int startPos = s.IndexOf("<Subtitle>", StringComparison.Ordinal) + 10;
             s = s.Substring(startPos, s.IndexOf("</Subtitle>", StringComparison.Ordinal) - startPos).Trim();
             return Layout.Replace("@", s);
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            LoadTMpeg(subtitle, lines, false);
+            this.LoadTMpeg(subtitle, lines, false);
         }
 
         internal void LoadTMpeg(Subtitle subtitle, List<string> lines, bool mustHaveLineBreakAsEnd)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
             double startSeconds = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             xml.LoadXml(sb.ToString().Trim());
-            var italicStyles = new List<bool>();
+            List<bool> italicStyles = new List<bool>();
 
             foreach (XmlNode node in xml.DocumentElement.SelectNodes("Layout/LayoutItem"))
             {
                 XmlNode fontItalic = node.SelectSingleNode("FontItalic");
                 if (fontItalic != null && fontItalic.InnerText == "1")
+                {
                     italicStyles.Add(true);
+                }
                 else
+                {
                     italicStyles.Add(false);
+                }
             }
 
             foreach (XmlNode node in xml.DocumentElement.SelectNodes("Subtitle/SubtitleItem"))
             {
                 try
                 {
-                    var pText = new StringBuilder();
+                    StringBuilder pText = new StringBuilder();
                     foreach (XmlNode innerNode in node.SelectSingleNode("Text").ChildNodes)
                     {
                         switch (innerNode.Name)
@@ -312,19 +331,19 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         }
                     }
 
-                    var start = string.Empty;
+                    string start = string.Empty;
                     if (node.Attributes["starttime"] != null)
                     {
                         start = node.Attributes["starttime"].InnerText;
                     }
 
-                    var end = string.Empty;
+                    string end = string.Empty;
                     if (node.Attributes["endtime"] != null)
                     {
                         end = node.Attributes["endtime"].InnerText;
                     }
 
-                    var startCode = TimeCode.FromSeconds(startSeconds);
+                    TimeCode startCode = TimeCode.FromSeconds(startSeconds);
                     if (start.Length > 0)
                     {
                         startCode = GetTimeCode(start);
@@ -339,36 +358,45 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     {
                         endCode = new TimeCode(startCode.TotalMilliseconds + 3000);
                     }
+
                     startSeconds = endCode.TotalSeconds;
                     if (mustHaveLineBreakAsEnd)
                     {
                         if (!pText.ToString().EndsWith("\\n", StringComparison.Ordinal))
-                            _errorCount++;
+                        {
+                            this._errorCount++;
+                        }
                     }
                     else
                     {
                         if (pText.ToString().EndsWith("\\n", StringComparison.Ordinal))
-                            _errorCount++;
+                        {
+                            this._errorCount++;
+                        }
                     }
 
-                    var p = new Paragraph(startCode, endCode, pText.ToString().Trim().Replace("<Text>", string.Empty).Replace("</Text>", string.Empty).Replace("\\n", Environment.NewLine).TrimEnd());
+                    Paragraph p = new Paragraph(startCode, endCode, pText.ToString().Trim().Replace("<Text>", string.Empty).Replace("</Text>", string.Empty).Replace("\\n", Environment.NewLine).TrimEnd());
                     if (node.Attributes["layoutindex"] != null)
                     {
                         int idx;
                         if (int.TryParse(node.Attributes["layoutindex"].InnerText, out idx))
                         {
                             if (idx >= 0 && idx < italicStyles.Count && italicStyles[idx])
+                            {
                                 p.Text = "<i>" + p.Text + "</i>";
+                            }
                         }
                     }
+
                     subtitle.Paragraphs.Add(p);
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
 
@@ -379,7 +407,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 s = s.TrimEnd('s');
                 return TimeCode.FromSeconds(double.Parse(s));
             }
-            string[] parts = s.Split(new[] { ':', '.', ',' });
+
+            string[] parts = s.Split(':', '.', ',');
             return new TimeCode(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]));
         }
     }

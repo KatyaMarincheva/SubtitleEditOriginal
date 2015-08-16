@@ -1,44 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class Dost : SubtitleFormat
     {
-        private static Regex regexTimeCodes = new Regex(@"^\d\d\d\d\t\d\d:\d\d:\d\d:\d\d\t\d\d:\d\d:\d\d:\d\d\t", RegexOptions.Compiled);
+        private static readonly Regex regexTimeCodes = new Regex(@"^\d\d\d\d\t\d\d:\d\d:\d\d:\d\d\t\d\d:\d\d:\d\d:\d\d\t", RegexOptions.Compiled);
 
         public override string Extension
         {
-            get { return ".dost"; }
+            get
+            {
+                return ".dost";
+            }
         }
 
         public override string Name
         {
-            get { return "DOST"; }
+            get
+            {
+                return "DOST";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
+            Subtitle subtitle = new Subtitle();
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             foreach (string line in lines)
+            {
                 sb.AppendLine(line);
-            if (!sb.ToString().Contains(Environment.NewLine + "NO\tINTIME"))
-                return false;
-            if (!sb.ToString().Contains("$FORMAT"))
-                return false;
+            }
 
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            if (!sb.ToString().Contains(Environment.NewLine + "NO\tINTIME"))
+            {
+                return false;
+            }
+
+            if (!sb.ToString().Contains("$FORMAT"))
+            {
+                return false;
+            }
+
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
@@ -48,16 +67,16 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            //0001  01:25:59:21 01:26:00:20 0   0   BK02-total_0001.png 0   0
+            // 0001  01:25:59:21 01:26:00:20 0   0   BK02-total_0001.png 0   0
             Paragraph p = null;
             subtitle.Paragraphs.Clear();
-            _errorCount = 0;
+            this._errorCount = 0;
             foreach (string line in lines)
             {
                 string s = line;
                 if (regexTimeCodes.IsMatch(s))
                 {
-                    var temp = s.Split('\t');
+                    string[] temp = s.Split('\t');
                     if (temp.Length > 7)
                     {
                         string start = temp[1];
@@ -70,8 +89,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         }
                         catch (Exception exception)
                         {
-                            _errorCount++;
-                            System.Diagnostics.Debug.WriteLine(exception.Message);
+                            this._errorCount++;
+                            Debug.WriteLine(exception.Message);
                         }
                     }
                 }
@@ -83,7 +102,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     {
                         double f = frameRate / TimeCode.BaseUnit;
                         if (f > 10 && f < 500)
+                        {
                             Configuration.Settings.General.CurrentFrameRate = f;
+                        }
                     }
                 }
                 else if (string.IsNullOrWhiteSpace(line) || line.StartsWith('$'))
@@ -92,7 +113,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 }
                 else if (!string.IsNullOrWhiteSpace(line) && p != null)
                 {
-                    _errorCount++;
+                    this._errorCount++;
                 }
             }
 
@@ -101,7 +122,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         private static TimeCode DecodeTimeCode(string[] parts)
         {
-            //00:00:07:12
+            // 00:00:07:12
             string hour = parts[0];
             string minutes = parts[1];
             string seconds = parts[2];
@@ -110,6 +131,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             TimeCode tc = new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), FramesToMillisecondsMax999(int.Parse(frames)));
             return tc;
         }
-
     }
 }

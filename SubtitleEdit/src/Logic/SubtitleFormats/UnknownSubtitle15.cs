@@ -1,26 +1,37 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class UnknownSubtitle15 : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 15"; }
+            get
+            {
+                return "Unknown 15";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
@@ -30,34 +41,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return subtitle.Paragraphs.Count > 0;
         }
 
-        private static string ToTimeCode(TimeCode tc)
-        {
-            int last = (int)(tc.Milliseconds / 10.0D + 0.5D);
-            return tc.ToString().Substring(0, 8) + ":" + string.Format("{0:0#}", last);
-        }
-
-        private static TimeCode DecodeTimeCode(string s)
-        {
-            var parts = s.Split(new[] { ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
-            TimeCode tc = new TimeCode(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]) * 100);
-            return tc;
-        }
-
         public override string ToText(Subtitle subtitle, string title)
         {
-            //<page>
+            // <page>
             // <video>
-            //   <cuepoint>
-            //     <name>That's 123. That's the number one hundred twenty three.</name>
-            //     <startTime>00:00:04:67</startTime>
-            //     <endTime>00:00:07:50</endTime>
-            //   </cuepoint>
+            // <cuepoint>
+            // <name>That's 123. That's the number one hundred twenty three.</name>
+            // <startTime>00:00:04:67</startTime>
+            // <endTime>00:00:07:50</endTime>
+            // </cuepoint>
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<page><video/></page>";
 
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<page><video/></page>";
-
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
 
             int id = 1;
@@ -86,16 +81,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
             string allText = sb.ToString();
             if (!allText.Contains("<page") || !allText.Contains("<cuepoint"))
+            {
                 return;
+            }
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             try
             {
@@ -103,8 +100,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
-                _errorCount = 1;
+                Debug.WriteLine(exception.Message);
+                this._errorCount = 1;
                 return;
             }
 
@@ -119,12 +116,25 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
 
+        private static string ToTimeCode(TimeCode tc)
+        {
+            int last = (int)(tc.Milliseconds / 10.0D + 0.5D);
+            return tc.ToString().Substring(0, 8) + ":" + string.Format("{0:0#}", last);
+        }
+
+        private static TimeCode DecodeTimeCode(string s)
+        {
+            string[] parts = s.Split(new[] { ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
+            TimeCode tc = new TimeCode(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]) * 100);
+            return tc;
+        }
     }
 }

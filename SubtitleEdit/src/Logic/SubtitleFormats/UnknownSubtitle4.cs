@@ -1,84 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     public class UnknownSubtitle4 : SubtitleFormat
     {
-        private readonly static Regex regexTimeCodes = new Regex(@"^\d\d:\d\d:\d\d.\d+, \d\d:\d\d:\d\d.\d+$", RegexOptions.Compiled);
+        private static readonly Regex regexTimeCodes = new Regex(@"^\d\d:\d\d:\d\d.\d+, \d\d:\d\d:\d\d.\d+$", RegexOptions.Compiled);
 
         private enum ExpectingLine
         {
             TimeCodes,
+
             Text
         }
 
         public override string Extension
         {
-            get { return ".sub"; }
+            get
+            {
+                return ".sub";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 4"; }
+            get
+            {
+                return "Unknown 4";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
             const string paragraphWriteFormat = "{0:00}:{1:00}:{2:00}.{3:00}, {4:00}:{5:00}:{6:00}.{7:00}{8}{9}";
 
-            //00:00:07.00, 00:00:12.00
-            //Welche Auswirkung Mikroversicherungen auf unsere Klienten hat? Lassen wir sie für sich selber sprechen!
-            //
-            //00:00:22.00, 00:00:27.00
-            //Arme Menschen in Uganda leben oft in schlechten Unterkünften.
-
-            var sb = new StringBuilder();
+            // 00:00:07.00, 00:00:12.00
+            // Welche Auswirkung Mikroversicherungen auf unsere Klienten hat? Lassen wir sie für sich selber sprechen!
+            // 00:00:22.00, 00:00:27.00
+            // Arme Menschen in Uganda leben oft in schlechten Unterkünften.
+            StringBuilder sb = new StringBuilder();
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 string text = p.Text.Replace(Environment.NewLine, "|");
 
-                sb.AppendLine(string.Format(paragraphWriteFormat,
-                                        p.StartTime.Hours,
-                                        p.StartTime.Minutes,
-                                        p.StartTime.Seconds,
-                                        RoundTo2Cifres(p.StartTime.Milliseconds),
-                                        p.EndTime.Hours,
-                                        p.EndTime.Minutes,
-                                        p.EndTime.Seconds,
-                                        RoundTo2Cifres(p.EndTime.Milliseconds),
-                                        Environment.NewLine,
-                                        text));
+                sb.AppendLine(string.Format(paragraphWriteFormat, p.StartTime.Hours, p.StartTime.Minutes, p.StartTime.Seconds, RoundTo2Cifres(p.StartTime.Milliseconds), p.EndTime.Hours, p.EndTime.Minutes, p.EndTime.Seconds, RoundTo2Cifres(p.EndTime.Milliseconds), Environment.NewLine, text));
                 sb.AppendLine();
             }
-            return sb.ToString().Trim();
-        }
 
-        private static int RoundTo2Cifres(int milliseconds)
-        {
-            int rounded = (int)Math.Round((double)milliseconds / 10);
-            return rounded;
+            return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            var paragraph = new Paragraph();
+            Paragraph paragraph = new Paragraph();
             ExpectingLine expecting = ExpectingLine.TimeCodes;
-            _errorCount = 0;
+            this._errorCount = 0;
 
             subtitle.Paragraphs.Clear();
             char[] splitChars = { ':', ',', '.', ' ' };
@@ -137,7 +130,14 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     }
                 }
             }
+
             subtitle.Renumber();
+        }
+
+        private static int RoundTo2Cifres(int milliseconds)
+        {
+            int rounded = (int)Math.Round((double)milliseconds / 10);
+            return rounded;
         }
     }
 }

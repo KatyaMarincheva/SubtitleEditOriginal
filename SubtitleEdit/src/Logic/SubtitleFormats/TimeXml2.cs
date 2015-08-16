@@ -1,26 +1,37 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class TimeXml2 : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Xml 2"; }
+            get
+            {
+                return "Xml 2";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
@@ -32,9 +43,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<Subtitles/>";
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<Subtitles/>";
 
             XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
@@ -71,15 +80,17 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
-            var sb = new StringBuilder();
+            this._errorCount = 0;
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
-            var xmlString = sb.ToString();
+            string xmlString = sb.ToString();
             if (!xmlString.Contains("<Subtitles>") || !xmlString.Contains("<Text>") || !xmlString.Contains("<Duration>"))
+            {
                 return;
+            }
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             try
             {
@@ -87,7 +98,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch
             {
-                _errorCount = 1;
+                this._errorCount = 1;
                 return;
             }
 
@@ -102,25 +113,25 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
 
         private static TimeCode DecodeTimeCode(string p)
         {
-            var parts = p.Split(new[] { ';', '.', ':', ',' });
+            string[] parts = p.Split(';', '.', ':', ',');
 
             string hour = parts[0];
             string minutes = parts[1];
             string seconds = parts[2];
             string ms = parts[3];
 
-            TimeCode tc = new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), (int.Parse(ms)));
+            TimeCode tc = new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), int.Parse(ms));
             return tc;
         }
-
     }
 }

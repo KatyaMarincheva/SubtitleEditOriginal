@@ -1,11 +1,11 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Core;
 
     public class TMPlayer : SubtitleFormat
     {
@@ -13,23 +13,32 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override string Extension
         {
-            get { return ".txt"; }
+            get
+            {
+                return ".txt";
+            }
         }
 
         public override string Name
         {
-            get { return "TMPlayer"; }
+            get
+            {
+                return "TMPlayer";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
 
             if (subtitle.Paragraphs.Count > 4)
             {
@@ -42,37 +51,43 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         break;
                     }
                 }
+
                 if (allStartWithNumber)
+                {
                     return false;
+                }
             }
-            if (subtitle.Paragraphs.Count > _errorCount)
+
+            if (subtitle.Paragraphs.Count > this._errorCount)
             {
                 if (new UnknownSubtitle33().IsMine(lines, fileName) || new UnknownSubtitle36().IsMine(lines, fileName))
+                {
                     return false;
+                }
+
                 return true;
             }
+
             return false;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 string text = HtmlUtil.RemoveHtmlTags(p.Text);
                 text = text.Replace(Environment.NewLine, "|");
-                sb.AppendLine(string.Format("{0:00}:{1:00}:{2:00}:{3}", p.StartTime.Hours,
-                                                               p.StartTime.Minutes,
-                                                               p.StartTime.Seconds,
-                                                               text));
+                sb.AppendLine(string.Format("{0:00}:{1:00}:{2:00}:{3}", p.StartTime.Hours, p.StartTime.Minutes, p.StartTime.Seconds, text));
             }
+
             return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         { // 0:02:36:You've returned to the village|after 2 years, Shekhar.
             // 00:00:50:America has made my fortune.
-            _errorCount = 0;
+            this._errorCount = 0;
             foreach (string line in lines)
             {
                 bool success = false;
@@ -82,7 +97,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     {
                         string s = line;
                         if (line.Length > 9 && line[8] == ' ')
+                        {
                             s = line.Substring(0, 8) + ":" + line.Substring(9);
+                        }
+
                         string[] parts = s.Split(':');
                         if (parts.Length > 3)
                         {
@@ -93,27 +111,35 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             for (int i = 3; i < parts.Length; i++)
                             {
                                 if (text.Length == 0)
+                                {
                                     text = parts[i];
+                                }
                                 else
+                                {
                                     text += ":" + parts[i];
+                                }
                             }
-                            text = text.Replace("|", Environment.NewLine);
-                            var start = new TimeCode(hours, minutes, seconds, 0);
-                            double duration = Utilities.GetOptimalDisplayMilliseconds(text);
-                            var end = new TimeCode(start.TotalMilliseconds + duration);
 
-                            var p = new Paragraph(start, end, text);
+                            text = text.Replace("|", Environment.NewLine);
+                            TimeCode start = new TimeCode(hours, minutes, seconds, 0);
+                            double duration = Utilities.GetOptimalDisplayMilliseconds(text);
+                            TimeCode end = new TimeCode(start.TotalMilliseconds + duration);
+
+                            Paragraph p = new Paragraph(start, end, text);
                             subtitle.Paragraphs.Add(p);
                             success = true;
                         }
                     }
                     catch
                     {
-                        _errorCount++;
+                        this._errorCount++;
                     }
                 }
+
                 if (!success)
-                    _errorCount++;
+                {
+                    this._errorCount++;
+                }
             }
 
             int index = 0;
@@ -121,7 +147,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 Paragraph next = subtitle.GetParagraphOrDefault(index + 1);
                 if (next != null && next.StartTime.TotalMilliseconds <= p.EndTime.TotalMilliseconds)
+                {
                     p.EndTime.TotalMilliseconds = next.StartTime.TotalMilliseconds - 1;
+                }
 
                 index++;
                 p.Number = index;

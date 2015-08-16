@@ -1,36 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+
     public class TmpegEncText : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".subtitle"; }
+            get
+            {
+                return ".subtitle";
+            }
         }
 
         public override string Name
         {
-            get { return "Tmpeg Encoder Text"; }
+            get
+            {
+                return "Tmpeg Encoder Text";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.AppendLine(@"[LayoutData]
 'Picture bottom layout',4,Tahoma,0.069,17588159451135,0,0,0,0,1,2,0,1,0.00345,0
 'Picture top layout',4,Tahoma,0.1,17588159451135,0,0,0,0,1,0,0,1,0.005,0
@@ -50,26 +60,31 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 i++;
                 sb.AppendLine(string.Format("{0},1,\"{1}\",\"{2}\",0,\"{3}\"", i, p.StartTime, p.EndTime, p.Text.Replace(Environment.NewLine, "\\n").Replace("\"", string.Empty)));
             }
+
             return sb.ToString().Trim() + Environment.NewLine;
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            //1,1,"00:01:57,269","00:01:59,169",0,"These hills here are full of Apaches."
-
+            // 1,1,"00:01:57,269","00:01:59,169",0,"These hills here are full of Apaches."
             StringBuilder temp = new StringBuilder();
             foreach (string l in lines)
+            {
                 temp.Append(l);
+            }
+
             string all = temp.ToString();
             if (!all.Contains("[ItemData]"))
+            {
                 return;
+            }
 
-            _errorCount = 0;
+            this._errorCount = 0;
             subtitle.Paragraphs.Clear();
             for (int i = 0; i < lines.Count; i++)
             {
                 string line = lines[i].Trim();
-                var arr = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] arr = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 if (arr.Length >= 8 && Utilities.IsInteger(arr[0]) && Utilities.IsInteger(arr[1]))
                 {
                     Paragraph p = new Paragraph();
@@ -84,24 +99,24 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     }
                     catch (Exception exception)
                     {
-                        System.Diagnostics.Debug.WriteLine(exception.Message);
-                        _errorCount++;
+                        Debug.WriteLine(exception.Message);
+                        this._errorCount++;
                     }
                 }
             }
+
             subtitle.Renumber();
         }
 
         private static TimeCode GetTimeCode(string code)
         {
             code = code.Trim().Trim('"');
-            var arr = code.Split(new[] { ':', '.', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] arr = code.Split(new[] { ':', '.', ',' }, StringSplitOptions.RemoveEmptyEntries);
             int h = int.Parse(arr[0]);
             int m = int.Parse(arr[1]);
             int s = int.Parse(arr[2]);
             int ms = int.Parse(arr[3]);
             return new TimeCode(h, m, s, ms);
         }
-
     }
 }

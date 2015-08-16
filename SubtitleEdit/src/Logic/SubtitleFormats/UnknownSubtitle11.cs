@@ -1,36 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Core;
+
     /// <summary>
-    /// MicroDVD with time codes...?
+    ///     MicroDVD with time codes...?
     /// </summary>
     public class UnknownSubtitle11 : SubtitleFormat
     {
-        private static Regex _regexMicroDvdLine = new Regex(@"^\{-?\d+:\d+:\d+}\{-?\d+:\d+:\d+}.*$", RegexOptions.Compiled);
+        private static readonly Regex _regexMicroDvdLine = new Regex(@"^\{-?\d+:\d+:\d+}\{-?\d+:\d+:\d+}.*$", RegexOptions.Compiled);
 
         public override string Extension
         {
-            get { return ".sub"; }
+            get
+            {
+                return ".sub";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 11"; }
+            get
+            {
+                return "Unknown 11";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var trimmedLines = new List<string>();
+            List<string> trimmedLines = new List<string>();
             int errors = 0;
             foreach (string line in lines)
             {
@@ -38,9 +48,13 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     string s = RemoveIllegalSpacesAndFixEmptyCodes(line);
                     if (_regexMicroDvdLine.IsMatch(s))
+                    {
                         trimmedLines.Add(s);
+                    }
                     else
+                    {
                         errors++;
+                    }
                 }
                 else
                 {
@@ -51,39 +65,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return trimmedLines.Count > errors;
         }
 
-        private static string RemoveIllegalSpacesAndFixEmptyCodes(string line)
-        {
-            int index = line.IndexOf('}');
-            if (index >= 0 && index < line.Length)
-            {
-                index = line.IndexOf('}', index + 1);
-                if (index >= 0 && index + 1 < line.Length)
-                {
-                    var indexOfBrackets = line.IndexOf("{}", StringComparison.Ordinal);
-                    if (indexOfBrackets >= 0 && indexOfBrackets < index)
-                    {
-                        line = line.Insert(indexOfBrackets + 1, "0"); // set empty time codes to zero
-                        index++;
-                    }
-
-                    while (line.Contains(' ') && line.IndexOf(' ') < index)
-                    {
-                        line = line.Remove(line.IndexOf(' '), 1);
-                        index--;
-                    }
-                }
-            }
-            return line;
-        }
-
-        private static string MakeTimeCode(TimeCode tc)
-        {
-            return string.Format("{0}:{1:00}:{2:00}", tc.Hours, tc.Minutes, tc.Seconds);
-        }
-
         public override string ToText(Subtitle subtitle, string title)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 sb.Append('{');
@@ -92,10 +76,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 sb.Append(MakeTimeCode(p.EndTime));
                 sb.Append('}');
 
-                //{y:b} is italics for single line
-                //{Y:b} is italics for both lines
-
-                var parts = p.Text.SplitToLines();
+                // {y:b} is italics for single line
+                // {Y:b} is italics for both lines
+                string[] parts = p.Text.SplitToLines();
                 int count = 0;
                 bool italicOn = false;
                 bool boldOn = false;
@@ -104,7 +87,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 foreach (string line in parts)
                 {
                     if (count > 0)
+                    {
                         lineSb.Append('|');
+                    }
 
                     if (line.StartsWith("<i>") || italicOn)
                     {
@@ -129,39 +114,48 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     }
 
                     if (line.Contains("</i>"))
+                    {
                         italicOn = false;
+                    }
 
                     if (line.Contains("</b>"))
+                    {
                         boldOn = false;
+                    }
 
                     if (line.Contains("</u>"))
+                    {
                         underlineOn = false;
+                    }
 
                     lineSb.Append(HtmlUtil.RemoveHtmlTags(line));
                     count++;
                 }
+
                 string text = lineSb.ToString();
                 int noOfLines = Utilities.CountTagInText(text, '|') + 1;
                 if (noOfLines > 1 && Utilities.CountTagInText(text, "{y:i}") == noOfLines)
+                {
                     text = "{Y:i}" + text.Replace("{y:i}", string.Empty);
+                }
                 else if (noOfLines > 1 && Utilities.CountTagInText(text, "{y:b}") == noOfLines)
+                {
                     text = "{Y:b}" + text.Replace("{y:b}", string.Empty);
+                }
                 else if (noOfLines > 1 && Utilities.CountTagInText(text, "{y:u}") == noOfLines)
+                {
                     text = "{Y:u}" + text.Replace("{y:u}", string.Empty);
+                }
+
                 sb.AppendLine(HtmlUtil.RemoveHtmlTags(text));
             }
-            return sb.ToString().Trim();
-        }
 
-        private static TimeCode DecodeTimeCode(string timeCode)
-        {
-            string[] arr = timeCode.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-            return new TimeCode(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]), 0);
+            return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
             foreach (string line in lines)
             {
@@ -187,7 +181,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             foreach (string s2 in parts)
                             {
                                 if (count > 0)
+                                {
                                     lineSb.AppendLine();
+                                }
 
                                 s = s2.Trim();
                                 if (s.StartsWith("{Y:i}"))
@@ -217,24 +213,26 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                 {
                                     s = "<u>" + s.Replace("{y:u}", string.Empty) + "</u>";
                                 }
+
                                 s = s.Replace("{Y:i}", string.Empty).Replace("{y:i}", string.Empty);
                                 s = s.Replace("{Y:b}", string.Empty).Replace("{y:b}", string.Empty);
                                 s = s.Replace("{Y:u}", string.Empty).Replace("{y:u}", string.Empty);
                                 lineSb.Append(s);
                                 count++;
                             }
+
                             text = lineSb + post;
                             subtitle.Paragraphs.Add(new Paragraph(startTime, endTime, text));
                         }
                     }
                     catch
                     {
-                        _errorCount++;
+                        this._errorCount++;
                     }
                 }
                 else
                 {
-                    _errorCount++;
+                    this._errorCount++;
                 }
             }
 
@@ -246,14 +244,53 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     p.StartFrame = previous.EndFrame + 1;
                 }
+
                 if (p.EndFrame == 0)
                 {
                     p.EndFrame = p.StartFrame;
                 }
+
                 i++;
             }
 
             subtitle.Renumber();
+        }
+
+        private static string RemoveIllegalSpacesAndFixEmptyCodes(string line)
+        {
+            int index = line.IndexOf('}');
+            if (index >= 0 && index < line.Length)
+            {
+                index = line.IndexOf('}', index + 1);
+                if (index >= 0 && index + 1 < line.Length)
+                {
+                    int indexOfBrackets = line.IndexOf("{}", StringComparison.Ordinal);
+                    if (indexOfBrackets >= 0 && indexOfBrackets < index)
+                    {
+                        line = line.Insert(indexOfBrackets + 1, "0"); // set empty time codes to zero
+                        index++;
+                    }
+
+                    while (line.Contains(' ') && line.IndexOf(' ') < index)
+                    {
+                        line = line.Remove(line.IndexOf(' '), 1);
+                        index--;
+                    }
+                }
+            }
+
+            return line;
+        }
+
+        private static string MakeTimeCode(TimeCode tc)
+        {
+            return string.Format("{0}:{1:00}:{2:00}", tc.Hours, tc.Minutes, tc.Seconds);
+        }
+
+        private static TimeCode DecodeTimeCode(string timeCode)
+        {
+            string[] arr = timeCode.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+            return new TimeCode(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]), 0);
         }
 
         private static int GetTextStartIndex(string line)
@@ -263,10 +300,13 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             while (i < line.Length && tagCount < 4)
             {
                 if (line[i] == '{' || line[i] == '}')
+                {
                     tagCount++;
+                }
 
                 i++;
             }
+
             return i;
         }
     }

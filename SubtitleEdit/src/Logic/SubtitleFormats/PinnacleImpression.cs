@@ -1,41 +1,55 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class PinnacleImpression : SubtitleFormat
     {
-        private static Regex regexTimeCodes = new Regex(@"^\d\d:\d\d:\d\d:\d\d \d\d:\d\d:\d\d:\d\d ", RegexOptions.Compiled);
+        private static readonly Regex regexTimeCodes = new Regex(@"^\d\d:\d\d:\d\d:\d\d \d\d:\d\d:\d\d:\d\d ", RegexOptions.Compiled);
 
         public override string Extension
         {
-            get { return ".txt"; }
+            get
+            {
+                return ".txt";
+            }
         }
 
         public override string Name
         {
-            get { return "Pinnacle Impression"; }
+            get
+            {
+                return "Pinnacle Impression";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
+            Subtitle subtitle = new Subtitle();
             StringBuilder sb = new StringBuilder();
             foreach (string line in lines)
+            {
                 sb.AppendLine(line);
+            }
+
             if (sb.ToString().Contains("#INPOINT OUTPOINT PATH"))
             {
-                LoadSubtitle(subtitle, lines, fileName);
-                return subtitle.Paragraphs.Count > _errorCount;
+                this.LoadSubtitle(subtitle, lines, fileName);
+                return subtitle.Paragraphs.Count > this._errorCount;
             }
+
             return false;
         }
 
@@ -43,35 +57,29 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(@"-------------------------------------------------
-#INPOINT OUTPOINT PATH
--------------------------------------------------");
+                            #INPOINT OUTPOINT PATH
+                            -------------------------------------------------");
             int index = 0;
             foreach (Paragraph p in subtitle.Paragraphs)
             {
-                //00:03:15:22 00:03:23:10 This is line one.
-                //This is line two.
+                // 00:03:15:22 00:03:23:10 This is line one.
+                // This is line two.
                 sb.AppendLine(string.Format("{0} {1} {2}", EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), HtmlUtil.RemoveHtmlTags(p.Text)));
                 index++;
             }
+
             sb.AppendLine(@"-------------------------------------------------");
 
             return sb.ToString();
         }
 
-        private static string EncodeTimeCode(TimeCode time)
-        {
-            //00:03:15:22 (last is frame)
-            int frames = time.Milliseconds / (1000 / 30);
-            return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", time.Hours, time.Minutes, time.Seconds, frames);
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            //00:03:15:22 00:03:23:10 This is line one.
-            //This is line two.
+            // 00:03:15:22 00:03:23:10 This is line one.
+            // This is line two.
             Paragraph p = null;
             subtitle.Paragraphs.Clear();
-            _errorCount = 0;
+            this._errorCount = 0;
             foreach (string line in lines)
             {
                 if (regexTimeCodes.IsMatch(line))
@@ -96,18 +104,29 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 else if (!string.IsNullOrWhiteSpace(line) && p != null)
                 {
                     if (string.IsNullOrEmpty(p.Text))
+                    {
                         p.Text = line;
+                    }
                     else
+                    {
                         p.Text = p.Text + Environment.NewLine + line;
+                    }
                 }
             }
 
             subtitle.Renumber();
         }
 
+        private static string EncodeTimeCode(TimeCode time)
+        {
+            // 00:03:15:22 (last is frame)
+            int frames = time.Milliseconds / (1000 / 30);
+            return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", time.Hours, time.Minutes, time.Seconds, frames);
+        }
+
         private static TimeCode DecodeTimeCode(string[] parts)
         {
-            //00:00:07:12
+            // 00:00:07:12
             string hour = parts[0];
             string minutes = parts[1];
             string seconds = parts[2];
@@ -115,11 +134,12 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             int milliseconds = (int)((1000 / 30.0) * int.Parse(frames));
             if (milliseconds > 999)
+            {
                 milliseconds = 999;
+            }
 
             TimeCode tc = new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), milliseconds);
             return tc;
         }
-
     }
 }

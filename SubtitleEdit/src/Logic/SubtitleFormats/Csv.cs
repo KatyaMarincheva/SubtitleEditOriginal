@@ -1,29 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class Csv : SubtitleFormat
     {
         private const string Separator = ";";
+
         private static readonly Regex CsvLine = new Regex(@"^""?\d+""?" + Separator + @"""?\d+""?" + Separator + @"""?\d+""?" + Separator + @"""?[^""]*""?$", RegexOptions.Compiled);
 
         public override string Extension
         {
-            get { return ".csv"; }
+            get
+            {
+                return ".csv";
+            }
         }
 
         public override string Name
         {
-            get { return "Csv"; }
+            get
+            {
+                return "Csv";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
@@ -33,28 +44,34 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             foreach (string line in lines)
             {
                 if (CsvLine.IsMatch(line))
+                {
                     fine++;
+                }
                 else
+                {
                     failed++;
+                }
             }
+
             return fine > failed;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
             const string format = "{1}{0}{2}{0}{3}{0}\"{4}\"";
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.AppendLine(string.Format(format, Separator, "Number", "Start time in milliseconds", "End time in milliseconds", "Text"));
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 sb.AppendLine(string.Format(format, Separator, p.Number, p.StartTime.TotalMilliseconds, p.EndTime.TotalMilliseconds, p.Text.Replace(Environment.NewLine, "\n")));
             }
+
             return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
             bool continuation = false;
             Paragraph p = null;
             foreach (string line in lines)
@@ -63,6 +80,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     string[] parts = line.Split(Separator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length == 4)
+                    {
                         try
                         {
                             int start = Convert.ToInt32(Utilities.FixQuotes(parts[1]));
@@ -74,25 +92,29 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         }
                         catch
                         {
-                            _errorCount++;
+                            this._errorCount++;
                         }
+                    }
                 }
                 else
                 {
                     if (continuation)
                     {
                         if (p.Text.Length < 300)
+                        {
                             p.Text = (p.Text + Environment.NewLine + line.TrimEnd('"')).Trim();
+                        }
+
                         continuation = !line.TrimEnd().EndsWith('"');
                     }
                     else
                     {
-                        _errorCount++;
+                        this._errorCount++;
                     }
                 }
             }
+
             subtitle.Renumber();
         }
-
     }
 }

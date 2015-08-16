@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class SubViewer10 : SubtitleFormat
     {
         private static readonly Regex regexTimeCode = new Regex(@"^\[\d\d:\d\d:\d\d\]$", RegexOptions.Compiled);
@@ -13,40 +14,49 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
         private enum ExpectingLine
         {
             TimeStart,
+
             Text,
-            TimeEnd,
+
+            TimeEnd
         }
 
         public override string Extension
         {
-            get { return ".sub"; }
+            get
+            {
+                return ".sub";
+            }
         }
 
         public override string Name
         {
-            get { return "SubViewer 1.0"; }
+            get
+            {
+                return "SubViewer 1.0";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //[00:02:14]
-            //Yes a new line|Line number 2
-            //[00:02:15]
-            string paragraphWriteFormat = "[{0:00}:{1:00}:{2:00}]" + Environment.NewLine +
-                                          "{3}" + Environment.NewLine +
-                                          "[{4:00}:{5:00}:{6:00}]";
+            // [00:02:14]
+            // Yes a new line|Line number 2
+            // [00:02:15]
+            string paragraphWriteFormat = "[{0:00}:{1:00}:{2:00}]" + Environment.NewLine + "{3}" + Environment.NewLine + "[{4:00}:{5:00}:{6:00}]";
             const string header = @"[TITLE]
 {0}
 [AUTHOR]
@@ -63,31 +73,25 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             const string footer = @"[end]
 ******** END SCRIPT ********
 ";
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.AppendFormat(header, title);
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 string text = HtmlUtil.RemoveHtmlTags(p.Text.Replace(Environment.NewLine, "|"));
 
-                sb.AppendLine(string.Format(paragraphWriteFormat,
-                                        p.StartTime.Hours,
-                                        p.StartTime.Minutes,
-                                        p.StartTime.Seconds,
-                                        text,
-                                        p.EndTime.Hours,
-                                        p.EndTime.Minutes,
-                                        p.EndTime.Seconds));
+                sb.AppendLine(string.Format(paragraphWriteFormat, p.StartTime.Hours, p.StartTime.Minutes, p.StartTime.Seconds, text, p.EndTime.Hours, p.EndTime.Minutes, p.EndTime.Seconds));
                 sb.AppendLine();
             }
+
             sb.Append(footer);
             return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            var paragraph = new Paragraph();
+            Paragraph paragraph = new Paragraph();
             ExpectingLine expecting = ExpectingLine.TimeStart;
-            _errorCount = 0;
+            this._errorCount = 0;
 
             subtitle.Paragraphs.Clear();
             foreach (string line in lines)
@@ -102,7 +106,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             int startHours = int.Parse(parts[0]);
                             int startMinutes = int.Parse(parts[1]);
                             int startSeconds = int.Parse(parts[2]);
-                            var tc = new TimeCode(startHours, startMinutes, startSeconds, 0);
+                            TimeCode tc = new TimeCode(startHours, startMinutes, startSeconds, 0);
                             if (expecting == ExpectingLine.TimeStart)
                             {
                                 paragraph = new Paragraph();
@@ -119,7 +123,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         }
                         catch
                         {
-                            _errorCount++;
+                            this._errorCount++;
                             expecting = ExpectingLine.TimeStart;
                         }
                     }
@@ -137,6 +141,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     }
                 }
             }
+
             subtitle.Renumber();
         }
     }

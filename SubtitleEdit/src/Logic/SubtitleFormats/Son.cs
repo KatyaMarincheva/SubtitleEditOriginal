@@ -1,38 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class Son : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".son"; }
+            get
+            {
+                return ".son";
+            }
         }
 
         public override string Name
         {
-            get { return "SON"; }
+            get
+            {
+                return "SON";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
+            Subtitle subtitle = new Subtitle();
 
             StringBuilder sb = new StringBuilder();
             foreach (string line in lines)
+            {
                 sb.AppendLine(line);
+            }
 
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
@@ -44,22 +56,17 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 sb.AppendLine(string.Format("{0:0000}\t{1}\t{2}\t{3}", index + 1, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), HtmlUtil.RemoveHtmlTags(p.Text).Replace(Environment.NewLine, "\t")));
                 index++;
             }
-            return sb.ToString();
-        }
 
-        private static string EncodeTimeCode(TimeCode time)
-        {
-            //00:03:15:22 (last is frame)
-            return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", time.Hours, time.Minutes, time.Seconds, MillisecondsToFramesMaxFrameRate(time.Milliseconds));
+            return sb.ToString();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            //0001  00:00:19:13 00:00:22:10 a_0001.tif
+            // 0001  00:00:19:13 00:00:22:10 a_0001.tif
             Paragraph p = null;
             subtitle.Paragraphs.Clear();
-            _errorCount = 0;
-            var regexTimeCodes = new Regex(@"^\d\d\d\d[\t]+\d\d:\d\d:\d\d:\d\d\t\d\d:\d\d:\d\d:\d\d\t.+\.(tif|tiff|png|bmp|TIF|TIFF|PNG|BMP)", RegexOptions.Compiled);
+            this._errorCount = 0;
+            Regex regexTimeCodes = new Regex(@"^\d\d\d\d[\t]+\d\d:\d\d:\d\d:\d\d\t\d\d:\d\d:\d\d:\d\d\t.+\.(tif|tiff|png|bmp|TIF|TIFF|PNG|BMP)", RegexOptions.Compiled);
             int index = 0;
             foreach (string line in lines)
             {
@@ -76,7 +83,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         int lastIndexOfTab = line.LastIndexOf('\t');
                         string text = line.Remove(0, lastIndexOfTab + 1).Trim();
                         if (!text.Contains(Environment.NewLine))
+                        {
                             text = text.Replace("\t", Environment.NewLine);
+                        }
+
                         p = new Paragraph(DecodeTimeCode(startParts), DecodeTimeCode(endParts), text);
                         subtitle.Paragraphs.Add(p);
                     }
@@ -87,16 +97,24 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 }
                 else if (p != null)
                 {
-                    _errorCount++;
+                    this._errorCount++;
                 }
+
                 index++;
             }
+
             subtitle.Renumber();
+        }
+
+        private static string EncodeTimeCode(TimeCode time)
+        {
+            // 00:03:15:22 (last is frame)
+            return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", time.Hours, time.Minutes, time.Seconds, MillisecondsToFramesMaxFrameRate(time.Milliseconds));
         }
 
         private static TimeCode DecodeTimeCode(string[] parts)
         {
-            //00:00:07:12
+            // 00:00:07:12
             string hour = parts[0];
             string minutes = parts[1];
             string seconds = parts[2];
@@ -105,6 +123,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             TimeCode tc = new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), FramesToMillisecondsMax999(int.Parse(frames)));
             return tc;
         }
-
     }
 }

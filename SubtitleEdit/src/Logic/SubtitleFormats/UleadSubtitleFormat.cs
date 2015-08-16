@@ -1,36 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Core;
 
     public class UleadSubtitleFormat : SubtitleFormat
     {
-        private static Regex regexTimeCodes = new Regex(@"^#\d+ \d\d;\d\d;\d\d;\d\d \d\d;\d\d;\d\d;\d\d", RegexOptions.Compiled);
+        private static readonly Regex regexTimeCodes = new Regex(@"^#\d+ \d\d;\d\d;\d\d;\d\d \d\d;\d\d;\d\d;\d\d", RegexOptions.Compiled);
 
         public override string Extension
         {
-            get { return ".txt"; }
+            get
+            {
+                return ".txt";
+            }
         }
 
         public override string Name
         {
-            get { return "Ulead subtitle format"; }
+            get
+            {
+                return "Ulead subtitle format";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
@@ -53,32 +62,26 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             int index = 0;
             foreach (Paragraph p in subtitle.Paragraphs)
             {
-                //#3 00;04;26;04 00;04;27;05
-                //How much in there? -
-                //Three...
+                // #3 00;04;26;04 00;04;27;05
+                // How much in there? -
+                // Three...
                 sb.AppendLine(string.Format("#{0} {1} {2}", index, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime)));
                 sb.AppendLine(HtmlUtil.RemoveHtmlTags(p.Text));
                 index++;
             }
+
             sb.AppendLine(string.Format(Footer, subtitle.Paragraphs.Count));
             return sb.ToString();
         }
 
-        private static string EncodeTimeCode(TimeCode time)
-        {
-            //00;04;27;05
-            int frames = time.Milliseconds / (1000 / 25);
-            return string.Format("{0:00};{1:00};{2:00};{3:00}", time.Hours, time.Minutes, time.Seconds, frames);
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            //#3 00;04;26;04 00;04;27;05
-            //How much in there? -
-            //Three...
+            // #3 00;04;26;04 00;04;27;05
+            // How much in there? -
+            // Three...
             Paragraph p = null;
             subtitle.Paragraphs.Clear();
-            _errorCount = 0;
+            this._errorCount = 0;
             foreach (string l2 in lines)
             {
                 string line = l2.TrimEnd('ഀ');
@@ -96,7 +99,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         }
                         catch
                         {
-                            _errorCount++;
+                            this._errorCount++;
                         }
                     }
                 }
@@ -107,22 +110,33 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 else if (p != null)
                 {
                     if (string.IsNullOrEmpty(p.Text))
+                    {
                         p.Text = line.TrimEnd();
+                    }
                     else
+                    {
                         p.Text = p.Text + Environment.NewLine + line.TrimEnd();
+                    }
                 }
                 else
                 {
-                    _errorCount++;
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
+        }
+
+        private static string EncodeTimeCode(TimeCode time)
+        {
+            // 00;04;27;05
+            int frames = time.Milliseconds / (1000 / 25);
+            return string.Format("{0:00};{1:00};{2:00};{3:00}", time.Hours, time.Minutes, time.Seconds, frames);
         }
 
         private static TimeCode DecodeTimeCode(string time)
         {
-            //00;04;26;04
-
+            // 00;04;26;04
             string hour = time.Substring(0, 2);
             string minutes = time.Substring(3, 2);
             string seconds = time.Substring(6, 2);
@@ -130,11 +144,12 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             int milliseconds = (int)((1000 / 25.0) * int.Parse(frames));
             if (milliseconds > 999)
+            {
                 milliseconds = 999;
+            }
 
             TimeCode tc = new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), milliseconds);
             return tc;
         }
-
     }
 }

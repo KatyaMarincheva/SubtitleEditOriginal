@@ -1,38 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class Json : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".json"; }
+            get
+            {
+                return ".json";
+            }
         }
 
         public override string Name
         {
-            get { return "JSON"; }
+            get
+            {
+                return "JSON";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
-        }
-
-        public override bool IsMine(List<string> lines, string fileName)
-        {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            get
+            {
+                return true;
+            }
         }
 
         public static string EncodeJsonText(string text)
         {
-            var sb = new StringBuilder();
-            foreach (var c in text)
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in text)
             {
                 if (c == '"')
                 {
@@ -47,18 +51,19 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     sb.Append(c);
                 }
             }
+
             return sb.ToString().Replace(Environment.NewLine, "<br />");
         }
 
         public static string DecodeJsonText(string text)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             text = text.Replace("<br />", Environment.NewLine);
             text = text.Replace("<br>", Environment.NewLine);
             text = text.Replace("<br/>", Environment.NewLine);
             text = text.Replace("\\n", Environment.NewLine);
             bool keepNext = false;
-            foreach (var c in text)
+            foreach (char c in text)
             {
                 if (c == '\\' && !keepNext)
                 {
@@ -70,66 +75,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     keepNext = false;
                 }
             }
+
             return sb.ToString();
-        }
-
-        public override string ToText(Subtitle subtitle, string title)
-        {
-            var sb = new StringBuilder(@"[");
-            int count = 0;
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                if (count > 0)
-                    sb.Append(',');
-                sb.Append("{\"start\":");
-                sb.Append(p.StartTime.TotalSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                sb.Append(",\"end\":");
-                sb.Append(p.EndTime.TotalSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                sb.Append(",\"text\":\"");
-                sb.Append(EncodeJsonText(p.Text));
-                sb.Append("\"}");
-                count++;
-            }
-            sb.Append(']');
-            return sb.ToString().Trim();
-        }
-
-        public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
-        {
-            _errorCount = 0;
-
-            var sb = new StringBuilder();
-            foreach (string s in lines)
-                sb.Append(s);
-            if (!sb.ToString().TrimStart().StartsWith("[{\"start"))
-                return;
-
-            foreach (string line in sb.ToString().Replace("},{", Environment.NewLine).SplitToLines())
-            {
-                string s = line.Trim() + "}";
-                string start = ReadTag(s, "start");
-                string end = ReadTag(s, "end");
-                string text = ReadTag(s, "text");
-                if (start != null && end != null && text != null)
-                {
-                    double startSeconds;
-                    double endSeconds;
-                    if (double.TryParse(start, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out startSeconds) &&
-                        double.TryParse(end, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out endSeconds))
-                    {
-                        subtitle.Paragraphs.Add(new Paragraph(DecodeJsonText(text), startSeconds * TimeCode.BaseUnit, endSeconds * TimeCode.BaseUnit));
-                    }
-                    else
-                    {
-                        _errorCount++;
-                    }
-                }
-                else
-                {
-                    _errorCount++;
-                }
-            }
-            subtitle.Renumber();
         }
 
         public static string ConvertJsonSpecialCharacters(string s)
@@ -138,52 +85,74 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 for (int i = 33; i < 200; i++)
                 {
-                    var tag = "\\u" + i.ToString("x4");
+                    string tag = "\\u" + i.ToString("x4");
                     if (s.Contains(tag))
+                    {
                         s = s.Replace(tag, Convert.ToChar(i).ToString());
+                    }
                 }
             }
+
             return s;
         }
 
         public static string ReadTag(string s, string tag)
         {
-            var startIndex = s.IndexOfAny(new[] { "\"" + tag + "\"", "'" + tag + "'" }, StringComparison.Ordinal);
+            int startIndex = s.IndexOfAny(new[] { "\"" + tag + "\"", "'" + tag + "'" }, StringComparison.Ordinal);
             if (startIndex < 0)
+            {
                 return null;
-            var res = s.Substring(startIndex + 3 + tag.Length).Trim().TrimStart(':').TrimStart();
+            }
+
+            string res = s.Substring(startIndex + 3 + tag.Length).Trim().TrimStart(':').TrimStart();
             if (res.StartsWith('"'))
             { // text
-                res = Json.ConvertJsonSpecialCharacters(res);
+                res = ConvertJsonSpecialCharacters(res);
                 res = res.Replace("\\\"", "@__1");
                 int endIndex = res.IndexOf("\"}", StringComparison.Ordinal);
                 int endAlternate = res.IndexOf("\",", StringComparison.Ordinal);
                 if (endIndex < 0)
+                {
                     endIndex = endAlternate;
+                }
                 else if (endAlternate > 0 && endAlternate < endIndex)
+                {
                     endIndex = endAlternate;
+                }
+
                 if (endIndex < 0)
+                {
                     return null;
+                }
+
                 if (res.Length > 1)
+                {
                     return res.Substring(1, endIndex - 1).Replace("@__1", "\\\"");
+                }
+
                 return string.Empty;
             }
             else
             { // number
-                var endIndex = res.IndexOfAny(new[] { ',', '}' });
+                int endIndex = res.IndexOfAny(new[] { ',', '}' });
                 if (endIndex < 0)
+                {
                     return null;
+                }
+
                 return res.Substring(0, endIndex);
             }
         }
 
         public static List<string> ReadArray(string s, string tag)
         {
-            var list = new List<string>();
+            List<string> list = new List<string>();
 
-            var startIndex = s.IndexOfAny(new[] { "\"" + tag + "\"", "'" + tag + "'" }, StringComparison.Ordinal);
+            int startIndex = s.IndexOfAny(new[] { "\"" + tag + "\"", "'" + tag + "'" }, StringComparison.Ordinal);
             if (startIndex < 0)
+            {
                 return list;
+            }
 
             startIndex += tag.Length + 4;
 
@@ -199,7 +168,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     nextTag = res.IndexOf('"', oldStart + 1);
 
                     while (nextTag > 0 && nextTag + 1 < res.Length && res[nextTag - 1] == '\\')
+                    {
                         nextTag = res.IndexOf('"', nextTag + 1);
+                    }
 
                     if (nextTag > 0)
                     {
@@ -219,6 +190,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             newValue = newValue.TrimEnd(']');
                             tagLevel = -10; // return
                         }
+
                         list.Add(newValue.Trim());
                         oldStart = nextTag + 1;
                     }
@@ -241,18 +213,97 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             string newValue = res.Substring(oldStart, nextTag - oldStart);
                             list.Add(newValue);
                             if (res[nextTag] == ']')
+                            {
                                 tagLevel--;
+                            }
+
                             oldStart = nextTag + 1;
                         }
                     }
                 }
             }
+
             return list;
+        }
+
+        public override bool IsMine(List<string> lines, string fileName)
+        {
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
+        }
+
+        public override string ToText(Subtitle subtitle, string title)
+        {
+            StringBuilder sb = new StringBuilder(@"[");
+            int count = 0;
+            foreach (Paragraph p in subtitle.Paragraphs)
+            {
+                if (count > 0)
+                {
+                    sb.Append(',');
+                }
+
+                sb.Append("{\"start\":");
+                sb.Append(p.StartTime.TotalSeconds.ToString(CultureInfo.InvariantCulture));
+                sb.Append(",\"end\":");
+                sb.Append(p.EndTime.TotalSeconds.ToString(CultureInfo.InvariantCulture));
+                sb.Append(",\"text\":\"");
+                sb.Append(EncodeJsonText(p.Text));
+                sb.Append("\"}");
+                count++;
+            }
+
+            sb.Append(']');
+            return sb.ToString().Trim();
+        }
+
+        public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
+        {
+            this._errorCount = 0;
+
+            StringBuilder sb = new StringBuilder();
+            foreach (string s in lines)
+            {
+                sb.Append(s);
+            }
+
+            if (!sb.ToString().TrimStart().StartsWith("[{\"start"))
+            {
+                return;
+            }
+
+            foreach (string line in sb.ToString().Replace("},{", Environment.NewLine).SplitToLines())
+            {
+                string s = line.Trim() + "}";
+                string start = ReadTag(s, "start");
+                string end = ReadTag(s, "end");
+                string text = ReadTag(s, "text");
+                if (start != null && end != null && text != null)
+                {
+                    double startSeconds;
+                    double endSeconds;
+                    if (double.TryParse(start, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out startSeconds) && double.TryParse(end, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out endSeconds))
+                    {
+                        subtitle.Paragraphs.Add(new Paragraph(DecodeJsonText(text), startSeconds * TimeCode.BaseUnit, endSeconds * TimeCode.BaseUnit));
+                    }
+                    else
+                    {
+                        this._errorCount++;
+                    }
+                }
+                else
+                {
+                    this._errorCount++;
+                }
+            }
+
+            subtitle.Renumber();
         }
 
         internal static List<string> ReadArray(string text)
         {
-            var list = new List<string>();
+            List<string> list = new List<string>();
             text = text.Trim();
             if (text.StartsWith('[') && text.EndsWith(']'))
             {
@@ -265,8 +316,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 text = text.Replace("\\n", Environment.NewLine);
 
                 bool keepNext = false;
-                var sb = new StringBuilder();
-                foreach (var c in text)
+                StringBuilder sb = new StringBuilder();
+                foreach (char c in text)
                 {
                     if (c == '\\' && !keepNext)
                     {
@@ -283,11 +334,14 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         keepNext = false;
                     }
                 }
+
                 if (sb.Length > 0)
+                {
                     list.Add(sb.ToString());
+                }
             }
+
             return list;
         }
-
     }
 }

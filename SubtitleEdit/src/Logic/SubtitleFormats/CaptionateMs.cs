@@ -1,57 +1,68 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class CaptionateMs : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Captionate MS"; }
+            get
+            {
+                return "Captionate MS";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
             return subtitle.Paragraphs.Count > 0;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
             const string xmlStructure = @"<captionate>
-<timeformat>ms</timeformat>
-<namesareprefixed>namesareprefixed</namesareprefixed>
-<captioninfo>
-<trackinfo>
-<track>
-<displayname>Default</displayname>
-<type/>
-<languagecode/>
-<targetwpm>140</targetwpm>
-<stringdata/>
-</track>
-</trackinfo>
-<speakerinfo>
-</speakerinfo>
-</captioninfo>
-<captions></captions></captionate>";
+                                        <timeformat>ms</timeformat>
+                                        <namesareprefixed>namesareprefixed</namesareprefixed>
+                                        <captioninfo>
+                                        <trackinfo>
+                                        <track>
+                                        <displayname>Default</displayname>
+                                        <type/>
+                                        <languagecode/>
+                                        <targetwpm>140</targetwpm>
+                                        <stringdata/>
+                                        </track>
+                                        </trackinfo>
+                                        <speakerinfo>
+                                        </speakerinfo>
+                                        </captioninfo>
+                                        <captions></captions></captionate>";
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
 
             Paragraph last = null;
@@ -61,7 +72,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     if (last.EndTime.TotalMilliseconds + 500 < p.StartTime.TotalMilliseconds)
                     {
-                        var blank = new Paragraph();
+                        Paragraph blank = new Paragraph();
                         blank.StartTime.TotalMilliseconds = last.EndTime.TotalMilliseconds;
                         AddParagraph(xml, blank);
                     }
@@ -72,6 +83,68 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
 
             return ToUtf8XmlString(xml, true);
+        }
+
+        public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
+        {
+            this._errorCount = 0;
+
+            StringBuilder sb = new StringBuilder();
+            lines.ForEach(line => sb.AppendLine(line));
+
+            string xmlString = sb.ToString();
+            if (!xmlString.Contains("<captionate>") || !xmlString.Contains("</caption>"))
+            {
+                return;
+            }
+
+            XmlDocument xml = new XmlDocument();
+            xml.XmlResolver = null;
+            try
+            {
+                xml.LoadXml(xmlString);
+            }
+            catch
+            {
+                this._errorCount = 1;
+                return;
+            }
+
+            Paragraph p = null;
+            foreach (XmlNode node in xml.DocumentElement.SelectNodes("captions/caption"))
+            {
+                try
+                {
+                    if (node.Attributes["time"] != null)
+                    {
+                        string start = node.Attributes["time"].InnerText;
+                        double startMilliseconds = double.Parse(start);
+                        if (p != null)
+                        {
+                            p.EndTime.TotalMilliseconds = startMilliseconds - 1;
+                        }
+
+                        if (node.SelectSingleNode("tracks/track0") != null)
+                        {
+                            string text = node.SelectSingleNode("tracks/track0").InnerText;
+                            text = HtmlUtil.RemoveHtmlTags(text);
+                            text = text.Replace("<br>", Environment.NewLine).Replace("<br />", Environment.NewLine).Replace("<BR>", Environment.NewLine);
+                            p = new Paragraph(text, startMilliseconds, startMilliseconds + 3000);
+                            if (!string.IsNullOrWhiteSpace(text))
+                            {
+                                subtitle.Paragraphs.Add(p);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
+                }
+            }
+
+            subtitle.Renumber();
         }
 
         private static void AddParagraph(XmlDocument xml, Paragraph p)
@@ -92,67 +165,13 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 track0.InnerXml = track0.InnerXml.Replace(Environment.NewLine, "<br />");
                 tracks.AppendChild(track0);
             }
+
             xml.DocumentElement.SelectSingleNode("captions").AppendChild(paragraph);
-        }
-
-        public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
-        {
-            _errorCount = 0;
-
-            var sb = new StringBuilder();
-            lines.ForEach(line => sb.AppendLine(line));
-
-            string xmlString = sb.ToString();
-            if (!xmlString.Contains("<captionate>") || !xmlString.Contains("</caption>"))
-                return;
-
-            var xml = new XmlDocument();
-            xml.XmlResolver = null;
-            try
-            {
-                xml.LoadXml(xmlString);
-            }
-            catch
-            {
-                _errorCount = 1;
-                return;
-            }
-
-            Paragraph p = null;
-            foreach (XmlNode node in xml.DocumentElement.SelectNodes("captions/caption"))
-            {
-                try
-                {
-                    if (node.Attributes["time"] != null)
-                    {
-                        string start = node.Attributes["time"].InnerText;
-                        double startMilliseconds = double.Parse(start);
-                        if (p != null)
-                            p.EndTime.TotalMilliseconds = startMilliseconds - 1;
-                        if (node.SelectSingleNode("tracks/track0") != null)
-                        {
-                            string text = node.SelectSingleNode("tracks/track0").InnerText;
-                            text = HtmlUtil.RemoveHtmlTags(text);
-                            text = text.Replace("<br>", Environment.NewLine).Replace("<br />", Environment.NewLine).Replace("<BR>", Environment.NewLine);
-                            p = new Paragraph(text, startMilliseconds, startMilliseconds + 3000);
-                            if (!string.IsNullOrWhiteSpace(text))
-                                subtitle.Paragraphs.Add(p);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
-                }
-            }
-            subtitle.Renumber();
         }
 
         private static string EncodeTime(TimeCode time)
         {
             return time.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
         }
-
     }
 }

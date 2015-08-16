@@ -1,84 +1,91 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class QuickTimeText : SubtitleFormat
     {
         private static readonly Regex regexTimeCodes = new Regex(@"^\[\d\d:\d\d:\d\d.\d\d\]", RegexOptions.Compiled);
 
         public override string Extension
         {
-            get { return ".txt"; }
+            get
+            {
+                return ".txt";
+            }
         }
 
         public override string Name
         {
-            get { return "QuickTime text"; }
+            get
+            {
+                return "QuickTime text";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (lines != null && lines.Count > 0 && lines[0].StartsWith("{\\rtf", StringComparison.Ordinal))
+            {
                 return false;
+            }
 
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
             const string Header = @"{QTtext} {font:Tahoma}
-{plain} {size:20}
-{timeScale:30}
-{width:160} {height:32}
-{timestamps:absolute} {language:0}";
+                                    {plain} {size:20}
+                                    {timeScale:30}
+                                    {width:160} {height:32}
+                                    {timestamps:absolute} {language:0}";
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.AppendLine(Header);
             int index = 0;
             foreach (Paragraph p in subtitle.Paragraphs)
             {
-                //[00:00:07.12]
-                //d’être perdu dans un brouillard de pensées,
-                //[00:00:17.06] (this line is optional!)
-                //              (blank line optional too)
-                //[00:00:26.26]
-                //tout le temps,
-                //[00:00:35.08]
+                // [00:00:07.12]
+                // d’être perdu dans un brouillard de pensées,
+                // [00:00:17.06] (this line is optional!)
+                // (blank line optional too)
+                // [00:00:26.26]
+                // tout le temps,
+                // [00:00:35.08]
                 sb.AppendLine(string.Format("{0}{1}{2}", EncodeTimeCode(p.StartTime) + Environment.NewLine, HtmlUtil.RemoveHtmlTags(p.Text) + Environment.NewLine, EncodeTimeCode(p.EndTime) + Environment.NewLine));
                 index++;
             }
-            return sb.ToString();
-        }
 
-        private static string EncodeTimeCode(TimeCode time)
-        {
-            //[00:00:07.12]
-            return string.Format("[{0:00}:{1:00}:{2:00}.{3:00}]", time.Hours, time.Minutes, time.Seconds, MillisecondsToFramesMaxFrameRate(time.Milliseconds));
+            return sb.ToString();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            //[00:00:07.12]
-            //d’être perdu dans un brouillard de pensées,
-            //[00:00:17.06] (this line is optional!)
-            //              (blank line optional too)
-            //[00:00:26.26]
-            //tout le temps,
-            //[00:00:35.08]
+            // [00:00:07.12]
+            // d’être perdu dans un brouillard de pensées,
+            // [00:00:17.06] (this line is optional!)
+            // (blank line optional too)
+            // [00:00:26.26]
+            // tout le temps,
+            // [00:00:35.08]
             Paragraph p = null;
             subtitle.Paragraphs.Clear();
-            _errorCount = 0;
+            this._errorCount = 0;
             foreach (string line in lines)
             {
                 if (regexTimeCodes.IsMatch(line))
@@ -94,12 +101,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                 string text = string.Empty;
                                 int indexOfEndTime = line.IndexOf(']');
                                 if (indexOfEndTime > 0 && indexOfEndTime + 1 < line.Length)
+                                {
                                     text = line.Substring(indexOfEndTime + 1);
+                                }
+
                                 p = new Paragraph(DecodeTimeCode(parts), DecodeTimeCode(parts), text);
                             }
                             catch
                             {
-                                _errorCount++;
+                                this._errorCount++;
                             }
                         }
                         else
@@ -110,7 +120,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             string text = string.Empty;
                             int indexOfEndTime = line.IndexOf(']');
                             if (indexOfEndTime > 0 && indexOfEndTime + 1 < line.Length)
+                            {
                                 text = line.Substring(indexOfEndTime + 1);
+                            }
+
                             p = new Paragraph(DecodeTimeCode(parts), DecodeTimeCode(parts), text);
                         }
                     }
@@ -122,22 +135,32 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 else if (p != null)
                 {
                     if (string.IsNullOrEmpty(p.Text))
+                    {
                         p.Text = line;
+                    }
                     else
+                    {
                         p.Text = p.Text + Environment.NewLine + line;
+                    }
                 }
                 else
                 {
-                    _errorCount++;
+                    this._errorCount++;
                 }
             }
 
             subtitle.Renumber();
         }
 
+        private static string EncodeTimeCode(TimeCode time)
+        {
+            // [00:00:07.12]
+            return string.Format("[{0:00}:{1:00}:{2:00}.{3:00}]", time.Hours, time.Minutes, time.Seconds, MillisecondsToFramesMaxFrameRate(time.Milliseconds));
+        }
+
         private static TimeCode DecodeTimeCode(string[] parts)
         {
-            //[00:00:07.12]
+            // [00:00:07.12]
             string hour = parts[0];
             string minutes = parts[1];
             string seconds = parts[2];
@@ -146,6 +169,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             TimeCode tc = new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), FramesToMillisecondsMax999(int.Parse(frames)));
             return tc;
         }
-
     }
 }

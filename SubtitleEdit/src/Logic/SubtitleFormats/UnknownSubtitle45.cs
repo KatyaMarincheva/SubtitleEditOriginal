@@ -1,45 +1,59 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class UnknownSubtitle45 : SubtitleFormat
     {
-        //*         00001.00-00003.00 02.01 00.0 1 0001 00 16-090-090
-        //*         00138.10-00143.05 00.00 00.0 1 0003 00 16-090-090
-        private static Regex regexTimeCodes = new Regex(@"^\*\s+\d\d\d\d\d\.\d\d-\d\d\d\d\d\.\d\d \d\d.\d\d \d\d.\d\ \d \d\d\d\d \d\d \d\d-\d\d\d-\d\d\d$", RegexOptions.Compiled);
+        // *         00001.00-00003.00 02.01 00.0 1 0001 00 16-090-090
+        // *         00138.10-00143.05 00.00 00.0 1 0003 00 16-090-090
+        private static readonly Regex regexTimeCodes = new Regex(@"^\*\s+\d\d\d\d\d\.\d\d-\d\d\d\d\d\.\d\d \d\d.\d\d \d\d.\d\ \d \d\d\d\d \d\d \d\d-\d\d\d-\d\d\d$", RegexOptions.Compiled);
 
         public override string Extension
         {
-            get { return ".rtf"; }
+            get
+            {
+                return ".rtf";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 45"; }
+            get
+            {
+                return "Unknown 45";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            if (fileName != null && !fileName.EndsWith(Extension, StringComparison.OrdinalIgnoreCase))
+            if (fileName != null && !fileName.EndsWith(this.Extension, StringComparison.OrdinalIgnoreCase))
+            {
                 return false;
+            }
 
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.AppendLine(@"0 2 1.0 1.0 3.0 048 0400 0040 0500 100 100 0 100 0 6600 6600 01
 CRULIC R1
 ST 0 EB 3.10
@@ -48,41 +62,41 @@ ST 0 EB 3.10
             int index = 0;
             foreach (Paragraph p in subtitle.Paragraphs)
             {
-                //1 00:50:34:22 00:50:39:13
-                //Ich muss dafür sorgen,
-                //dass die Epsteins weiterleben
+                // 1 00:50:34:22 00:50:39:13
+                // Ich muss dafür sorgen,
+                // dass die Epsteins weiterleben
                 index++;
                 sb.AppendLine(string.Format("*         {0}-{1} 00.00 00.0 1 {2} 00 16-090-090{3}{4}{3}@", EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), index.ToString().PadLeft(4, '0'), Environment.NewLine, HtmlUtil.RemoveHtmlTags(p.Text)));
             }
-            System.Windows.Forms.RichTextBox rtBox = new System.Windows.Forms.RichTextBox();
+
+            RichTextBox rtBox = new RichTextBox();
             rtBox.Text = sb.ToString();
             string rtf = rtBox.Rtf;
             rtBox.Dispose();
             return rtf;
         }
 
-        private static string EncodeTimeCode(TimeCode time)
-        {
-            return string.Format("{0:00000}.{1:00}", time.TotalSeconds, MillisecondsToFramesMaxFrameRate(time.Milliseconds));
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            //*         00001.00-00003.00 02.01 00.0 1 0001 00 16-090-090
-            //CRULIC R1
-            //pour Bobi
-            //@
-            _errorCount = 0;
-            var sb = new StringBuilder();
+            // *         00001.00-00003.00 02.01 00.0 1 0001 00 16-090-090
+            // CRULIC R1
+            // pour Bobi
+            // @
+            this._errorCount = 0;
+            StringBuilder sb = new StringBuilder();
             foreach (string line in lines)
+            {
                 sb.AppendLine(line);
+            }
 
             string rtf = sb.ToString().Trim();
             if (!rtf.StartsWith("{\\rtf"))
+            {
                 return;
+            }
 
             string[] arr = null;
-            var rtBox = new System.Windows.Forms.RichTextBox();
+            RichTextBox rtBox = new RichTextBox();
             try
             {
                 rtBox.Rtf = rtf;
@@ -90,7 +104,7 @@ ST 0 EB 3.10
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
+                Debug.WriteLine(exception.Message);
                 return;
             }
             finally
@@ -126,24 +140,36 @@ ST 0 EB 3.10
                 else if (!string.IsNullOrWhiteSpace(line) && p != null)
                 {
                     if (p.Text.Length > 2000)
+                    {
                         return; // wrong format
-                    else if (string.IsNullOrEmpty(p.Text))
+                    }
+
+                    if (string.IsNullOrEmpty(p.Text))
+                    {
                         p.Text = line;
+                    }
                     else
+                    {
                         p.Text = p.Text + Environment.NewLine + line;
+                    }
                 }
             }
+
             subtitle.Renumber();
+        }
+
+        private static string EncodeTimeCode(TimeCode time)
+        {
+            return string.Format("{0:00000}.{1:00}", time.TotalSeconds, MillisecondsToFramesMaxFrameRate(time.Milliseconds));
         }
 
         private static TimeCode DecodeTimeCode(string[] parts)
         {
-            //00119.12
+            // 00119.12
             string seconds = parts[0];
             string frames = parts[1];
             TimeCode tc = new TimeCode(0, 0, int.Parse(seconds), FramesToMillisecondsMax999(int.Parse(frames)));
             return tc;
         }
-
     }
 }

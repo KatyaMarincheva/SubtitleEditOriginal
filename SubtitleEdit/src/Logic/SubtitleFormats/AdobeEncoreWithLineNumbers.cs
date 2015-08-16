@@ -1,73 +1,86 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class AdobeEncoreWithLineNumbers : SubtitleFormat
     {
         private static readonly Regex regexTimeCodes = new Regex(@"^\d+ \d\d:\d\d:\d\d:\d\d \d\d:\d\d:\d\d:\d\d ", RegexOptions.Compiled);
 
         public override string Extension
         {
-            get { return ".txt"; }
+            get
+            {
+                return ".txt";
+            }
         }
 
         public override string Name
         {
-            get { return "Adobe Encore w. line#"; }
+            get
+            {
+                return "Adobe Encore w. line#";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
+            Subtitle subtitle = new Subtitle();
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             foreach (string line in lines)
+            {
                 sb.AppendLine(line);
-            if (sb.ToString().Contains("#INPOINT OUTPOINT PATH"))
-                return false; // Pinnacle Impression
-            if (sb.ToString().StartsWith("{{\\rtf1"))
-                return false;
+            }
 
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            if (sb.ToString().Contains("#INPOINT OUTPOINT PATH"))
+            {
+                return false; // Pinnacle Impression
+            }
+
+            if (sb.ToString().StartsWith("{{\\rtf1"))
+            {
+                return false;
+            }
+
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             int index = 0;
             foreach (Paragraph p in subtitle.Paragraphs)
             {
-                //00:03:15:22 00:03:23:10 This is line one.
-                //This is line two.
+                // 00:03:15:22 00:03:23:10 This is line one.
+                // This is line two.
                 sb.AppendLine(string.Format("{0} {1} {2} {3}", index + 1, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), HtmlUtil.RemoveHtmlTags(p.Text, true)));
                 index++;
             }
-            return sb.ToString();
-        }
 
-        private static string EncodeTimeCode(TimeCode time)
-        {
-            //00:03:15:22 (last is frame)
-            return time.ToHHMMSSFF();
+            return sb.ToString();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            //00:03:15:22 00:03:23:10 This is line one.
-            //This is line two.
+            // 00:03:15:22 00:03:23:10 This is line one.
+            // This is line two.
             Paragraph p = null;
             subtitle.Paragraphs.Clear();
-            _errorCount = 0;
+            this._errorCount = 0;
             foreach (string line in lines)
             {
                 if (regexTimeCodes.IsMatch(line))
@@ -93,25 +106,34 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 else if (p != null)
                 {
                     if (string.IsNullOrEmpty(p.Text))
+                    {
                         p.Text = line;
+                    }
                     else
+                    {
                         p.Text = p.Text + Environment.NewLine + line;
+                    }
                 }
             }
 
             subtitle.Renumber();
         }
 
+        private static string EncodeTimeCode(TimeCode time)
+        {
+            // 00:03:15:22 (last is frame)
+            return time.ToHHMMSSFF();
+        }
+
         private static TimeCode DecodeTimeCode(string[] parts)
         {
-            //00:00:07:12
-            var hour = int.Parse(parts[0]);
-            var minutes = int.Parse(parts[1]);
-            var seconds = int.Parse(parts[2]);
-            var frames = int.Parse(parts[3]);
+            // 00:00:07:12
+            int hour = int.Parse(parts[0]);
+            int minutes = int.Parse(parts[1]);
+            int seconds = int.Parse(parts[2]);
+            int frames = int.Parse(parts[3]);
 
             return new TimeCode(hour, minutes, seconds, FramesToMillisecondsMax999(frames));
         }
-
     }
 }

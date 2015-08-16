@@ -1,73 +1,89 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
     public class AQTitle : SubtitleFormat
     {
         private enum ExpectingLine
         {
             TimeStart,
+
             Text,
-            TimeEndOrText,
+
+            TimeEndOrText
         }
 
         public override string Extension
         {
-            get { return ".aqt"; }
+            get
+            {
+                return ".aqt";
+            }
         }
 
         public override string Name
         {
-            get { return "AQTitle"; }
+            get
+            {
+                return "AQTitle";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return false; }
+            get
+            {
+                return false;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //-->> 072058
-            //<i>Meine Mutter und meine Schwester,
+            // -->> 072058
+            // <i>Meine Mutter und meine Schwester,
 
-            //-->> 072169
+            // -->> 072169
 
-            //-->> 072172
-            //<i>die in Zürich lebt, und ich,
+            // -->> 072172
+            // <i>die in Zürich lebt, und ich,
 
-            //-->> 072247
+            // -->> 072247
             const string paragraphWriteFormat = "-->> {0}{3}{2}{3}-->> {1}{3}{3}";
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 string text = Utilities.RemoveSsaTags(p.Text);
                 int noOfLines = Utilities.GetNumberOfLines(text);
                 if (noOfLines > 2)
+                {
                     text = Utilities.AutoBreakLine(text);
+                }
                 else if (noOfLines == 1)
+                {
                     text += Environment.NewLine;
+                }
 
                 sb.AppendLine(string.Format(paragraphWriteFormat, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), text, Environment.NewLine));
             }
+
             return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            var paragraph = new Paragraph();
+            Paragraph paragraph = new Paragraph();
             ExpectingLine expecting = ExpectingLine.TimeStart;
-            _errorCount = 0;
+            this._errorCount = 0;
 
             subtitle.Paragraphs.Clear();
             foreach (string line in lines)
@@ -79,7 +95,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     {
                         try
                         {
-                            var tc = DecodeTimeCode(timePart);
+                            TimeCode tc = DecodeTimeCode(timePart);
                             if (expecting == ExpectingLine.TimeStart)
                             {
                                 paragraph = new Paragraph();
@@ -98,7 +114,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         }
                         catch
                         {
-                            _errorCount++;
+                            this._errorCount++;
                             expecting = ExpectingLine.TimeStart;
                         }
                     }
@@ -111,15 +127,21 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         {
                             string text = line.Replace("|", Environment.NewLine);
                             if (string.IsNullOrEmpty(paragraph.Text))
+                            {
                                 paragraph.Text = text.Trim();
+                            }
                             else
+                            {
                                 paragraph.Text += Environment.NewLine + text;
+                            }
+
                             if (paragraph.Text.Length > 2000)
                             {
-                                _errorCount += 100;
+                                this._errorCount += 100;
                                 return;
                             }
                         }
+
                         expecting = ExpectingLine.TimeEndOrText;
                     }
                     else if (expecting == ExpectingLine.TimeStart && !string.IsNullOrWhiteSpace(line))
@@ -134,6 +156,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     }
                 }
             }
+
             subtitle.Renumber();
         }
 
@@ -148,6 +171,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             int milliseconds = (int)((TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate) * int.Parse(timePart));
             return new TimeCode(milliseconds);
         }
-
     }
 }

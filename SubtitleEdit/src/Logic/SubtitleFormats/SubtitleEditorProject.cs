@@ -1,38 +1,48 @@
-﻿using System.Globalization;
-using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class SubtitleEditorProject : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Subtitle Editor Project"; }
+            get
+            {
+                return "Subtitle Editor Project";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
             string xmlAsString = sb.ToString().Trim();
-            if (xmlAsString.Contains("<SubtitleEditorProject") &&
-                xmlAsString.Contains("<subtitle "))
+            if (xmlAsString.Contains("<SubtitleEditorProject") && xmlAsString.Contains("<subtitle "))
             {
-                var xml = new XmlDocument { XmlResolver = null };
+                XmlDocument xml = new XmlDocument { XmlResolver = null };
                 try
                 {
                     xml.LoadXml(xmlAsString);
@@ -43,30 +53,22 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.Message);
                     return false;
                 }
             }
+
             return false;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            string xmlStructure =
-                "<?xml version=\"1.0\"?>" + Environment.NewLine +
-                "<SubtitleEditorProject version=\"1.0\">" + Environment.NewLine +
-                "  <player />" + Environment.NewLine +
-                "  <waveform />" + Environment.NewLine +
-                "  <styles />" + Environment.NewLine +
-                "  <subtitles timing_mode=\"TIME\" edit_timing_mode=\"TIME\" framerate=\"25\">" + Environment.NewLine +
-                "  </subtitles>" + Environment.NewLine +
-                "  <subtitles-selection />" + Environment.NewLine +
-                "</SubtitleEditorProject>";
+            string xmlStructure = "<?xml version=\"1.0\"?>" + Environment.NewLine + "<SubtitleEditorProject version=\"1.0\">" + Environment.NewLine + "  <player />" + Environment.NewLine + "  <waveform />" + Environment.NewLine + "  <styles />" + Environment.NewLine + "  <subtitles timing_mode=\"TIME\" edit_timing_mode=\"TIME\" framerate=\"25\">" + Environment.NewLine + "  </subtitles>" + Environment.NewLine + "  <subtitles-selection />" + Environment.NewLine + "</SubtitleEditorProject>";
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
 
-            //          <subtitle duration="2256" effect="" end="124581" layer="0" margin-l="0" margin-r="0" margin-v="0" name="" note="" path="0" start="122325" style="Default" text="The fever hath weakened thee." translation="" />
+            // <subtitle duration="2256" effect="" end="124581" layer="0" margin-l="0" margin-r="0" margin-v="0" name="" note="" path="0" start="122325" style="Default" text="The fever hath weakened thee." translation="" />
             XmlNode div = xml.DocumentElement.SelectSingleNode("subtitles");
             foreach (Paragraph p in subtitle.Paragraphs)
             {
@@ -137,11 +139,11 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
-            var xml = new XmlDocument { XmlResolver = null };
+            XmlDocument xml = new XmlDocument { XmlResolver = null };
             xml.LoadXml(sb.ToString().Trim());
 
             XmlNode div = xml.DocumentElement.SelectSingleNode("subtitles");
@@ -149,8 +151,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 try
                 {
-                    //<subtitle duration="2256" effect="" end="124581" layer="0" margin-l="0" margin-r="0" margin-v="0" name="" note="" path="0" start="122325" style="Default" text="The fever hath weakened thee." translation="" />
-                    var p = new Paragraph { StartTime = { TotalMilliseconds = int.Parse(node.Attributes["start"].Value) } };
+                    // <subtitle duration="2256" effect="" end="124581" layer="0" margin-l="0" margin-r="0" margin-v="0" name="" note="" path="0" start="122325" style="Default" text="The fever hath weakened thee." translation="" />
+                    Paragraph p = new Paragraph { StartTime = { TotalMilliseconds = int.Parse(node.Attributes["start"].Value) } };
                     p.EndTime.TotalMilliseconds = p.StartTime.TotalMilliseconds + int.Parse(node.Attributes["duration"].Value);
                     p.Text = node.Attributes["text"].Value;
 
@@ -158,12 +160,12 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
-
     }
 }

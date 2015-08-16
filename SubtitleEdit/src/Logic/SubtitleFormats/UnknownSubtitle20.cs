@@ -1,41 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     public class UnknownSubtitle20 : SubtitleFormat
     {
-        private static Regex _regexTimeCode1 = new Regex(@"^     \d\d:\d\d:\d\d:\d\d     \d\d\d\d            ", RegexOptions.Compiled);
-        private static Regex _regexTimeCode1Empty = new Regex(@"^     \d\d:\d\d:\d\d:\d\d     \d\d\d\d$", RegexOptions.Compiled);
-        private static Regex _regexTimeCode2 = new Regex(@"^     \d\d:\d\d:\d\d:\d\d     \d\d\d\-\d\d          ", RegexOptions.Compiled);
+        private static readonly Regex _regexTimeCode1 = new Regex(@"^     \d\d:\d\d:\d\d:\d\d     \d\d\d\d            ", RegexOptions.Compiled);
+
+        private static readonly Regex _regexTimeCode1Empty = new Regex(@"^     \d\d:\d\d:\d\d:\d\d     \d\d\d\d$", RegexOptions.Compiled);
+
+        private static readonly Regex _regexTimeCode2 = new Regex(@"^     \d\d:\d\d:\d\d:\d\d     \d\d\d\-\d\d          ", RegexOptions.Compiled);
 
         public override string Extension
         {
-            get { return ".C"; }
+            get
+            {
+                return ".C";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 20"; }
+            get
+            {
+                return "Unknown 20";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             int number = 1;
             int number2 = 0;
             foreach (Paragraph p in subtitle.Paragraphs)
@@ -44,7 +55,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 string line2 = string.Empty;
                 string[] lines = p.Text.Replace(Environment.NewLine, "\r").Split('\r');
                 if (lines.Length > 2)
+                {
                     lines = Utilities.AutoBreakLine(p.Text).Replace(Environment.NewLine, "\r").Split('\r');
+                }
+
                 if (lines.Length == 1)
                 {
                     line2 = lines[0];
@@ -63,7 +77,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 sb.Append(string.Empty.PadLeft(12, ' '));
                 sb.AppendLine(line1);
 
-                //line 2
+                // line 2
                 sb.Append(string.Empty.PadLeft(5, ' '));
                 sb.Append(p.EndTime.ToHHMMSSFF());
                 sb.Append(string.Empty.PadLeft(5, ' '));
@@ -77,18 +91,13 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 number++;
                 number2++;
             }
-            return sb.ToString();
-        }
 
-        private static TimeCode DecodeTimeCode(string timeCode)
-        {
-            string[] arr = timeCode.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-            return new TimeCode(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]), FramesToMillisecondsMax999(int.Parse(arr[3])));
+            return sb.ToString();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
             Paragraph p = null;
             foreach (string line in lines)
             {
@@ -98,12 +107,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     try
                     {
                         if (p != null)
+                        {
                             subtitle.Paragraphs.Add(p);
+                        }
+
                         p = new Paragraph(DecodeTimeCode(s.Substring(5, 11)), new TimeCode(0, 0, 0, 0), s.Remove(0, 37).Trim());
                     }
                     catch
                     {
-                        _errorCount++;
+                        this._errorCount++;
                         p = null;
                     }
                 }
@@ -112,12 +124,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     try
                     {
                         if (p != null)
+                        {
                             subtitle.Paragraphs.Add(p);
+                        }
+
                         p = new Paragraph(DecodeTimeCode(s.Substring(5, 11)), new TimeCode(0, 0, 0, 0), string.Empty);
                     }
                     catch
                     {
-                        _errorCount++;
+                        this._errorCount++;
                         p = null;
                     }
                 }
@@ -129,26 +144,39 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         {
                             p.EndTime = DecodeTimeCode(s.Substring(5, 11));
                             if (string.IsNullOrWhiteSpace(p.Text))
+                            {
                                 p.Text = s.Remove(0, 37).Trim();
+                            }
                             else
+                            {
                                 p.Text = p.Text + Environment.NewLine + s.Remove(0, 37).Trim();
+                            }
                         }
                     }
                     catch
                     {
-                        _errorCount++;
+                        this._errorCount++;
                         p = null;
                     }
                 }
                 else if (!string.IsNullOrWhiteSpace(s))
                 {
-                    _errorCount++;
+                    this._errorCount++;
                 }
             }
+
             if (p != null)
+            {
                 subtitle.Paragraphs.Add(p);
+            }
+
             subtitle.Renumber();
         }
 
+        private static TimeCode DecodeTimeCode(string timeCode)
+        {
+            string[] arr = timeCode.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+            return new TimeCode(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]), FramesToMillisecondsMax999(int.Parse(arr[3])));
+        }
     }
 }

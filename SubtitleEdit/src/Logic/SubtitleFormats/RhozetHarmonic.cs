@@ -1,66 +1,54 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class RhozetHarmonic : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Rhozet Harmonic"; }
+            get
+            {
+                return "Rhozet Harmonic";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
             return subtitle.Paragraphs.Count > 0;
-        }
-
-        private static string ToTimeCode(TimeCode time)
-        {
-            return time.ToHHMMSSFF();
-        }
-
-        private static TimeCode DecodeTimeCode(string s)
-        {
-            var parts = s.Split(new[] { ':', ';' }, StringSplitOptions.RemoveEmptyEntries);
-            string hour = parts[0];
-            string minutes = parts[1];
-            string seconds = parts[2];
-            string frames = parts[3];
-
-            int milliseconds = (int)Math.Round(((TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate) * int.Parse(frames)));
-            if (milliseconds > 999)
-                milliseconds = 999;
-
-            return new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), milliseconds);
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //<TitlerData>
+            // <TitlerData>
             // <Data StartTimecode='00:00:02;21' EndTimecode='00:00:05;21' Title='CAPTIONING PROVIDED BY
-            //CharSize='0.2' PosX='0.5' PosY='0.75' ColorR='245' ColorG='245' ColorB='245' Transparency='0.0' ShadowSize='0.5' BkgEnable='1' BkgExtraWidth='0.02' BkgExtraHeight='0.02'/>
+            // CharSize='0.2' PosX='0.5' PosY='0.75' ColorR='245' ColorG='245' ColorB='245' Transparency='0.0' ShadowSize='0.5' BkgEnable='1' BkgExtraWidth='0.02' BkgExtraHeight='0.02'/>
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<TitlerData></TitlerData>";
 
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<TitlerData></TitlerData>";
-
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
 
             XmlNode paragraph = xml.CreateElement("Data");
@@ -132,22 +120,27 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             string s = "<?xml version=\"1.0\"?>" + Environment.NewLine + ToUtf8XmlString(xml, true).Replace("\"", "__@____").Replace("'", "&apos;").Replace("__@____", "'").Replace(" />", "/>");
             while (s.Contains(Environment.NewLine + " "))
+            {
                 s = s.Replace(Environment.NewLine + " ", Environment.NewLine);
+            }
+
             return s;
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
             string allText = sb.ToString();
             if (!allText.Contains("<TitlerData") || !allText.Contains("<Data"))
+            {
                 return;
+            }
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             try
             {
@@ -155,14 +148,14 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
-                _errorCount = 1;
+                Debug.WriteLine(exception.Message);
+                this._errorCount = 1;
                 return;
             }
 
             if (xml.DocumentElement == null)
             {
-                _errorCount = 1;
+                this._errorCount = 1;
                 return;
             }
 
@@ -180,12 +173,34 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
 
+        private static string ToTimeCode(TimeCode time)
+        {
+            return time.ToHHMMSSFF();
+        }
+
+        private static TimeCode DecodeTimeCode(string s)
+        {
+            string[] parts = s.Split(new[] { ':', ';' }, StringSplitOptions.RemoveEmptyEntries);
+            string hour = parts[0];
+            string minutes = parts[1];
+            string seconds = parts[2];
+            string frames = parts[3];
+
+            int milliseconds = (int)Math.Round((TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate) * int.Parse(frames));
+            if (milliseconds > 999)
+            {
+                milliseconds = 999;
+            }
+
+            return new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), milliseconds);
+        }
     }
 }

@@ -1,35 +1,45 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class NciCaption : SubtitleFormat
     {
+        public const string NameOfFormat = "NCI Caption";
+
         public override string Extension
         {
-            get { return ".cap"; }
+            get
+            {
+                return ".cap";
+            }
         }
-
-        public const string NameOfFormat = "NCI Caption";
 
         public override string Name
         {
-            get { return NameOfFormat; }
+            get
+            {
+                return NameOfFormat;
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public static void Save(string fileName)
         {
-            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
-                //...
+                // ...
             }
         }
 
@@ -37,32 +47,21 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
         {
             if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
             {
-                var fi = new FileInfo(fileName);
-                if (fi.Length >= 640 && fi.Length < 1024000) // not too small or too big
+                FileInfo fi = new FileInfo(fileName);
+                if (fi.Length >= 640 && fi.Length < 1024000)
                 {
+                    // not too small or too big
                     if (fileName.EndsWith(".cap", StringComparison.OrdinalIgnoreCase))
                     {
                         byte[] buffer = FileUtil.ReadAllBytesShared(fileName);
 
-                        return ((buffer[0] == 0x43 &&  // CAPT.2.0
-                                buffer[1] == 0x41 &&
-                                buffer[2] == 0x50 &&
-                                buffer[3] == 0x54 &&
-                                buffer[4] == 0x00 &&
-                                buffer[5] == 0x32 &&
-                                buffer[6] == 0x2e &&
-                                buffer[7] == 0x30) ||
-                               (buffer[0] == 0x43 && // CAPT.1.2
-                                buffer[1] == 0x41 &&
-                                buffer[2] == 0x50 &&
-                                buffer[3] == 0x54 &&
-                                buffer[4] == 0x00 &&
-                                buffer[5] == 0x31 &&
-                                buffer[6] == 0x2e &&
-                                buffer[7] == 0x32));
+                        return (buffer[0] == 0x43 && // CAPT.2.0
+                                buffer[1] == 0x41 && buffer[2] == 0x50 && buffer[3] == 0x54 && buffer[4] == 0x00 &&   buffer[5] == 0x32 && buffer[6] == 0x2e && buffer[7] == 0x30) || (buffer[0] == 0x43    && // CAPT.1.2
+                                buffer[1] == 0x41 && buffer[2] == 0x50 && buffer[3] == 0x54 && buffer[4] == 0x00 &&   buffer[5] == 0x31 && buffer[6] == 0x2e && buffer[7] == 0x32);
                     }
                 }
             }
+
             return false;
         }
 
@@ -71,23 +70,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return "Not supported!";
         }
 
-        private static TimeCode DecodeTimeCode(byte[] buffer, int index)
-        {
-            int hour = buffer[index];
-            int minutes = buffer[index + 1];
-            int seconds = buffer[index + 2];
-            int frames = buffer[index + 3];
-
-            int milliseconds = (int)(TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate * frames);
-            if (milliseconds > 999)
-                milliseconds = 999;
-
-            return new TimeCode(hour, minutes, seconds, milliseconds);
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
             subtitle.Paragraphs.Clear();
             subtitle.Header = null;
@@ -96,13 +81,13 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             string title = Encoding.ASCII.GetString(buffer, 82, 66);
 
             int i = 128;
-            var encoding = Encoding.GetEncoding(1252);
+            Encoding encoding = Encoding.GetEncoding(1252);
             while (i < buffer.Length - 66)
             {
                 if (buffer[i] == 0xff && buffer[i + 1] == 0xff && buffer[i + 3] != 0xff && buffer[i - 1] != 0xff && buffer[i + 64] == 0xff && buffer[i + 65] == 0xff)
                 {
-                    var p = new Paragraph();
-                    var sb = new StringBuilder();
+                    Paragraph p = new Paragraph();
+                    StringBuilder sb = new StringBuilder();
                     int j = i + 4;
                     while (j < i + 64)
                     {
@@ -110,7 +95,8 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                         {
                             break;
                         }
-                        else if (buffer[j] == 0xd)
+
+                        if (buffer[j] == 0xd)
                         {
                             sb.AppendLine();
                             j += 3;
@@ -126,6 +112,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             j++;
                         }
                     }
+
                     p.Text = sb.ToString();
                     subtitle.Paragraphs.Add(p);
                     i += 62;
@@ -135,16 +122,11 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     i++;
                 }
             }
+
             subtitle.Renumber();
 
             if (buffer[0] == 0x43 && // CAPT.1.2
-                                buffer[1] == 0x41 &&
-                                buffer[2] == 0x50 &&
-                                buffer[3] == 0x54 &&
-                                buffer[4] == 0x00 &&
-                                buffer[5] == 0x31 &&
-                                buffer[6] == 0x2e &&
-                                buffer[7] == 0x32)
+                buffer[1] == 0x41 && buffer[2] == 0x50 && buffer[3] == 0x54 && buffer[4] == 0x00 && buffer[5] == 0x31 && buffer[6] == 0x2e && buffer[7] == 0x32)
             {
                 i = 396;
                 int start = i;
@@ -162,9 +144,11 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                 p.EndTime = DecodeTimeCode(buffer, i + 22);
                                 number++;
                             }
+
                             i += 25;
                         }
                     }
+
                     i++;
                 }
             }
@@ -188,10 +172,13 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             }
                             else
                             {
-                                //System.Windows.Forms.MessageBox.Show("Problem at with a length of " + length.ToString() + " at file position " + (i + 2) + " which gives remainer: " + (length % 14));
+                                // System.Windows.Forms.MessageBox.Show("Problem at with a length of " + length.ToString() + " at file position " + (i + 2) + " which gives remainer: " + (length % 14));
                                 if (length % 14 == 8)
+                                {
                                     count++;
+                                }
                             }
+
                             for (int k = 0; k < count; k++)
                             {
                                 int index = start + 2 + (14 * k);
@@ -205,6 +192,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                         number = tempNumber;
                                     }
                                 }
+
                                 if (number > lastNumber)
                                 {
                                     lastNumber = number;
@@ -220,14 +208,17 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                         {
                                             p.StartTime = DecodeTimeCode(buffer, index + 6);
                                         }
+
                                         countTimecodes++;
                                     }
                                 }
                             }
                         }
+
                         start = i + 2;
                         i += 5;
                     }
+
                     i++;
                 }
             }
@@ -237,7 +228,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 Paragraph p = subtitle.GetParagraphOrDefault(i);
                 Paragraph next = subtitle.GetParagraphOrDefault(i + 1);
                 if (next != null && p.EndTime.TotalMilliseconds == 0)
+                {
                     p.EndTime.TotalMilliseconds = next.StartTime.TotalMilliseconds - 1;
+                }
             }
 
             for (i = 0; i < subtitle.Paragraphs.Count; i++)
@@ -245,15 +238,35 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 Paragraph p = subtitle.GetParagraphOrDefault(i);
                 Paragraph next = subtitle.GetParagraphOrDefault(i + 1);
                 if (p.Duration.TotalMilliseconds <= 0 && next != null)
+                {
                     p.EndTime.TotalMilliseconds = next.StartTime.TotalMilliseconds - 1;
+                }
             }
 
             subtitle.RemoveEmptyLines();
             Paragraph last = subtitle.GetParagraphOrDefault(subtitle.Paragraphs.Count - 1);
             if (last != null)
+            {
                 last.EndTime.TotalMilliseconds = last.StartTime.TotalMilliseconds + Utilities.GetOptimalDisplayMilliseconds(last.Text);
+            }
+
             subtitle.Renumber();
         }
 
+        private static TimeCode DecodeTimeCode(byte[] buffer, int index)
+        {
+            int hour = buffer[index];
+            int minutes = buffer[index + 1];
+            int seconds = buffer[index + 2];
+            int frames = buffer[index + 3];
+
+            int milliseconds = (int)(TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate * frames);
+            if (milliseconds > 999)
+            {
+                milliseconds = 999;
+            }
+
+            return new TimeCode(hour, minutes, seconds, milliseconds);
+        }
     }
 }

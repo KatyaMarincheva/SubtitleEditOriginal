@@ -1,64 +1,77 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     public class SwiftTextLineNumber : SubtitleFormat
     {
+        private static readonly Regex RegexTimeCodes = new Regex(@"^SUBTITLE: \d+\s+TIMEIN:\s*[0123456789-]+:[0123456789-]+:[0123456789-]+:[0123456789-]+\s*TIMEOUT:\s*[0123456789-]+:[0123456789-]+:[0123456789-]+:[0123456789-]+$", RegexOptions.Compiled);
+
+        private ExpectingLine _expecting = ExpectingLine.TimeCodes;
+
+        private Paragraph _paragraph;
+
+        private StringBuilder _text = new StringBuilder();
+
         private enum ExpectingLine
         {
             TimeCodes,
+
             Text
         }
 
-        private Paragraph _paragraph;
-        private StringBuilder _text = new StringBuilder();
-        private ExpectingLine _expecting = ExpectingLine.TimeCodes;
-
-        private static readonly Regex RegexTimeCodes = new Regex(@"^SUBTITLE: \d+\s+TIMEIN:\s*[0123456789-]+:[0123456789-]+:[0123456789-]+:[0123456789-]+\s*TIMEOUT:\s*[0123456789-]+:[0123456789-]+:[0123456789-]+:[0123456789-]+$", RegexOptions.Compiled);
-
         public override string Extension
         {
-            get { return ".txt"; }
+            get
+            {
+                return ".txt";
+            }
         }
 
         public override string Name
         {
-            get { return "Swift text line#"; }
+            get
+            {
+                return "Swift text line#";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (lines == null || lines.Count > 2 && !string.IsNullOrEmpty(lines[0]) && lines[0].Contains("{QTtext}"))
+            {
                 return false;
+            }
 
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //SUBTITLE: 1   TIMEIN: 00:00:00:00 TIMEOUT: 00:00:04:00
-            //Voor de oorlog
+            // SUBTITLE: 1   TIMEIN: 00:00:00:00 TIMEOUT: 00:00:04:00
+            // Voor de oorlog
 
-            //SUBTITLE: 2   TIMEIN: 00:00:05:12 TIMEOUT: 00:00:10:02
-            //Ik ben Marie Pinhas. Ik ben geboren
-            //in Thessaloniki in Griekenland,
+            // SUBTITLE: 2   TIMEIN: 00:00:05:12 TIMEOUT: 00:00:10:02
+            // Ik ben Marie Pinhas. Ik ben geboren
+            // in Thessaloniki in Griekenland,
 
-            //SUBTITLE: 3   TIMEIN: 00:00:10:06 TIMEOUT: 00:00:15:17
-            //op 6 maart '31,
-            //in een heel oude Griekse familie.
-
+            // SUBTITLE: 3   TIMEIN: 00:00:10:06 TIMEOUT: 00:00:15:17
+            // op 6 maart '31,
+            // in een heel oude Griekse familie.
             const string paragraphWriteFormat = "SUBTITLE: {1}\tTIMEIN: {0}\tTIMEOUT: {2}\r\n{3}\r\n";
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             int count = 1;
             foreach (Paragraph p in subtitle.Paragraphs)
             {
@@ -67,65 +80,33 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 sb.AppendLine(string.Format(paragraphWriteFormat, startTime, count, timeOut, p.Text));
                 count++;
             }
+
             return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _paragraph = new Paragraph();
-            _expecting = ExpectingLine.TimeCodes;
-            _errorCount = 0;
+            this._paragraph = new Paragraph();
+            this._expecting = ExpectingLine.TimeCodes;
+            this._errorCount = 0;
 
             subtitle.Paragraphs.Clear();
             foreach (string line in lines)
             {
-                ReadLine(subtitle, line);
-                if (_text.Length > 1000)
+                this.ReadLine(subtitle, line);
+                if (this._text.Length > 1000)
+                {
                     return;
+                }
             }
-            if (_text != null && _text.ToString().TrimStart().Length > 0)
+
+            if (this._text != null && this._text.ToString().TrimStart().Length > 0)
             {
-                _paragraph.Text = _text.ToString().Trim();
-                subtitle.Paragraphs.Add(_paragraph);
+                this._paragraph.Text = this._text.ToString().Trim();
+                subtitle.Paragraphs.Add(this._paragraph);
             }
 
             subtitle.Renumber();
-        }
-
-        private void ReadLine(Subtitle subtitle, string line)
-        {
-            switch (_expecting)
-            {
-                case ExpectingLine.TimeCodes:
-                    if (TryReadTimeCodesLine(line, _paragraph))
-                    {
-                        _text = new StringBuilder();
-                        _expecting = ExpectingLine.Text;
-                    }
-                    else if (!string.IsNullOrWhiteSpace(line))
-                    {
-                        _errorCount++;
-                        _expecting = ExpectingLine.Text; // lets go to next paragraph
-                    }
-                    break;
-                case ExpectingLine.Text:
-                    if (!string.IsNullOrWhiteSpace(line))
-                    {
-                        _text.AppendLine(line.TrimEnd());
-                    }
-                    else if (_paragraph != null && _paragraph.EndTime.TotalMilliseconds > 0)
-                    {
-                        _paragraph.Text = _text.ToString().Trim();
-                        subtitle.Paragraphs.Add(_paragraph);
-                        _paragraph = new Paragraph();
-                        _expecting = ExpectingLine.TimeCodes;
-                    }
-                    else
-                    {
-                        _errorCount++;
-                    }
-                    break;
-            }
         }
 
         private static bool TryReadTimeCodesLine(string line, Paragraph paragraph)
@@ -133,7 +114,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             line = line.Trim();
             if (RegexTimeCodes.IsMatch(line))
             {
-                //SUBTITLE: 59  TIMEIN: 00:04:28:06 TIMEOUT: 00:04:32:12
+                // SUBTITLE: 59  TIMEIN: 00:04:28:06 TIMEOUT: 00:04:32:12
                 string s = line.Replace("SUBTITLE:", string.Empty).Replace("TIMEIN", string.Empty).Replace("TIMEOUT", string.Empty).Replace(" ", string.Empty).Replace("\t", string.Empty);
                 string[] parts = s.Split(':');
                 try
@@ -145,16 +126,27 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
                     int endHours = 0;
                     if (parts[5] != "--")
+                    {
                         endHours = int.Parse(parts[5]);
+                    }
+
                     int endMinutes = 0;
                     if (parts[6] != "--")
+                    {
                         endMinutes = int.Parse(parts[6]);
+                    }
+
                     int endSeconds = 0;
                     if (parts[7] != "--")
+                    {
                         endSeconds = int.Parse(parts[7]);
+                    }
+
                     int endMilliseconds = 0;
                     if (parts[8] != "--")
+                    {
                         endMilliseconds = FramesToMillisecondsMax999(int.Parse(parts[8]));
+                    }
 
                     paragraph.StartTime = new TimeCode(startHours, startMinutes, startSeconds, startMilliseconds);
                     paragraph.EndTime = new TimeCode(endHours, endMinutes, endSeconds, endMilliseconds);
@@ -165,7 +157,46 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     return false;
                 }
             }
+
             return false;
+        }
+
+        private void ReadLine(Subtitle subtitle, string line)
+        {
+            switch (this._expecting)
+            {
+                case ExpectingLine.TimeCodes:
+                    if (TryReadTimeCodesLine(line, this._paragraph))
+                    {
+                        this._text = new StringBuilder();
+                        this._expecting = ExpectingLine.Text;
+                    }
+                    else if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        this._errorCount++;
+                        this._expecting = ExpectingLine.Text; // lets go to next paragraph
+                    }
+
+                    break;
+                case ExpectingLine.Text:
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        this._text.AppendLine(line.TrimEnd());
+                    }
+                    else if (this._paragraph != null && this._paragraph.EndTime.TotalMilliseconds > 0)
+                    {
+                        this._paragraph.Text = this._text.ToString().Trim();
+                        subtitle.Paragraphs.Add(this._paragraph);
+                        this._paragraph = new Paragraph();
+                        this._expecting = ExpectingLine.TimeCodes;
+                    }
+                    else
+                    {
+                        this._errorCount++;
+                    }
+
+                    break;
+            }
         }
     }
 }

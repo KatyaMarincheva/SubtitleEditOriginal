@@ -1,23 +1,26 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class TmpegEncAW5 : TmpegEncXml
     {
-
         public override string Name
         {
-            get { return "TMPGEnc AW5"; }
+            get
+            {
+                return "TMPGEnc AW5";
+            }
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
             string xmlStructure = Layout.Replace("'", "\"");
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
             XmlNode div = xml.DocumentElement.SelectSingleNode("Subtitle");
             div.InnerXml = string.Empty;
@@ -32,9 +35,13 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
                 XmlAttribute layoutIndex = xml.CreateAttribute("layoutindex");
                 if (p.Text.TrimStart().StartsWith("<i>") && p.Text.TrimEnd().EndsWith("</i>"))
+                {
                     layoutIndex.InnerText = "4";
+                }
                 else
+                {
                     layoutIndex.InnerText = "0";
+                }
 
                 paragraph.Attributes.Append(layoutIndex);
 
@@ -62,23 +69,23 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
             string xmlAsString = sb.ToString().Trim();
-            if ((xmlAsString.Contains("<TMPGEncVMESubtitleTextFormat>") || xmlAsString.Contains("<SubtitleItem ")) && (xmlAsString.Contains("<Subtitle")))
+            if ((xmlAsString.Contains("<TMPGEncVMESubtitleTextFormat>") || xmlAsString.Contains("<SubtitleItem ")) && xmlAsString.Contains("<Subtitle"))
             {
-                var subtitle = new Subtitle();
-                LoadSubtitle(subtitle, lines, fileName);
-                return subtitle.Paragraphs.Count > _errorCount;
+                Subtitle subtitle = new Subtitle();
+                this.LoadSubtitle(subtitle, lines, fileName);
+                return subtitle.Paragraphs.Count > this._errorCount;
             }
+
             return false;
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
-            LoadTMpeg(subtitle, lines, true);
+            this._errorCount = 0;
+            this.LoadTMpeg(subtitle, lines, true);
         }
-
     }
 }

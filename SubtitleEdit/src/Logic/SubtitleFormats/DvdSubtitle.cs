@@ -1,35 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     public class DvdSubtitle : SubtitleFormat
     {
-
-        private static Regex regexTimeCodes = new Regex(@"^\{T\ \d+:\d+:\d+:\d+$", RegexOptions.Compiled);
+        private static readonly Regex regexTimeCodes = new Regex(@"^\{T\ \d+:\d+:\d+:\d+$", RegexOptions.Compiled);
 
         public override string Extension
         {
-            get { return ".sub"; }
+            get
+            {
+                return ".sub";
+            }
         }
 
         public override string Name
         {
-            get { return "DVDSubtitle"; }
+            get
+            {
+                return "DVDSubtitle";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
@@ -37,18 +45,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             const string paragraphWriteFormat = "T {0}\r\n{1}\r\n";
             const string timeFormat = "{0:00}:{1:00}:{2:00}:{3:00}";
             const string header = @"{HEAD
-DISCID=
-DVDTITLE=
-CODEPAGE=1250
-FORMAT=ASCII
-LANG=
-TITLE=1
-ORIGINAL=ORIGINAL
-AUTHOR=
-WEB=
-INFO=
-LICENSE=
-}";
+                                    DISCID=
+                                    DVDTITLE=
+                                    CODEPAGE=1250
+                                    FORMAT=ASCII
+                                    LANG=
+                                    TITLE=1
+                                    ORIGINAL=ORIGINAL
+                                    AUTHOR=
+                                    WEB=
+                                    INFO=
+                                    LICENSE=
+                                    }";
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(header);
@@ -62,15 +70,16 @@ LICENSE=
                 time = string.Format(timeFormat, p.EndTime.Hours, p.EndTime.Minutes, p.EndTime.Seconds, milliseconds);
                 sb.AppendLine("{" + string.Format(paragraphWriteFormat, time, string.Empty) + "}");
             }
+
             return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            //{T 00:03:14:27
-            //Some text
-            //}
-            _errorCount = 0;
+            // {T 00:03:14:27
+            // Some text
+            // }
+            this._errorCount = 0;
             bool textOn = false;
             string text = string.Empty;
             TimeCode start = new TimeCode(0);
@@ -96,9 +105,13 @@ LICENSE=
                     else
                     {
                         if (text.Length == 0)
+                        {
                             text = line;
+                        }
                         else
+                        {
                             text += Environment.NewLine + line;
+                        }
                     }
                 }
                 else
@@ -116,14 +129,17 @@ LICENSE=
                                 int seconds = int.Parse(arr[2]);
                                 int milliseconds = int.Parse(arr[3]);
                                 if (arr[3].Length == 2)
+                                {
                                     milliseconds *= 10;
+                                }
+
                                 start = new TimeCode(hours, minutes, seconds, milliseconds);
                             }
                         }
                         catch
                         {
                             textOn = false;
-                            _errorCount++;
+                            this._errorCount++;
                         }
                     }
                 }
@@ -137,6 +153,7 @@ LICENSE=
                 {
                     p.EndTime.TotalMilliseconds = next.StartTime.TotalMilliseconds - 1;
                 }
+
                 index++;
             }
 

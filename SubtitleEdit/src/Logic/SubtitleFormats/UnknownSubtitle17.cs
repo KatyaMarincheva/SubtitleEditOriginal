@@ -1,63 +1,79 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     public class UnknownSubtitle17 : SubtitleFormat
     {
-
         private static readonly Regex RegexTimeCode = new Regex(@"^\d\d:\d\d:\d\d:\d\d", RegexOptions.Compiled);
+
         private static readonly Regex RegexNumber = new Regex(@"^\[\d+\]$", RegexOptions.Compiled);
 
         private enum ExpectingLine
         {
             Number,
+
             TimeStart,
+
             TimeEnd,
+
             Text
         }
 
         public override string Extension
         {
-            get { return ".txt"; }
+            get
+            {
+                return ".txt";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 17"; }
+            get
+            {
+                return "Unknown 17";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             foreach (string line in lines)
+            {
                 sb.AppendLine(line);
+            }
+
             string s = sb.ToString();
             if (!s.Contains("[HEADER]") || !s.Contains("[BODY]"))
+            {
                 return false;
+            }
 
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //[1]
-            //01:00:21:20
-            //01:00:23:17
-            //[I]Pysy kanavalla,
-            //[I]koska myöhemmin tänään
-
+            // [1]
+            // 01:00:21:20
+            // 01:00:23:17
+            // [I]Pysy kanavalla,
+            // [I]koska myöhemmin tänään
             const string paragraphWriteFormat = "[{4}]{3}{0}{3}{1}{3}{2}";
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.AppendLine(@"[HEADER]
 SUBTITLING_COMPANY=Softitler Net, Inc.
 TIME_FORMAT=NTSC
@@ -79,6 +95,7 @@ DIGITAL_CINEMA=YES
                 string text = p.Text.Replace("<i>", "[I]").Replace("</i>", "[/I]");
                 sb.AppendLine(string.Format(paragraphWriteFormat, EncodeTimeCode(p.StartTime), EncodeTimeCode(p.EndTime), text, Environment.NewLine, count));
             }
+
             sb.AppendLine("[/BODY]");
             return sb.ToString().Trim();
         }
@@ -86,8 +103,8 @@ DIGITAL_CINEMA=YES
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             Paragraph paragraph = null;
-            var expecting = ExpectingLine.Number;
-            _errorCount = 0;
+            ExpectingLine expecting = ExpectingLine.Number;
+            this._errorCount = 0;
 
             subtitle.Paragraphs.Clear();
             foreach (string l in lines)
@@ -96,7 +113,10 @@ DIGITAL_CINEMA=YES
                 if (RegexNumber.IsMatch(line))
                 {
                     if (paragraph != null)
+                    {
                         subtitle.Paragraphs.Add(paragraph);
+                    }
+
                     paragraph = new Paragraph();
                     expecting = ExpectingLine.TimeStart;
                 }
@@ -107,13 +127,13 @@ DIGITAL_CINEMA=YES
                     {
                         try
                         {
-                            var tc = DecodeTimeCode(parts);
+                            TimeCode tc = DecodeTimeCode(parts);
                             paragraph.StartTime = tc;
                             expecting = ExpectingLine.TimeEnd;
                         }
                         catch
                         {
-                            _errorCount++;
+                            this._errorCount++;
                             expecting = ExpectingLine.Number;
                         }
                     }
@@ -125,13 +145,13 @@ DIGITAL_CINEMA=YES
                     {
                         try
                         {
-                            var tc = DecodeTimeCode(parts);
+                            TimeCode tc = DecodeTimeCode(parts);
                             paragraph.EndTime = tc;
                             expecting = ExpectingLine.Text;
                         }
                         catch
                         {
-                            _errorCount++;
+                            this._errorCount++;
                             expecting = ExpectingLine.Number;
                         }
                     }
@@ -147,9 +167,13 @@ DIGITAL_CINEMA=YES
                             {
                                 s = "<i>" + s.Remove(0, 3);
                                 if (s.EndsWith("[/i]", StringComparison.OrdinalIgnoreCase))
+                                {
                                     s = s.Remove(s.Length - 4, 4);
+                                }
+
                                 s += "</i>";
                             }
+
                             s = s.Replace("[I]", "<i>");
                             s = s.Replace("[/I]", "</i>");
                             s = s.Replace("[P]", string.Empty);
@@ -158,7 +182,7 @@ DIGITAL_CINEMA=YES
                             paragraph.Text = (paragraph.Text + Environment.NewLine + s).Trim();
                             if (paragraph.Text.Length > 2000)
                             {
-                                _errorCount += 100;
+                                this._errorCount += 100;
                                 subtitle.Renumber();
                                 return;
                             }
@@ -166,11 +190,13 @@ DIGITAL_CINEMA=YES
                     }
                 }
             }
+
             if (paragraph != null && !string.IsNullOrEmpty(paragraph.Text))
             {
                 paragraph.Text = paragraph.Text.Replace("[/BODY]", string.Empty).Trim();
                 subtitle.Paragraphs.Add(paragraph);
             }
+
             subtitle.Renumber();
         }
 
@@ -186,12 +212,13 @@ DIGITAL_CINEMA=YES
             string seconds = parts[2];
             string frames = parts[3];
 
-            var milliseconds = (int)((TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate) * int.Parse(frames));
+            int milliseconds = (int)((TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate) * int.Parse(frames));
             if (milliseconds > 999)
+            {
                 milliseconds = 999;
+            }
 
             return new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), milliseconds);
         }
-
     }
 }

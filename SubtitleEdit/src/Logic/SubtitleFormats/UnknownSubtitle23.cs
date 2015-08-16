@@ -1,41 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+
     public class UnknownSubtitle23 : SubtitleFormat
     {
-        //1:  01:00:19.04  01:00:21.05
+        // 1:  01:00:19.04  01:00:21.05
         private static readonly Regex RegexTimeCode1 = new Regex(@"^\s*\d+:\s+\d\d:\d\d:\d\d.\d\d\s+\d\d:\d\d:\d\d.\d\d\s*$", RegexOptions.Compiled);
 
         public override string Extension
         {
-            get { return ".rtf"; }
+            get
+            {
+                return ".rtf";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 23"; }
+            get
+            {
+                return "Unknown 23";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.AppendLine(title);
             sb.AppendLine(@"1ab
 
@@ -60,36 +71,29 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 count++;
             }
 
-            using (var rtBox = new System.Windows.Forms.RichTextBox { Text = sb.ToString().Trim() })
+            using (RichTextBox rtBox = new RichTextBox { Text = sb.ToString().Trim() })
             {
                 return rtBox.Rtf;
             }
         }
 
-        private static string MakeTimeCode(TimeCode timeCode)
-        {
-            return timeCode.ToHHMMSSPeriodFF();
-        }
-
-        private static TimeCode DecodeTimeCode(string timeCode)
-        {
-            string[] arr = timeCode.Split(new[] { ':', ';', ',', '.' }, StringSplitOptions.RemoveEmptyEntries);
-            return new TimeCode(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]), FramesToMillisecondsMax999(int.Parse(arr[3])));
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
-            var sb = new StringBuilder();
+            this._errorCount = 0;
+            StringBuilder sb = new StringBuilder();
             foreach (string line in lines)
+            {
                 sb.AppendLine(line);
+            }
 
             string rtf = sb.ToString().Trim();
             if (!rtf.StartsWith("{\\rtf"))
+            {
                 return;
+            }
 
             string text = string.Empty;
-            var rtBox = new System.Windows.Forms.RichTextBox();
+            RichTextBox rtBox = new RichTextBox();
             try
             {
                 rtBox.Rtf = rtf;
@@ -97,7 +101,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
+                Debug.WriteLine(exception.Message);
                 return;
             }
             finally
@@ -107,9 +111,11 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
             lines = new List<string>();
             foreach (string line in text.Split('\n'))
+            {
                 lines.Add(line);
+            }
 
-            _errorCount = 0;
+            this._errorCount = 0;
             Paragraph p = null;
             sb = new StringBuilder();
             foreach (string line in lines)
@@ -124,14 +130,17 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             p.Text = sb.ToString().Trim();
                             subtitle.Paragraphs.Add(p);
                         }
+
                         sb = new StringBuilder();
                         string[] arr = s.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                         if (arr.Length == 3)
+                        {
                             p = new Paragraph(DecodeTimeCode(arr[1]), DecodeTimeCode(arr[2]), string.Empty);
+                        }
                     }
                     catch
                     {
-                        _errorCount++;
+                        this._errorCount++;
                         p = null;
                     }
                 }
@@ -141,9 +150,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 }
                 else if (!string.IsNullOrWhiteSpace(s))
                 {
-                    _errorCount++;
+                    this._errorCount++;
                 }
             }
+
             if (p != null)
             {
                 p.Text = sb.ToString().Trim();
@@ -153,5 +163,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             subtitle.Renumber();
         }
 
+        private static string MakeTimeCode(TimeCode timeCode)
+        {
+            return timeCode.ToHHMMSSPeriodFF();
+        }
+
+        private static TimeCode DecodeTimeCode(string timeCode)
+        {
+            string[] arr = timeCode.Split(new[] { ':', ';', ',', '.' }, StringSplitOptions.RemoveEmptyEntries);
+            return new TimeCode(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]), FramesToMillisecondsMax999(int.Parse(arr[3])));
+        }
     }
 }

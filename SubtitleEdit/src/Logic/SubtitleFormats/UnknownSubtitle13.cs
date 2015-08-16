@@ -1,42 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Text;
+    using System.Xml;
+
     public class UnknownSubtitle13 : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 13"; }
+            get
+            {
+                return "Unknown 13";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
             return subtitle.Paragraphs.Count > 0;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<subtitle><config bgAlpha=\"0.5\" bgColor=\"0x000000\" defaultColor=\"0xCCffff\" fontSize=\"16\"/></subtitle>";
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<subtitle><config bgAlpha=\"0.5\" bgColor=\"0x000000\" defaultColor=\"0xCCffff\" fontSize=\"16\"/></subtitle>";
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
 
             int id = 1;
@@ -67,24 +75,26 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
             string allText = sb.ToString();
             if (!allText.Contains("<subtitle>") || !allText.Contains("timeIn="))
+            {
                 return;
+            }
 
-            var xml = new XmlDocument { XmlResolver = null };
+            XmlDocument xml = new XmlDocument { XmlResolver = null };
             try
             {
                 xml.LoadXml(allText);
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
-                _errorCount = 1;
+                Debug.WriteLine(exception.Message);
+                this._errorCount = 1;
                 return;
             }
 
@@ -96,20 +106,29 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     string end = node.Attributes["timeOut"].InnerText;
                     string text = node.InnerText;
                     if (text.StartsWith("![CDATA[", StringComparison.Ordinal))
+                    {
                         text = text.Remove(0, 8);
+                    }
+
                     if (text.StartsWith("<![CDATA[", StringComparison.Ordinal))
+                    {
                         text = text.Remove(0, 9);
+                    }
+
                     if (text.EndsWith("]]", StringComparison.Ordinal))
+                    {
                         text = text.Remove(text.Length - 2, 2);
+                    }
 
                     subtitle.Paragraphs.Add(new Paragraph(DecodeTimeCode(start), DecodeTimeCode(end), text));
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
         }
 
@@ -122,6 +141,5 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             int ms = int.Parse(arr[3]);
             return new TimeCode(hours, minutes, seconds, ms);
         }
-
     }
 }

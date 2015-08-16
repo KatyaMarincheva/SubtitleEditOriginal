@@ -1,37 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class JsonType5 : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".json"; }
+            get
+            {
+                return ".json";
+            }
         }
 
         public override string Name
         {
-            get { return "JSON Type 5"; }
+            get
+            {
+                return "JSON Type 5";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.Append("{\"text_tees\":[");
             for (int i = 0; i < subtitle.Paragraphs.Count; i++)
             {
@@ -40,8 +50,11 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 sb.Append(',');
                 sb.Append(p.EndTime.TotalMilliseconds);
                 if (i < subtitle.Paragraphs.Count - 1)
+                {
                     sb.Append(',');
+                }
             }
+
             sb.Append("],");
 
             sb.Append("\"text_target\":[");
@@ -49,8 +62,11 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 sb.Append("[\"w1\",\"w3\"],[\"w1\",\"w3\"]");
                 if (i < subtitle.Paragraphs.Count - 1)
+                {
                     sb.Append(',');
+                }
             }
+
             sb.Append("],");
 
             sb.Append("\"text_content\":[");
@@ -58,21 +74,29 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 sb.Append('[');
                 Paragraph p = subtitle.Paragraphs[i];
-                var lines = p.Text.Replace(Environment.NewLine, "\n").Split('\n');
+                string[] lines = p.Text.Replace(Environment.NewLine, "\n").Split('\n');
                 for (int j = 0; j < lines.Length; j++)
                 {
                     sb.Append('"');
                     sb.Append(Json.EncodeJsonText(lines[j]));
                     sb.Append('"');
                     if (j < lines.Length - 1)
+                    {
                         sb.Append(',');
+                    }
                 }
+
                 sb.Append("],");
                 if (i < subtitle.Paragraphs.Count - 1)
+                {
                     sb.Append("[\"\",\"\"],");
+                }
                 else
+                {
                     sb.Append("[\"\",\"\"]");
+                }
             }
+
             sb.Append("],");
 
             sb.Append("\"text_styles\":[");
@@ -80,22 +104,35 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             {
                 sb.Append("[\"s1\",\"s2\"],[\"s1\",\"s2\"]");
                 if (i < subtitle.Paragraphs.Count - 1)
+                {
                     sb.Append(',');
+                }
             }
+
             sb.Append("],");
 
             sb.Append("\"timerange\":[");
             Paragraph timerageP = subtitle.GetParagraphOrDefault(0);
             if (timerageP == null)
+            {
                 sb.Append('0');
+            }
             else
+            {
                 sb.Append(timerageP.StartTime.TotalMilliseconds);
+            }
+
             sb.Append(',');
             timerageP = subtitle.GetParagraphOrDefault(subtitle.Paragraphs.Count - 1);
             if (timerageP == null)
+            {
                 sb.Append('0');
+            }
             else
+            {
                 sb.Append(timerageP.EndTime.TotalMilliseconds);
+            }
+
             sb.Append(']');
 
             sb.Append('}');
@@ -105,18 +142,22 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             foreach (string s in lines)
+            {
                 sb.Append(s);
+            }
 
             string allText = sb.ToString();
             if (!allText.Contains("text_tees"))
+            {
                 return;
+            }
 
-            var times = Json.ReadArray(allText, "text_tees");
-            var texts = Json.ReadArray(allText, "text_content");
+            List<string> times = Json.ReadArray(allText, "text_tees");
+            List<string> texts = Json.ReadArray(allText, "text_content");
 
             for (int i = 0; i < Math.Min(times.Count, texts.Count); i++)
             {
@@ -125,20 +166,21 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     string text = texts[i];
                     if (text.StartsWith('['))
                     {
-                        var textLines = Json.ReadArray("{\"text\":" + texts[i] + "}", "text");
-                        var textSb = new StringBuilder();
+                        List<string> textLines = Json.ReadArray("{\"text\":" + texts[i] + "}", "text");
+                        StringBuilder textSb = new StringBuilder();
                         foreach (string line in textLines)
                         {
                             string t = Json.DecodeJsonText(line);
                             if (t.StartsWith("[\"", StringComparison.Ordinal) && t.EndsWith("\"]", StringComparison.Ordinal))
                             {
-                                var innerSb = new StringBuilder();
-                                var innerTextLines = Json.ReadArray("{\"text\":" + t + "}", "text");
+                                StringBuilder innerSb = new StringBuilder();
+                                List<string> innerTextLines = Json.ReadArray("{\"text\":" + t + "}", "text");
                                 foreach (string innerLine in innerTextLines)
                                 {
                                     innerSb.Append(' ');
                                     innerSb.Append(innerLine);
                                 }
+
                                 textSb.AppendLine(innerSb.ToString().Trim());
                             }
                             else
@@ -146,22 +188,27 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                 textSb.AppendLine(t);
                             }
                         }
+
                         text = textSb.ToString().Trim();
                         text = text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
                     }
-                    var p = new Paragraph(text, int.Parse(times[i]), 0);
+
+                    Paragraph p = new Paragraph(text, int.Parse(times[i]), 0);
                     if (i + 1 < times.Count)
+                    {
                         p.EndTime.TotalMilliseconds = int.Parse(times[i + 1]);
+                    }
+
                     subtitle.Paragraphs.Add(p);
                 }
                 catch
                 {
-                    _errorCount++;
+                    this._errorCount++;
                 }
             }
+
             subtitle.RemoveEmptyLines();
             subtitle.Renumber();
         }
-
     }
 }

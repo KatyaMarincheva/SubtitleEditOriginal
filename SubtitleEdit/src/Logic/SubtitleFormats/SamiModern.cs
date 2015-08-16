@@ -1,20 +1,22 @@
-﻿using System.Collections.Generic;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System.Collections.Generic;
+
     public class SamiModern : Sami
     {
-
         public override string Name
         {
-            get { return "SAMI modern"; }
+            get
+            {
+                return "SAMI modern";
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
     }
 }

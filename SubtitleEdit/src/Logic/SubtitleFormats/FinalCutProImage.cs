@@ -1,33 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Xml;
+
     public class FinalCutProImage : SubtitleFormat
     {
         public double FrameRate { get; set; }
 
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Final Cut Pro Image"; }
+            get
+            {
+                return "Final Cut Pro Image";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
             return subtitle.Paragraphs.Count > 0;
         }
 
@@ -38,12 +47,12 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
-            FrameRate = Configuration.Settings.General.CurrentFrameRate;
+            this._errorCount = 0;
+            this.FrameRate = Configuration.Settings.General.CurrentFrameRate;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             try
             {
@@ -60,7 +69,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             XmlNode filePathNode = fileNode.SelectSingleNode("pathurl");
                             if (fileNameNode != null)
                             {
-                                var p = new Paragraph();
+                                Paragraph p = new Paragraph();
                                 p.Text = fileNameNode.InnerText;
                                 XmlNode inNode = node.SelectSingleNode("in");
                                 XmlNode startNode = node.SelectSingleNode("start");
@@ -72,6 +81,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                 {
                                     p.StartTime.TotalMilliseconds = FramesToMilliseconds(Convert.ToInt32(startNode.InnerText));
                                 }
+
                                 XmlNode outNode = node.SelectSingleNode("out");
                                 XmlNode endNode = node.SelectSingleNode("end");
                                 if (outNode != null)
@@ -82,23 +92,23 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                                 {
                                     p.EndTime.TotalMilliseconds = FramesToMilliseconds(Convert.ToInt32(endNode.InnerText));
                                 }
+
                                 subtitle.Paragraphs.Add(p);
                             }
                         }
                     }
                     catch
                     {
-                        _errorCount++;
+                        this._errorCount++;
                     }
                 }
+
                 subtitle.Renumber();
             }
             catch
             {
-                _errorCount = 1;
-                return;
+                this._errorCount = 1;
             }
         }
-
     }
 }

@@ -1,26 +1,62 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class VocapiaSplit : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".xml"; }
+            get
+            {
+                return ".xml";
+            }
         }
 
         public override string Name
         {
-            get { return "Vocapia Split"; }
+            get
+            {
+                return "Vocapia Split";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool HasStyleSupport
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public static List<string> GetStylesFromHeader(Subtitle subtitle)
+        {
+            List<string> list = new List<string>();
+            foreach (Paragraph p in subtitle.Paragraphs)
+            {
+                if (!string.IsNullOrEmpty(p.Actor))
+                {
+                    if (list.IndexOf(p.Actor) < 0)
+                    {
+                        list.Add(p.Actor);
+                    }
+                }
+            }
+
+            return list;
         }
 
         public override bool IsMine(List<string> lines, string fileName)
@@ -32,26 +68,23 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            string xmlStructure =
-                "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine +
-                "<AudioDoc name=\"title\">" + Environment.NewLine +
-                "<SpeakerList/>" + Environment.NewLine +
-                "<SegmentList/>" + Environment.NewLine +
-                "</AudioDoc>";
+            string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<AudioDoc name=\"title\">" + Environment.NewLine + "<SpeakerList/>" + Environment.NewLine + "<SegmentList/>" + Environment.NewLine + "</AudioDoc>";
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStructure);
             xml.DocumentElement.Attributes["name"].InnerText = title;
 
             if (subtitle.Header != null && subtitle.Header.Contains("<SpeakerList"))
             {
-                var header = new XmlDocument();
+                XmlDocument header = new XmlDocument();
                 try
                 {
                     header.LoadXml(subtitle.Header);
-                    var speakerListNode = header.DocumentElement.SelectSingleNode("SpeakerList");
+                    XmlNode speakerListNode = header.DocumentElement.SelectSingleNode("SpeakerList");
                     if (speakerListNode != null)
+                    {
                         xml.DocumentElement.SelectSingleNode("SpeakerList").InnerXml = speakerListNode.InnerXml;
+                    }
                 }
                 catch
                 {
@@ -86,23 +119,20 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return ToUtf8XmlString(xml);
         }
 
-        private static string ToTimeCode(double totalMilliseconds)
-        {
-            return string.Format("{0:0##}", totalMilliseconds / TimeCode.BaseUnit);
-        }
-
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             lines.ForEach(line => sb.AppendLine(line));
 
             string xmlString = sb.ToString();
             if (!xmlString.Contains("<SpeechSegment"))
+            {
                 return;
+            }
 
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.XmlResolver = null;
             try
             {
@@ -110,7 +140,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
             catch
             {
-                _errorCount = 1;
+                this._errorCount = 1;
                 return;
             }
 
@@ -123,49 +153,38 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     string text = node.InnerText;
                     text = text.Replace("<s/>", Environment.NewLine);
                     text = text.Replace("  ", " ");
-                    var p = new Paragraph(text, ParseTimeCode(start), ParseTimeCode(end));
-                    var spkIdAttr = node.Attributes["spkid"];
+                    Paragraph p = new Paragraph(text, ParseTimeCode(start), ParseTimeCode(end));
+                    XmlAttribute spkIdAttr = node.Attributes["spkid"];
                     if (spkIdAttr != null)
                     {
                         p.Extra = spkIdAttr.InnerText;
                         p.Actor = p.Extra;
                     }
+
                     subtitle.Paragraphs.Add(p);
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    _errorCount++;
+                    Debug.WriteLine(ex.Message);
+                    this._errorCount++;
                 }
             }
+
             subtitle.Renumber();
             if (subtitle.Paragraphs.Count > 0)
+            {
                 subtitle.Header = xmlString;
+            }
+        }
+
+        private static string ToTimeCode(double totalMilliseconds)
+        {
+            return string.Format("{0:0##}", totalMilliseconds / TimeCode.BaseUnit);
         }
 
         private static double ParseTimeCode(string s)
         {
             return Convert.ToDouble(s) * TimeCode.BaseUnit;
         }
-
-        public override bool HasStyleSupport
-        {
-            get { return true; }
-        }
-
-        public static List<string> GetStylesFromHeader(Subtitle subtitle)
-        {
-            var list = new List<string>();
-            foreach (Paragraph p in subtitle.Paragraphs)
-            {
-                if (!string.IsNullOrEmpty(p.Actor))
-                {
-                    if (list.IndexOf(p.Actor) < 0)
-                        list.Add(p.Actor);
-                }
-            }
-            return list;
-        }
-
     }
 }

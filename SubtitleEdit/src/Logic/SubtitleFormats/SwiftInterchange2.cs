@@ -1,35 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class SwiftInterchange2 : SubtitleFormat
     {
         public override string Extension
         {
-            get { return ".sif"; }
+            get
+            {
+                return ".sif";
+            }
         }
 
         public override string Name
         {
-            get { return "Swift Interchange File V2"; }
+            get
+            {
+                return "Swift Interchange File V2";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (lines.Count > 0 && lines[0] != null && lines[0].StartsWith("{\\rtf1"))
+            {
                 return false;
+            }
 
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
@@ -56,7 +68,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 # START ROW BOTTOM
 # ALIGN CENTRE JUSTIFY LEFT
 # ROW 0";
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.AppendLine(header.Replace("[DATE]", date).Replace("[VIDEO_FILE]", title + ".mpg"));
             sb.AppendLine();
             sb.AppendLine();
@@ -78,26 +90,32 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 sb.AppendLine();
                 count++;
             }
+
             return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
             Paragraph p = null;
             foreach (string line in lines)
             {
                 if (line.StartsWith("# SUBTITLE"))
                 {
                     if (p != null)
+                    {
                         subtitle.Paragraphs.Add(p);
+                    }
+
                     p = new Paragraph();
                 }
                 else if (p != null && line.StartsWith("# TIMEIN"))
                 {
                     string timeCode = line.Remove(0, 8).Trim();
                     if (timeCode != "--:--:--:--" && !GetTimeCode(p.StartTime, timeCode))
-                        _errorCount++;
+                    {
+                        this._errorCount++;
+                    }
                 }
                 else if (p != null && line.StartsWith("# DURATION"))
                 {
@@ -105,7 +123,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     string timecode = line.Remove(0, 10).Replace("AUTO", string.Empty).Trim();
                     if (timecode != "--:--")
                     {
-                        var arr = timecode.Split(new[] { ':', ' ' });
+                        string[] arr = timecode.Split(':', ' ');
                         if (arr.Length > 1)
                         {
                             int sec;
@@ -122,20 +140,27 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     string timeCode = line.Remove(0, 9).Trim();
                     if (timeCode != "--:--:--:--" && !GetTimeCode(p.EndTime, timeCode))
-                        _errorCount++;
+                    {
+                        this._errorCount++;
+                    }
                 }
                 else if (p != null && !line.StartsWith('#'))
                 {
                     if (p.Text.Length > 500)
                     {
-                        _errorCount += 10;
+                        this._errorCount += 10;
                         return;
                     }
+
                     p.Text = (p.Text + Environment.NewLine + line).Trim();
                 }
             }
+
             if (p != null)
+            {
                 subtitle.Paragraphs.Add(p);
+            }
+
             subtitle.RemoveEmptyLines();
             subtitle.Renumber();
         }
@@ -144,7 +169,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
         {
             try
             {
-                string[] timeParts = timeString.Split(new[] { ':', '.' });
+                string[] timeParts = timeString.Split(':', '.');
                 timeCode.Hours = int.Parse(timeParts[0]);
                 timeCode.Minutes = int.Parse(timeParts[1]);
                 timeCode.Seconds = int.Parse(timeParts[2]);

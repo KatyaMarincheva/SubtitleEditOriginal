@@ -1,42 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     public class SubViewer20 : SubtitleFormat
     {
         private enum ExpectingLine
         {
             TimeCodes,
+
             Text
         }
 
         public override string Extension
         {
-            get { return ".sub"; }
+            get
+            {
+                return ".sub";
+            }
         }
 
         public override string Name
         {
-            get { return "SubViewer 2.0"; }
+            get
+            {
+                return "SubViewer 2.0";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
-            var sbv = new YouTubeSbv();
-            if (sbv.IsMine(lines, fileName) && !String.Join(String.Empty, lines.ToArray()).Contains("[br]"))
+            YouTubeSbv sbv = new YouTubeSbv();
+            if (sbv.IsMine(lines, fileName) && !string.Join(string.Empty, lines.ToArray()).Contains("[br]"))
+            {
                 return false;
+            }
 
-            var subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            Subtitle subtitle = new Subtitle();
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
@@ -55,9 +67,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 [SUBTITLE]
 [COLF]&H000000,[STYLE]bd,[SIZE]25,[FONT]Arial
 ";
-            //00:00:06.61,00:00:13.75
-            //text1[br]text2
-            var sb = new StringBuilder();
+
+            // 00:00:06.61,00:00:13.75
+            // text1[br]text2
+            StringBuilder sb = new StringBuilder();
             sb.AppendFormat(header, title);
             foreach (Paragraph p in subtitle.Paragraphs)
             {
@@ -72,35 +85,20 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 text = text.Replace("</u>", "{\\u0}");
                 text = text.Replace("</u>", "{\\u}");
 
-                sb.AppendLine(string.Format(paragraphWriteFormat,
-                                        p.StartTime.Hours,
-                                        p.StartTime.Minutes,
-                                        p.StartTime.Seconds,
-                                        RoundTo2Cifres(p.StartTime.Milliseconds),
-                                        p.EndTime.Hours,
-                                        p.EndTime.Minutes,
-                                        p.EndTime.Seconds,
-                                        RoundTo2Cifres(p.EndTime.Milliseconds),
-                                        Environment.NewLine,
-                                        text));
+                sb.AppendLine(string.Format(paragraphWriteFormat, p.StartTime.Hours, p.StartTime.Minutes, p.StartTime.Seconds, RoundTo2Cifres(p.StartTime.Milliseconds), p.EndTime.Hours, p.EndTime.Minutes, p.EndTime.Seconds, RoundTo2Cifres(p.EndTime.Milliseconds), Environment.NewLine, text));
                 sb.AppendLine();
             }
-            return sb.ToString().Trim();
-        }
 
-        private static int RoundTo2Cifres(int milliseconds)
-        {
-            int rounded = (int)Math.Round((double)milliseconds / 10);
-            return rounded;
+            return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            var regexTimeCodes = new Regex(@"^\d\d:\d\d:\d\d.\d+,\d\d:\d\d:\d\d.\d+$", RegexOptions.Compiled);
+            Regex regexTimeCodes = new Regex(@"^\d\d:\d\d:\d\d.\d+,\d\d:\d\d:\d\d.\d+$", RegexOptions.Compiled);
 
-            var paragraph = new Paragraph();
+            Paragraph paragraph = new Paragraph();
             ExpectingLine expecting = ExpectingLine.TimeCodes;
-            _errorCount = 0;
+            this._errorCount = 0;
 
             subtitle.Paragraphs.Clear();
             foreach (string line in lines)
@@ -155,7 +153,14 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     }
                 }
             }
+
             subtitle.Renumber();
+        }
+
+        private static int RoundTo2Cifres(int milliseconds)
+        {
+            int rounded = (int)Math.Round((double)milliseconds / 10);
+            return rounded;
         }
     }
 }

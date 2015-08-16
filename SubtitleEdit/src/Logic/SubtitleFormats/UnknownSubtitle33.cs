@@ -1,54 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using Nikse.SubtitleEdit.Core;
-
-namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Core;
+
     public class UnknownSubtitle33 : SubtitleFormat
     {
+        private static readonly Regex regexTimeCodes = new Regex(@"^\d\d\:\d\d\:\d\d\s+\d+    ", RegexOptions.Compiled);
 
-        private static Regex regexTimeCodes = new Regex(@"^\d\d\:\d\d\:\d\d\s+\d+    ", RegexOptions.Compiled);
-        private static Regex regexNumberAndText = new Regex(@"^\d+    [^ ]+", RegexOptions.Compiled);
+        private static readonly Regex regexNumberAndText = new Regex(@"^\d+    [^ ]+", RegexOptions.Compiled);
+
         public override string Extension
         {
-            get { return ".txt"; }
+            get
+            {
+                return ".txt";
+            }
         }
 
         public override string Name
         {
-            get { return "Unknown 33"; }
+            get
+            {
+                return "Unknown 33";
+            }
         }
 
         public override bool IsTimeBased
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
-            LoadSubtitle(subtitle, lines, fileName);
-            return subtitle.Paragraphs.Count > _errorCount;
+            this.LoadSubtitle(subtitle, lines, fileName);
+            return subtitle.Paragraphs.Count > this._errorCount;
         }
 
         public override string ToText(Subtitle subtitle, string title)
         {
-            //08:59:51  3    ON THE PANEL THIS WEEK WE HAVE EMILY LAWLER AND ZACH
-            //08:59:54  4    GORCHOW, ALONG WITH RON DZWONKOWSKI.
-            //          5    HERE IS THE RUNDOWN.
-            //          6    A POSSIBLE REDO OF THE EM LAW IF VOTERS REJECT IT.
-            //09:00:03  7    AND MIKE DUGAN AND LATER GENE CLEM IS DISCUSSING THIS
-
+            // 08:59:51  3    ON THE PANEL THIS WEEK WE HAVE EMILY LAWLER AND ZACH
+            // 08:59:54  4    GORCHOW, ALONG WITH RON DZWONKOWSKI.
+            // 5    HERE IS THE RUNDOWN.
+            // 6    A POSSIBLE REDO OF THE EM LAW IF VOTERS REJECT IT.
+            // 09:00:03  7    AND MIKE DUGAN AND LATER GENE CLEM IS DISCUSSING THIS
             const string paragraphWriteFormat = "{0} {1}    {2}";
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             int count = 1;
             int count2 = 1;
             foreach (Paragraph p in subtitle.Paragraphs)
             {
-                var lines = HtmlUtil.RemoveHtmlTags(p.Text).SplitToLines();
+                string[] lines = HtmlUtil.RemoveHtmlTags(p.Text).SplitToLines();
                 if (lines.Length > 0)
                 {
                     sb.AppendLine(string.Format(paragraphWriteFormat, EncodeTimeCode(p.StartTime), count.ToString().PadLeft(2, ' '), lines[0]));
@@ -63,6 +73,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                             count = 1;
                             count2++;
                         }
+
                         sb.AppendLine(string.Format(paragraphWriteFormat, string.Empty, count.ToString().PadLeft(10, ' '), lines[i]));
                     }
 
@@ -77,18 +88,13 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     }
                 }
             }
-            return sb.ToString().Trim();
-        }
 
-        private static string EncodeTimeCode(TimeCode timeCode)
-        {
-            int seconds = (int)(timeCode.Seconds + timeCode.Milliseconds / 1000 + 0.5);
-            return string.Format("{0:00}:{1:00}:{2:00}", timeCode.Hours, timeCode.Minutes, seconds);
+            return sb.ToString().Trim();
         }
 
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
-            _errorCount = 0;
+            this._errorCount = 0;
             Paragraph p = null;
             foreach (string line in lines)
             {
@@ -96,7 +102,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 if (s.Length > 4 && s[2] == ':' && regexTimeCodes.Match(s).Success)
                 {
                     if (p != null && !string.IsNullOrEmpty(p.Text))
+                    {
                         subtitle.Paragraphs.Add(p);
+                    }
+
                     p = new Paragraph();
 
                     try
@@ -114,26 +123,30 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                     }
                     catch
                     {
-                        _errorCount++;
+                        this._errorCount++;
                     }
                 }
                 else if (p != null && regexNumberAndText.Match(s).Success)
                 {
                     if (p.Text.Length > 1000)
                     {
-                        _errorCount += 100;
+                        this._errorCount += 100;
                         return;
                     }
+
                     string text = s.Remove(0, 2).Trim();
                     p.Text = (p.Text + Environment.NewLine + text).Trim();
                 }
                 else if (s.Length > 0 && !Utilities.IsInteger(s))
                 {
-                    _errorCount++;
+                    this._errorCount++;
                 }
             }
+
             if (p != null && !string.IsNullOrEmpty(p.Text))
+            {
                 subtitle.Paragraphs.Add(p);
+            }
 
             int index = 1;
             foreach (Paragraph paragraph in subtitle.Paragraphs)
@@ -143,6 +156,7 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
                 {
                     paragraph.EndTime.TotalMilliseconds = next.StartTime.TotalMilliseconds - 1;
                 }
+
                 index++;
             }
 
@@ -150,5 +164,10 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             subtitle.Renumber();
         }
 
+        private static string EncodeTimeCode(TimeCode timeCode)
+        {
+            int seconds = (int)(timeCode.Seconds + timeCode.Milliseconds / 1000 + 0.5);
+            return string.Format("{0:00}:{1:00}:{2:00}", timeCode.Hours, timeCode.Minutes, seconds);
+        }
     }
 }
