@@ -172,7 +172,7 @@
 
             text = FixBeginTags(text, BeginTag);
 
-            text = FifEndTags(text, EndTag);
+            text = FixEndTags(text, EndTag);
 
             text = RemoveItalicEndBeginTagGroups(text);
 
@@ -533,7 +533,7 @@
             return text;
         }
 
-        private static string FifEndTags(string text, string endTag)
+        private static string FixEndTags(string text, string endTag)
         {
             const string EndTagPattern = @"<\s*/\s*i\s*>";
             text = Regex.Replace(text, EndTagPattern, endTag, RegexOptions.IgnoreCase);

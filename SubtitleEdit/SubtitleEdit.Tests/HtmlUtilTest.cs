@@ -433,5 +433,57 @@ namespace Nikse.SubtitleEdit.Core
             return result;
             // TODO: add assertions to method HtmlUtilTest.RemoveUnnecessarySelfClosingTags(String, String, String)
         }
+        [PexMethod]
+        [PexMethodUnderTest("RemoveItalicEndBeginTagGroups(String)")]
+        internal string RemoveItalicEndBeginTagGroups(string text)
+        {
+            object[] args = new object[1];
+            args[0] = (object)text;
+            Type[] parameterTypes = new Type[1];
+            parameterTypes[0] = typeof(string);
+            string result0 = ((MethodBase)(typeof(HtmlUtil).GetMethod("RemoveItalicEndBeginTagGroups",
+                                                                      BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.NonPublic, (Binder)null,
+                                                                      CallingConventions.Standard, parameterTypes, (ParameterModifier[])null)))
+                                 .Invoke((object)null, args) as string;
+            string result = result0;
+            return result;
+            // TODO: add assertions to method HtmlUtilTest.RemoveItalicEndBeginTagGroups(String)
+        }
+        [PexMethod]
+        [PexMethodUnderTest("FixEndTags(String, String)")]
+        internal string FixEndTags(string text, string endTag)
+        {
+            object[] args = new object[2];
+            args[0] = (object)text;
+            args[1] = (object)endTag;
+            Type[] parameterTypes = new Type[2];
+            parameterTypes[0] = typeof(string);
+            parameterTypes[1] = typeof(string);
+            string result0 = ((MethodBase)(typeof(HtmlUtil).GetMethod("FixEndTags",
+                                                                      BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.NonPublic, (Binder)null,
+                                                                      CallingConventions.Standard, parameterTypes, (ParameterModifier[])null)))
+                                 .Invoke((object)null, args) as string;
+            string result = result0;
+            return result;
+            // TODO: add assertions to method HtmlUtilTest.FixEndTags(String, String)
+        }
+        [PexMethod]
+        [PexMethodUnderTest("FixBeginTags(String, String)")]
+        internal string FixBeginTags(string text, string beginTag)
+        {
+            object[] args = new object[2];
+            args[0] = (object)text;
+            args[1] = (object)beginTag;
+            Type[] parameterTypes = new Type[2];
+            parameterTypes[0] = typeof(string);
+            parameterTypes[1] = typeof(string);
+            string result0 = ((MethodBase)(typeof(HtmlUtil).GetMethod("FixBeginTags",
+                                                                      BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.NonPublic, (Binder)null,
+                                                                      CallingConventions.Standard, parameterTypes, (ParameterModifier[])null)))
+                                 .Invoke((object)null, args) as string;
+            string result = result0;
+            return result;
+            // TODO: add assertions to method HtmlUtilTest.FixBeginTags(String, String)
+        }
     }
 }

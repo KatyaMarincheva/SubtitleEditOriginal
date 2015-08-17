@@ -24,7 +24,7 @@ namespace Test.Core
         public void RemoveOpenCloseTags880()
         {
             string s;
-            s = this.RemoveOpenCloseTags("", (string[])null);
+            s = HtmlUtil.RemoveOpenCloseTags("", (string[])null);
             Assert.AreEqual<string>("", s);
         }
     }

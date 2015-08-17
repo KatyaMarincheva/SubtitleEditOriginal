@@ -59,6 +59,12 @@
     <Compile Include="HtmlUtilTest.EncodeText.g.cs">
       <DependentUpon>HtmlUtilTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="HtmlUtilTest.FixBeginTags.g.cs">
+      <DependentUpon>HtmlUtilTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HtmlUtilTest.FixEndTags.g.cs">
+      <DependentUpon>HtmlUtilTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="HtmlUtilTest.FixInvalidItalicTags.g.cs">
       <DependentUpon>HtmlUtilTest.cs</DependentUpon>
     </Compile>
@@ -87,6 +93,9 @@
       <DependentUpon>HtmlUtilTest.cs</DependentUpon>
     </Compile>
     <Compile Include="HtmlUtilTest.RemoveItalicBeginEndTagGroup.g.cs">
+      <DependentUpon>HtmlUtilTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HtmlUtilTest.RemoveItalicEndBeginTagGroups.g.cs">
       <DependentUpon>HtmlUtilTest.cs</DependentUpon>
     </Compile>
     <Compile Include="HtmlUtilTest.RemoveMultipleBeginTags.g.cs">
