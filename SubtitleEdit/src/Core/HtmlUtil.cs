@@ -165,7 +165,7 @@
             return text;
         }
 
-        public static string    (string text)
+        public static string FixInvalidItalicTags(string text)
         {
             const string BeginTag = "<i>";
             const string EndTag = "</i>";
