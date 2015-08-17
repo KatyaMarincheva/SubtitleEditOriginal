@@ -11,7 +11,7 @@
     /// <summary>
     ///     HTML specific string manipulations.
     /// </summary>
-    internal static class HtmlUtil
+    public static class HtmlUtil
     {
         public const string TagItalic = "i";
 
@@ -195,7 +195,7 @@
 
                 text = RemoveDuplicateBeginTag(text, italicBeginTagCount, italicEndTagCount, BeginTag, EndTag);
 
-                text = Text(text, italicBeginTagCount, italicEndTagCount, BeginTag, EndTag, noOfLines);
+                text = AddMissingEndTag(text, italicBeginTagCount, italicEndTagCount, BeginTag, EndTag, noOfLines);
 
                 text = AddMissingBeginTag(text, italicBeginTagCount, italicEndTagCount, EndTag, BeginTag);
 
@@ -381,7 +381,7 @@
             return text;
         }
 
-        private static string Text(string text, int italicBeginTagCount, int italicEndTagCount, string beginTag, string endTag, int noOfLines)
+        private static string AddMissingEndTag(string text, int italicBeginTagCount, int italicEndTagCount, string beginTag, string endTag, int noOfLines)
         {
             if (italicBeginTagCount == 1 && italicEndTagCount == 0)
             {
