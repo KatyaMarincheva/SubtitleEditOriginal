@@ -54,6 +54,10 @@
       <HintPath>DLLs\Interop.QuartzTypeLib.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NHunspell, Version=1.2.5554.16953, Culture=neutral, PublicKeyToken=1ac793ea843b4366, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\NHunspell.1.2.5554.16953\lib\net\NHunspell.dll</HintPath>
@@ -70,6 +74,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\Interfaces\IVideoPlayerContainer.cs" />
+    <Compile Include="Controls\MockVideoPlayerContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\MouseDownParagraphType.cs" />
     <Compile Include="Controls\ParagraphEventArgs.cs" />
     <Compile Include="Controls\RichTextBoxViewOnly.cs">
@@ -832,6 +840,7 @@
     <Compile Include="Logic\Forms\RemoveTextForHI.cs" />
     <Compile Include="Logic\Forms\SplitLongLinesHelper.cs" />
     <Compile Include="Core\HtmlUtil.cs" />
+    <Compile Include="Logic\Interfaces\IParagraph.cs" />
     <Compile Include="Logic\LanguageDeserializer.cs" />
     <Compile Include="Logic\MurMurHash3.cs" />
     <Compile Include="Logic\NativeMethods.cs" />
@@ -1200,6 +1209,7 @@
     <Compile Include="Logic\ContainerFormats\RiffDecodeHeader.cs" />
     <Compile Include="Logic\ContainerFormats\RiffParser.cs" />
     <Compile Include="Logic\VideoInfo.cs" />
+    <Compile Include="Logic\Interfaces\IVideoPlayer.cs" />
     <Compile Include="Logic\VideoPlayers\LibVlcDynamic.cs" />
     <Compile Include="Logic\VideoPlayers\LibVlcMono.cs" />
     <Compile Include="Logic\VideoPlayers\ManagedDirectXPlayer.cs" />

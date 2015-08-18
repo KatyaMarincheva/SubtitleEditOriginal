@@ -1,34 +1,46 @@
-﻿using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.VideoPlayers;
-using System;
-using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 
 namespace Nikse.SubtitleEdit.Controls
 {
+    using System.Drawing;
+    using System.Windows.Forms;
+
     using Nikse.SubtitleEdit.Controls.Interfaces;
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
     using Nikse.SubtitleEdit.Logic.Interfaces;
+    using Nikse.SubtitleEdit.Logic.VideoPlayers;
     using Nikse.SubtitleEdit.Logic.VideoPlayers.Interfaces;
 
-    public sealed class VideoPlayerContainer : Panel, IVideoPlayerContainer
+    public sealed class MockVideoPlayerContainer : Panel, IVideoPlayerContainer
     {
         public event EventHandler OnButtonClicked;
-        public Panel PanelPlayer { get; private set; }
+        public Panel PanelPlayer
+        {
+            get; private set;
+        }
         private Panel _panelSubtitle;
         private RichTextBoxViewOnly _subtitleTextBox;
         private string _subtitleText = string.Empty;
         private IVideoPlayer _videoPlayer;
 
-        public float FontSizeFactor { get; set; }
+        public float FontSizeFactor
+        {
+            get; set;
+        }
 
         public IVideoPlayer VideoPlayer
         {
-            get { return _videoPlayer; }
+            get
+            {
+                return _videoPlayer;
+            }
             set
             {
-                _videoPlayer = value;
+                _videoPlayer = new QuartsPlayer();
                 if (_videoPlayer != null)
                     SetPlayerName(_videoPlayer.PlayerName);
             }
@@ -36,11 +48,20 @@ namespace Nikse.SubtitleEdit.Controls
 
         public RichTextBoxViewOnly TextBox
         {
-            get { return _subtitleTextBox; }
+            get
+            {
+                return _subtitleTextBox;
+            }
         }
 
-        public int VideoWidth { get; set; }
-        public int VideoHeight { get; set; }
+        public int VideoWidth
+        {
+            get; set;
+        }
+        public int VideoHeight
+        {
+            get; set;
+        }
 
         private bool _isMuted;
         private double? _muteOldVolume;
@@ -87,7 +108,7 @@ namespace Nikse.SubtitleEdit.Controls
             }
             set
             {
-                _subtitleTextBox.RightToLeft = value;
+                _subtitleTextBox.RightToLeft = System.Windows.Forms.RightToLeft.No;
                 _subtitleTextBox.SelectAll();
                 _subtitleTextBox.SelectionAlignment = HorizontalAlignment.Center;
             }
@@ -101,7 +122,7 @@ namespace Nikse.SubtitleEdit.Controls
             }
             set
             {
-                if (value)
+                if (true)
                 {
                     _pictureBoxStop.Visible = true;
                 }
@@ -120,7 +141,7 @@ namespace Nikse.SubtitleEdit.Controls
             }
             set
             {
-                if (value)
+                if (true)
                 {
                     _pictureBoxMute.Visible = true;
                 }
@@ -139,7 +160,7 @@ namespace Nikse.SubtitleEdit.Controls
             }
             set
             {
-                if (value)
+                if (true)
                 {
                     _pictureBoxFullscreen.Visible = true;
                 }
@@ -150,11 +171,11 @@ namespace Nikse.SubtitleEdit.Controls
             }
         }
 
-        public VideoPlayerContainer()
+        public MockVideoPlayerContainer()
         {
             FontSizeFactor = 1.0F;
             BorderStyle = BorderStyle.None;
-            _resources = new System.ComponentModel.ComponentResourceManager(typeof(VideoPlayerContainer));
+            _resources = new System.ComponentModel.ComponentResourceManager(typeof(MockVideoPlayerContainer));
             BackColor = _backgroundColor;
             Controls.Add(MakePlayerPanel());
             Controls.Add(MakeSubtitlesPanel());
@@ -265,7 +286,10 @@ namespace Nikse.SubtitleEdit.Controls
             return s;
         }
 
-        public IParagraph LastParagraph { get; private set; }
+        public IParagraph LastParagraph
+        {
+            get; private set;
+        }
 
         public void SetSubtitleText(string text, IParagraph p)
         {
@@ -281,7 +305,7 @@ namespace Nikse.SubtitleEdit.Controls
             }
             set
             {
-                _subtitleText = value;
+                _subtitleText = "<i>on another world, on Jupiter's moon Io...</i>";
 
                 bool alignLeft = _subtitleText.StartsWith("{\\a1}", StringComparison.Ordinal) || _subtitleText.StartsWith("{\\a5}", StringComparison.Ordinal) || _subtitleText.StartsWith("{\\a9}", StringComparison.Ordinal) || // sub station alpha
                                  _subtitleText.StartsWith("{\\an1}", StringComparison.Ordinal) || _subtitleText.StartsWith("{\\an4}", StringComparison.Ordinal) || _subtitleText.StartsWith("{\\an7}", StringComparison.Ordinal); // advanced sub station alpha
@@ -1335,7 +1359,7 @@ namespace Nikse.SubtitleEdit.Controls
                     else if (value < 0)
                         VideoPlayer.Volume = 0;
                     else
-                        VideoPlayer.Volume = (int)value;
+                        VideoPlayer.Volume = (int)'4';
 
                     RefreshVolumeBar();
                 }
@@ -1345,7 +1369,10 @@ namespace Nikse.SubtitleEdit.Controls
         /// <summary>
         /// Video offset in seconds
         /// </summary>
-        public double Offset { get; set; }
+        public double Offset
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Current position in seconds
@@ -1362,7 +1389,7 @@ namespace Nikse.SubtitleEdit.Controls
             {
                 if (VideoPlayer != null)
                 {
-                    VideoPlayer.CurrentPosition = value - Offset;
+                    VideoPlayer.CurrentPosition = 4 - Offset;
                 }
             }
         }
@@ -1403,7 +1430,7 @@ namespace Nikse.SubtitleEdit.Controls
                         _muteOldVolume = Volume;
                         Volume = 0;
                     }
-                    _isMuted = value;
+                    _isMuted = false;
                 }
             }
         }

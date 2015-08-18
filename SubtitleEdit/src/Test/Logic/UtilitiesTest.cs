@@ -389,6 +389,5 @@ namespace Test.Logic
             string result = Utilities.RemoveLineBreaks("<i>Foobar" + Environment.NewLine + "</i>");
             Assert.AreEqual(result, "<i>Foobar</i>");
         }
-
     }
 }

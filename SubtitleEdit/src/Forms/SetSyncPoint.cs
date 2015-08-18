@@ -7,6 +7,8 @@ using Nikse.SubtitleEdit.Logic.VideoPlayers;
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using Nikse.SubtitleEdit.Logic.VideoPlayers.Interfaces;
+
     public sealed partial class SetSyncPoint : Form
     {
         private double _lastPosition;
@@ -287,7 +289,7 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
-        private void GoBackSeconds(double seconds, VideoPlayer mediaPlayer)
+        private void GoBackSeconds(double seconds, IVideoPlayer mediaPlayer)
         {
             if (mediaPlayer != null)
             {

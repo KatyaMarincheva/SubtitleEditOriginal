@@ -3,7 +3,9 @@ using System.Windows.Forms;
 
 namespace Nikse.SubtitleEdit.Logic.VideoPlayers
 {
-    public abstract class VideoPlayer
+    using Nikse.SubtitleEdit.Logic.VideoPlayers.Interfaces;
+
+    public abstract class VideoPlayer : IVideoPlayer
     {
         public abstract string PlayerName { get; }
         public string VideoFileName { get; protected set; }

@@ -1,3 +1,4 @@
+using System.Runtime.Versioning;
 using System;
 // <copyright file="PexAssemblyInfo.cs" company="Nikse">Nikse</copyright>
 using Microsoft.Pex.Framework.Coverage;
@@ -29,4 +30,8 @@ using Microsoft.Pex.Framework.Validation;
 [assembly: PexCoverageFilterAssembly(PexCoverageDomain.UserOrTestCode, "System.Core")]
 [assembly: PexCoverageFilterAssembly(PexCoverageDomain.UserOrTestCode, "System.Drawing")]
 [assembly: PexInstrumentType(typeof(Environment))]
+[assembly: PexInstrumentType(typeof(Environment))]
+[assembly: PexInstrumentType(typeof(OperatingSystem))]
+[assembly: PexInstrumentType(typeof(Environment))]
+[assembly: PexInstrumentType(typeof(VersioningHelper))]
 

@@ -3,7 +3,9 @@ using System;
 
 namespace Nikse.SubtitleEdit.Logic
 {
-    public class Paragraph
+    using Nikse.SubtitleEdit.Logic.Interfaces;
+
+    public class Paragraph : IParagraph
     {
         public int Number { get; set; }
 
@@ -45,7 +47,7 @@ namespace Nikse.SubtitleEdit.Logic
 
         public bool NewSection { get; set; }
 
-        private string GenerateId()
+        public string GenerateId()
         {
             return Guid.NewGuid().ToString();
         }
@@ -104,7 +106,7 @@ namespace Nikse.SubtitleEdit.Logic
             ID = GenerateId();
         }
 
-        internal void Adjust(double factor, double adjust)
+        public void Adjust(double factor, double adjust)
         {
             if (StartTime.IsMaxTime)
                 return;
