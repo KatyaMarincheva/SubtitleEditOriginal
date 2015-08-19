@@ -39,6 +39,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.ExtendedReflection, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\Microsoft\Pex\Microsoft.ExtendedReflection.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Pex.Framework">
       <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\Microsoft\Pex\Microsoft.Pex.Framework.dll</HintPath>
     </Reference>
@@ -57,6 +61,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Factories\ParagraphFactory.cs" />
     <Compile Include="Factories\VideoPlayerContainerFactory.cs" />
     <Compile Include="HtmlUtilTest.AddMissingBeginTag.g.cs">
       <DependentUpon>HtmlUtilTest.cs</DependentUpon>
@@ -128,6 +133,10 @@
     <Compile Include="HtmlUtilTest.TwoEndTagsSetBeginAndEndTags.g.cs">
       <DependentUpon>HtmlUtilTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="ParagraphTest.Constructor.g.cs">
+      <DependentUpon>ParagraphTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ParagraphTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\PexAssemblyInfo.cs" />
     <Compile Include="UtilitiesTest.cs" />
@@ -160,6 +169,49 @@
     </Compile>
     <Compile Include="UtilitiesTest.TryReadVideoInfoViaMp4.g.cs">
       <DependentUpon>UtilitiesTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubMergedPackTest.Constructor.g.cs">
+      <DependentUpon>VobSubMergedPackTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubMergedPackTest.cs" />
+    <Compile Include="VobSubPackTest.Constructor.g.cs">
+      <DependentUpon>VobSubPackTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubPackTest.cs" />
+    <Compile Include="VobSubParserTest.Constructor.g.cs">
+      <DependentUpon>VobSubParserTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubParserTest.cs" />
+    <Compile Include="VobSubParserTest.IsMpeg2PackHeader.g.cs">
+      <DependentUpon>VobSubParserTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubParserTest.IsPrivateStream1.g.cs">
+      <DependentUpon>VobSubParserTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubParserTest.IsPrivateStream2.g.cs">
+      <DependentUpon>VobSubParserTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubParserTest.IsSubtitlePack.g.cs">
+      <DependentUpon>VobSubParserTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubParserTest.MergeVobSubPacks.g.cs">
+      <DependentUpon>VobSubParserTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubParserTest.Open.g.cs">
+      <DependentUpon>VobSubParserTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubWriterTest.cs" />
+    <Compile Include="VobSubWriterTest.ToHexColor.g.cs">
+      <DependentUpon>VobSubWriterTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubWriterTest.WriteColors.g.cs">
+      <DependentUpon>VobSubWriterTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubWriterTest.WriteEndianWord.g.cs">
+      <DependentUpon>VobSubWriterTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VobSubWriterTest.WritePixelDataAddress.g.cs">
+      <DependentUpon>VobSubWriterTest.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
