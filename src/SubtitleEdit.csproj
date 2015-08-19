@@ -1,0 +1,2007 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <ApplicationIcon>Icons\SE.ico</ApplicationIcon>
+    <AssemblyName>SubtitleEdit</AssemblyName>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <FileAlignment>512</FileAlignment>
+    <ManifestCertificateThumbprint>DCCE7922B5E425ADB221E06DC2FB405664CF8F63</ManifestCertificateThumbprint>
+    <MapFileExtensions>true</MapFileExtensions>
+    <NuGetPackageImportStamp>275fbe13</NuGetPackageImportStamp>
+    <OutputType>WinExe</OutputType>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{511A5B59-1C35-4719-8536-23B19AF9B21A}</ProjectGuid>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <RestorePackages>true</RestorePackages>
+    <RootNamespace>Nikse.SubtitleEdit</RootNamespace>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DebugType>pdbonly</DebugType>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Interop.QuartzTypeLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>DLLs\Interop.QuartzTypeLib.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NHunspell, Version=1.2.5554.16953, Culture=neutral, PublicKeyToken=1ac793ea843b4366, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\NHunspell.1.2.5554.16953\lib\net\NHunspell.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="zlib.net">
+      <HintPath>packages\zlib.net.1.0.4.0\lib\zlib.net.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\Interfaces\IVideoPlayerContainer.cs" />
+    <Compile Include="Controls\MockVideoPlayerContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\MouseDownParagraphType.cs" />
+    <Compile Include="Controls\ParagraphEventArgs.cs" />
+    <Compile Include="Controls\RichTextBoxViewOnly.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\SETextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\VideoPlayerContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TimeUpDown.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TimeUpDown.Designer.cs">
+      <DependentUpon>TimeUpDown.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AudioVisualizer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\AudioVisualizer.Designer.cs">
+      <DependentUpon>AudioVisualizer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\FastFileStream.cs" />
+    <Compile Include="Core\StringExtensions.cs" />
+    <Compile Include="Forms\AddWaveformBatch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddWaveformBatch.Designer.cs">
+      <DependentUpon>AddWaveformBatch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CheckForUpdates.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CheckForUpdates.Designer.cs">
+      <DependentUpon>CheckForUpdates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ColorChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DCinema\DCinemaPropertiesForm.cs">
+      <SubType>form</SubType>
+    </Compile>
+    <Compile Include="Forms\DCinema\DCinemaPropertiesInterop.cs">
+      <SubType>form</SubType>
+    </Compile>
+    <Compile Include="Forms\DCinema\DCinemaPropertiesInterop.Designer.cs">
+      <DependentUpon>DCinemaPropertiesInterop.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DCinema\DCinemaPropertiesSmpte.cs">
+      <SubType>form</SubType>
+    </Compile>
+    <Compile Include="Forms\DCinema\DCinemaPropertiesSmpte.Designer.cs">
+      <DependentUpon>DCinemaPropertiesSmpte.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DoNotBreakAfterListEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DoNotBreakAfterListEdit.Designer.cs">
+      <DependentUpon>DoNotBreakAfterListEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SubtitleListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\AddToNames.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddToNames.Designer.cs">
+      <DependentUpon>AddToNames.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AddToOcrReplaceList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddToOcrReplaceList.Designer.cs">
+      <DependentUpon>AddToOcrReplaceList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AddToUserDic.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddToUserDic.Designer.cs">
+      <DependentUpon>AddToUserDic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AddWaveform.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddWaveform.Designer.cs">
+      <DependentUpon>AddWaveform.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AlignmentPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AlignmentPicker.Designer.cs">
+      <DependentUpon>AlignmentPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ApplyDurationLimits.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ApplyDurationLimits.Designer.cs">
+      <DependentUpon>ApplyDurationLimits.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AutoBreakUnbreakLines.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AutoBreakUnbreakLines.Designer.cs">
+      <DependentUpon>AutoBreakUnbreakLines.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BatchConvert.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BatchConvert.Designer.cs">
+      <DependentUpon>BatchConvert.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Beamer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Beamer.Designer.cs">
+      <DependentUpon>Beamer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ChangeCasing.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChangeCasing.Designer.cs">
+      <DependentUpon>ChangeCasing.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ChangeCasingNames.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChangeCasingNames.Designer.cs">
+      <DependentUpon>ChangeCasingNames.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ChangeFrameRate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChangeFrameRate.Designer.cs">
+      <DependentUpon>ChangeFrameRate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ChangeSpeedInPercent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChangeSpeedInPercent.Designer.cs">
+      <DependentUpon>ChangeSpeedInPercent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ChooseAudioTrack.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChooseAudioTrack.Designer.cs">
+      <DependentUpon>ChooseAudioTrack.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ChooseLanguage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChooseLanguage.Designer.cs">
+      <DependentUpon>ChooseLanguage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ChooseEncoding.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChooseEncoding.Designer.cs">
+      <DependentUpon>ChooseEncoding.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ChooseResolution.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChooseResolution.Designer.cs">
+      <DependentUpon>ChooseResolution.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ChooseStyle.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChooseStyle.Designer.cs">
+      <DependentUpon>ChooseStyle.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Compare.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Compare.Designer.cs">
+      <DependentUpon>Compare.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AdjustDisplayDuration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AdjustDisplayDuration.Designer.cs">
+      <DependentUpon>AdjustDisplayDuration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DurationsBridgeGaps.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DurationsBridgeGaps.Designer.cs">
+      <DependentUpon>DurationsBridgeGaps.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ExportCustomText.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExportCustomText.Designer.cs">
+      <DependentUpon>ExportCustomText.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ExportCustomTextFormat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExportCustomTextFormat.Designer.cs">
+      <DependentUpon>ExportCustomTextFormat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ExportPngXmlPreview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExportPngXmlPreview.Designer.cs">
+      <DependentUpon>ExportPngXmlPreview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ExportTextST.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExportTextST.Designer.cs">
+      <DependentUpon>ExportTextST.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FcpProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FcpProperties.Designer.cs">
+      <DependentUpon>FcpProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ImportImages.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ImportImages.Designer.cs">
+      <DependentUpon>ImportImages.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ImportSceneChanges.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ImportSceneChanges.Designer.cs">
+      <DependentUpon>ImportSceneChanges.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ImportUnknownFormat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ImportUnknownFormat.Designer.cs">
+      <DependentUpon>ImportUnknownFormat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MeasurementConverter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MeasurementConverter.Designer.cs">
+      <DependentUpon>MeasurementConverter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MergeTextWithSameTimeCodes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MergeTextWithSameTimeCodes.Designer.cs">
+      <DependentUpon>MergeTextWithSameTimeCodes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NuendoProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NuendoProperties.Designer.cs">
+      <DependentUpon>NuendoProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EbuSaveOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EbuSaveOptions.Designer.cs">
+      <DependentUpon>EbuSaveOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EffectKaraoke.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EffectKaraoke.Designer.cs">
+      <DependentUpon>EffectKaraoke.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EffectTypewriter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EffectTypewriter.Designer.cs">
+      <DependentUpon>EffectTypewriter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ExportPngXml.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExportPngXml.Designer.cs">
+      <DependentUpon>ExportPngXml.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ExportText.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExportText.Designer.cs">
+      <DependentUpon>ExportText.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ExtractDateTimeInfo.cs">
+      <SubType>form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExtractDateTimeInfo.Designer.cs">
+      <DependentUpon>ExtractDateTimeInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FindDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FindDialog.Designer.cs">
+      <DependentUpon>FindDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FindSubtitleLine.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FindSubtitleLine.Designer.cs">
+      <DependentUpon>FindSubtitleLine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FixCommonErrors.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FixCommonErrors.Designer.cs">
+      <DependentUpon>FixCommonErrors.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DvdSubRip.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DvdSubRip.Designer.cs">
+      <DependentUpon>DvdSubRip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DvdSubRipChooseLanguage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DvdSubRipChooseLanguage.Designer.cs">
+      <DependentUpon>DvdSubRipChooseLanguage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\GetDictionaries.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\GetDictionaries.Designer.cs">
+      <DependentUpon>GetDictionaries.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\GetTesseractDictionaries.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\GetTesseractDictionaries.Designer.cs">
+      <DependentUpon>GetTesseractDictionaries.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\HardSubExtract.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\HardSubExtract.Designer.cs">
+      <DependentUpon>HardSubExtract.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Interjections.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Interjections.Designer.cs">
+      <DependentUpon>Interjections.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\JoinSubtitles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\JoinSubtitles.Designer.cs">
+      <DependentUpon>JoinSubtitles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MergeDoubleLines.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MergeDoubleLines.Designer.cs">
+      <DependentUpon>MergeDoubleLines.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ModifySelection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ModifySelection.Designer.cs">
+      <DependentUpon>ModifySelection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NetworkChat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NetworkChat.Designer.cs">
+      <DependentUpon>NetworkChat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NetworkJoin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NetworkJoin.Designer.cs">
+      <DependentUpon>NetworkJoin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NetworkLogAndInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NetworkLogAndInfo.Designer.cs">
+      <DependentUpon>NetworkLogAndInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NetworkStart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NetworkStart.Designer.cs">
+      <DependentUpon>NetworkStart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\OpenVideoDvd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OpenVideoDvd.Designer.cs">
+      <DependentUpon>OpenVideoDvd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PacEncoding.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PacEncoding.Designer.cs">
+      <DependentUpon>PacEncoding.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ColumnPaste.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ColumnPaste.Designer.cs">
+      <DependentUpon>ColumnPaste.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PluginsGet.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PluginsGet.Designer.cs">
+      <DependentUpon>PluginsGet.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PositionAndSizeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\RestoreAutoBackup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\RestoreAutoBackup.Designer.cs">
+      <DependentUpon>RestoreAutoBackup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SeekSilence.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SeekSilence.Designer.cs">
+      <DependentUpon>SeekSilence.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SetSyncPoint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SetSyncPoint.Designer.cs">
+      <DependentUpon>SetSyncPoint.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\GoogleTranslate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\GoogleTranslate.Designer.cs">
+      <DependentUpon>GoogleTranslate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\GoToLine.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\GoToLine.Designer.cs">
+      <DependentUpon>GoToLine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ImportText.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ImportText.Designer.cs">
+      <DependentUpon>ImportText.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Main.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MatroskaSubtitleChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MatroskaSubtitleChooser.Designer.cs">
+      <DependentUpon>MatroskaSubtitleChooser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MergeShortLines.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MergeShortLines.Designer.cs">
+      <DependentUpon>MergeShortLines.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MultipleReplace.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MultipleReplace.Designer.cs">
+      <DependentUpon>MultipleReplace.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\OCRSpellCheck.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OCRSpellCheck.Designer.cs">
+      <DependentUpon>OCRSpellCheck.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\RemoveTextFromHearImpaired.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\RemoveTextFromHearImpaired.Designer.cs">
+      <DependentUpon>RemoveTextFromHearImpaired.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ReplaceDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ReplaceDialog.Designer.cs">
+      <DependentUpon>ReplaceDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SetMinimumDisplayTimeBetweenParagraphs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SetMinimumDisplayTimeBetweenParagraphs.Designer.cs">
+      <DependentUpon>SetMinimumDisplayTimeBetweenParagraphs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Settings.Designer.cs">
+      <DependentUpon>Settings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SetVideoOffset.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SetVideoOffset.Designer.cs">
+      <DependentUpon>SetVideoOffset.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ShowEarlierLater.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ShowEarlierLater.Designer.cs">
+      <DependentUpon>ShowEarlierLater.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ShowHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ShowHistory.Designer.cs">
+      <DependentUpon>ShowHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SpellCheck.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SpellCheck.Designer.cs">
+      <DependentUpon>SpellCheck.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DialogDoNotShowAgain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DialogDoNotShowAgain.Designer.cs">
+      <DependentUpon>DialogDoNotShowAgain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Split.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Split.Designer.cs">
+      <DependentUpon>Split.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SplitLongLines.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SplitLongLines.Designer.cs">
+      <DependentUpon>SplitLongLines.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SplitSubtitle.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SplitSubtitle.Designer.cs">
+      <DependentUpon>SplitSubtitle.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\StartNumberingFrom.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\StartNumberingFrom.Designer.cs">
+      <DependentUpon>StartNumberingFrom.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Statistics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Statistics.Designer.cs">
+      <DependentUpon>Statistics.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\StatusLog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\StatusLog.Designer.cs">
+      <DependentUpon>StatusLog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Styles\StylesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SubStationAlphaProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SubStationAlphaProperties.Designer.cs">
+      <DependentUpon>SubStationAlphaProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Styles\SubStationAlphaStyles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Styles\SubStationAlphaStyles.Designer.cs">
+      <DependentUpon>SubStationAlphaStyles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TimedTextProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TimedTextProperties.Designer.cs">
+      <DependentUpon>TimedTextProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Styles\TimedTextStyles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Styles\TimedTextStyles.Designer.cs">
+      <DependentUpon>TimedTextStyles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TransportStreamSubtitleChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TransportStreamSubtitleChooser.Designer.cs">
+      <DependentUpon>TransportStreamSubtitleChooser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\UnknownSubtitle.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UnknownSubtitle.Designer.cs">
+      <DependentUpon>UnknownSubtitle.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VideoControlsUndocked.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VideoControlsUndocked.Designer.cs">
+      <DependentUpon>VideoControlsUndocked.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VideoError.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VideoError.Designer.cs">
+      <DependentUpon>VideoError.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VideoPlayerUndocked.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VideoPlayerUndocked.Designer.cs">
+      <DependentUpon>VideoPlayerUndocked.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VisualSync.cs">
+      <SubType>form</SubType>
+    </Compile>
+    <Compile Include="Forms\VisualSync.Designer.cs">
+      <DependentUpon>VisualSync.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VobSubEditCharacters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VobSubEditCharacters.Designer.cs">
+      <DependentUpon>VobSubEditCharacters.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VobSubNOcrCharacterInspect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VobSubNOcrCharacterInspect.Designer.cs">
+      <DependentUpon>VobSubNOcrCharacterInspect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VobSubNOcrEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VobSubNOcrEdit.Designer.cs">
+      <DependentUpon>VobSubNOcrEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VobSubNOcrTrain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VobSubNOcrTrain.Designer.cs">
+      <DependentUpon>VobSubNOcrTrain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VobSubOcr.cs">
+      <SubType>form</SubType>
+    </Compile>
+    <Compile Include="Forms\VobSubOcr.Designer.cs">
+      <DependentUpon>VobSubOcr.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VobSubOcrCharacter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VobSubOcrCharacter.Designer.cs">
+      <DependentUpon>VobSubOcrCharacter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VobSubOcrCharacterInspect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VobSubOcrCharacterInspect.Designer.cs">
+      <DependentUpon>VobSubOcrCharacterInspect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VobSubOcrNewFolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VobSubOcrNewFolder.Designer.cs">
+      <DependentUpon>VobSubOcrNewFolder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VobSubOcrNOcrCharacter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VobSubOcrNOcrCharacter.Designer.cs">
+      <DependentUpon>VobSubOcrNOcrCharacter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VobSubOcrSetItalicFactor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VobSubOcrSetItalicFactor.Designer.cs">
+      <DependentUpon>VobSubOcrSetItalicFactor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Watermark.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Watermark.Designer.cs">
+      <DependentUpon>Watermark.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WaveformGenerateTimeCodes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WaveformGenerateTimeCodes.Designer.cs">
+      <DependentUpon>WaveformGenerateTimeCodes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WaveformUndocked.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WaveformUndocked.Designer.cs">
+      <DependentUpon>WaveformUndocked.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\GoogleOrMicrosoftTranslate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\GoogleOrMicrosoftTranslate.Designer.cs">
+      <DependentUpon>GoogleOrMicrosoftTranslate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WebVttNewVoice.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WebVttNewVoice.Designer.cs">
+      <DependentUpon>WebVttNewVoice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\YouTubeAnnotationsImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\YouTubeAnnotationsImport.Designer.cs">
+      <DependentUpon>YouTubeAnnotationsImport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Logic\CommandLineConvert.cs" />
+    <Compile Include="Logic\BluRaySup\BluRaySupPalette.cs" />
+    <Compile Include="Logic\BluRaySup\BluRaySupParser.cs" />
+    <Compile Include="Logic\BluRaySup\BluRaySupPicture.cs" />
+    <Compile Include="Logic\BluRaySup\Core.cs" />
+    <Compile Include="Logic\BluRaySup\ImageObject.cs" />
+    <Compile Include="Logic\BluRaySup\ImageObjectFragment.cs" />
+    <Compile Include="Logic\BluRaySup\PaletteInfo.cs" />
+    <Compile Include="Logic\BluRaySup\ToolBox.cs" />
+    <Compile Include="Logic\BmpReader.cs" />
+    <Compile Include="Logic\ColorChooser\ColorChangedEventArgs.cs" />
+    <Compile Include="Logic\ColorChooser\ColorHandler.cs" />
+    <Compile Include="Logic\ColorChooser\ColorWheel.cs" />
+    <Compile Include="Logic\ContainerFormats\MaterialExchangeFormat\KeyIdentifier.cs" />
+    <Compile Include="Logic\ContainerFormats\MaterialExchangeFormat\KlvPacket.cs" />
+    <Compile Include="Logic\ContainerFormats\MaterialExchangeFormat\MxfParser.cs" />
+    <Compile Include="Logic\ContainerFormats\MaterialExchangeFormat\PartitionStatus.cs" />
+    <Compile Include="Logic\Dictionaries\NamesList.cs" />
+    <Compile Include="Logic\Dictionaries\OcrFixReplaceList.cs" />
+    <Compile Include="Core\FileUtil.cs" />
+    <Compile Include="Logic\Forms\CheckForUpdatesHelper.cs" />
+    <Compile Include="Logic\Forms\FixCommonErrorsHelper.cs" />
+    <Compile Include="Logic\Forms\RemoveTextForHISettings.cs" />
+    <Compile Include="Logic\Forms\RemoveTextForHI.cs" />
+    <Compile Include="Logic\Forms\SplitLongLinesHelper.cs" />
+    <Compile Include="Core\HtmlUtil.cs" />
+    <Compile Include="Logic\Interfaces\IParagraph.cs" />
+    <Compile Include="Logic\LanguageDeserializer.cs" />
+    <Compile Include="Logic\MurMurHash3.cs" />
+    <Compile Include="Logic\NativeMethods.cs" />
+    <Compile Include="Logic\NikseBitmapImageSplitter.cs" />
+    <Compile Include="Logic\DetectEncoding\EncodingTools.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\CMLangConvertCharset.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\CMLangConvertCharsetClass.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\CMLangString.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\CMLangStringClass.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\CMultiLanguage.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\CMultiLanguageClass.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IEnumCodePage.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IEnumRfc1766.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IEnumScript.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMLangCodePages.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMLangConvertCharset.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMLangFontLink.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMLangFontLink2.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMLangLineBreakConsole.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMLangString.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMLangStringAStr.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMLangStringBufA.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMLangStringBufW.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMLangStringWStr.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMultiLanguage.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMultiLanguage2.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IMultiLanguage3.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\ISequentialStream.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\IStream.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\tagDetectEncodingInfo.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\tagMIMECONTF.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\tagMIMECPINFO.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\tagMIMECSETINFO.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\tagMLCPF.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\tagMLDETECTCP.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\tagMLSTR_FLAGS.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\tagRFC1766INFO.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\tagSCRIPFONTINFO.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\tagSCRIPTINFO.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\tagSTATSTG.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\tagUNICODERANGE.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\_FILETIME.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\_LARGE_INTEGER.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\_RemotableHandle.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\_ULARGE_INTEGER.cs" />
+    <Compile Include="Logic\DetectEncoding\Multilang\__MIDL_IWinTypes_0009.cs" />
+    <Compile Include="Logic\Enums\SelectionChoice.cs" />
+    <Compile Include="Logic\FastBitmap.cs" />
+    <Compile Include="Logic\Fourier.cs" />
+    <Compile Include="Logic\IfoParser.cs" />
+    <Compile Include="Logic\Language.cs" />
+    <Compile Include="Logic\ManagedBitmap.cs" />
+    <Compile Include="Logic\ContainerFormats\Mp4\Boxes\Box.cs" />
+    <Compile Include="Logic\ContainerFormats\Mp4\Boxes\Mdhd.cs" />
+    <Compile Include="Logic\ContainerFormats\Mp4\Boxes\Mdia.cs" />
+    <Compile Include="Logic\ContainerFormats\Mp4\Boxes\Minf.cs" />
+    <Compile Include="Logic\ContainerFormats\Mp4\Boxes\Moov.cs" />
+    <Compile Include="Logic\ContainerFormats\Mp4\Boxes\Mvhd.cs" />
+    <Compile Include="Logic\ContainerFormats\Mp4\Boxes\Stbl.cs" />
+    <Compile Include="Logic\ContainerFormats\Mp4\Boxes\Tkhd.cs" />
+    <Compile Include="Logic\ContainerFormats\Mp4\Boxes\Trak.cs" />
+    <Compile Include="Logic\ContainerFormats\Mp4\Mp4Parser.cs" />
+    <Compile Include="Logic\Networking\NikseWebServiceSession.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Logic\Networking\UpdateLogEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Logic\NikseBitmap.cs" />
+    <Compile Include="Logic\NoBreakAfterItem.cs" />
+    <Compile Include="Logic\Ocr\Binary\BinaryOcrBitmap.cs" />
+    <Compile Include="Logic\Ocr\Binary\BinaryOcrDb.cs" />
+    <Compile Include="Logic\Ocr\ModiLanguage.cs" />
+    <Compile Include="Logic\Ocr\NOcrDb.cs" />
+    <Compile Include="Logic\Ocr\OcrAlphabet.cs" />
+    <Compile Include="Logic\Ocr\NOcrChar.cs" />
+    <Compile Include="Logic\Ocr\OcrCharacter.cs" />
+    <Compile Include="Logic\Ocr\OcrFixEngine.cs" />
+    <Compile Include="Logic\Ocr\OcrImage.cs" />
+    <Compile Include="Logic\Ocr\NOcrPoint.cs" />
+    <Compile Include="Logic\Ocr\SpellCheckOcrTextResult.cs" />
+    <Compile Include="Logic\SubtitleFormats\TextST.cs" />
+    <Compile Include="Logic\SubtitleFormats\TimelineFootageAscii.cs" />
+    <Compile Include="Logic\SubtitleFormats\TimelineAscii.cs" />
+    <Compile Include="Logic\SubtitleFormats\TimelineMvt.cs" />
+    <Compile Include="Logic\SubtitleFormats\Pns.cs" />
+    <Compile Include="Logic\SubtitleFormats\PacUnicode.cs" />
+    <Compile Include="Logic\Settings.cs" />
+    <Compile Include="Logic\Enums\SubtitleSortCriteria.cs" />
+    <Compile Include="Logic\ImageSplitterItem.cs" />
+    <Compile Include="Logic\Configuration.cs" />
+    <Compile Include="Logic\Enums\FindType.cs" />
+    <Compile Include="Logic\Enums\SpellCheckAction.cs" />
+    <Compile Include="Logic\FindReplaceDialogHelper.cs" />
+    <Compile Include="Logic\HistoryItem.cs" />
+    <Compile Include="Logic\SpellCheckWord.cs" />
+    <Compile Include="Logic\SpellCheck\Hunspell.cs" />
+    <Compile Include="Logic\SpellCheck\LinuxHunspell.cs" />
+    <Compile Include="Logic\SpellCheck\MacHunspell.cs" />
+    <Compile Include="Logic\SpellCheck\VoikkoSpellCheck.cs" />
+    <Compile Include="Logic\SpellCheck\WindowsHunspell.cs" />
+    <Compile Include="Logic\SsaStyle.cs" />
+    <Compile Include="Logic\StripableText.cs" />
+    <Compile Include="Logic\SubtitleFormats\AdobeAfterEffectsFTME.cs" />
+    <Compile Include="Logic\SubtitleFormats\AdobeEncore.cs" />
+    <Compile Include="Logic\SubtitleFormats\Ayato.cs" />
+    <Compile Include="Logic\SubtitleFormats\Chk.cs" />
+    <Compile Include="Logic\SubtitleFormats\DvdStudioProSpaceOne.cs" />
+    <Compile Include="Logic\SubtitleFormats\FinalCutProXml14Text.cs" />
+    <Compile Include="Logic\SubtitleFormats\FinalCutProXml14.cs" />
+    <Compile Include="Logic\SubtitleFormats\JsonType6.cs" />
+    <Compile Include="Logic\SubtitleFormats\JsonType5.cs" />
+    <Compile Include="Logic\SubtitleFormats\SamiYouTube.cs" />
+    <Compile Include="Logic\SubtitleFormats\SatBoxPng.cs" />
+    <Compile Include="Logic\SubtitleFormats\TimedText200604CData.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle73.cs" />
+    <Compile Include="Logic\SubtitleFormats\AdobeEncoreLineTabNewLine.cs" />
+    <Compile Include="Logic\SubtitleFormats\AdobeEncoreLineTabs.cs" />
+    <Compile Include="Logic\SubtitleFormats\AdobeEncoreTabs.cs" />
+    <Compile Include="Logic\SubtitleFormats\AdobeEncoreWithLineNumbers.cs" />
+    <Compile Include="Logic\SubtitleFormats\AdobeEncoreWithLineNumbersNtsc.cs" />
+    <Compile Include="Logic\SubtitleFormats\AdvancedSubStationAlpha.cs" />
+    <Compile Include="Logic\SubtitleFormats\AQTitle.cs" />
+    <Compile Include="Logic\SubtitleFormats\AvidCaption.cs" />
+    <Compile Include="Logic\SubtitleFormats\AvidStl.cs" />
+    <Compile Include="Logic\SubtitleFormats\AvidDvd.cs" />
+    <Compile Include="Logic\SubtitleFormats\BdnXml.cs" />
+    <Compile Include="Logic\SubtitleFormats\BelleNuitSubtitler.cs" />
+    <Compile Include="Logic\SubtitleFormats\CapMakerPlus.cs" />
+    <Compile Include="Logic\SubtitleFormats\CaptionAssistant.cs" />
+    <Compile Include="Logic\SubtitleFormats\Captionate.cs" />
+    <Compile Include="Logic\SubtitleFormats\CaptionateMs.cs" />
+    <Compile Include="Logic\SubtitleFormats\CaptionsInc.cs" />
+    <Compile Include="Logic\SubtitleFormats\CaraokeXml.cs" />
+    <Compile Include="Logic\SubtitleFormats\Cavena890.cs" />
+    <Compile Include="Logic\SubtitleFormats\CheetahCaption.cs" />
+    <Compile Include="Logic\SubtitleFormats\Csv3.cs" />
+    <Compile Include="Logic\SubtitleFormats\FilmEditXml.cs" />
+    <Compile Include="Logic\SubtitleFormats\SoftNiColonSub.cs" />
+    <Compile Include="Logic\SubtitleFormats\SwiftTextLineNoAndDur.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle71.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle70.cs" />
+    <Compile Include="Logic\SubtitleFormats\TimeXml2.cs" />
+    <Compile Include="Logic\SubtitleFormats\OresmeDocXDocument.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle68.cs" />
+    <Compile Include="Logic\SubtitleFormats\FinalCutProXml13.cs" />
+    <Compile Include="Logic\SubtitleFormats\DCinemaSmpte2007.cs" />
+    <Compile Include="Logic\SubtitleFormats\FinalCutProImage.cs" />
+    <Compile Include="Logic\SubtitleFormats\ELRStudioClosedCaption.cs" />
+    <Compile Include="Logic\SubtitleFormats\FLVCoreCuePoints.cs" />
+    <Compile Include="Logic\SubtitleFormats\ScenaristClosedCaptionsDropFrame.cs" />
+    <Compile Include="Logic\SubtitleFormats\FinalCutProXCM.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle67.cs" />
+    <Compile Include="Logic\SubtitleFormats\SwiftTextLineNumber.cs" />
+    <Compile Include="Logic\SubtitleFormats\Titra.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle69.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle72.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle76.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle75.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle74.cs" />
+    <Compile Include="Logic\SubtitleFormats\WebVTTFileWithLineNumber.cs" />
+    <Compile Include="Logic\SubtitleFormats\FinalCutProXmlGap.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle66.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle65.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle64.cs" />
+    <Compile Include="Logic\SubtitleFormats\Oresme.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle63.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle62.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle61.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle60.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle59.cs" />
+    <Compile Include="Logic\SubtitleFormats\DvdSubtitleSystem.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle58.cs" />
+    <Compile Include="Logic\SubtitleFormats\Csv2.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle57.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle56.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle55.cs" />
+    <Compile Include="Logic\SubtitleFormats\Dost.cs" />
+    <Compile Include="Logic\SubtitleFormats\Lrc.cs" />
+    <Compile Include="Logic\SubtitleFormats\TSB4.cs" />
+    <Compile Include="Logic\SubtitleFormats\UniversalSubtitleFormat.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle54.cs" />
+    <Compile Include="Logic\SubtitleFormats\FinalCutProTest2Xml.cs" />
+    <Compile Include="Logic\SubtitleFormats\JsonType4.cs" />
+    <Compile Include="Logic\SubtitleFormats\DCinemaSmpte2010.cs" />
+    <Compile Include="Logic\SubtitleFormats\DCSubtitle.cs" />
+    <Compile Include="Logic\SubtitleFormats\DvdStudioProSpace.cs" />
+    <Compile Include="Logic\SubtitleFormats\Eeg708.cs" />
+    <Compile Include="Logic\SubtitleFormats\F4Rtf.cs" />
+    <Compile Include="Logic\SubtitleFormats\F4Text.cs" />
+    <Compile Include="Logic\SubtitleFormats\F4Xml.cs" />
+    <Compile Include="Logic\SubtitleFormats\FabSubtitler.cs" />
+    <Compile Include="Logic\SubtitleFormats\FinalCutProTextXml.cs" />
+    <Compile Include="Logic\SubtitleFormats\FinalCutProXml.cs" />
+    <Compile Include="Logic\SubtitleFormats\FinalCutProXXml.cs" />
+    <Compile Include="Logic\SubtitleFormats\FlashXml.cs" />
+    <Compile Include="Logic\SubtitleFormats\Footage.cs" />
+    <Compile Include="Logic\SubtitleFormats\GpacTtxt.cs" />
+    <Compile Include="Logic\SubtitleFormats\HtmlSamiArray.cs" />
+    <Compile Include="Logic\SubtitleFormats\IssXml.cs" />
+    <Compile Include="Logic\SubtitleFormats\ItunesTimedText.cs" />
+    <Compile Include="Logic\SubtitleFormats\JsonType3.cs" />
+    <Compile Include="Logic\SubtitleFormats\MacCaption.cs" />
+    <Compile Include="Logic\SubtitleFormats\NciCaption.cs" />
+    <Compile Include="Logic\SubtitleFormats\QubeMasterImport.cs" />
+    <Compile Include="Logic\SubtitleFormats\RhozetHarmonic.cs" />
+    <Compile Include="Logic\SubtitleFormats\Json.cs" />
+    <Compile Include="Logic\SubtitleFormats\MidwayInscriberCGX.cs" />
+    <Compile Include="Logic\SubtitleFormats\Pac.cs" />
+    <Compile Include="Logic\SubtitleFormats\PE2.cs" />
+    <Compile Include="Logic\SubtitleFormats\PinnacleImpression.cs" />
+    <Compile Include="Logic\SubtitleFormats\PListCaption.cs" />
+    <Compile Include="Logic\SubtitleFormats\QuickTimeText.cs" />
+    <Compile Include="Logic\SubtitleFormats\RealTime.cs" />
+    <Compile Include="Logic\SubtitleFormats\SamiModern.cs" />
+    <Compile Include="Logic\SubtitleFormats\Scenarist.cs" />
+    <Compile Include="Logic\SubtitleFormats\ScenaristClosedCaptions.cs" />
+    <Compile Include="Logic\SubtitleFormats\SmilTimesheetData.cs" />
+    <Compile Include="Logic\SubtitleFormats\SoftNiSub.cs" />
+    <Compile Include="Logic\SubtitleFormats\Son.cs" />
+    <Compile Include="Logic\SubtitleFormats\SonicScenaristBitmaps.cs" />
+    <Compile Include="Logic\SubtitleFormats\SonyDVDArchitectExplicitDuration.cs" />
+    <Compile Include="Logic\SubtitleFormats\SonyDVDArchitectLineAndDuration.cs" />
+    <Compile Include="Logic\SubtitleFormats\SonyDVDArchitectTabs.cs" />
+    <Compile Include="Logic\SubtitleFormats\SonyDVDArchitectWithLineNumbers.cs" />
+    <Compile Include="Logic\SubtitleFormats\Ebu.cs" />
+    <Compile Include="Logic\SubtitleFormats\SonyDVDArchitect.cs" />
+    <Compile Include="Logic\SubtitleFormats\Spruce.cs" />
+    <Compile Include="Logic\SubtitleFormats\SpruceWithSpace.cs" />
+    <Compile Include="Logic\SubtitleFormats\Spt.cs" />
+    <Compile Include="Logic\SubtitleFormats\StructuredTitles.cs" />
+    <Compile Include="Logic\SubtitleFormats\SubtitleEditorProject.cs" />
+    <Compile Include="Logic\SubtitleFormats\SwiftInterchange2.cs" />
+    <Compile Include="Logic\SubtitleFormats\SwiftText.cs" />
+    <Compile Include="Logic\SubtitleFormats\Tek.cs" />
+    <Compile Include="Logic\SubtitleFormats\TimedText10.cs" />
+    <Compile Include="Logic\SubtitleFormats\TimedText200604.cs" />
+    <Compile Include="Logic\SubtitleFormats\TitleExchangePro.cs" />
+    <Compile Include="Logic\SubtitleFormats\TmpegEncText.cs" />
+    <Compile Include="Logic\SubtitleFormats\TmpegEncXml.cs" />
+    <Compile Include="Logic\SubtitleFormats\TmpegEncAW5.cs" />
+    <Compile Include="Logic\SubtitleFormats\Tmx14.cs" />
+    <Compile Include="Logic\SubtitleFormats\TranscriberXml.cs" />
+    <Compile Include="Logic\SubtitleFormats\TurboTitler.cs" />
+    <Compile Include="Logic\SubtitleFormats\UleadSubtitleFormat.cs" />
+    <Compile Include="Logic\SubtitleFormats\Ultech130.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle10.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle11.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle12.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle13.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle14.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle15.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle16.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle17.cs" />
+    <Compile Include="Logic\SubtitleFormats\JsonType2.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle18.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle19.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle20.cs" />
+    <Compile Include="Logic\SubtitleFormats\ImageLogicAutocaption.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle21.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle22.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle23.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle24.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle25.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle26.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle27.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle28.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle29.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle30.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle32.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle33.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle34.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle35.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle36.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle37.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle38.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle39.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle40.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle41.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle42.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle43.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle44.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle45.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle46.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle47.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle48.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle49.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle5.cs" />
+    <Compile Include="Logic\SubtitleFormats\OpenDvt.cs" />
+    <Compile Include="Logic\SubtitleFormats\AbcIViewer.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle50.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle51.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle52.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle53.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle6.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle7.cs" />
+    <Compile Include="Logic\SubtitleFormats\DigiBeta.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle8.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle9.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle31.cs" />
+    <Compile Include="Logic\SubtitleFormats\UTSubtitleXml.cs" />
+    <Compile Include="Logic\SubtitleFormats\Utx.cs" />
+    <Compile Include="Logic\SubtitleFormats\UtxFrames.cs" />
+    <Compile Include="Logic\SubtitleFormats\VocapiaSplit.cs" />
+    <Compile Include="Logic\SubtitleFormats\WebVTT.cs" />
+    <Compile Include="Logic\SubtitleFormats\Wsb.cs" />
+    <Compile Include="Logic\SubtitleFormats\YouTubeAnnotations.cs" />
+    <Compile Include="Logic\SubtitleFormats\YouTubeSbv.cs" />
+    <Compile Include="Logic\SubtitleFormats\SubViewer10.cs" />
+    <Compile Include="Logic\SubtitleFormats\TimedText.cs" />
+    <Compile Include="Logic\SubtitleFormats\TimeXml.cs" />
+    <Compile Include="Logic\SubtitleFormats\Csv.cs" />
+    <Compile Include="Logic\SubtitleFormats\DvdStudioPro.cs" />
+    <Compile Include="Logic\SubtitleFormats\DvdSubtitle.cs" />
+    <Compile Include="Logic\SubtitleFormats\Idx.cs" />
+    <Compile Include="Logic\SubtitleFormats\MicroDvd.cs" />
+    <Compile Include="Logic\SubtitleFormats\MPlayer2.cs" />
+    <Compile Include="Logic\SubtitleFormats\Sami.cs" />
+    <Compile Include="Logic\SubtitleFormats\SubStationAlpha.cs" />
+    <Compile Include="Logic\SubtitleFormats\SubtitleFormat.cs" />
+    <Compile Include="Logic\SubtitleFormats\SubRip.cs" />
+    <Compile Include="Logic\Paragraph.cs" />
+    <Compile Include="Logic\LanguageStructure.cs" />
+    <Compile Include="Logic\Subtitle.cs" />
+    <Compile Include="Logic\SubtitleFormats\SubViewer20.cs" />
+    <Compile Include="Logic\SubtitleFormats\TMPlayer.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle1.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle2.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle3.cs" />
+    <Compile Include="Logic\SubtitleFormats\UnknownSubtitle4.cs" />
+    <Compile Include="Logic\SubtitleFormats\YouTubeTranscript.cs" />
+    <Compile Include="Logic\SubtitleFormats\YouTubeTranscriptOneLine.cs" />
+    <Compile Include="Logic\SubtitleFormats\ZeroG.cs" />
+    <Compile Include="Logic\TarHeader.cs" />
+    <Compile Include="Logic\TarReader.cs" />
+    <Compile Include="Logic\TaskbarList.cs" />
+    <Compile Include="Logic\TextDraw.cs" />
+    <Compile Include="Logic\TimeCode.cs" />
+    <Compile Include="Logic\TransportStream\AdaptationField.cs" />
+    <Compile Include="Logic\TransportStream\ClutDefinitionSegment.cs" />
+    <Compile Include="Logic\TransportStream\DisplayDefinitionSegment.cs" />
+    <Compile Include="Logic\TransportStream\DvbSubPes.cs" />
+    <Compile Include="Logic\TransportStream\EbuPesDataField.cs" />
+    <Compile Include="Logic\TransportStream\EbuPesDataFieldText.cs" />
+    <Compile Include="Logic\TransportStream\TransportStreamSubtitle.cs" />
+    <Compile Include="Logic\TransportStream\Helper.cs" />
+    <Compile Include="Logic\TransportStream\HummingDecoder.cs" />
+    <Compile Include="Logic\TransportStream\ObjectDataSegment.cs" />
+    <Compile Include="Logic\TransportStream\Packet.cs" />
+    <Compile Include="Logic\TransportStream\PageCompositionSegemnt.cs" />
+    <Compile Include="Logic\TransportStream\PageCompositionSegmentRegion.cs" />
+    <Compile Include="Logic\TransportStream\ProgramAssociationTable.cs" />
+    <Compile Include="Logic\TransportStream\RegionClutSegmentEntry.cs" />
+    <Compile Include="Logic\TransportStream\RegionCompositionSegment.cs" />
+    <Compile Include="Logic\TransportStream\RegionCompositionSegmentObject.cs" />
+    <Compile Include="Logic\TransportStream\SubtitleSegment.cs" />
+    <Compile Include="Logic\TransportStream\TransportStreamParser.cs" />
+    <Compile Include="Logic\UknownFormatImporter.cs" />
+    <Compile Include="Logic\Utilities.cs" />
+    <Compile Include="Logic\ContainerFormats\AviRiffData.cs" />
+    <Compile Include="Logic\ContainerFormats\Ebml\Element.cs" />
+    <Compile Include="Logic\ContainerFormats\Ebml\ElementId.cs" />
+    <Compile Include="Logic\ContainerFormats\Matroska\MatroskaFile.cs" />
+    <Compile Include="Logic\ContainerFormats\Matroska\MatroskaTrackInfo.cs" />
+    <Compile Include="Logic\ContainerFormats\Matroska\MatroskaSubtitle.cs" />
+    <Compile Include="Logic\ContainerFormats\RiffDecodeHeader.cs" />
+    <Compile Include="Logic\ContainerFormats\RiffParser.cs" />
+    <Compile Include="Logic\VideoInfo.cs" />
+    <Compile Include="Logic\Interfaces\IVideoPlayer.cs" />
+    <Compile Include="Logic\VideoPlayers\LibVlcDynamic.cs" />
+    <Compile Include="Logic\VideoPlayers\LibVlcMono.cs" />
+    <Compile Include="Logic\VideoPlayers\ManagedDirectXPlayer.cs" />
+    <Compile Include="Logic\VideoPlayers\MpcHC\MessageHandlerWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Logic\VideoPlayers\MpcHC\MessageHandlerWindow.Designer.cs">
+      <DependentUpon>MessageHandlerWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Logic\VideoPlayers\MpcHC\MpcHcCommand.cs" />
+    <Compile Include="Logic\VideoPlayers\MpcHC\MpcHc.cs" />
+    <Compile Include="Logic\VideoPlayers\MpcHC\NativeMethods.cs" />
+    <Compile Include="Logic\VideoPlayers\MPlayer.cs" />
+    <Compile Include="Logic\VideoPlayers\QuartsPlayer.cs" />
+    <Compile Include="Logic\VideoPlayers\VideoPlayer.cs" />
+    <Compile Include="Logic\VideoPlayers\WmpPlayer.cs" />
+    <Compile Include="Logic\VobSub\Helper.cs" />
+    <Compile Include="Logic\VobSub\Idx.cs" />
+    <Compile Include="Logic\VobSub\IdxParagraph.cs" />
+    <Compile Include="Logic\VobSub\Mpeg2Header.cs" />
+    <Compile Include="Logic\VobSub\PacketizedElementaryStream.cs" />
+    <Compile Include="Logic\VobSub\SpHeader.cs" />
+    <Compile Include="Logic\VobSub\SubPicture.cs" />
+    <Compile Include="Logic\VobSub\VobSubParser.cs" />
+    <Compile Include="Logic\VobSub\VobSubMergedPack.cs" />
+    <Compile Include="Logic\VobSub\VobSubPack.cs" />
+    <Compile Include="Logic\VobSub\VobSubWriter.cs" />
+    <Compile Include="Logic\WordSpellChecker.cs" />
+    <Compile Include="Logic\XSub.cs" />
+    <Compile Include="Logic\Wave.cs" />
+    <Compile Include="Logic\WaveToVisualizer.cs" />
+    <Compile Include="Logic\ZipExtractor.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Forms\SyncPointsSync.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SyncPointsSync.Designer.cs">
+      <DependentUpon>SyncPointsSync.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\RegistryUtil.cs" />
+    <Compile Include="Web References\MicrosoftTranslationService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\SeNetworkService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Controls\TimeUpDown.resx">
+      <DependentUpon>TimeUpDown.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\AudioVisualizer.resx">
+      <DependentUpon>AudioVisualizer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddWaveformBatch.resx">
+      <DependentUpon>AddWaveformBatch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CheckForUpdates.resx">
+      <DependentUpon>CheckForUpdates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ColorChooser.resx">
+      <DependentUpon>ColorChooser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DCinema\DCinemaPropertiesInterop.resx">
+      <DependentUpon>DCinemaPropertiesInterop.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DCinema\DCinemaPropertiesSmpte.resx">
+      <DependentUpon>DCinemaPropertiesSmpte.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DoNotBreakAfterListEdit.resx">
+      <DependentUpon>DoNotBreakAfterListEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddToNames.resx">
+      <DependentUpon>AddToNames.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddToOcrReplaceList.resx">
+      <DependentUpon>AddToOcrReplaceList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddToUserDic.resx">
+      <DependentUpon>AddToUserDic.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddWaveform.resx">
+      <DependentUpon>AddWaveform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AlignmentPicker.resx">
+      <DependentUpon>AlignmentPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ApplyDurationLimits.resx">
+      <DependentUpon>ApplyDurationLimits.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BatchConvert.resx">
+      <DependentUpon>BatchConvert.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Beamer.resx">
+      <DependentUpon>Beamer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChangeCasing.resx">
+      <DependentUpon>ChangeCasing.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChangeFrameRate.resx">
+      <DependentUpon>ChangeFrameRate.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChangeSpeedInPercent.resx">
+      <DependentUpon>ChangeSpeedInPercent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChooseAudioTrack.resx">
+      <DependentUpon>ChooseAudioTrack.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChooseEncoding.resx">
+      <DependentUpon>ChooseEncoding.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AdjustDisplayDuration.resx">
+      <DependentUpon>AdjustDisplayDuration.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChooseResolution.resx">
+      <DependentUpon>ChooseResolution.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChooseStyle.resx">
+      <DependentUpon>ChooseStyle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DurationsBridgeGaps.resx">
+      <DependentUpon>DurationsBridgeGaps.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ExportCustomText.resx">
+      <DependentUpon>ExportCustomText.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ExportCustomTextFormat.resx">
+      <DependentUpon>ExportCustomTextFormat.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ExportPngXmlPreview.resx">
+      <DependentUpon>ExportPngXmlPreview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ExportTextST.resx">
+      <DependentUpon>ExportTextST.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FcpProperties.resx">
+      <DependentUpon>FcpProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImportImages.resx">
+      <DependentUpon>ImportImages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImportSceneChanges.resx">
+      <DependentUpon>ImportSceneChanges.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImportUnknownFormat.resx">
+      <DependentUpon>ImportUnknownFormat.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MeasurementConverter.resx">
+      <DependentUpon>MeasurementConverter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MergeTextWithSameTimeCodes.resx">
+      <DependentUpon>MergeTextWithSameTimeCodes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NuendoProperties.resx">
+      <DependentUpon>NuendoProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EbuSaveOptions.resx">
+      <DependentUpon>EbuSaveOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EffectKaraoke.resx">
+      <DependentUpon>EffectKaraoke.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EffectTypewriter.resx">
+      <DependentUpon>EffectTypewriter.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ExportPngXml.resx">
+      <DependentUpon>ExportPngXml.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ExportText.resx">
+      <DependentUpon>ExportText.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ExtractDateTimeInfo.resx">
+      <DependentUpon>ExtractDateTimeInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FindDialog.resx">
+      <DependentUpon>FindDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FindSubtitleLine.resx">
+      <DependentUpon>FindSubtitleLine.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FixCommonErrors.resx">
+      <DependentUpon>FixCommonErrors.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DvdSubRip.resx">
+      <DependentUpon>DvdSubRip.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DvdSubRipChooseLanguage.resx">
+      <DependentUpon>DvdSubRipChooseLanguage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\GetDictionaries.resx">
+      <DependentUpon>GetDictionaries.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\GetTesseractDictionaries.resx">
+      <DependentUpon>GetTesseractDictionaries.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\HardSubExtract.resx">
+      <DependentUpon>HardSubExtract.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Interjections.resx">
+      <DependentUpon>Interjections.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\JoinSubtitles.resx">
+      <DependentUpon>JoinSubtitles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MergeDoubleLines.resx">
+      <DependentUpon>MergeDoubleLines.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ModifySelection.resx">
+      <DependentUpon>ModifySelection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NetworkChat.resx">
+      <DependentUpon>NetworkChat.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NetworkJoin.resx">
+      <DependentUpon>NetworkJoin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NetworkLogAndInfo.resx">
+      <DependentUpon>NetworkLogAndInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NetworkStart.resx">
+      <DependentUpon>NetworkStart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OpenVideoDvd.resx">
+      <DependentUpon>OpenVideoDvd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PacEncoding.resx">
+      <DependentUpon>PacEncoding.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ColumnPaste.resx">
+      <DependentUpon>ColumnPaste.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PluginsGet.resx">
+      <DependentUpon>PluginsGet.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\RestoreAutoBackup.resx">
+      <DependentUpon>RestoreAutoBackup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SeekSilence.resx">
+      <DependentUpon>SeekSilence.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SetSyncPoint.resx">
+      <DependentUpon>SetSyncPoint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\GoogleTranslate.resx">
+      <DependentUpon>GoogleTranslate.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\GoToLine.resx">
+      <DependentUpon>GoToLine.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImportText.resx">
+      <DependentUpon>ImportText.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MatroskaSubtitleChooser.resx">
+      <DependentUpon>MatroskaSubtitleChooser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MergeShortLines.resx">
+      <DependentUpon>MergeShortLines.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\RemoveTextFromHearImpaired.resx">
+      <DependentUpon>RemoveTextFromHearImpaired.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ReplaceDialog.resx">
+      <DependentUpon>ReplaceDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SetMinimumDisplayTimeBetweenParagraphs.resx">
+      <DependentUpon>SetMinimumDisplayTimeBetweenParagraphs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Settings.resx">
+      <DependentUpon>Settings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SetVideoOffset.resx">
+      <DependentUpon>SetVideoOffset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ShowHistory.resx">
+      <DependentUpon>ShowHistory.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SpellCheck.resx">
+      <DependentUpon>SpellCheck.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DialogDoNotShowAgain.resx">
+      <DependentUpon>DialogDoNotShowAgain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Split.resx">
+      <DependentUpon>Split.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SplitLongLines.resx">
+      <DependentUpon>SplitLongLines.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SplitSubtitle.resx">
+      <DependentUpon>SplitSubtitle.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\StartNumberingFrom.resx">
+      <DependentUpon>StartNumberingFrom.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Statistics.resx">
+      <DependentUpon>Statistics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\StatusLog.resx">
+      <DependentUpon>StatusLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubStationAlphaProperties.resx">
+      <DependentUpon>SubStationAlphaProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Styles\SubStationAlphaStyles.resx">
+      <DependentUpon>SubStationAlphaStyles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TimedTextProperties.resx">
+      <DependentUpon>TimedTextProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Styles\TimedTextStyles.resx">
+      <DependentUpon>TimedTextStyles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TransportStreamSubtitleChooser.resx">
+      <DependentUpon>TransportStreamSubtitleChooser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UnknownSubtitle.resx">
+      <DependentUpon>UnknownSubtitle.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VideoControlsUndocked.resx">
+      <DependentUpon>VideoControlsUndocked.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VideoPlayerUndocked.resx">
+      <DependentUpon>VideoPlayerUndocked.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VisualSync.resx">
+      <DependentUpon>VisualSync.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VobSubNOcrCharacterInspect.resx">
+      <DependentUpon>VobSubNOcrCharacterInspect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VobSubNOcrEdit.resx">
+      <DependentUpon>VobSubNOcrEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VobSubNOcrTrain.resx">
+      <DependentUpon>VobSubNOcrTrain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VobSubOcr.resx">
+      <DependentUpon>VobSubOcr.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VobSubOcrCharacter.resx">
+      <DependentUpon>VobSubOcrCharacter.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VobSubOcrCharacterInspect.resx">
+      <DependentUpon>VobSubOcrCharacterInspect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VobSubOcrNewFolder.resx">
+      <DependentUpon>VobSubOcrNewFolder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VobSubOcrNOcrCharacter.resx">
+      <DependentUpon>VobSubOcrNOcrCharacter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VobSubOcrSetItalicFactor.resx">
+      <DependentUpon>VobSubOcrSetItalicFactor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Watermark.resx">
+      <DependentUpon>Watermark.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WaveformGenerateTimeCodes.resx">
+      <DependentUpon>WaveformGenerateTimeCodes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WaveformUndocked.resx">
+      <DependentUpon>WaveformUndocked.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\GoogleOrMicrosoftTranslate.resx">
+      <DependentUpon>GoogleOrMicrosoftTranslate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WebVttNewVoice.resx">
+      <DependentUpon>WebVttNewVoice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\YouTubeAnnotationsImport.resx">
+      <DependentUpon>YouTubeAnnotationsImport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Logic\VideoPlayers\MpcHC\MessageHandlerWindow.resx">
+      <DependentUpon>MessageHandlerWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Main.resx">
+      <DependentUpon>Main.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Forms\SyncPointsSync.resx">
+      <DependentUpon>SyncPointsSync.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Resources\OpenOfficeDictionaries.xml.gz" />
+    <EmbeddedResource Include="Resources\HunspellDictionaries.xml.gz" />
+    <EmbeddedResource Include="Resources\TesseractDictionaries.xml.gz" />
+    <None Include="Resources\nOCR_TesseractHelper.xml.gz" />
+    <None Include="Resources\SMPTE-428-7-2007-DCST.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <EmbeddedResource Include="Resources\SMPTE-428-7-2007-DCST.xsd.gz" />
+    <None Include="Resources\SMPTE-428-7-2010-DCST.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <EmbeddedResource Include="Resources\SMPTE-428-7-2010-DCST.xsd.gz" />
+    <None Include="Web References\MicrosoftTranslationService\GetTranslationsResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MicrosoftTranslationService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\MicrosoftTranslationService\soap.wsdl" />
+    <None Include="Web References\MicrosoftTranslationService\soap.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MicrosoftTranslationService\soap0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MicrosoftTranslationService\soap1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MicrosoftTranslationService\soap2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MicrosoftTranslationService\SoapService.wsdl" />
+    <None Include="Web References\MicrosoftTranslationService\TranslateArrayResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\SeNetworkService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\SeNetworkService\SeSequence.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\SeNetworkService\SeService.wsdl" />
+    <None Include="Web References\SeNetworkService\SeUpdate.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\SeNetworkService\SeUser.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Transparent Background.png" />
+    <None Include="Icons\Donate.png" />
+    <Content Include="DLLs\Voikkox64.dll" />
+    <Content Include="DLLs\Voikkox86.dll" />
+    <None Include="Hunspellx64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Hunspellx86.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="Languages\ar-EG.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\bg-BG.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\ca-ES.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\cs-CZ.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\da-DK.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\de-DE.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\el-GR.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\es-AR.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\es-ES.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\es-MX.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\eu-ES.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\fa-IR.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\fi-FI.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\fr-FR.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\hu-HU.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\it-IT.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\ko-KR.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\hr-HR.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\ja-JP.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\nl-NL.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\pl-PL.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\pt-BR.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\pt-PT.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\sl-SI.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\sr-Cyrl-RS.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\sr-Latn-RS.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\th-TH.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\tr-TR.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\ro-RO.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\ru-RU.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\sv-SE.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\vi-VN.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\zh-Hans.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Languages\zh-tw.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\pictureBoxNoFSOver.Image.png" />
+    <None Include="Resources\pictureBoxNoFSDown.Image.png" />
+    <None Include="Resources\pictureBoxNoFS.Image.png" />
+    <None Include="Web References\SeNetworkService\SeService.disco" />
+    <None Include="DLLs\Interop.QuartzTypeLib.dll" />
+    <Content Include="..\Changelog.txt" />
+    <Content Include="..\gpl.txt" />
+    <EmbeddedResource Include="Controls\VideoPlayerContainer.resx">
+      <DependentUpon>VideoPlayerContainer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AutoBreakUnbreakLines.resx">
+      <DependentUpon>AutoBreakUnbreakLines.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChangeCasingNames.resx">
+      <DependentUpon>ChangeCasingNames.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChooseLanguage.resx">
+      <DependentUpon>ChooseLanguage.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Compare.resx">
+      <DependentUpon>Compare.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MultipleReplace.resx">
+      <DependentUpon>MultipleReplace.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OCRSpellCheck.resx">
+      <DependentUpon>OCRSpellCheck.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ShowEarlierLater.resx">
+      <DependentUpon>ShowEarlierLater.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VideoError.resx">
+      <DependentUpon>VideoError.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VobSubEditCharacters.resx">
+      <DependentUpon>VobSubEditCharacters.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="Icons\connect.png" />
+    <Content Include="Icons\Find.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\FixCommonErrors.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\Help.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\New.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\Open.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\Replace.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\Save.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\SaveAs.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\SE.ico" />
+    <Content Include="Icons\Settings.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\SpellCheck.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\VideoToggle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\VisualSync.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\WaveformToggle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\pictureBoxFS.Image.png" />
+    <None Include="Resources\pictureBoxFSDown.Image.png" />
+    <None Include="Resources\pictureBoxFSOver.Image.png" />
+    <None Include="Resources\pictureBoxFastForward.Image.png" />
+    <None Include="Resources\pictureBoxFastForwardMouseDown.Image.png" />
+    <None Include="Resources\pictureBoxFastForwardMouseOver.Image.png" />
+    <None Include="Resources\pictureBoxReverse.Image.png" />
+    <None Include="Resources\pictureBoxReverseMouseDown.Image.png" />
+    <None Include="Resources\pictureBoxReverseMouseOver.Image.png" />
+    <Content Include="Resources\TesseractDictionaries.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\HunspellDictionaries.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\OpenOfficeDictionaries.xml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Visual.C++.10.0.x86">
+      <Visible>False</Visible>
+      <ProductName>Visual C++ 2010 Runtime Libraries %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://api.microsofttranslator.com/V2/Soap.svc">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\MicrosoftTranslationService\</RelPath>
+      <UpdateFromURL>http://api.microsofttranslator.com/V2/Soap.svc</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>SubtitleEdit_MicrosoftTranslationService_SoapService</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://localhost:2782/se/SeService.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\SeNetworkService\</RelPath>
+      <UpdateFromURL>http://localhost:2782/se/SeService.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>SubtitleEdit_SeNetworkService_SeService</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>"$(ProjectDir)..\build_helpers.bat" rev &amp;&amp; "$(ProjectDir)..\build_helpers.bat" lang</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>COPY /Y /V "$(ProjectDir)packages\NHunspell.1.2.5554.16953\content\*.dll" "$(TargetDir)"
+"$(ProjectDir)packages\ILRepack.2.0.1\tools\ILRepack.exe" /out:"$(TargetDir)$(TargetName).exe" "$(TargetDir)$(TargetName).exe" "$(ProjectDir)packages\NHunspell.1.2.5554.16953\lib\net\NHunspell.dll" "$(ProjectDir)packages\zlib.net.1.0.4.0\lib\zlib.net.dll" "$(ProjectDir)DLLs\Interop.QuartzTypeLib.dll" /targetplatform:v4 /internalize /parallel</PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them. For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
