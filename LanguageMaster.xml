@@ -1,79 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Language Name="English">
-  <General>
-    <Title>Subtitle Edit</Title>
-    <Version>3.4.7</Version>
-    <TranslatedBy>Translated by Nikse</TranslatedBy>
-    <CultureName>en-US</CultureName>
-    <HelpFile />
-    <Ok>&amp;OK</Ok>
-    <Cancel>C&amp;ancel</Cancel>
-    <Apply>Apply</Apply>
-    <None>None</None>
-    <All>All</All>
-    <Preview>Preview</Preview>
-    <SubtitleFiles>Subtitle files</SubtitleFiles>
-    <AllFiles>All files</AllFiles>
-    <VideoFiles>Video files</VideoFiles>
-    <AudioFiles>Audio files</AudioFiles>
-    <OpenSubtitle>Open subtitle...</OpenSubtitle>
-    <OpenVideoFile>Open video file...</OpenVideoFile>
-    <OpenVideoFileTitle>Open video file...</OpenVideoFileTitle>
-    <NoVideoLoaded>No video loaded</NoVideoLoaded>
-    <VideoInformation>Video info</VideoInformation>
-    <PositionX>Position / duration: {0}</PositionX>
-    <StartTime>Start time</StartTime>
-    <EndTime>End time</EndTime>
-    <Duration>Duration</Duration>
-    <NumberSymbol>#</NumberSymbol>
-    <Number>Number</Number>
-    <Text>Text</Text>
-    <HourMinutesSecondsMilliseconds>Hour:min:sec:ms</HourMinutesSecondsMilliseconds>
-    <Bold>Bold</Bold>
-    <Italic>Italic</Italic>
-    <Underline>Underline</Underline>
-    <Visible>Visible</Visible>
-    <FrameRate>Frame rate</FrameRate>
-    <Name>Name</Name>
-    <FileNameXAndSize>File name: {0} ({1})</FileNameXAndSize>
-    <ResolutionX>Resolution: {0}</ResolutionX>
-    <FrameRateX>Frame rate: {0:0.0###}</FrameRateX>
-    <TotalFramesX>Total frames: {0:#,##0.##}</TotalFramesX>
-    <VideoEncodingX>Video encoding: {0}</VideoEncodingX>
-    <SingleLineLengths>Single line length:</SingleLineLengths>
-    <TotalLengthX>Total length: {0}</TotalLengthX>
-    <TotalLengthXSplitLine>Total length: {0} (split line!)</TotalLengthXSplitLine>
-    <SplitLine>Split line!</SplitLine>
-    <NotAvailable>N/A</NotAvailable>
-    <OverlapPreviousLineX>Overlap prev line ({0:#,##0.###})</OverlapPreviousLineX>
-    <OverlapX>Overlap ({0:#,##0.###})</OverlapX>
-    <OverlapNextX>Overlap next ({0:#,##0.###})</OverlapNextX>
-    <Negative>Negative</Negative>
-    <RegularExpressionIsNotValid>Regular expression is not valid!</RegularExpressionIsNotValid>
-    <SubtitleSaved>Subtitle saved</SubtitleSaved>
-    <CurrentSubtitle>Current subtitle</CurrentSubtitle>
-    <OriginalText>Original text</OriginalText>
-    <OpenOriginalSubtitleFile>Open original subtitle file...</OpenOriginalSubtitleFile>
-    <PleaseWait>Please wait...</PleaseWait>
-    <SessionKey>Session key</SessionKey>
-    <UserName>Username</UserName>
-    <UserNameAlreadyInUse>Username already in use</UserNameAlreadyInUse>
-    <WebServiceUrl>Webservice URL</WebServiceUrl>
-    <IP>IP</IP>
-    <VideoWindowTitle>Video - {0}</VideoWindowTitle>
-    <AudioWindowTitle>Audio - {0}</AudioWindowTitle>
-    <ControlsWindowTitle>Controls - {0}</ControlsWindowTitle>
-    <Advanced>Advanced</Advanced>
-    <Style>Style</Style>
-    <StyleLanguage>Style / Language</StyleLanguage>
-    <Character>Character</Character>
-    <Class>Class</Class>
-    <GeneralText>General</GeneralText>
-    <LineNumber>Line#</LineNumber>
-    <Before>Before</Before>
-    <After>After</After>
-    <Size>Size</Size>
-  </General>
   <About>
     <Title>About Subtitle Edit</Title>
     <AboutText1>Subtitle Edit is Free Software under the GNU Public License.
@@ -623,6 +549,80 @@ Note: Do check free disk space.</WaveFileMalformed>
     <FixSpaceBetweenNumbersExample>1 100 -&gt; 1100</FixSpaceBetweenNumbersExample>
     <FixDialogsOneLineExample>Hi John! - Hi Ida! -&gt; Hi John!&lt;br /&gt;- Hi Ida!</FixDialogsOneLineExample>
   </FixCommonErrors>
+  <General>
+    <Title>Subtitle Edit</Title>
+    <Version>3.4.7</Version>
+    <TranslatedBy>Translated by Nikse</TranslatedBy>
+    <CultureName>en-US</CultureName>
+    <HelpFile />
+    <Ok>&amp;OK</Ok>
+    <Cancel>C&amp;ancel</Cancel>
+    <Apply>Apply</Apply>
+    <None>None</None>
+    <All>All</All>
+    <Preview>Preview</Preview>
+    <SubtitleFiles>Subtitle files</SubtitleFiles>
+    <AllFiles>All files</AllFiles>
+    <VideoFiles>Video files</VideoFiles>
+    <AudioFiles>Audio files</AudioFiles>
+    <OpenSubtitle>Open subtitle...</OpenSubtitle>
+    <OpenVideoFile>Open video file...</OpenVideoFile>
+    <OpenVideoFileTitle>Open video file...</OpenVideoFileTitle>
+    <NoVideoLoaded>No video loaded</NoVideoLoaded>
+    <VideoInformation>Video info</VideoInformation>
+    <PositionX>Position / duration: {0}</PositionX>
+    <StartTime>Start time</StartTime>
+    <EndTime>End time</EndTime>
+    <Duration>Duration</Duration>
+    <NumberSymbol>#</NumberSymbol>
+    <Number>Number</Number>
+    <Text>Text</Text>
+    <HourMinutesSecondsMilliseconds>Hour:min:sec:ms</HourMinutesSecondsMilliseconds>
+    <Bold>Bold</Bold>
+    <Italic>Italic</Italic>
+    <Underline>Underline</Underline>
+    <Visible>Visible</Visible>
+    <FrameRate>Frame rate</FrameRate>
+    <Name>Name</Name>
+    <FileNameXAndSize>File name: {0} ({1})</FileNameXAndSize>
+    <ResolutionX>Resolution: {0}</ResolutionX>
+    <FrameRateX>Frame rate: {0:0.0###}</FrameRateX>
+    <TotalFramesX>Total frames: {0:#,##0.##}</TotalFramesX>
+    <VideoEncodingX>Video encoding: {0}</VideoEncodingX>
+    <SingleLineLengths>Single line length:</SingleLineLengths>
+    <TotalLengthX>Total length: {0}</TotalLengthX>
+    <TotalLengthXSplitLine>Total length: {0} (split line!)</TotalLengthXSplitLine>
+    <SplitLine>Split line!</SplitLine>
+    <NotAvailable>N/A</NotAvailable>
+    <OverlapPreviousLineX>Overlap prev line ({0:#,##0.###})</OverlapPreviousLineX>
+    <OverlapX>Overlap ({0:#,##0.###})</OverlapX>
+    <OverlapNextX>Overlap next ({0:#,##0.###})</OverlapNextX>
+    <Negative>Negative</Negative>
+    <RegularExpressionIsNotValid>Regular expression is not valid!</RegularExpressionIsNotValid>
+    <SubtitleSaved>Subtitle saved</SubtitleSaved>
+    <CurrentSubtitle>Current subtitle</CurrentSubtitle>
+    <OriginalText>Original text</OriginalText>
+    <OpenOriginalSubtitleFile>Open original subtitle file...</OpenOriginalSubtitleFile>
+    <PleaseWait>Please wait...</PleaseWait>
+    <SessionKey>Session key</SessionKey>
+    <UserName>Username</UserName>
+    <UserNameAlreadyInUse>Username already in use</UserNameAlreadyInUse>
+    <WebServiceUrl>Webservice URL</WebServiceUrl>
+    <IP>IP</IP>
+    <VideoWindowTitle>Video - {0}</VideoWindowTitle>
+    <AudioWindowTitle>Audio - {0}</AudioWindowTitle>
+    <ControlsWindowTitle>Controls - {0}</ControlsWindowTitle>
+    <Advanced>Advanced</Advanced>
+    <Style>Style</Style>
+    <StyleLanguage>Style / Language</StyleLanguage>
+    <Character>Character</Character>
+    <Class>Class</Class>
+    <GeneralText>General</GeneralText>
+    <LineNumber>Line#</LineNumber>
+    <Before>Before</Before>
+    <After>After</After>
+    <Size>Size</Size>
+  </General>
   <GetDictionaries>
     <Title>Need dictionaries?</Title>
     <DescriptionLine1>Subtitle Edit's spell check is based on the NHunspell engine which</DescriptionLine1>
@@ -645,15 +645,6 @@ Note: Do check free disk space.</WaveFileMalformed>
     <Download>Download</Download>
     <XDownloaded>{0} has been downloaded and installed</XDownloaded>
   </GetTesseractDictionaries>
-  <GoogleTranslate>
-    <Title>Google translate</Title>
-    <From>From:</From>
-    <To>To:</To>
-    <Translate>Translate</Translate>
-    <PleaseWait>Please wait... this may take a while</PleaseWait>
-    <PoweredByGoogleTranslate>Powered by Google translate</PoweredByGoogleTranslate>
-    <PoweredByMicrosoftTranslate>Powered by Microsoft translate</PoweredByMicrosoftTranslate>
-  </GoogleTranslate>
   <GoogleOrMicrosoftTranslate>
     <Title>Google vs Microsoft translate</Title>
     <From>From:</From>
@@ -663,6 +654,15 @@ Note: Do check free disk space.</WaveFileMalformed>
     <GoogleTranslate>Google translate</GoogleTranslate>
     <MicrosoftTranslate>Microsoft translate</MicrosoftTranslate>
   </GoogleOrMicrosoftTranslate>
+  <GoogleTranslate>
+    <Title>Google translate</Title>
+    <From>From:</From>
+    <To>To:</To>
+    <Translate>Translate</Translate>
+    <PleaseWait>Please wait... this may take a while</PleaseWait>
+    <PoweredByGoogleTranslate>Powered by Google translate</PoweredByGoogleTranslate>
+    <PoweredByMicrosoftTranslate>Powered by Microsoft translate</PoweredByMicrosoftTranslate>
+  </GoogleTranslate>
   <GoToLine>
     <Title>Go to subtitle number</Title>
     <XIsNotAValidNumber>{0} is not a valid number</XIsNotAValidNumber>
@@ -1422,6 +1422,16 @@ can edit in same subtitle file (collaboration)</Information>
     <UpdateAll>Update all</UpdateAll>
     <XPluginsUpdated>{0} plugin(s) updated</XPluginsUpdated>
   </PluginsGet>
+  <PointSync>
+    <Title>Point synchronization</Title>
+    <TitleViaOtherSubtitle>Point sync via other subtitle</TitleViaOtherSubtitle>
+    <SyncHelp>Set at least two sync points to make rough synchronization</SyncHelp>
+    <SetSyncPoint>Set sync point</SetSyncPoint>
+    <RemoveSyncPoint>Remove sync point</RemoveSyncPoint>
+    <SyncPointsX>Sync points: {0}</SyncPointsX>
+    <Info>One sync point will adjust position, two or more sync points will adjust position and speed</Info>
+    <ApplySync>Apply</ApplySync>
+  </PointSync>
   <RegularExpressionContextMenu>
     <WordBoundary>Word boundary (\b)</WordBoundary>
     <NonWordBoundary>Non word boundary (\B)</NonWordBoundary>
@@ -1934,16 +1944,6 @@ can edit in same subtitle file (collaboration)</Information>
     <StyleXExportedToFileY>Style '{0}' exported to file '{1}'</StyleXExportedToFileY>
     <StyleXImportedFromFileY>Style '{0}' imported from file '{1}'</StyleXImportedFromFileY>
   </SubStationAlphaStyles>
-  <PointSync>
-    <Title>Point synchronization</Title>
-    <TitleViaOtherSubtitle>Point sync via other subtitle</TitleViaOtherSubtitle>
-    <SyncHelp>Set at least two sync points to make rough synchronization</SyncHelp>
-    <SetSyncPoint>Set sync point</SetSyncPoint>
-    <RemoveSyncPoint>Remove sync point</RemoveSyncPoint>
-    <SyncPointsX>Sync points: {0}</SyncPointsX>
-    <Info>One sync point will adjust position, two or more sync points will adjust position and speed</Info>
-    <ApplySync>Apply</ApplySync>
-  </PointSync>
   <TransportStreamSubtitleChooser>
     <Title>Transport stream subtitle chooser - {0}</Title>
     <PidLine>Transport Packet Identifier (PID) = {0}, number of subtitles = {1}</PidLine>

@@ -1,59 +1,39 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="LanguageDeserializer.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   The language deserializer.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+﻿using System.IO;
+using System.Xml;
+using System.Text;
+using Nikse.SubtitleEdit.Logic;
 
- // !!! THIS FILE IS AUTO-GENERATED!!!
 // !!! THIS FILE IS AUTO-GENERATED!!!
 // !!! THIS FILE IS AUTO-GENERATED!!!
+// !!! THIS FILE IS AUTO-GENERATED!!!
+
 namespace Nikse.SubtitleEdit.Logic
 {
-    using System.IO;
-    using System.Text;
-    using System.Xml;
 
-    /// <summary>
-    /// The language deserializer.
-    /// </summary>
-    public class LanguageDeserializer
+    public class LanguageDeserializer // NOTE: This class is AUTO-GENERATED!!!!
     {
-        // NOTE: This class is AUTO-GENERATED!!!!
-        /// <summary>
-        /// The custom deserialize language.
-        /// </summary>
-        /// <param name="fileName">
-        /// The file name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Language"/>.
-        /// </returns>
+
         public static Language CustomDeserializeLanguage(string fileName)
         {
             var name = new StringBuilder(100, 1000);
             var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var language = new Language();
 
-            using (XmlReader reader = XmlReader.Create(stream, new XmlReaderSettings { IgnoreWhitespace = true, IgnoreProcessingInstructions = true, IgnoreComments = true, DtdProcessing = DtdProcessing.Ignore, CheckCharacters = false, CloseInput = true }))
+            using (XmlReader reader = XmlReader.Create(stream, new XmlReaderSettings {
+                   IgnoreWhitespace = true, IgnoreProcessingInstructions = true, IgnoreComments = true,
+                   DtdProcessing = DtdProcessing.Ignore, CheckCharacters = false, CloseInput = true }))
             {
                 while (reader.Read())
                 {
                     if (reader.NodeType == XmlNodeType.Element)
                     {
                         if (!reader.IsEmptyElement && reader.Depth > 0)
-                        {
                             name.Append('/').Append(reader.Name);
-                        }
                     }
                     else if (reader.NodeType == XmlNodeType.EndElement)
                     {
                         if (name.Length > 0)
-                        {
                             name.Length -= reader.Name.Length + 1;
-                        }
                     }
                     else if (reader.NodeType == XmlNodeType.Text)
                     {
@@ -61,244 +41,15 @@ namespace Nikse.SubtitleEdit.Logic
                     }
                 }
             }
-
             return language;
         }
 
-        /// <summary>
-        /// The set value.
-        /// </summary>
-        /// <param name="language">
-        /// The language.
-        /// </param>
-        /// <param name="reader">
-        /// The reader.
-        /// </param>
-        /// <param name="name">
-        /// The name.
-        /// </param>
         private static void SetValue(Language language, XmlReader reader, string name)
         {
             switch (name)
             {
                 case "Name":
                     language.Name = reader.Value;
-                    break;
-                case "General/Title":
-                    language.General.Title = reader.Value;
-                    break;
-                case "General/Version":
-                    language.General.Version = reader.Value;
-                    break;
-                case "General/TranslatedBy":
-                    language.General.TranslatedBy = reader.Value;
-                    break;
-                case "General/CultureName":
-                    language.General.CultureName = reader.Value;
-                    break;
-                case "General/HelpFile":
-                    language.General.HelpFile = reader.Value;
-                    break;
-                case "General/Ok":
-                    language.General.Ok = reader.Value;
-                    break;
-                case "General/Cancel":
-                    language.General.Cancel = reader.Value;
-                    break;
-                case "General/Apply":
-                    language.General.Apply = reader.Value;
-                    break;
-                case "General/None":
-                    language.General.None = reader.Value;
-                    break;
-                case "General/All":
-                    language.General.All = reader.Value;
-                    break;
-                case "General/Preview":
-                    language.General.Preview = reader.Value;
-                    break;
-                case "General/SubtitleFiles":
-                    language.General.SubtitleFiles = reader.Value;
-                    break;
-                case "General/AllFiles":
-                    language.General.AllFiles = reader.Value;
-                    break;
-                case "General/VideoFiles":
-                    language.General.VideoFiles = reader.Value;
-                    break;
-                case "General/AudioFiles":
-                    language.General.AudioFiles = reader.Value;
-                    break;
-                case "General/OpenSubtitle":
-                    language.General.OpenSubtitle = reader.Value;
-                    break;
-                case "General/OpenVideoFile":
-                    language.General.OpenVideoFile = reader.Value;
-                    break;
-                case "General/OpenVideoFileTitle":
-                    language.General.OpenVideoFileTitle = reader.Value;
-                    break;
-                case "General/NoVideoLoaded":
-                    language.General.NoVideoLoaded = reader.Value;
-                    break;
-                case "General/VideoInformation":
-                    language.General.VideoInformation = reader.Value;
-                    break;
-                case "General/PositionX":
-                    language.General.PositionX = reader.Value;
-                    break;
-                case "General/StartTime":
-                    language.General.StartTime = reader.Value;
-                    break;
-                case "General/EndTime":
-                    language.General.EndTime = reader.Value;
-                    break;
-                case "General/Duration":
-                    language.General.Duration = reader.Value;
-                    break;
-                case "General/NumberSymbol":
-                    language.General.NumberSymbol = reader.Value;
-                    break;
-                case "General/Number":
-                    language.General.Number = reader.Value;
-                    break;
-                case "General/Text":
-                    language.General.Text = reader.Value;
-                    break;
-                case "General/HourMinutesSecondsMilliseconds":
-                    language.General.HourMinutesSecondsMilliseconds = reader.Value;
-                    break;
-                case "General/Bold":
-                    language.General.Bold = reader.Value;
-                    break;
-                case "General/Italic":
-                    language.General.Italic = reader.Value;
-                    break;
-                case "General/Underline":
-                    language.General.Underline = reader.Value;
-                    break;
-                case "General/Visible":
-                    language.General.Visible = reader.Value;
-                    break;
-                case "General/FrameRate":
-                    language.General.FrameRate = reader.Value;
-                    break;
-                case "General/Name":
-                    language.General.Name = reader.Value;
-                    break;
-                case "General/FileNameXAndSize":
-                    language.General.FileNameXAndSize = reader.Value;
-                    break;
-                case "General/ResolutionX":
-                    language.General.ResolutionX = reader.Value;
-                    break;
-                case "General/FrameRateX":
-                    language.General.FrameRateX = reader.Value;
-                    break;
-                case "General/TotalFramesX":
-                    language.General.TotalFramesX = reader.Value;
-                    break;
-                case "General/VideoEncodingX":
-                    language.General.VideoEncodingX = reader.Value;
-                    break;
-                case "General/SingleLineLengths":
-                    language.General.SingleLineLengths = reader.Value;
-                    break;
-                case "General/TotalLengthX":
-                    language.General.TotalLengthX = reader.Value;
-                    break;
-                case "General/TotalLengthXSplitLine":
-                    language.General.TotalLengthXSplitLine = reader.Value;
-                    break;
-                case "General/SplitLine":
-                    language.General.SplitLine = reader.Value;
-                    break;
-                case "General/NotAvailable":
-                    language.General.NotAvailable = reader.Value;
-                    break;
-                case "General/OverlapPreviousLineX":
-                    language.General.OverlapPreviousLineX = reader.Value;
-                    break;
-                case "General/OverlapX":
-                    language.General.OverlapX = reader.Value;
-                    break;
-                case "General/OverlapNextX":
-                    language.General.OverlapNextX = reader.Value;
-                    break;
-                case "General/Negative":
-                    language.General.Negative = reader.Value;
-                    break;
-                case "General/RegularExpressionIsNotValid":
-                    language.General.RegularExpressionIsNotValid = reader.Value;
-                    break;
-                case "General/SubtitleSaved":
-                    language.General.SubtitleSaved = reader.Value;
-                    break;
-                case "General/CurrentSubtitle":
-                    language.General.CurrentSubtitle = reader.Value;
-                    break;
-                case "General/OriginalText":
-                    language.General.OriginalText = reader.Value;
-                    break;
-                case "General/OpenOriginalSubtitleFile":
-                    language.General.OpenOriginalSubtitleFile = reader.Value;
-                    break;
-                case "General/PleaseWait":
-                    language.General.PleaseWait = reader.Value;
-                    break;
-                case "General/SessionKey":
-                    language.General.SessionKey = reader.Value;
-                    break;
-                case "General/UserName":
-                    language.General.UserName = reader.Value;
-                    break;
-                case "General/UserNameAlreadyInUse":
-                    language.General.UserNameAlreadyInUse = reader.Value;
-                    break;
-                case "General/WebServiceUrl":
-                    language.General.WebServiceUrl = reader.Value;
-                    break;
-                case "General/IP":
-                    language.General.IP = reader.Value;
-                    break;
-                case "General/VideoWindowTitle":
-                    language.General.VideoWindowTitle = reader.Value;
-                    break;
-                case "General/AudioWindowTitle":
-                    language.General.AudioWindowTitle = reader.Value;
-                    break;
-                case "General/ControlsWindowTitle":
-                    language.General.ControlsWindowTitle = reader.Value;
-                    break;
-                case "General/Advanced":
-                    language.General.Advanced = reader.Value;
-                    break;
-                case "General/Style":
-                    language.General.Style = reader.Value;
-                    break;
-                case "General/StyleLanguage":
-                    language.General.StyleLanguage = reader.Value;
-                    break;
-                case "General/Character":
-                    language.General.Character = reader.Value;
-                    break;
-                case "General/Class":
-                    language.General.Class = reader.Value;
-                    break;
-                case "General/GeneralText":
-                    language.General.GeneralText = reader.Value;
-                    break;
-                case "General/LineNumber":
-                    language.General.LineNumber = reader.Value;
-                    break;
-                case "General/Before":
-                    language.General.Before = reader.Value;
-                    break;
-                case "General/After":
-                    language.General.After = reader.Value;
-                    break;
-                case "General/Size":
-                    language.General.Size = reader.Value;
                     break;
                 case "About/Title":
                     language.About.Title = reader.Value;
@@ -1674,6 +1425,222 @@ namespace Nikse.SubtitleEdit.Logic
                 case "FixCommonErrors/FixDialogsOneLineExample":
                     language.FixCommonErrors.FixDialogsOneLineExample = reader.Value;
                     break;
+                case "General/Title":
+                    language.General.Title = reader.Value;
+                    break;
+                case "General/Version":
+                    language.General.Version = reader.Value;
+                    break;
+                case "General/TranslatedBy":
+                    language.General.TranslatedBy = reader.Value;
+                    break;
+                case "General/CultureName":
+                    language.General.CultureName = reader.Value;
+                    break;
+                case "General/HelpFile":
+                    language.General.HelpFile = reader.Value;
+                    break;
+                case "General/Ok":
+                    language.General.Ok = reader.Value;
+                    break;
+                case "General/Cancel":
+                    language.General.Cancel = reader.Value;
+                    break;
+                case "General/Apply":
+                    language.General.Apply = reader.Value;
+                    break;
+                case "General/None":
+                    language.General.None = reader.Value;
+                    break;
+                case "General/All":
+                    language.General.All = reader.Value;
+                    break;
+                case "General/Preview":
+                    language.General.Preview = reader.Value;
+                    break;
+                case "General/SubtitleFiles":
+                    language.General.SubtitleFiles = reader.Value;
+                    break;
+                case "General/AllFiles":
+                    language.General.AllFiles = reader.Value;
+                    break;
+                case "General/VideoFiles":
+                    language.General.VideoFiles = reader.Value;
+                    break;
+                case "General/AudioFiles":
+                    language.General.AudioFiles = reader.Value;
+                    break;
+                case "General/OpenSubtitle":
+                    language.General.OpenSubtitle = reader.Value;
+                    break;
+                case "General/OpenVideoFile":
+                    language.General.OpenVideoFile = reader.Value;
+                    break;
+                case "General/OpenVideoFileTitle":
+                    language.General.OpenVideoFileTitle = reader.Value;
+                    break;
+                case "General/NoVideoLoaded":
+                    language.General.NoVideoLoaded = reader.Value;
+                    break;
+                case "General/VideoInformation":
+                    language.General.VideoInformation = reader.Value;
+                    break;
+                case "General/PositionX":
+                    language.General.PositionX = reader.Value;
+                    break;
+                case "General/StartTime":
+                    language.General.StartTime = reader.Value;
+                    break;
+                case "General/EndTime":
+                    language.General.EndTime = reader.Value;
+                    break;
+                case "General/Duration":
+                    language.General.Duration = reader.Value;
+                    break;
+                case "General/NumberSymbol":
+                    language.General.NumberSymbol = reader.Value;
+                    break;
+                case "General/Number":
+                    language.General.Number = reader.Value;
+                    break;
+                case "General/Text":
+                    language.General.Text = reader.Value;
+                    break;
+                case "General/HourMinutesSecondsMilliseconds":
+                    language.General.HourMinutesSecondsMilliseconds = reader.Value;
+                    break;
+                case "General/Bold":
+                    language.General.Bold = reader.Value;
+                    break;
+                case "General/Italic":
+                    language.General.Italic = reader.Value;
+                    break;
+                case "General/Underline":
+                    language.General.Underline = reader.Value;
+                    break;
+                case "General/Visible":
+                    language.General.Visible = reader.Value;
+                    break;
+                case "General/FrameRate":
+                    language.General.FrameRate = reader.Value;
+                    break;
+                case "General/Name":
+                    language.General.Name = reader.Value;
+                    break;
+                case "General/FileNameXAndSize":
+                    language.General.FileNameXAndSize = reader.Value;
+                    break;
+                case "General/ResolutionX":
+                    language.General.ResolutionX = reader.Value;
+                    break;
+                case "General/FrameRateX":
+                    language.General.FrameRateX = reader.Value;
+                    break;
+                case "General/TotalFramesX":
+                    language.General.TotalFramesX = reader.Value;
+                    break;
+                case "General/VideoEncodingX":
+                    language.General.VideoEncodingX = reader.Value;
+                    break;
+                case "General/SingleLineLengths":
+                    language.General.SingleLineLengths = reader.Value;
+                    break;
+                case "General/TotalLengthX":
+                    language.General.TotalLengthX = reader.Value;
+                    break;
+                case "General/TotalLengthXSplitLine":
+                    language.General.TotalLengthXSplitLine = reader.Value;
+                    break;
+                case "General/SplitLine":
+                    language.General.SplitLine = reader.Value;
+                    break;
+                case "General/NotAvailable":
+                    language.General.NotAvailable = reader.Value;
+                    break;
+                case "General/OverlapPreviousLineX":
+                    language.General.OverlapPreviousLineX = reader.Value;
+                    break;
+                case "General/OverlapX":
+                    language.General.OverlapX = reader.Value;
+                    break;
+                case "General/OverlapNextX":
+                    language.General.OverlapNextX = reader.Value;
+                    break;
+                case "General/Negative":
+                    language.General.Negative = reader.Value;
+                    break;
+                case "General/RegularExpressionIsNotValid":
+                    language.General.RegularExpressionIsNotValid = reader.Value;
+                    break;
+                case "General/SubtitleSaved":
+                    language.General.SubtitleSaved = reader.Value;
+                    break;
+                case "General/CurrentSubtitle":
+                    language.General.CurrentSubtitle = reader.Value;
+                    break;
+                case "General/OriginalText":
+                    language.General.OriginalText = reader.Value;
+                    break;
+                case "General/OpenOriginalSubtitleFile":
+                    language.General.OpenOriginalSubtitleFile = reader.Value;
+                    break;
+                case "General/PleaseWait":
+                    language.General.PleaseWait = reader.Value;
+                    break;
+                case "General/SessionKey":
+                    language.General.SessionKey = reader.Value;
+                    break;
+                case "General/UserName":
+                    language.General.UserName = reader.Value;
+                    break;
+                case "General/UserNameAlreadyInUse":
+                    language.General.UserNameAlreadyInUse = reader.Value;
+                    break;
+                case "General/WebServiceUrl":
+                    language.General.WebServiceUrl = reader.Value;
+                    break;
+                case "General/IP":
+                    language.General.IP = reader.Value;
+                    break;
+                case "General/VideoWindowTitle":
+                    language.General.VideoWindowTitle = reader.Value;
+                    break;
+                case "General/AudioWindowTitle":
+                    language.General.AudioWindowTitle = reader.Value;
+                    break;
+                case "General/ControlsWindowTitle":
+                    language.General.ControlsWindowTitle = reader.Value;
+                    break;
+                case "General/Advanced":
+                    language.General.Advanced = reader.Value;
+                    break;
+                case "General/Style":
+                    language.General.Style = reader.Value;
+                    break;
+                case "General/StyleLanguage":
+                    language.General.StyleLanguage = reader.Value;
+                    break;
+                case "General/Character":
+                    language.General.Character = reader.Value;
+                    break;
+                case "General/Class":
+                    language.General.Class = reader.Value;
+                    break;
+                case "General/GeneralText":
+                    language.General.GeneralText = reader.Value;
+                    break;
+                case "General/LineNumber":
+                    language.General.LineNumber = reader.Value;
+                    break;
+                case "General/Before":
+                    language.General.Before = reader.Value;
+                    break;
+                case "General/After":
+                    language.General.After = reader.Value;
+                    break;
+                case "General/Size":
+                    language.General.Size = reader.Value;
+                    break;
                 case "GetDictionaries/Title":
                     language.GetDictionaries.Title = reader.Value;
                     break;
@@ -1734,27 +1701,6 @@ namespace Nikse.SubtitleEdit.Logic
                 case "GetTesseractDictionaries/XDownloaded":
                     language.GetTesseractDictionaries.XDownloaded = reader.Value;
                     break;
-                case "GoogleTranslate/Title":
-                    language.GoogleTranslate.Title = reader.Value;
-                    break;
-                case "GoogleTranslate/From":
-                    language.GoogleTranslate.From = reader.Value;
-                    break;
-                case "GoogleTranslate/To":
-                    language.GoogleTranslate.To = reader.Value;
-                    break;
-                case "GoogleTranslate/Translate":
-                    language.GoogleTranslate.Translate = reader.Value;
-                    break;
-                case "GoogleTranslate/PleaseWait":
-                    language.GoogleTranslate.PleaseWait = reader.Value;
-                    break;
-                case "GoogleTranslate/PoweredByGoogleTranslate":
-                    language.GoogleTranslate.PoweredByGoogleTranslate = reader.Value;
-                    break;
-                case "GoogleTranslate/PoweredByMicrosoftTranslate":
-                    language.GoogleTranslate.PoweredByMicrosoftTranslate = reader.Value;
-                    break;
                 case "GoogleOrMicrosoftTranslate/Title":
                     language.GoogleOrMicrosoftTranslate.Title = reader.Value;
                     break;
@@ -1775,6 +1721,27 @@ namespace Nikse.SubtitleEdit.Logic
                     break;
                 case "GoogleOrMicrosoftTranslate/MicrosoftTranslate":
                     language.GoogleOrMicrosoftTranslate.MicrosoftTranslate = reader.Value;
+                    break;
+                case "GoogleTranslate/Title":
+                    language.GoogleTranslate.Title = reader.Value;
+                    break;
+                case "GoogleTranslate/From":
+                    language.GoogleTranslate.From = reader.Value;
+                    break;
+                case "GoogleTranslate/To":
+                    language.GoogleTranslate.To = reader.Value;
+                    break;
+                case "GoogleTranslate/Translate":
+                    language.GoogleTranslate.Translate = reader.Value;
+                    break;
+                case "GoogleTranslate/PleaseWait":
+                    language.GoogleTranslate.PleaseWait = reader.Value;
+                    break;
+                case "GoogleTranslate/PoweredByGoogleTranslate":
+                    language.GoogleTranslate.PoweredByGoogleTranslate = reader.Value;
+                    break;
+                case "GoogleTranslate/PoweredByMicrosoftTranslate":
+                    language.GoogleTranslate.PoweredByMicrosoftTranslate = reader.Value;
                     break;
                 case "GoToLine/Title":
                     language.GoToLine.Title = reader.Value;
@@ -3804,6 +3771,30 @@ namespace Nikse.SubtitleEdit.Logic
                 case "PluginsGet/XPluginsUpdated":
                     language.PluginsGet.XPluginsUpdated = reader.Value;
                     break;
+                case "PointSync/Title":
+                    language.PointSync.Title = reader.Value;
+                    break;
+                case "PointSync/TitleViaOtherSubtitle":
+                    language.PointSync.TitleViaOtherSubtitle = reader.Value;
+                    break;
+                case "PointSync/SyncHelp":
+                    language.PointSync.SyncHelp = reader.Value;
+                    break;
+                case "PointSync/SetSyncPoint":
+                    language.PointSync.SetSyncPoint = reader.Value;
+                    break;
+                case "PointSync/RemoveSyncPoint":
+                    language.PointSync.RemoveSyncPoint = reader.Value;
+                    break;
+                case "PointSync/SyncPointsX":
+                    language.PointSync.SyncPointsX = reader.Value;
+                    break;
+                case "PointSync/Info":
+                    language.PointSync.Info = reader.Value;
+                    break;
+                case "PointSync/ApplySync":
+                    language.PointSync.ApplySync = reader.Value;
+                    break;
                 case "RegularExpressionContextMenu/WordBoundary":
                     language.RegularExpressionContextMenu.WordBoundary = reader.Value;
                     break;
@@ -5226,30 +5217,6 @@ namespace Nikse.SubtitleEdit.Logic
                 case "SubStationAlphaStyles/StyleXImportedFromFileY":
                     language.SubStationAlphaStyles.StyleXImportedFromFileY = reader.Value;
                     break;
-                case "PointSync/Title":
-                    language.PointSync.Title = reader.Value;
-                    break;
-                case "PointSync/TitleViaOtherSubtitle":
-                    language.PointSync.TitleViaOtherSubtitle = reader.Value;
-                    break;
-                case "PointSync/SyncHelp":
-                    language.PointSync.SyncHelp = reader.Value;
-                    break;
-                case "PointSync/SetSyncPoint":
-                    language.PointSync.SetSyncPoint = reader.Value;
-                    break;
-                case "PointSync/RemoveSyncPoint":
-                    language.PointSync.RemoveSyncPoint = reader.Value;
-                    break;
-                case "PointSync/SyncPointsX":
-                    language.PointSync.SyncPointsX = reader.Value;
-                    break;
-                case "PointSync/Info":
-                    language.PointSync.Info = reader.Value;
-                    break;
-                case "PointSync/ApplySync":
-                    language.PointSync.ApplySync = reader.Value;
-                    break;
                 case "TransportStreamSubtitleChooser/Title":
                     language.TransportStreamSubtitleChooser.Title = reader.Value;
                     break;
@@ -5679,6 +5646,7 @@ namespace Nikse.SubtitleEdit.Logic
                 case "WebVttNewVoice/VoiceName":
                     language.WebVttNewVoice.VoiceName = reader.Value;
                     break;
+
             }
         }
     }

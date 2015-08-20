@@ -771,7 +771,7 @@ namespace Test.Logic.Forms
             target.Settings.ColonSeparateLine = false;
             target.Settings.RemoveTextBetweenParentheses = true;
             string text = "(<i>GOIN' BACK TO INDIANA</i>" + Environment.NewLine + "CONTINUES PLAYING)";
-            const string expected = string.Empty;
+            const string expected = "";
             string actual = target.RemoveLineIfAllUppercase(text);
             Assert.AreEqual(expected, actual);
         }
@@ -792,7 +792,7 @@ namespace Test.Logic.Forms
             target.Settings.ColonSeparateLine = false;
             target.Settings.RemoveTextBetweenParentheses = true;
             string text = "(<i>GOIN' BACK TO INDIANA</i>" + Environment.NewLine + "CONTINUES PLAYING)";
-            const string expected = string.Empty;
+            const string expected = "";
             string actual = target.RemoveHearImpairedTags(text);
             Assert.AreEqual(expected, actual);
         }

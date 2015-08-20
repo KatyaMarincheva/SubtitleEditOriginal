@@ -8,13 +8,3047 @@
             <summary>A factory for Nikse.SubtitleEdit.Logic.Paragraph instances</summary>
         </member>
         <member name="M:Nikse.SubtitleEdit.Logic.ParagraphFactory.Create(Nikse.SubtitleEdit.Logic.Paragraph)">
-            <summary>A factory for Nikse.SubtitleEdit.Logic.Paragraph instances</summary>
+            <summary>
+            A factory for Nikse.SubtitleEdit.Logic.Paragraph instances
+            </summary>
+            <param name="paragraph_paragraph1">
+            The paragraph_paragraph 1.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.Paragraph"/>.
+            </returns>
+        </member>
+        <member name="T:Nikse.SubtitleEdit.Logic.ParagraphTest">
+            <summary>
+            The paragraph test.
+            </summary>
+            <summary>
+            The paragraph test.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.ParagraphTest.Constructor8">
+            <summary>
+            The constructor 8.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.ParagraphTest.Constructor785">
+            <summary>
+            The constructor 785.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.ParagraphTest.Constructor525">
+            <summary>
+            The constructor 525.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.ParagraphTest.Constructor895">
+            <summary>
+            The constructor 895.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.ParagraphTest.Constructor">
+            <summary>
+            The constructor.
+            </summary>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.Paragraph"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.ParagraphTest.Constructor(Nikse.SubtitleEdit.Logic.TimeCode,Nikse.SubtitleEdit.Logic.TimeCode,System.String)">
+            <summary>
+            The constructor.
+            </summary>
+            <param name="startTime">
+            The start time.
+            </param>
+            <param name="endTime">
+            The end time.
+            </param>
+            <param name="text">
+            The text.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.Paragraph"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.ParagraphTest.Constructor(System.Int32,System.Int32,System.String)">
+            <summary>
+            The constructor.
+            </summary>
+            <param name="startFrame">
+            The start frame.
+            </param>
+            <param name="endFrame">
+            The end frame.
+            </param>
+            <param name="text">
+            The text.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.Paragraph"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.ParagraphTest.Constructor(System.String,System.Double,System.Double)">
+            <summary>
+            The constructor.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="startTotalMilliseconds">
+            The start total milliseconds.
+            </param>
+            <param name="endTotalMilliseconds">
+            The end total milliseconds.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.Paragraph"/>.
+            </returns>
+        </member>
+        <member name="T:Nikse.SubtitleEdit.Logic.UtilitiesTest">
+            <summary>
+            The utilities test.
+            </summary>
+            <summary>
+            The utilities test.
+            </summary>
+            <summary>
+            The utilities test.
+            </summary>
+            <summary>
+            The utilities test.
+            </summary>
+            <summary>
+            The utilities test.
+            </summary>
+            <summary>
+            The utilities test.
+            </summary>
+            <summary>
+            The utilities test.
+            </summary>
+            <summary>
+            The utilities test.
+            </summary>
+            <summary>
+            The utilities test.
+            </summary>
+            <summary>
+            The utilities test.
+            </summary>
+            <summary>
+            The utilities test.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.TryReadVideoInfoViaDirectShow(System.String)">
+            <summary>
+            The try read video info via direct show.
+            </summary>
+            <param name="fileName">
+            The file name.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.VideoInfo"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.GetVideoInfo(System.String)">
+            <summary>
+            The get video info.
+            </summary>
+            <param name="fileName">
+            The file name.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.VideoInfo"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.TryReadVideoInfoViaMatroskaHeader(System.String)">
+            <summary>
+            The try read video info via matroska header.
+            </summary>
+            <param name="fileName">
+            The file name.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.VideoInfo"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.TryReadVideoInfoViaAviHeader(System.String)">
+            <summary>
+            The try read video info via avi header.
+            </summary>
+            <param name="fileName">
+            The file name.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.VideoInfo"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.TryReadVideoInfoViaMp4(System.String)">
+            <summary>
+            The try read video info via mp 4.
+            </summary>
+            <param name="fileName">
+            The file name.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.VideoInfo"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.GetMovieFileExtensions">
+            <summary>
+            The get movie file extensions.
+            </summary>
+            <returns>
+            The <see cref="!:List"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.GetVideoFileFilter(System.Boolean)">
+            <summary>
+            The get video file filter.
+            </summary>
+            <param name="includeAudioFiles">
+            The include audio files.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.IsInteger(System.String)">
+            <summary>
+            The is integer.
+            </summary>
+            <param name="s">
+            The s.
+            </param>
+            <returns>
+            The <see cref="T:System.Boolean"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.GetSubtitleFormatByFriendlyName(System.String)">
+            <summary>
+            The get subtitle format by friendly name.
+            </summary>
+            <param name="friendlyName">
+            The friendly name.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.SubtitleFormats.SubtitleFormat"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.FormatBytesToDisplayFileSize(System.Int64)">
+            <summary>
+            The format bytes to display file size.
+            </summary>
+            <param name="fileSize">
+            The file size.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.ShowSubtitle(System.Collections.Generic.List{Nikse.SubtitleEdit.Logic.Paragraph},Nikse.SubtitleEdit.Controls.VideoPlayerContainer)">
+            <summary>
+            The show subtitle.
+            </summary>
+            <param name="paragraphs">
+            The paragraphs.
+            </param>
+            <param name="videoPlayerContainer">
+            The video player container.
+            </param>
+            <returns>
+            The <see cref="T:System.Int32"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.FormatBytesToDisplayFileSize463">
+            <summary>
+            The format bytes to display file size 463.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.FormatBytesToDisplayFileSize734">
+            <summary>
+            The format bytes to display file size 734.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.FormatBytesToDisplayFileSize301">
+            <summary>
+            The format bytes to display file size 301.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.FormatBytesToDisplayFileSize754">
+            <summary>
+            The format bytes to display file size 754.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.GetMovieFileExtensions52">
+            <summary>
+            The get movie file extensions 52.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.GetSubtitleFormatByFriendlyName836">
+            <summary>
+            The get subtitle format by friendly name 836.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.GetSubtitleFormatByFriendlyName827">
+            <summary>
+            The get subtitle format by friendly name 827.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.GetSubtitleFormatByFriendlyName55">
+            <summary>
+            The get subtitle format by friendly name 55.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.GetVideoFileFilter384">
+            <summary>
+            The get video file filter 384.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.GetVideoFileFilter828">
+            <summary>
+            The get video file filter 828.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.GetVideoInfo611">
+            <summary>
+            The get video info 611.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.IsInteger582">
+            <summary>
+            The is integer 582.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.IsInteger766">
+            <summary>
+            The is integer 766.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.IsInteger28">
+            <summary>
+            The is integer 28.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.IsInteger667">
+            <summary>
+            The is integer 667.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.IsInteger660">
+            <summary>
+            The is integer 660.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.IsInteger989">
+            <summary>
+            The is integer 989.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.IsInteger855">
+            <summary>
+            The is integer 855.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.IsInteger815">
+            <summary>
+            The is integer 815.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.IsInteger978">
+            <summary>
+            The is integer 978.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.IsInteger450">
+            <summary>
+            The is integer 450.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.IsInteger970">
+            <summary>
+            The is integer 970.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.TryReadVideoInfoViaAviHeader676">
+            <summary>
+            The try read video info via avi header 676.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.TryReadVideoInfoViaAviHeader242">
+            <summary>
+            The try read video info via avi header 242.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.TryReadVideoInfoViaDirectShow676">
+            <summary>
+            The try read video info via direct show 676.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.TryReadVideoInfoViaDirectShow242">
+            <summary>
+            The try read video info via direct show 242.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.TryReadVideoInfoViaMatroskaHeader676">
+            <summary>
+            The try read video info via matroska header 676.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.TryReadVideoInfoViaMatroskaHeader242">
+            <summary>
+            The try read video info via matroska header 242.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.TryReadVideoInfoViaMp4676">
+            <summary>
+            The try read video info via mp 4676.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.UtilitiesTest.TryReadVideoInfoViaMp4242">
+            <summary>
+            The try read video info via mp 4242.
+            </summary>
+        </member>
+        <member name="T:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest">
+            <summary>
+            The vob sub merged pack test.
+            </summary>
+            <summary>
+            The vob sub merged pack test.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor951">
+            <summary>
+            The constructor 951.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor265">
+            <summary>
+            The constructor 265.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor319">
+            <summary>
+            The constructor 319.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor926">
+            <summary>
+            The constructor 926.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor490">
+            <summary>
+            The constructor 490.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor128">
+            <summary>
+            The constructor 128.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor467">
+            <summary>
+            The constructor 467.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor248">
+            <summary>
+            The constructor 248.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor540">
+            <summary>
+            The constructor 540.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor495">
+            <summary>
+            The constructor 495.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor27">
+            <summary>
+            The constructor 27.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor141">
+            <summary>
+            The constructor 141.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor814">
+            <summary>
+            The constructor 814.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor521">
+            <summary>
+            The constructor 521.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor529">
+            <summary>
+            The constructor 529.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor782">
+            <summary>
+            The constructor 782.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor62">
+            <summary>
+            The constructor 62.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor132">
+            <summary>
+            The constructor 132.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor588">
+            <summary>
+            The constructor 588.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor632">
+            <summary>
+            The constructor 632.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor468">
+            <summary>
+            The constructor 468.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor452">
+            <summary>
+            The constructor 452.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor619">
+            <summary>
+            The constructor 619.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor321">
+            <summary>
+            The constructor 321.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor787">
+            <summary>
+            The constructor 787.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor110">
+            <summary>
+            The constructor 110.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor603">
+            <summary>
+            The constructor 603.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor763">
+            <summary>
+            The constructor 763.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPackTest.Constructor(System.Byte[],System.TimeSpan,System.Int32,Nikse.SubtitleEdit.Logic.VobSub.IdxParagraph)">
+            <summary>
+            The constructor.
+            </summary>
+            <param name="subPictureData">
+            The sub picture data.
+            </param>
+            <param name="presentationTimestamp">
+            The presentation timestamp.
+            </param>
+            <param name="streamId">
+            The stream id.
+            </param>
+            <param name="idxLine">
+            The idx line.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.VobSub.VobSubMergedPack"/>.
+            </returns>
+        </member>
+        <member name="T:Nikse.SubtitleEdit.Logic.VobSub.VobSubPackTest">
+            <summary>
+            The vob sub pack test.
+            </summary>
+            <summary>
+            The vob sub pack test.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubPackTest.Constructor865">
+            <summary>
+            The constructor 865.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubPackTest.Constructor140">
+            <summary>
+            The constructor 140.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubPackTest.Constructor116">
+            <summary>
+            The constructor 116.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubPackTest.Constructor256">
+            <summary>
+            The constructor 256.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubPackTest.Constructor139">
+            <summary>
+            The constructor 139.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubPackTest.Constructor99">
+            <summary>
+            The constructor 99.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubPackTest.Constructor105">
+            <summary>
+            The constructor 105.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubPackTest.Constructor187">
+            <summary>
+            The constructor 187.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubPackTest.Constructor182">
+            <summary>
+            The constructor 182.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubPackTest.Constructor(System.Byte[],Nikse.SubtitleEdit.Logic.VobSub.IdxParagraph)">
+            <summary>
+            The constructor.
+            </summary>
+            <param name="buffer">
+            The buffer.
+            </param>
+            <param name="idxLine">
+            The idx line.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.VobSub.VobSubPack"/>.
+            </returns>
+        </member>
+        <member name="T:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest">
+            <summary>
+            The vob sub parser test.
+            </summary>
+            <summary>
+            The vob sub parser test.
+            </summary>
+            <summary>
+            The vob sub parser test.
+            </summary>
+            <summary>
+            The vob sub parser test.
+            </summary>
+            <summary>
+            The vob sub parser test.
+            </summary>
+            <summary>
+            The vob sub parser test.
+            </summary>
+            <summary>
+            The vob sub parser test.
+            </summary>
+            <summary>
+            The vob sub parser test.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.Constructor124">
+            <summary>
+            The constructor 124.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.Constructor(System.Boolean)">
+            <summary>
+            The constructor.
+            </summary>
+            <param name="isPal">
+            The is pal.
+            </param>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.VobSub.VobSubParser"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.Open(Nikse.SubtitleEdit.Logic.VobSub.VobSubParser,System.IO.Stream)">
+            <summary>
+            The open.
+            </summary>
+            <param name="target">
+            The target.
+            </param>
+            <param name="ms">
+            The ms.
+            </param>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.MergeVobSubPacks(Nikse.SubtitleEdit.Logic.VobSub.VobSubParser)">
+            <summary>
+            The merge vob sub packs.
+            </summary>
+            <param name="target">
+            The target.
+            </param>
+            <returns>
+            The <see cref="!:List"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsMpeg2PackHeader(System.Byte[])">
+            <summary>
+            The is mpeg 2 pack header.
+            </summary>
+            <param name="buffer">
+            The buffer.
+            </param>
+            <returns>
+            The <see cref="T:System.Boolean"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsPrivateStream1(System.Byte[],System.Int32)">
+            <summary>
+            The is private stream 1.
+            </summary>
+            <param name="buffer">
+            The buffer.
+            </param>
+            <param name="index">
+            The index.
+            </param>
+            <returns>
+            The <see cref="T:System.Boolean"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsPrivateStream2(System.Byte[],System.Int32)">
+            <summary>
+            The is private stream 2.
+            </summary>
+            <param name="buffer">
+            The buffer.
+            </param>
+            <param name="index">
+            The index.
+            </param>
+            <returns>
+            The <see cref="T:System.Boolean"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack(System.Byte[])">
+            <summary>
+            The is subtitle pack.
+            </summary>
+            <param name="buffer">
+            The buffer.
+            </param>
+            <returns>
+            The <see cref="T:System.Boolean"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsMpeg2PackHeader829">
+            <summary>
+            The is mpeg 2 pack header 829.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsMpeg2PackHeader488">
+            <summary>
+            The is mpeg 2 pack header 488.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsMpeg2PackHeader760">
+            <summary>
+            The is mpeg 2 pack header 760.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsMpeg2PackHeader256">
+            <summary>
+            The is mpeg 2 pack header 256.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsMpeg2PackHeader203">
+            <summary>
+            The is mpeg 2 pack header 203.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsPrivateStream1789">
+            <summary>
+            The is private stream 1789.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsPrivateStream1102">
+            <summary>
+            The is private stream 1102.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsPrivateStream1508">
+            <summary>
+            The is private stream 1508.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsPrivateStream1499">
+            <summary>
+            The is private stream 1499.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsPrivateStream1645">
+            <summary>
+            The is private stream 1645.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsPrivateStream2789">
+            <summary>
+            The is private stream 2789.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsPrivateStream2102">
+            <summary>
+            The is private stream 2102.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsPrivateStream2508">
+            <summary>
+            The is private stream 2508.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsPrivateStream2499">
+            <summary>
+            The is private stream 2499.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsPrivateStream2645">
+            <summary>
+            The is private stream 2645.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack829">
+            <summary>
+            The is subtitle pack 829.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack488">
+            <summary>
+            The is subtitle pack 488.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack760">
+            <summary>
+            The is subtitle pack 760.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack877">
+            <summary>
+            The is subtitle pack 877.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack203">
+            <summary>
+            The is subtitle pack 203.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack865">
+            <summary>
+            The is subtitle pack 865.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack809">
+            <summary>
+            The is subtitle pack 809.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack980">
+            <summary>
+            The is subtitle pack 980.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack256">
+            <summary>
+            The is subtitle pack 256.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack468">
+            <summary>
+            The is subtitle pack 468.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack460">
+            <summary>
+            The is subtitle pack 460.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.IsSubtitlePack197">
+            <summary>
+            The is subtitle pack 197.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.MergeVobSubPacks749">
+            <summary>
+            The merge vob sub packs 749.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.MergeVobSubPacks880">
+            <summary>
+            The merge vob sub packs 880.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.Open488">
+            <summary>
+            The open 488.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.Open48801">
+            <summary>
+            The open 48801.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.Open48802">
+            <summary>
+            The open 48802.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.Open48803">
+            <summary>
+            The open 48803.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.Open48804">
+            <summary>
+            The open 48804.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.Open48805">
+            <summary>
+            The open 48805.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.Open48806">
+            <summary>
+            The open 48806.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.Open48807">
+            <summary>
+            The open 48807.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubParserTest.Open48808">
+            <summary>
+            The open 48808.
+            </summary>
+        </member>
+        <member name="T:Nikse.SubtitleEdit.Logic.VobSub.VobSubWriterTest">
+            <summary>
+            The vob sub writer test.
+            </summary>
+            <summary>
+            The vob sub writer test.
+            </summary>
+            <summary>
+            The vob sub writer test.
+            </summary>
+            <summary>
+            The vob sub writer test.
+            </summary>
+            <summary>
+            The vob sub writer test.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubWriterTest.ToHexColor(System.Drawing.Color)">
+            <summary>
+            The to hex color.
+            </summary>
+            <param name="c">
+            The c.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubWriterTest.WriteColors(System.IO.Stream)">
+            <summary>
+            The write colors.
+            </summary>
+            <param name="stream">
+            The stream.
+            </param>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubWriterTest.WritePixelDataAddress(System.IO.Stream,System.Int32,System.Int32)">
+            <summary>
+            The write pixel data address.
+            </summary>
+            <param name="stream">
+            The stream.
+            </param>
+            <param name="imageTopFieldDataAddress">
+            The image top field data address.
+            </param>
+            <param name="imageBottomFieldDataAddress">
+            The image bottom field data address.
+            </param>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubWriterTest.WriteEndianWord(System.Int32,System.IO.Stream)">
+            <summary>
+            The write endian word.
+            </summary>
+            <param name="i">
+            The i.
+            </param>
+            <param name="stream">
+            The stream.
+            </param>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubWriterTest.ToHexColor360">
+            <summary>
+            The to hex color 360.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubWriterTest.WriteColors58">
+            <summary>
+            The write colors 58.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubWriterTest.WriteEndianWord816">
+            <summary>
+            The write endian word 816.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.VobSub.VobSubWriterTest.WritePixelDataAddress821">
+            <summary>
+            The write pixel data address 821.
+            </summary>
         </member>
         <member name="T:Nikse.SubtitleEdit.Controls.VideoPlayerContainerFactory">
             <summary>A factory for Nikse.SubtitleEdit.Controls.VideoPlayerContainer instances</summary>
         </member>
         <member name="M:Nikse.SubtitleEdit.Controls.VideoPlayerContainerFactory.Create">
-            <summary>A factory for Nikse.SubtitleEdit.Controls.VideoPlayerContainer instances</summary>
+            <summary>
+            A factory for Nikse.SubtitleEdit.Controls.VideoPlayerContainer instances
+            </summary>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Controls.Interfaces.IVideoPlayerContainer"/>.
+            </returns>
+        </member>
+        <member name="T:Nikse.SubtitleEdit.Core.HtmlUtilTest">
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+            <summary>
+            The html util test.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingBeginTag252">
+            <summary>
+            The add missing begin tag 252.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingBeginTagThrowsTargetInvocationException893">
+            <summary>
+            The add missing begin tag throws target invocation exception 893.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingBeginTagThrowsTargetInvocationException691">
+            <summary>
+            The add missing begin tag throws target invocation exception 691.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingBeginTag637">
+            <summary>
+            The add missing begin tag 637.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingBeginTag350">
+            <summary>
+            The add missing begin tag 350.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag162">
+            <summary>
+            The add missing end tag 162.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTagThrowsTargetInvocationException206">
+            <summary>
+            The add missing end tag throws target invocation exception 206.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag106">
+            <summary>
+            The add missing end tag 106.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag313">
+            <summary>
+            The add missing end tag 313.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag579">
+            <summary>
+            The add missing end tag 579.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag831">
+            <summary>
+            The add missing end tag 831.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag155">
+            <summary>
+            The add missing end tag 155.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTagThrowsTargetInvocationException886">
+            <summary>
+            The add missing end tag throws target invocation exception 886.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag11001">
+            <summary>
+            The add missing end tag 11001.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag778">
+            <summary>
+            The add missing end tag 778.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag240">
+            <summary>
+            The add missing end tag 240.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag518">
+            <summary>
+            The add missing end tag 518.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTagThrowsTargetInvocationException681">
+            <summary>
+            The add missing end tag throws target invocation exception 681.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag491">
+            <summary>
+            The add missing end tag 491.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag273">
+            <summary>
+            The add missing end tag 273.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag444">
+            <summary>
+            The add missing end tag 444.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag895">
+            <summary>
+            The add missing end tag 895.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag183">
+            <summary>
+            The add missing end tag 183.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag110">
+            <summary>
+            The add missing end tag 110.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText(System.String)">
+            <summary>
+            The encode text.
+            </summary>
+            <param name="source">
+            The source.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags(System.String,System.Boolean)">
+            <summary>
+            The remove html tags.
+            </summary>
+            <param name="s">
+            The s.
+            </param>
+            <param name="alsoSsaTags">
+            The also ssa tags.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl(System.String)">
+            <summary>
+            The is url.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <returns>
+            The <see cref="T:System.Boolean"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl(System.String)">
+            <summary>
+            The starts with url.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <returns>
+            The <see cref="T:System.Boolean"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixUpperTags(System.String)">
+            <summary>
+            The fix upper tags.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags(System.String)">
+            <summary>
+            The fix invalid italic tags.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags(System.String,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            The remove multiple begin tags.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="italicBeginTagCount">
+            The italic begin tag count.
+            </param>
+            <param name="italicEndTagCount">
+            The italic end tag count.
+            </param>
+            <param name="beginTag">
+            The begin tag.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicBeginEndTagGroup(System.String)">
+            <summary>
+            The remove italic begin end tag group.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText(System.String,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            The set begin and end tag for 2 lines text.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="italicBeginTagCount">
+            The italic begin tag count.
+            </param>
+            <param name="italicEndTagCount">
+            The italic end tag count.
+            </param>
+            <param name="beginTag">
+            The begin tag.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsConvertFirstToBeginTag(System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+            The two end tags convert first to begin tag.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="italicBeginTagCount">
+            The italic begin tag count.
+            </param>
+            <param name="italicEndTagCount">
+            The italic end tag count.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsSetBeginAndEndTags(System.String,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            The two end tags set begin and end tags.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="italicBeginTagCount">
+            The italic begin tag count.
+            </param>
+            <param name="italicEndTagCount">
+            The italic end tag count.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <param name="beginTag">
+            The begin tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingBeginTag(System.String,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            The add missing begin tag.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="italicBeginTagCount">
+            The italic begin tag count.
+            </param>
+            <param name="italicEndTagCount">
+            The italic end tag count.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <param name="beginTag">
+            The begin tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.AddMissingEndTag(System.String,System.Int32,System.Int32,System.String,System.String,System.Int32)">
+            <summary>
+            The add missing end tag.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="italicBeginTagCount">
+            The italic begin tag count.
+            </param>
+            <param name="italicEndTagCount">
+            The italic end tag count.
+            </param>
+            <param name="beginTag">
+            The begin tag.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <param name="noOfLines">
+            The no of lines.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateBeginTag(System.String,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            The remove duplicate begin tag.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="italicBeginTagCount">
+            The italic begin tag count.
+            </param>
+            <param name="italicEndTagCount">
+            The italic end tag count.
+            </param>
+            <param name="beginTag">
+            The begin tag.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateEndTag(System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+            The remove duplicate end tag.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="italicBeginTagCount">
+            The italic begin tag count.
+            </param>
+            <param name="italicEndTagCount">
+            The italic end tag count.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IfTwoBeginTagsConvertSecondToEndTag(System.String,System.Int32,System.Int32,System.String,System.Int32,System.String)">
+            <summary>
+            The if two begin tags convert second to end tag.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="italicBeginTagCount">
+            The italic begin tag count.
+            </param>
+            <param name="italicEndTagCount">
+            The italic end tag count.
+            </param>
+            <param name="beginTag">
+            The begin tag.
+            </param>
+            <param name="noOfLines">
+            The no of lines.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SwapEndAndBeginTags(System.String,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            The swap end and begin tags.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="italicBeginTagCount">
+            The italic begin tag count.
+            </param>
+            <param name="italicEndTagCount">
+            The italic end tag count.
+            </param>
+            <param name="beginTag">
+            The begin tag.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags(System.String,System.String)">
+            <summary>
+            The remove adjacent duplicate end tags.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags(System.String,System.String)">
+            <summary>
+            The remove adjacent duplicate begin tags.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="beginTag">
+            The begin tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveUnnecessarySelfClosingTags(System.String,System.String,System.String)">
+            <summary>
+            The remove unnecessary self closing tags.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="beginTag">
+            The begin tag.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroups(System.String)">
+            <summary>
+            The remove italic end begin tag groups.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags(System.String,System.String)">
+            <summary>
+            The fix end tags.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="endTag">
+            The end tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags(System.String,System.String)">
+            <summary>
+            The fix begin tags.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <param name="beginTag">
+            The begin tag.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText27201">
+            <summary>
+            The encode text 27201.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText36701">
+            <summary>
+            The encode text 36701.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText74801">
+            <summary>
+            The encode text 74801.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText87001">
+            <summary>
+            The encode text 87001.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText770">
+            <summary>
+            The encode text 770.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText414">
+            <summary>
+            The encode text 414.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText719">
+            <summary>
+            The encode text 719.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText919">
+            <summary>
+            The encode text 919.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText807">
+            <summary>
+            The encode text 807.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText256">
+            <summary>
+            The encode text 256.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText380">
+            <summary>
+            The encode text 380.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText696">
+            <summary>
+            The encode text 696.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.EncodeText775">
+            <summary>
+            The encode text 775.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags137">
+            <summary>
+            The fix begin tags 137.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTagsThrowsTargetInvocationException792">
+            <summary>
+            The fix begin tags throws target invocation exception 792.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags711">
+            <summary>
+            The fix begin tags 711.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags86">
+            <summary>
+            The fix begin tags 86.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags455">
+            <summary>
+            The fix begin tags 455.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags719">
+            <summary>
+            The fix begin tags 719.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags397">
+            <summary>
+            The fix begin tags 397.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags627">
+            <summary>
+            The fix begin tags 627.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags468">
+            <summary>
+            The fix begin tags 468.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags512">
+            <summary>
+            The fix begin tags 512.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags871">
+            <summary>
+            The fix begin tags 871.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags207">
+            <summary>
+            The fix begin tags 207.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags704">
+            <summary>
+            The fix begin tags 704.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags180">
+            <summary>
+            The fix begin tags 180.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags316">
+            <summary>
+            The fix begin tags 316.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags361">
+            <summary>
+            The fix begin tags 361.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags436">
+            <summary>
+            The fix begin tags 436.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags858">
+            <summary>
+            The fix begin tags 858.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags618">
+            <summary>
+            The fix begin tags 618.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags600">
+            <summary>
+            The fix begin tags 600.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags61801">
+            <summary>
+            The fix begin tags 61801.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags525">
+            <summary>
+            The fix begin tags 525.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags653">
+            <summary>
+            The fix begin tags 653.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixBeginTags410">
+            <summary>
+            The fix begin tags 410.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTagsThrowsTargetInvocationException717">
+            <summary>
+            The fix end tags throws target invocation exception 717.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags6">
+            <summary>
+            The fix end tags 6.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags814">
+            <summary>
+            The fix end tags 814.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags233">
+            <summary>
+            The fix end tags 233.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags560">
+            <summary>
+            The fix end tags 560.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags107">
+            <summary>
+            The fix end tags 107.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags348">
+            <summary>
+            The fix end tags 348.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags599">
+            <summary>
+            The fix end tags 599.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags88">
+            <summary>
+            The fix end tags 88.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags726">
+            <summary>
+            The fix end tags 726.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags727">
+            <summary>
+            The fix end tags 727.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags978">
+            <summary>
+            The fix end tags 978.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags506">
+            <summary>
+            The fix end tags 506.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags731">
+            <summary>
+            The fix end tags 731.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags654">
+            <summary>
+            The fix end tags 654.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags951">
+            <summary>
+            The fix end tags 951.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags865">
+            <summary>
+            The fix end tags 865.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags697">
+            <summary>
+            The fix end tags 697.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixEndTags753">
+            <summary>
+            The fix end tags 753.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags84">
+            <summary>
+            The fix invalid italic tags 84.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags504">
+            <summary>
+            The fix invalid italic tags 504.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags232">
+            <summary>
+            The fix invalid italic tags 232.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags400">
+            <summary>
+            The fix invalid italic tags 400.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags549">
+            <summary>
+            The fix invalid italic tags 549.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags432">
+            <summary>
+            The fix invalid italic tags 432.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags186">
+            <summary>
+            The fix invalid italic tags 186.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags146">
+            <summary>
+            The fix invalid italic tags 146.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags735">
+            <summary>
+            The fix invalid italic tags 735.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags442">
+            <summary>
+            The fix invalid italic tags 442.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags283">
+            <summary>
+            The fix invalid italic tags 283.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags911">
+            <summary>
+            The fix invalid italic tags 911.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags412">
+            <summary>
+            The fix invalid italic tags 412.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags647">
+            <summary>
+            The fix invalid italic tags 647.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags408">
+            <summary>
+            The fix invalid italic tags 408.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags994">
+            <summary>
+            The fix invalid italic tags 994.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags575">
+            <summary>
+            The fix invalid italic tags 575.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags684">
+            <summary>
+            The fix invalid italic tags 684.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags938">
+            <summary>
+            The fix invalid italic tags 938.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags137">
+            <summary>
+            The fix invalid italic tags 137.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixInvalidItalicTags678">
+            <summary>
+            The fix invalid italic tags 678.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixUpperTags400">
+            <summary>
+            The fix upper tags 400.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixUpperTags200">
+            <summary>
+            The fix upper tags 200.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixUpperTags457">
+            <summary>
+            The fix upper tags 457.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixUpperTags569">
+            <summary>
+            The fix upper tags 569.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixUpperTags299">
+            <summary>
+            The fix upper tags 299.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixUpperTags718">
+            <summary>
+            The fix upper tags 718.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.FixUpperTags13">
+            <summary>
+            The fix upper tags 13.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IfTwoBeginTagsConvertSecondToEndTag691">
+            <summary>
+            The if two begin tags convert second to end tag 691.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IfTwoBeginTagsConvertSecondToEndTag513">
+            <summary>
+            The if two begin tags convert second to end tag 513.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IfTwoBeginTagsConvertSecondToEndTag19">
+            <summary>
+            The if two begin tags convert second to end tag 19.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl962">
+            <summary>
+            The is url 962.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl26">
+            <summary>
+            The is url 26.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl783">
+            <summary>
+            The is url 783.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl554">
+            <summary>
+            The is url 554.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl843">
+            <summary>
+            The is url 843.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl841">
+            <summary>
+            The is url 841.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl610">
+            <summary>
+            The is url 610.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl817">
+            <summary>
+            The is url 817.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl259">
+            <summary>
+            The is url 259.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl703">
+            <summary>
+            The is url 703.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl696">
+            <summary>
+            The is url 696.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl859">
+            <summary>
+            The is url 859.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl211">
+            <summary>
+            The is url 211.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.IsUrl742">
+            <summary>
+            The is url 742.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTagsThrowsTargetInvocationException990">
+            <summary>
+            The remove adjacent duplicate begin tags throws target invocation exception 990.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags958">
+            <summary>
+            The remove adjacent duplicate begin tags 958.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags719">
+            <summary>
+            The remove adjacent duplicate begin tags 719.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags86">
+            <summary>
+            The remove adjacent duplicate begin tags 86.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags182">
+            <summary>
+            The remove adjacent duplicate begin tags 182.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags512">
+            <summary>
+            The remove adjacent duplicate begin tags 512.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags207">
+            <summary>
+            The remove adjacent duplicate begin tags 207.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags704">
+            <summary>
+            The remove adjacent duplicate begin tags 704.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags20701">
+            <summary>
+            The remove adjacent duplicate begin tags 20701.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags302">
+            <summary>
+            The remove adjacent duplicate begin tags 302.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags705">
+            <summary>
+            The remove adjacent duplicate begin tags 705.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags635">
+            <summary>
+            The remove adjacent duplicate begin tags 635.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags322">
+            <summary>
+            The remove adjacent duplicate begin tags 322.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags793">
+            <summary>
+            The remove adjacent duplicate begin tags 793.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags858">
+            <summary>
+            The remove adjacent duplicate begin tags 858.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags553">
+            <summary>
+            The remove adjacent duplicate begin tags 553.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags347">
+            <summary>
+            The remove adjacent duplicate begin tags 347.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateBeginTags147">
+            <summary>
+            The remove adjacent duplicate begin tags 147.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTagsThrowsTargetInvocationException327">
+            <summary>
+            The remove adjacent duplicate end tags throws target invocation exception 327.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags445">
+            <summary>
+            The remove adjacent duplicate end tags 445.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags560">
+            <summary>
+            The remove adjacent duplicate end tags 560.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags814">
+            <summary>
+            The remove adjacent duplicate end tags 814.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags360">
+            <summary>
+            The remove adjacent duplicate end tags 360.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags88">
+            <summary>
+            The remove adjacent duplicate end tags 88.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags727">
+            <summary>
+            The remove adjacent duplicate end tags 727.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags978">
+            <summary>
+            The remove adjacent duplicate end tags 978.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags753">
+            <summary>
+            The remove adjacent duplicate end tags 753.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags665">
+            <summary>
+            The remove adjacent duplicate end tags 665.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags633">
+            <summary>
+            The remove adjacent duplicate end tags 633.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags72">
+            <summary>
+            The remove adjacent duplicate end tags 72.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags684">
+            <summary>
+            The remove adjacent duplicate end tags 684.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags39">
+            <summary>
+            The remove adjacent duplicate end tags 39.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags766">
+            <summary>
+            The remove adjacent duplicate end tags 766.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags347">
+            <summary>
+            The remove adjacent duplicate end tags 347.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags647">
+            <summary>
+            The remove adjacent duplicate end tags 647.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags278">
+            <summary>
+            The remove adjacent duplicate end tags 278.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveAdjacentDuplicateEndTags205">
+            <summary>
+            The remove adjacent duplicate end tags 205.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateBeginTag506">
+            <summary>
+            The remove duplicate begin tag 506.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateBeginTag219">
+            <summary>
+            The remove duplicate begin tag 219.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateBeginTag961">
+            <summary>
+            The remove duplicate begin tag 961.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateBeginTag445">
+            <summary>
+            The remove duplicate begin tag 445.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateEndTag33">
+            <summary>
+            The remove duplicate end tag 33.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateEndTag701">
+            <summary>
+            The remove duplicate end tag 701.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateEndTag27">
+            <summary>
+            The remove duplicate end tag 27.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateEndTag370">
+            <summary>
+            The remove duplicate end tag 370.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateEndTag288">
+            <summary>
+            The remove duplicate end tag 288.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateEndTag462">
+            <summary>
+            The remove duplicate end tag 462.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateEndTag401">
+            <summary>
+            The remove duplicate end tag 401.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveDuplicateEndTag982">
+            <summary>
+            The remove duplicate end tag 982.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags246">
+            <summary>
+            The remove html tags 246.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags117">
+            <summary>
+            The remove html tags 117.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags158">
+            <summary>
+            The remove html tags 158.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags576">
+            <summary>
+            The remove html tags 576.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags278">
+            <summary>
+            The remove html tags 278.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags450">
+            <summary>
+            The remove html tags 450.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags252">
+            <summary>
+            The remove html tags 252.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags742">
+            <summary>
+            The remove html tags 742.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags17">
+            <summary>
+            The remove html tags 17.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags634">
+            <summary>
+            The remove html tags 634.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags763">
+            <summary>
+            The remove html tags 763.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags821">
+            <summary>
+            The remove html tags 821.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags835">
+            <summary>
+            The remove html tags 835.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags235">
+            <summary>
+            The remove html tags 235.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags332">
+            <summary>
+            The remove html tags 332.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags97">
+            <summary>
+            The remove html tags 97.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags658">
+            <summary>
+            The remove html tags 658.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags925">
+            <summary>
+            The remove html tags 925.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags954">
+            <summary>
+            The remove html tags 954.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveHtmlTags633">
+            <summary>
+            The remove html tags 633.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicBeginEndTagGroup232">
+            <summary>
+            The remove italic begin end tag group 232.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicBeginEndTagGroup772">
+            <summary>
+            The remove italic begin end tag group 772.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicBeginEndTagGroup481">
+            <summary>
+            The remove italic begin end tag group 481.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicBeginEndTagGroup592">
+            <summary>
+            The remove italic begin end tag group 592.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicBeginEndTagGroup792">
+            <summary>
+            The remove italic begin end tag group 792.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroupsThrowsTargetInvocationException856">
+            <summary>
+            The remove italic end begin tag groups throws target invocation exception 856.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroupsThrowsTargetInvocationException858">
+            <summary>
+            The remove italic end begin tag groups throws target invocation exception 858.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroupsThrowsTargetInvocationException854">
+            <summary>
+            The remove italic end begin tag groups throws target invocation exception 854.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroups232">
+            <summary>
+            The remove italic end begin tag groups 232.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroups400">
+            <summary>
+            The remove italic end begin tag groups 400.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroups456">
+            <summary>
+            The remove italic end begin tag groups 456.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroups567">
+            <summary>
+            The remove italic end begin tag groups 567.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroups653">
+            <summary>
+            The remove italic end begin tag groups 653.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroups433">
+            <summary>
+            The remove italic end begin tag groups 433.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroups51">
+            <summary>
+            The remove italic end begin tag groups 51.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroups138">
+            <summary>
+            The remove italic end begin tag groups 138.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroups750">
+            <summary>
+            The remove italic end begin tag groups 750.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveItalicEndBeginTagGroups236">
+            <summary>
+            The remove italic end begin tag groups 236.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags786">
+            <summary>
+            The remove multiple begin tags 786.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags253">
+            <summary>
+            The remove multiple begin tags 253.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags506">
+            <summary>
+            The remove multiple begin tags 506.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags585">
+            <summary>
+            The remove multiple begin tags 585.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags555">
+            <summary>
+            The remove multiple begin tags 555.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags188">
+            <summary>
+            The remove multiple begin tags 188.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags924">
+            <summary>
+            The remove multiple begin tags 924.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags282">
+            <summary>
+            The remove multiple begin tags 282.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags383">
+            <summary>
+            The remove multiple begin tags 383.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags710">
+            <summary>
+            The remove multiple begin tags 710.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags179">
+            <summary>
+            The remove multiple begin tags 179.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags668">
+            <summary>
+            The remove multiple begin tags 668.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags961">
+            <summary>
+            The remove multiple begin tags 961.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags659">
+            <summary>
+            The remove multiple begin tags 659.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags864">
+            <summary>
+            The remove multiple begin tags 864.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveMultipleBeginTags810">
+            <summary>
+            The remove multiple begin tags 810.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveUnnecessarySelfClosingTagsThrowsTargetInvocationException571">
+            <summary>
+            The remove unnecessary self closing tags throws target invocation exception 571.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveUnnecessarySelfClosingTags538">
+            <summary>
+            The remove unnecessary self closing tags 538.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveUnnecessarySelfClosingTags308">
+            <summary>
+            The remove unnecessary self closing tags 308.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveUnnecessarySelfClosingTags255">
+            <summary>
+            The remove unnecessary self closing tags 255.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveUnnecessarySelfClosingTags600">
+            <summary>
+            The remove unnecessary self closing tags 600.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveUnnecessarySelfClosingTags472">
+            <summary>
+            The remove unnecessary self closing tags 472.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveUnnecessarySelfClosingTags193">
+            <summary>
+            The remove unnecessary self closing tags 193.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveUnnecessarySelfClosingTags659">
+            <summary>
+            The remove unnecessary self closing tags 659.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveUnnecessarySelfClosingTags660">
+            <summary>
+            The remove unnecessary self closing tags 660.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.RemoveUnnecessarySelfClosingTags140">
+            <summary>
+            The remove unnecessary self closing tags 140.
+            </summary>
+        </member>
+        <member name="F:Nikse.SubtitleEdit.Core.HtmlUtilTest.BeginTag">
+            <summary>
+            The begin tag.
+            </summary>
+        </member>
+        <member name="F:Nikse.SubtitleEdit.Core.HtmlUtilTest.EndTag">
+            <summary>
+            The end tag.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText647">
+            <summary>
+            The set begin and end tag for 2 lines text 647.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText506">
+            <summary>
+            The set begin and end tag for 2 lines text 506.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText523">
+            <summary>
+            The set begin and end tag for 2 lines text 523.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesTextThrowsTargetInvocationException414">
+            <summary>
+            The set begin and end tag for 2 lines text throws target invocation exception 414.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText416">
+            <summary>
+            The set begin and end tag for 2 lines text 416.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText381">
+            <summary>
+            The set begin and end tag for 2 lines text 381.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesTextThrowsTargetInvocationException470">
+            <summary>
+            The set begin and end tag for 2 lines text throws target invocation exception 470.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesTextThrowsTargetInvocationException474">
+            <summary>
+            The set begin and end tag for 2 lines text throws target invocation exception 474.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText839">
+            <summary>
+            The set begin and end tag for 2 lines text 839.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesTextThrowsTargetInvocationException481">
+            <summary>
+            The set begin and end tag for 2 lines text throws target invocation exception 481.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText210">
+            <summary>
+            The set begin and end tag for 2 lines text 210.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText261">
+            <summary>
+            The set begin and end tag for 2 lines text 261.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText01">
+            <summary>
+            The set begin and end tag for 2 lines text 01.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText495">
+            <summary>
+            The set begin and end tag for 2 lines text 495.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesTextThrowsTargetInvocationException368">
+            <summary>
+            The set begin and end tag for 2 lines text throws target invocation exception 368.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText961">
+            <summary>
+            The set begin and end tag for 2 lines text 961.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText445">
+            <summary>
+            The set begin and end tag for 2 lines text 445.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText413">
+            <summary>
+            The set begin and end tag for 2 lines text 413.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SetBeginAndEndTagFor2LinesText810">
+            <summary>
+            The set begin and end tag for 2 lines text 810.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl505">
+            <summary>
+            The starts with url 505.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl476">
+            <summary>
+            The starts with url 476.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl206">
+            <summary>
+            The starts with url 206.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl26">
+            <summary>
+            The starts with url 26.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl154">
+            <summary>
+            The starts with url 154.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl507">
+            <summary>
+            The starts with url 507.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl690">
+            <summary>
+            The starts with url 690.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl171">
+            <summary>
+            The starts with url 171.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl757">
+            <summary>
+            The starts with url 757.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl809">
+            <summary>
+            The starts with url 809.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl618">
+            <summary>
+            The starts with url 618.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl976">
+            <summary>
+            The starts with url 976.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl696">
+            <summary>
+            The starts with url 696.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl328">
+            <summary>
+            The starts with url 328.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl569">
+            <summary>
+            The starts with url 569.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl148">
+            <summary>
+            The starts with url 148.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl870">
+            <summary>
+            The starts with url 870.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl821">
+            <summary>
+            The starts with url 821.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl950">
+            <summary>
+            The starts with url 950.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl736">
+            <summary>
+            The starts with url 736.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.StartsWithUrl742">
+            <summary>
+            The starts with url 742.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SwapEndAndBeginTags506">
+            <summary>
+            The swap end and begin tags 506.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SwapEndAndBeginTagsThrowsTargetInvocationException748">
+            <summary>
+            The swap end and begin tags throws target invocation exception 748.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SwapEndAndBeginTagsThrowsTargetInvocationException526">
+            <summary>
+            The swap end and begin tags throws target invocation exception 526.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SwapEndAndBeginTags263">
+            <summary>
+            The swap end and begin tags 263.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SwapEndAndBeginTags553">
+            <summary>
+            The swap end and begin tags 553.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SwapEndAndBeginTags961">
+            <summary>
+            The swap end and begin tags 961.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.SwapEndAndBeginTags20">
+            <summary>
+            The swap end and begin tags 20.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsConvertFirstToBeginTag33">
+            <summary>
+            The two end tags convert first to begin tag 33.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsConvertFirstToBeginTag771">
+            <summary>
+            The two end tags convert first to begin tag 771.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsConvertFirstToBeginTag355">
+            <summary>
+            The two end tags convert first to begin tag 355.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsConvertFirstToBeginTag613">
+            <summary>
+            The two end tags convert first to begin tag 613.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsConvertFirstToBeginTagThrowsTargetInvocationException341">
+            <summary>
+            The two end tags convert first to begin tag throws target invocation exception 341.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsConvertFirstToBeginTag724">
+            <summary>
+            The two end tags convert first to begin tag 724.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsConvertFirstToBeginTagThrowsTargetInvocationException665">
+            <summary>
+            The two end tags convert first to begin tag throws target invocation exception 665.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsConvertFirstToBeginTagThrowsTargetInvocationException228">
+            <summary>
+            The two end tags convert first to begin tag throws target invocation exception 228.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsConvertFirstToBeginTag957">
+            <summary>
+            The two end tags convert first to begin tag 957.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsConvertFirstToBeginTag401">
+            <summary>
+            The two end tags convert first to begin tag 401.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsConvertFirstToBeginTag982">
+            <summary>
+            The two end tags convert first to begin tag 982.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsSetBeginAndEndTags252">
+            <summary>
+            The two end tags set begin and end tags 252.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsSetBeginAndEndTags311">
+            <summary>
+            The two end tags set begin and end tags 311.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsSetBeginAndEndTags218">
+            <summary>
+            The two end tags set begin and end tags 218.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsSetBeginAndEndTags596">
+            <summary>
+            The two end tags set begin and end tags 596.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsSetBeginAndEndTags627">
+            <summary>
+            The two end tags set begin and end tags 627.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsSetBeginAndEndTags663">
+            <summary>
+            The two end tags set begin and end tags 663.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsSetBeginAndEndTagsThrowsTargetInvocationException949">
+            <summary>
+            The two end tags set begin and end tags throws target invocation exception 949.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsSetBeginAndEndTagsThrowsTargetInvocationException937">
+            <summary>
+            The two end tags set begin and end tags throws target invocation exception 937.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsSetBeginAndEndTags637">
+            <summary>
+            The two end tags set begin and end tags 637.
+            </summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Core.HtmlUtilTest.TwoEndTagsSetBeginAndEndTags350">
+            <summary>
+            The two end tags set begin and end tags 350.
+            </summary>
         </member>
     </members>
 </doc>

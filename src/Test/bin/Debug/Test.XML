@@ -4,14 +4,465 @@
         <name>Test</name>
     </assembly>
     <members>
+        <member name="T:Test.Core.UnitTest1">
+            <summary>
+            The unit test 1.
+            </summary>
+        </member>
+        <member name="M:Test.Core.UnitTest1.LineStartsWithHtmlTagEmpty">
+            <summary>
+            The line starts with html tag empty.
+            </summary>
+        </member>
+        <member name="M:Test.Core.UnitTest1.LineStartsWithHtmlTagNull">
+            <summary>
+            The line starts with html tag null.
+            </summary>
+        </member>
+        <member name="M:Test.Core.UnitTest1.LineStartsWithHtmlTagItalic">
+            <summary>
+            The line starts with html tag italic.
+            </summary>
+        </member>
+        <member name="M:Test.Core.UnitTest1.EndsWithEmpty">
+            <summary>
+            The ends with empty.
+            </summary>
+        </member>
+        <member name="M:Test.Core.UnitTest1.EndsWithHtmlTagEmpty">
+            <summary>
+            The ends with html tag empty.
+            </summary>
+        </member>
+        <member name="M:Test.Core.UnitTest1.EndsWithHtmlTagItalic">
+            <summary>
+            The ends with html tag italic.
+            </summary>
+        </member>
+        <member name="M:Test.Core.UnitTest1.LineBreakStartsWithHtmlTagEmpty">
+            <summary>
+            The line break starts with html tag empty.
+            </summary>
+        </member>
+        <member name="M:Test.Core.UnitTest1.LineBreakStartsWithHtmlTagItalic">
+            <summary>
+            The line break starts with html tag italic.
+            </summary>
+        </member>
+        <member name="M:Test.Core.UnitTest1.LineBreakStartsWithHtmlTagFont">
+            <summary>
+            The line break starts with html tag font.
+            </summary>
+        </member>
+        <member name="M:Test.Core.UnitTest1.LineBreakStartsWithHtmlTagFontFalse">
+            <summary>
+            The line break starts with html tag font false.
+            </summary>
+        </member>
+        <member name="T:Test.Core.HtmlUtilTest">
+            <summary>
+            The html util test.
+            </summary>
+        </member>
+        <member name="M:Test.Core.HtmlUtilTest.TestRemoveOpenCloseTagCyrillicI">
+            <summary>
+            The test remove open close tag cyrillic i.
+            </summary>
+        </member>
+        <member name="M:Test.Core.HtmlUtilTest.TestRemoveOpenCloseTagFont">
+            <summary>
+            The test remove open close tag font.
+            </summary>
+        </member>
+        <member name="M:Test.Core.HtmlUtilTest.RemoveOpenCloseTags880">
+            <summary>
+            The remove open close tags 880.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.Ocr.BinaryOcrTest">
+            <summary>
+            The binary ocr test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Ocr.BinaryOcrTest.TestMethodBinOcrSaveLoad">
+            <summary>
+            The test method bin ocr save load.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.Ocr.NOcrTest">
+            <summary>
+            The n ocr test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Ocr.NOcrTest.TestNOcrSaveLoad">
+            <summary>
+            The test n ocr save load.
+            </summary>
+        </member>
         <member name="T:Test.Logic.LanguageTest">
             <summary>
             Summary description for languageTest
             </summary>
         </member>
+        <member name="F:Test.Logic.LanguageTest._list">
+            <summary>
+            The _list.
+            </summary>
+        </member>
         <member name="M:Test.Logic.LanguageTest.#ctor">
             <summary>
+            Initializes a new instance of the <see cref="T:Test.Logic.LanguageTest"/> class. 
             Load a list of currently existing languages
+            </summary>
+        </member>
+        <member name="T:Test.Logic.BluRaySup.BluRaySupParserTest">
+            <summary>
+            The blu ray sup parser test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.BluRaySup.BluRaySupParserTest.BluRaySupWriteAndReadTwoBitmaps">
+            <summary>
+            The blu ray sup write and read two bitmaps.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.BluRaySup.BluRaySupParserTest.BluRaySupReadMultiImagePic">
+            <summary>
+            The blu ray sup read multi image pic.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.BluRaySup.ToolBoxTest">
+            <summary>
+            The tool box test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.BluRaySup.ToolBoxTest.TestZeroPtsToTimeString">
+            <summary>
+            The test zero pts to time string.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.Dictionaries.NamesListTest">
+            <summary>
+            The names list test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.NamesListTest.NamesListAddWord">
+            <summary>
+            The names list add word.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.NamesListTest.NamesListAddMultiWord">
+            <summary>
+            The names list add multi word.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.NamesListTest.NamesListIsInNamesEtcMultiWordList">
+            <summary>
+            The names list is in names etc multi word list.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.NamesListTest.NamesListNotInList">
+            <summary>
+            The names list not in list.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.NamesListTest.NamesListAddWordReload">
+            <summary>
+            The names list add word reload.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.NamesListTest.NamesListRemove">
+            <summary>
+            The names list remove.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.NamesListTest.NamesListRemoveReload">
+            <summary>
+            The names list remove reload.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.Dictionaries.OcrFixReplaceListTest">
+            <summary>
+            The ocr fix replace list test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.OcrFixReplaceListTest.OcrFixReplaceListAddWord">
+            <summary>
+            The ocr fix replace list add word.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.OcrFixReplaceListTest.OcrFixReplaceListAddWordReload">
+            <summary>
+            The ocr fix replace list add word reload.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.OcrFixReplaceListTest.OcrFixReplaceListAddPartialLine">
+            <summary>
+            The ocr fix replace list add partial line.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.OcrFixReplaceListTest.OcrFixReplaceListAddPartialLineReload">
+            <summary>
+            The ocr fix replace list add partial line reload.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.OcrFixReplaceListTest.OcrFixReplaceListRemoveWord">
+            <summary>
+            The ocr fix replace list remove word.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.OcrFixReplaceListTest.OcrFixReplaceListRemoveWordReload">
+            <summary>
+            The ocr fix replace list remove word reload.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.OcrFixReplaceListTest.OcrFixReplaceListRemovePartialLine">
+            <summary>
+            The ocr fix replace list remove partial line.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Dictionaries.OcrFixReplaceListTest.OcrFixReplaceListRemovePartialLineReload">
+            <summary>
+            The ocr fix replace list remove partial line reload.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.Mp4.Mp4Test">
+            <summary>
+            The mp 4 test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Mp4.Mp4Test.Mp4Test1">
+            <summary>
+            The mp 4 test 1.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.TarFileTest">
+            <summary>
+            The tar file test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TarFileTest.TarFileReadTest">
+            <summary>
+            The tar file read test.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.TransportStream.TransportStreamTest">
+            <summary>
+            The transport stream test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TransportStream.TransportStreamTest.TransportStreamTest1">
+            <summary>
+            The transport stream test 1.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.ParagraphTest">
+            <summary>
+            The paragraph test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.ParagraphTest.TestMethodNumberOfLinesTwoLines">
+            <summary>
+            The test method number of lines two lines.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.ParagraphTest.TestMethodNumberOfLinesThreeLines">
+            <summary>
+            The test method number of lines three lines.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.ParagraphTest.TestMethodNumberOfLinesOneLine">
+            <summary>
+            The test method number of lines one line.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.ParagraphTest.TestMethodNumberOfLinesZero">
+            <summary>
+            The test method number of lines zero.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.StripableTextTest">
+            <summary>
+            The stripable text test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.StripableTextTest.StripableTextItalic">
+            <summary>
+            The stripable text italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.StripableTextTest.StripableTextAss">
+            <summary>
+            The stripable text ass.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.StripableTextTest.StripableTextFont">
+            <summary>
+            The stripable text font.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.StripableTextTest.StripableTextItalic2">
+            <summary>
+            The stripable text italic 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.StripableTextTest.StripableTextItalic3">
+            <summary>
+            The stripable text italic 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.StripableTextTest.StripableTextFontDontTouch">
+            <summary>
+            The stripable text font dont touch.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.StripableTextTest.StripableOnlyPre">
+            <summary>
+            The stripable only pre.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.StripableTextTest.StripableOnlyPre2">
+            <summary>
+            The stripable only pre 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.StripableTextTest.StripableOnlyPre3">
+            <summary>
+            The stripable only pre 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.StripableTextTest.StripableOnlyText">
+            <summary>
+            The stripable only text.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.StripableTextTest.StripableTextItalicAndFont">
+            <summary>
+            The stripable text italic and font.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.StripableTextTest.StripableTextItalicAndMore">
+            <summary>
+            The stripable text italic and more.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.TimeCodeTest">
+            <summary>
+            The time code test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeAddTime1">
+            <summary>
+            The time code add time 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeAddTime2">
+            <summary>
+            The time code add time 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeAddTime3">
+            <summary>
+            The time code add time 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeAddTime4">
+            <summary>
+            The time code add time 4.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeAddTime5">
+            <summary>
+            The time code add time 5.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeAddTime6">
+            <summary>
+            The time code add time 6.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeAddTime7">
+            <summary>
+            The time code add time 7.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeMilliseconds">
+            <summary>
+            The time code milliseconds.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeSeconds1">
+            <summary>
+            The time code seconds 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeMinutes1">
+            <summary>
+            The time code minutes 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeHours1">
+            <summary>
+            The time code hours 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeParseToMilliseconds1">
+            <summary>
+            The time code parse to milliseconds 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.TimeCodeTest.TimeCodeGetTotalMilliseconds">
+            <summary>
+            The time code get total milliseconds.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.VideoFormats.MatroskaTest">
+            <summary>
+            The matroska test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.VideoFormats.MatroskaTest.MatroskaTestValid">
+            <summary>
+            The matroska test valid.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.VideoFormats.MatroskaTest.MatroskaTestInvalid">
+            <summary>
+            The matroska test invalid.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.VideoFormats.MatroskaTest.MatroskaTestIsSrt">
+            <summary>
+            The matroska test is srt.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.VideoFormats.MatroskaTest.MatroskaTestSrtContent">
+            <summary>
+            The matroska test srt content.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.VideoFormats.MatroskaTest.MatroskaTestVobSubPgs">
+            <summary>
+            The matroska test vob sub pgs.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.VideoFormats.MatroskaTest.MatroskaTestVobSubPgsContent">
+            <summary>
+            The matroska test vob sub pgs content.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.VideoFormats.MatroskaTest.MatroskaTestDelayed500Ms">
+            <summary>
+            The matroska test delayed 500 ms.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.VobSub.VobSubTest">
+            <summary>
+            The vob sub test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.VobSub.VobSubTest.VobSubWriteAndReadTwoBitmaps">
+            <summary>
+            The vob sub write and read two bitmaps.
             </summary>
         </member>
         <member name="T:Test.Logic.Forms.RemoveTextForHearImpairedTest">
@@ -26,9 +477,47 @@
             information about and functionality for the current test run.
             </summary>
         </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.GetRemoveTextForHiLib">
+            <summary>
+            The get remove text for hi lib.
+            </summary>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Logic.Forms.RemoveTextForHI"/>.
+            </returns>
+        </member>
         <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveColonTest">
             <summary>
             A test for RemoveColon
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveColonTest2A">
+            <summary>
+            The remove colon test 2 a.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveColonTest2B">
+            <summary>
+            The remove colon test 2 b.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveColonTest3">
+            <summary>
+            The remove colon test 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveColonTest4">
+            <summary>
+            The remove colon test 4.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveColonTest5">
+            <summary>
+            The remove colon test 5.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveColonTest6">
+            <summary>
+            The remove colon test 6.
             </summary>
         </member>
         <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveHIInsideLine">
@@ -66,16 +555,789 @@
             A test for RemoveHI
             </summary>
         </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveHIQuotes">
+            <summary>
+            The remove hi quotes.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveHIDouble">
+            <summary>
+            The remove hi double.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveRemoveNameOfFirstLine">
+            <summary>
+            The remove remove name of first line.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveRemoveNameOfFirstLineBold">
+            <summary>
+            The remove remove name of first line bold.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections">
+            <summary>
+            The remove interjections.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections2">
+            <summary>
+            The remove interjections 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections3">
+            <summary>
+            The remove interjections 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections4">
+            <summary>
+            The remove interjections 4.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections5">
+            <summary>
+            The remove interjections 5.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections6A">
+            <summary>
+            The remove interjections 6 a.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections6B">
+            <summary>
+            The remove interjections 6 b.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections6BItalic">
+            <summary>
+            The remove interjections 6 b italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections7">
+            <summary>
+            The remove interjections 7.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections8">
+            <summary>
+            The remove interjections 8.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections9">
+            <summary>
+            The remove interjections 9.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections10">
+            <summary>
+            The remove interjections 10.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections10Italic">
+            <summary>
+            The remove interjections 10 italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections11">
+            <summary>
+            The remove interjections 11.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections12">
+            <summary>
+            The remove interjections 12.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjections13">
+            <summary>
+            The remove interjections 13.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveColonOnlyOnSeparateLine">
+            <summary>
+            The remove colon only on separate line.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveLineIfAllUppercase1">
+            <summary>
+            The remove line if all uppercase 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveLineIfAllUppercase2">
+            <summary>
+            The remove line if all uppercase 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveLineIfAllUppercase3">
+            <summary>
+            The remove line if all uppercase 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveLineIfParentheses3">
+            <summary>
+            The remove line if parentheses 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextBeforeColonSecondLine">
+            <summary>
+            The remove text before colon second line.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextBeforeColonOnlyUpper1">
+            <summary>
+            The remove text before colon only upper 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextBeforeColonOnlyUpper2">
+            <summary>
+            The remove text before colon only upper 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextBeforeColonOnlyUpper3Negative">
+            <summary>
+            The remove text before colon only upper 3 negative.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextAss1">
+            <summary>
+            The remove text ass 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextAss2">
+            <summary>
+            The remove text ass 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextAss3Colon">
+            <summary>
+            The remove text ass 3 colon.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextBeforeColonTest1">
+            <summary>
+            The remove text before colon test 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextRemoveDashBeforeSquareBrackets">
+            <summary>
+            The remove text remove dash before square brackets.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextRemoveDashInRemoveInterjections">
+            <summary>
+            The remove text remove dash in remove interjections.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextRemoveSingleDash">
+            <summary>
+            The remove text remove single dash.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextBetweenQuestionMarks">
+            <summary>
+            The remove text between question marks.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjectionsItalicFirstLine">
+            <summary>
+            The remove interjections italic first line.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjectionsItalicSecondLine">
+            <summary>
+            The remove interjections italic second line.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjectionsItalicBothLines">
+            <summary>
+            The remove interjections italic both lines.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveInterjectionsMDash">
+            <summary>
+            The remove interjections m dash.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveFirstDashItalics">
+            <summary>
+            The remove first dash italics.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextIfUppercaseNotEmdash">
+            <summary>
+            The remove text if uppercase not emdash.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextDontCrashOnEmptyString">
+            <summary>
+            The remove text dont crash on empty string.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextKeepMusicSymbolsButRemoveHI">
+            <summary>
+            The remove text keep music symbols but remove hi.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextRemoveEmdash">
+            <summary>
+            The remove text remove emdash.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextIfUppercaseEmdashRemoveInDialogue">
+            <summary>
+            The remove text if uppercase emdash remove in dialogue.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextIfUppercaseEmdashRemoveInDialogueWithSpaces">
+            <summary>
+            The remove text if uppercase emdash remove in dialogue with spaces.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextEmdashComma">
+            <summary>
+            The remove text emdash comma.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextHiAndColon">
+            <summary>
+            The remove text hi and colon.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextDontLeaveDoubleDash">
+            <summary>
+            The remove text dont leave double dash.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextDontLeaveDot">
+            <summary>
+            The remove text dont leave dot.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextDontLeaveExl">
+            <summary>
+            The remove text dont leave exl.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextRememberDialogueTag">
+            <summary>
+            The remove text remember dialogue tag.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextRemoveLineWithColon">
+            <summary>
+            The remove text remove line with colon.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextRemoveLineWithColon2">
+            <summary>
+            The remove text remove line with colon 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextSpeakerWithColonPlusLineWithHyphen">
+            <summary>
+            The remove text speaker with colon plus line with hyphen.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextSpeakerWithColonPlusLineWithHyphenAlsoRemoveInterjections">
+            <summary>
+            The remove text speaker with colon plus line with hyphen also remove interjections.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextQuotesInFirstLine">
+            <summary>
+            The remove text quotes in first line.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextQuotesInFirstLine2">
+            <summary>
+            The remove text quotes in first line 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextForHiInDialogue1">
+            <summary>
+            The remove text for hi in dialogue 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextForHiInDialogue2">
+            <summary>
+            The remove text for hi in dialogue 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextForHiRemoveFontTag">
+            <summary>
+            The remove text for hi remove font tag.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextForHiRemoveFontTag2">
+            <summary>
+            The remove text for hi remove font tag 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveTextForHiRemoveFontTag3">
+            <summary>
+            The remove text for hi remove font tag 3.
+            </summary>
+        </member>
         <member name="T:Test.Logic.SubtitleFormats.SubtitleFormatsTest">
              <summary>
             This is a test class for subtitle formats and is intended
             to contain all subtitle formats Unit Tests
             </summary>
         </member>
+        <member name="F:Test.Logic.SubtitleFormats.SubtitleFormatsTest._testContextInstance">
+            <summary>
+            The _test context instance.
+            </summary>
+        </member>
         <member name="P:Test.Logic.SubtitleFormats.SubtitleFormatsTest.TestContext">
              <summary>
             Gets or sets the test context which provides
             information about and functionality for the current test run.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.CheckTimeCodes">
+            <summary>
+            The check time codes.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.GetSrtLines(System.String)">
+            <summary>
+            The get srt lines.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <returns>
+            The <see cref="!:List"/>.
+            </returns>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.SrtCoordinates">
+            <summary>
+            The srt coordinates.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.SrtNoLineNumbers">
+            <summary>
+            The srt no line numbers.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.SrtDotsInsteadOfCommas">
+            <summary>
+            The srt dots instead of commas.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.SrtTwoLiner">
+            <summary>
+            The srt two liner.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.SrtThreeLiner">
+            <summary>
+            The srt three liner.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.GetAssLines(System.String)">
+            <summary>
+            The get ass lines.
+            </summary>
+            <param name="lineOneText">
+            The line one text.
+            </param>
+            <returns>
+            The <see cref="!:List"/>.
+            </returns>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.AssSimpleItalic">
+            <summary>
+            The ass simple italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.AssSimpleBold">
+            <summary>
+            The ass simple bold.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.AssSimpleUnderline">
+            <summary>
+            The ass simple underline.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.AssSimpleFontSize">
+            <summary>
+            The ass simple font size.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.AssSimpleFontName">
+            <summary>
+            The ass simple font name.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.AssSimpleFontColor1">
+            <summary>
+            The ass simple font color 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.AssSimpleFontColor2">
+            <summary>
+            The ass simple font color 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.AssSimpleFontColor3">
+            <summary>
+            The ass simple font color 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.AssSimpleFontColor4">
+            <summary>
+            The ass simple font color 4.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.AssSimpleFontColorAndItalic">
+            <summary>
+            The ass simple font color and italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.AssFontNameAndSize">
+            <summary>
+            The ass font name and size.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.GetSsaLines(System.String)">
+            <summary>
+            The get ssa lines.
+            </summary>
+            <param name="lineOneText">
+            The line one text.
+            </param>
+            <returns>
+            The <see cref="!:List"/>.
+            </returns>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.SsaSimpleFontColorAndItalic">
+            <summary>
+            The ssa simple font color and italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.DcinemaSmpteItalic">
+            <summary>
+            The dcinema smpte italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.DcinemaSmpteColorAndItalic">
+            <summary>
+            The dcinema smpte color and italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.DcinemaInteropItalic">
+            <summary>
+            The dcinema interop italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.DcinemaInteropColorAndItalic">
+            <summary>
+            The dcinema interop color and italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.MicroDvdItalic">
+            <summary>
+            The micro dvd italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.MicroDvdBold">
+            <summary>
+            The micro dvd bold.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.MicroDvdUnderline">
+            <summary>
+            The micro dvd underline.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.MicroDvdUnderlineItalic">
+            <summary>
+            The micro dvd underline italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.MicroDvdItalicUnderline">
+            <summary>
+            The micro dvd italic underline.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.MicroDvdReadBoldItalic">
+            <summary>
+            The micro dvd read bold italic.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.MicroDvdReadFont">
+            <summary>
+            The micro dvd read font.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.MicroDvdReadAdvanced">
+            <summary>
+            The micro dvd read advanced.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.MicroDvdReadBoldFirstLineOnly">
+            <summary>
+            The micro dvd read bold first line only.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.MicroDvdReadBoldSecondLineOnly">
+            <summary>
+            The micro dvd read bold second line only.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.MicroDvdReadItalicBothLines">
+            <summary>
+            The micro dvd read italic both lines.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.MicroDvdReadBoldBothLinesItalicFirst">
+            <summary>
+            The micro dvd read bold both lines italic first.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.LineCount">
+            <summary>
+            The line count.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.LineContent">
+            <summary>
+            The line content.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.ToUtf8XmlStringDefault">
+            <summary>
+            The to utf 8 xml string default.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.ToUtf8XmlStringNoHeader">
+            <summary>
+            The to utf 8 xml string no header.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.SubtitleFormats.SubtitleFormatsTest.ToUtf8XmlStringStillXml">
+            <summary>
+            The to utf 8 xml string still xml.
+            </summary>
+        </member>
+        <member name="T:Test.Logic.UtilitiesTest">
+            <summary>
+            The utilities test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.AutoBreakLine1">
+            <summary>
+            The auto break line 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.AutoBreakLine2">
+            <summary>
+            The auto break line 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.AutoBreakLine3">
+            <summary>
+            The auto break line 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.AutoBreakLine4">
+            <summary>
+            The auto break line 4.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.AutoBreakLine5DoNoBreakAtPeriod">
+            <summary>
+            The auto break line 5 do no break at period.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.AutoBreakLineDoNotBreakAfterDashDash">
+            <summary>
+            The auto break line do not break after dash dash.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.AutoBreakLineDialog1">
+            <summary>
+            The auto break line dialog 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.AutoBreakLineDialog2">
+            <summary>
+            The auto break line dialog 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixInvalidItalicTags2">
+            <summary>
+            The fix invalid italic tags 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixInvalidItalicTags3">
+            <summary>
+            The fix invalid italic tags 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixInvalidItalicTags4">
+            <summary>
+            The fix invalid italic tags 4.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixInvalidItalicTags5">
+            <summary>
+            The fix invalid italic tags 5.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixInvalidItalicTags6">
+            <summary>
+            The fix invalid italic tags 6.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixInvalidItalicTags7">
+            <summary>
+            The fix invalid italic tags 7.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixInvalidItalicTags8">
+            <summary>
+            The fix invalid italic tags 8.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixInvalidItalicTags9">
+            <summary>
+            The fix invalid italic tags 9.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesDoubleSpace1">
+            <summary>
+            The fix unneeded spaces double space 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesDoubleSpace2">
+            <summary>
+            The fix unneeded spaces double space 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesItalics1">
+            <summary>
+            The fix unneeded spaces italics 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesItalics2">
+            <summary>
+            The fix unneeded spaces italics 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesHyphen1">
+            <summary>
+            The fix unneeded spaces hyphen 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesHyphen2">
+            <summary>
+            The fix unneeded spaces hyphen 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesHyphenDoNotChange1">
+            <summary>
+            The fix unneeded spaces hyphen do not change 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesHyphenDoNotChange2">
+            <summary>
+            The fix unneeded spaces hyphen do not change 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesHyphenDoNotChange3">
+            <summary>
+            The fix unneeded spaces hyphen do not change 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesHyphenDoNotChangeDutch1">
+            <summary>
+            The fix unneeded spaces hyphen do not change dutch 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesHyphenDoNotChangeDutch2">
+            <summary>
+            The fix unneeded spaces hyphen do not change dutch 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesDialogDotDotDotLine1">
+            <summary>
+            The fix unneeded spaces dialog dot dot dot line 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesDialogDotDotDotLine2">
+            <summary>
+            The fix unneeded spaces dialog dot dot dot line 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesFontTag1">
+            <summary>
+            The fix unneeded spaces font tag 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesFontTag2">
+            <summary>
+            The fix unneeded spaces font tag 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixUnneededSpacesFontTag3">
+            <summary>
+            The fix unneeded spaces font tag 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.CountTagInTextStringOneLetterString">
+            <summary>
+            The count tag in text string one letter string.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.CountTagInTextStringNotThere">
+            <summary>
+            The count tag in text string not there.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.CountTagInTextCharNormal">
+            <summary>
+            The count tag in text char normal.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.CountTagInTextCharNotThere">
+            <summary>
+            The count tag in text char not there.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.FixHyphensAddTest">
+            <summary>
+            The fix hyphens add test.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.RemoveLineBreaks1">
+            <summary>
+            The remove line breaks 1.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.RemoveLineBreaks2">
+            <summary>
+            The remove line breaks 2.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.RemoveLineBreaks3">
+            <summary>
+            The remove line breaks 3.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.RemoveLineBreaks4">
+            <summary>
+            The remove line breaks 4.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.UtilitiesTest.RemoveLineBreaks5">
+            <summary>
+            The remove line breaks 5.
             </summary>
         </member>
         <member name="T:Test.FixCommonErrorsTest">
@@ -90,9 +1352,601 @@
             information about and functionality for the current test run.
             </summary>
         </member>
+        <member name="M:Test.FixCommonErrorsTest.GetFixCommonErrorsLib">
+            <summary>
+            The get fix common errors lib.
+            </summary>
+            <returns>
+            The <see cref="T:Nikse.SubtitleEdit.Forms.FixCommonErrors"/>.
+            </returns>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.InitializeFixCommonErrorsLine(Nikse.SubtitleEdit.Forms.FixCommonErrors,System.String)">
+            <summary>
+            The initialize fix common errors line.
+            </summary>
+            <param name="target">
+            The target.
+            </param>
+            <param name="line">
+            The line.
+            </param>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.InitializeFixCommonErrorsLine(Nikse.SubtitleEdit.Forms.FixCommonErrors,System.String,System.String)">
+            <summary>
+            The initialize fix common errors line.
+            </summary>
+            <param name="target">
+            The target.
+            </param>
+            <param name="line">
+            The line.
+            </param>
+            <param name="line2">
+            The line 2.
+            </param>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixDoubleGreaterThanTest2">
+            <summary>
+            The fix double greater than test 2.
+            </summary>
+        </member>
         <member name="M:Test.FixCommonErrorsTest.CopyStream(System.IO.Stream,System.IO.Stream)">
             <summary>
             Copies the contents of input to output. Doesn't close either stream.
+            </summary>
+            <param name="input">
+            The input.
+            </param>
+            <param name="output">
+            The output.
+            </param>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.MyClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext)">
+            <summary>
+            The my class initialize.
+            </summary>
+            <param name="testContext">
+            The test context.
+            </param>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixShortLinesNormal">
+            <summary>
+            The fix short lines normal.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixShortLinesLong">
+            <summary>
+            The fix short lines long.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixShortLinesNormalItalic">
+            <summary>
+            The fix short lines normal italic.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixShortLinesDialog">
+            <summary>
+            The fix short lines dialog.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixShortLinesDialogItalic">
+            <summary>
+            The fix short lines dialog italic.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixShortLinesDialogItalicTwo">
+            <summary>
+            The fix short lines dialog italic two.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixShortLinesDoNotMergeMusicSymbols">
+            <summary>
+            The fix short lines do not merge music symbols.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.MergeShortLinesHearingImpaired">
+            <summary>
+            The merge short lines hearing impaired.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixItalicsBeginOnly">
+            <summary>
+            The fix italics begin only.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixItalicsFirstLineEndMissing">
+            <summary>
+            The fix italics first line end missing.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixItalicsStartInMiddle">
+            <summary>
+            The fix italics start in middle.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixItalicsEmptyStart">
+            <summary>
+            The fix italics empty start.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixItalicsSecondLineMissingEnd">
+            <summary>
+            The fix italics second line missing end.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixItalicsBadEnding">
+            <summary>
+            The fix italics bad ending.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixItalicsBadEnding2">
+            <summary>
+            The fix italics bad ending 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixItalicsBadEnding3">
+            <summary>
+            The fix italics bad ending 3.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixItalicsBadEnding4">
+            <summary>
+            The fix italics bad ending 4.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixItalicsLine1BadEnding">
+            <summary>
+            The fix italics line 1 bad ending.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixItalicsLine1BadEndingDouble">
+            <summary>
+            The fix italics line 1 bad ending double.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingPeriodsAtEndOfLineNone">
+            <summary>
+            The fix missing periods at end of line none.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingPeriodsAtEndOfLineItalicAndMissing">
+            <summary>
+            The fix missing periods at end of line italic and missing.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingPeriodsAtEndOfLineItalicAndMissing2">
+            <summary>
+            The fix missing periods at end of line italic and missing 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingPeriodsAtEndOfLineWithSpace">
+            <summary>
+            The fix missing periods at end of line with space.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixHyphensAddDash1">
+            <summary>
+            The fix hyphens add dash 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixHyphensAddDash2">
+            <summary>
+            The fix hyphens add dash 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixHyphensAddDash2Italic">
+            <summary>
+            The fix hyphens add dash 2 italic.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixHyphensAddDash3NoChange">
+            <summary>
+            The fix hyphens add dash 3 no change.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixHyphensAddDash4NoChange">
+            <summary>
+            The fix hyphens add dash 4 no change.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixHyphensAddDashButNotInFirst">
+            <summary>
+            The fix hyphens add dash but not in first.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixCommonOcrErrorsSlashMakesTwoWords">
+            <summary>
+            The fix common ocr errors slash makes two words.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixCommonOcrErrorsSlashIsL">
+            <summary>
+            The fix common ocr errors slash is l.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixCommonOcrErrorsDashedWords">
+            <summary>
+            The fix common ocr errors dashed words.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixCommonOcrErrorsNoStartWithLargeAfterThreePeriods">
+            <summary>
+            The fix common ocr errors no start with large after three periods.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixOcrErrorsNoChange">
+            <summary>
+            The fix ocr errors no change.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixOcrErrorsViaHardcodedRules1">
+            <summary>
+            The fix ocr errors via hardcoded rules 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixOcrErrorsViaDoNotFixToUpper">
+            <summary>
+            The fix ocr errors via do not fix to upper.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixOcrErrorsUrl">
+            <summary>
+            The fix ocr errors url.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingSpacesItalicBegin">
+            <summary>
+            The fix missing spaces italic begin.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingSpacesItalicEnd">
+            <summary>
+            The fix missing spaces italic end.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingSpacesBeforePeriod1">
+            <summary>
+            The fix missing spaces before period 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingSpacesBeforePeriod2">
+            <summary>
+            The fix missing spaces before period 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingSpacesNoChange1">
+            <summary>
+            The fix missing spaces no change 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingSpacesChange2">
+            <summary>
+            The fix missing spaces change 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingSpacesNoChange2">
+            <summary>
+            The fix missing spaces no change 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingSpacesNoChange3">
+            <summary>
+            The fix missing spaces no change 3.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingSpacesNoChange4">
+            <summary>
+            The fix missing spaces no change 4.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixMissingSpacesNoChange5Greek">
+            <summary>
+            The fix missing spaces no change 5 greek.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixUnneededSpaces1">
+            <summary>
+            The fix unneeded spaces 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixUnneededSpaces2">
+            <summary>
+            The fix unneeded spaces 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixUnneededSpaces3">
+            <summary>
+            The fix unneeded spaces 3.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixUnneededSpaces4">
+            <summary>
+            The fix unneeded spaces 4.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixUnneededSpaces5">
+            <summary>
+            The fix unneeded spaces 5.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixUnneededSpaces6">
+            <summary>
+            The fix unneeded spaces 6.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixUnneededSpacesItalic1">
+            <summary>
+            The fix unneeded spaces italic 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixUnneededSpacesItalic2">
+            <summary>
+            The fix unneeded spaces italic 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixUnneededSpacesFont1">
+            <summary>
+            The fix unneeded spaces font 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEmptyLinesTest1">
+            <summary>
+            The fix empty lines test 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEmptyLinesTest2">
+            <summary>
+            The fix empty lines test 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphMusic1">
+            <summary>
+            The start with uppercase after paragraph music 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphNormal1">
+            <summary>
+            The start with uppercase after paragraph normal 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphNormal2">
+            <summary>
+            The start with uppercase after paragraph normal 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphNormal3">
+            <summary>
+            The start with uppercase after paragraph normal 3.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphNormal4">
+            <summary>
+            The start with uppercase after paragraph normal 4.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphNormalNoChange1">
+            <summary>
+            The start with uppercase after paragraph normal no change 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphNormalDialog1">
+            <summary>
+            The start with uppercase after paragraph normal dialog 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphNormalDialog2">
+            <summary>
+            The start with uppercase after paragraph normal dialog 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphNormalDialog3">
+            <summary>
+            The start with uppercase after paragraph normal dialog 3.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphNormalDialog4">
+            <summary>
+            The start with uppercase after paragraph normal dialog 4.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphNormalNoChange2">
+            <summary>
+            The start with uppercase after paragraph normal no change 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphNormalDialogNoChange1">
+            <summary>
+            The start with uppercase after paragraph normal dialog no change 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.StartWithUppercaseAfterParagraphNormalDialogNoChange2">
+            <summary>
+            The start with uppercase after paragraph normal dialog no change 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixSpanishNormalQuestion1">
+            <summary>
+            The fix spanish normal question 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixSpanishNormalExclamationMark1">
+            <summary>
+            The fix spanish normal exclamation mark 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixSpanishExclamationMarkDouble">
+            <summary>
+            The fix spanish exclamation mark double.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixSpanishExclamationMarkTriple">
+            <summary>
+            The fix spanish exclamation mark triple.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixSpanishExclamationMarkAndQuestionMark">
+            <summary>
+            The fix spanish exclamation mark and question mark.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixSpanishExclamationMarkAndQuestionMarkManyTagsDoubleExcl">
+            <summary>
+            The fix spanish exclamation mark and question mark many tags double excl.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixSpanishExclamationMarkAndQuestionMarkOneOfEach">
+            <summary>
+            The fix spanish exclamation mark and question mark one of each.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixSingleLineDash1Italic">
+            <summary>
+            The fix single line dash 1 italic.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixSingleLineDash1Font">
+            <summary>
+            The fix single line dash 1 font.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixSingleLineDash1">
+            <summary>
+            The fix single line dash 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixSingleLineDash3">
+            <summary>
+            The fix single line dash 3.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixSingleLineDash4">
+            <summary>
+            The fix single line dash 4.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixDashWithPreviousEndsWithDashDash">
+            <summary>
+            The fix dash with previous ends with dash dash.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixDashDontRemoveWhiteSpaceWithItalic">
+            <summary>
+            The fix dash dont remove white space with italic.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartNormal1">
+            <summary>
+            The fix ellipses start normal 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartNormal2">
+            <summary>
+            The fix ellipses start normal 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartNormal3">
+            <summary>
+            The fix ellipses start normal 3.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartNormal4">
+            <summary>
+            The fix ellipses start normal 4.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartItalic1">
+            <summary>
+            The fix ellipses start italic 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartItalic2">
+            <summary>
+            The fix ellipses start italic 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartItalic3">
+            <summary>
+            The fix ellipses start italic 3.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartItalic4">
+            <summary>
+            The fix ellipses start italic 4.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartItalic5">
+            <summary>
+            The fix ellipses start italic 5.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartFont1">
+            <summary>
+            The fix ellipses start font 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartFont2">
+            <summary>
+            The fix ellipses start font 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartFont3">
+            <summary>
+            The fix ellipses start font 3.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartQuote">
+            <summary>
+            The fix ellipses start quote.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartQuote2">
+            <summary>
+            The fix ellipses start quote 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartQuote3">
+            <summary>
+            The fix ellipses start quote 3.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixEllipsesStartDontChange">
+            <summary>
+            The fix ellipses start dont change.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixUppercaseIInsideWords1">
+            <summary>
+            The fix uppercase i inside words 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixUppercaseIInsideWords2">
+            <summary>
+            The fix uppercase i inside words 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixDialogsOnOneLine1">
+            <summary>
+            The fix dialogs on one line 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixDialogsOnOneLine2">
+            <summary>
+            The fix dialogs on one line 2.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixDialogsOnOneLine3">
+            <summary>
+            The fix dialogs on one line 3.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixDoubleDashTest1">
+            <summary>
+            The fix double dash test 1.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.FixDoubleDashTest2">
+            <summary>
+            The fix double dash test 2.
             </summary>
         </member>
     </members>

@@ -47,3 +47,5 @@ using Microsoft.Pex.Framework.Validation;
 [assembly: PexInstrumentType(typeof(OperatingSystem))]
 [assembly: PexInstrumentType(typeof(Environment))]
 [assembly: PexInstrumentType(typeof(VersioningHelper))]
+[assembly: PexInstrumentType("mscorlib", "System.IO.Iterator`1<System.String>")]
+
