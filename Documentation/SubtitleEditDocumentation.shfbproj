@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <!-- The configuration and platform will be used to determine which assemblies to include from solution and
+				 project documentation sources -->
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{fc4c88af-4786-4919-8af5-d3b4a70c3dce}</ProjectGuid>
+    <SHFBSchemaVersion>1.9.9.0</SHFBSchemaVersion>
+    <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual Studio adds them anyway -->
+    <AssemblyName>Documentation</AssemblyName>
+    <RootNamespace>Documentation</RootNamespace>
+    <Name>Documentation</Name>
+    <!-- SHFB properties -->
+    <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
+    <OutputPath>.\Help\</OutputPath>
+    <HtmlHelpName>Documentation</HtmlHelpName>
+    <Language>en-US</Language>
+    <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
+    <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
+    <IndentHtml>False</IndentHtml>
+    <KeepLogFile>True</KeepLogFile>
+    <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
+    <CppCommentsFixup>False</CppCommentsFixup>
+    <CleanIntermediates>True</CleanIntermediates>
+    <DocumentationSources>
+      <DocumentationSource sourceFile="..\src\SubtitleEdit.sln" xmlns="" />
+    </DocumentationSources>
+    <NamespaceSummaries>
+      <NamespaceSummaryItem name="(global)" isDocumented="True" xmlns="" />
+<NamespaceSummaryItem name="MultiLanguage" isDocumented="True" xmlns="">MultiLanguage</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Controls" isDocumented="True" xmlns="">Coontrols</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Controls.Interfaces" isDocumented="True" xmlns="">Interfaces</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Core" isDocumented="True" xmlns="">Core</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Forms" isDocumented="True" xmlns="">Forms</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Forms.DCinema" isDocumented="True" xmlns="">DCinema</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Forms.Styles" isDocumented="True" xmlns="">Styles</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic" isDocumented="True" xmlns="">Logic</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.BluRaySup" isDocumented="True" xmlns="">BlueRaySup</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.ColorChooser" isDocumented="True" xmlns="">ColorChooser</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.ContainerFormats" isDocumented="True" xmlns="">ContainerFormats</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.ContainerFormats.MaterialExchangeFormat" isDocumented="True" xmlns="">MaterialExchenageFormat</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4" isDocumented="True" xmlns="">Mp4</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes" isDocumented="True" xmlns="">Boxes</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.DetectEncoding" isDocumented="True" xmlns="">DetectEncoding</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.Dictionaries" isDocumented="True" xmlns="">Dictionaries</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.Enums" isDocumented="True" xmlns="">Enums</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.Forms" isDocumented="True" xmlns="">Forms</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.Interfaces" isDocumented="True" xmlns="">Inerfaces</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.Networking" isDocumented="True" xmlns="">Networking</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.Ocr" isDocumented="True" xmlns="">Ocr</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.Ocr.Binary" isDocumented="True" xmlns="">Binary</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.SpellCheck" isDocumented="True" xmlns="">SpellCheck</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.SubtitleFormats" isDocumented="True" xmlns="">SubtitleFormats</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.TransportStream" isDocumented="True" xmlns="">TransportStream</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.VideoPlayers" isDocumented="True" xmlns="">VideoPlayers</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.VideoPlayers.Interfaces" isDocumented="True" xmlns="">Interfaces</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.VideoPlayers.MpcHC" isDocumented="True" xmlns="">MpcHC</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.Logic.VobSub" isDocumented="True" xmlns="">VobSub</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.MicrosoftTranslationService" isDocumented="True" xmlns="">MicrosoftTranslationService</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Nikse.SubtitleEdit.SeNetworkService" isDocumented="True" xmlns="">SetNetworkService</NamespaceSummaryItem>
+<NamespaceSummaryItem name="System.IO.Compression" isDocumented="True" xmlns="">Compression</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Test" isDocumented="True" xmlns="">Test</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Test.Core" isDocumented="True" xmlns="">Core</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Test.Logic" isDocumented="True" xmlns="">Logic</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Test.Logic.BluRaySup" isDocumented="True" xmlns="">BluRaySup</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Test.Logic.Dictionaries" isDocumented="True" xmlns="">Dictionaries</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Test.Logic.Forms" isDocumented="True" xmlns="">Forms</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Test.Logic.Mp4" isDocumented="True" xmlns="">Mp4</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Test.Logic.Ocr" isDocumented="True" xmlns="">Ocr</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Test.Logic.SubtitleFormats" isDocumented="True" xmlns="">SubtitleFormats</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Test.Logic.TransportStream" isDocumented="True" xmlns="">TransportStream</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Test.Logic.VideoFormats" isDocumented="True" xmlns="">VideoFormats</NamespaceSummaryItem>
+<NamespaceSummaryItem name="Test.Logic.VobSub" isDocumented="True" xmlns="">VobSub</NamespaceSummaryItem>
+<NamespaceSummaryItem name="UpdateAssemblyInfo" isDocumented="True" xmlns="">UpdateAssemblyInfo</NamespaceSummaryItem></NamespaceSummaries>
+  </PropertyGroup>
+  <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
+			 the build.  The others are optional common platform types that may appear. -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Win32' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Win32' ">
+  </PropertyGroup>
+  <!-- Import the SHFB build targets -->
+  <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
+</Project>
