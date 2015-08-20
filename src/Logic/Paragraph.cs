@@ -210,6 +210,34 @@ namespace Nikse.SubtitleEdit.Logic
         public bool NewSection { get; set; }
 
         /// <summary>
+        /// Gets the number of lines.
+        /// </summary>
+        public int NumberOfLines
+        {
+            get
+            {
+                return Utilities.GetNumberOfLines(this.Text);
+            }
+        }
+
+        /// <summary>
+        /// Gets the words per minute.
+        /// </summary>
+        public double WordsPerMinute
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.Text))
+                {
+                    return 0;
+                }
+
+                int wordCount = HtmlUtil.RemoveHtmlTags(this.Text, true).Split(new[] { ' ', ',', '.', '!', '?', ';', ':', '(', ')', '[', ']', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
+                return (60.0 / this.Duration.TotalSeconds) * wordCount;
+            }
+        }
+
+        /// <summary>
         /// The generate id.
         /// </summary>
         /// <returns>
@@ -236,10 +264,10 @@ namespace Nikse.SubtitleEdit.Logic
                 return;
             }
 
-            double seconds = this.StartTime.TimeSpan.TotalSeconds * factor + adjust;
+            double seconds = (this.StartTime.TimeSpan.TotalSeconds * factor) + adjust;
             this.StartTime.TimeSpan = TimeSpan.FromSeconds(seconds);
 
-            seconds = this.EndTime.TimeSpan.TotalSeconds * factor + adjust;
+            seconds = (this.EndTime.TimeSpan.TotalSeconds * factor) + adjust;
             this.EndTime.TimeSpan = TimeSpan.FromSeconds(seconds);
         }
 
@@ -265,34 +293,6 @@ namespace Nikse.SubtitleEdit.Logic
         {
             this.StartTime.TotalMilliseconds = this.StartFrame * (TimeCode.BaseUnit / frameRate);
             this.EndTime.TotalMilliseconds = this.EndFrame * (TimeCode.BaseUnit / frameRate);
-        }
-
-        /// <summary>
-        /// Gets the number of lines.
-        /// </summary>
-        public int NumberOfLines
-        {
-            get
-            {
-                return Utilities.GetNumberOfLines(this.Text);
-            }
-        }
-
-        /// <summary>
-        /// Gets the words per minute.
-        /// </summary>
-        public double WordsPerMinute
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(this.Text))
-                {
-                    return 0;
-                }
-
-                int wordCount = HtmlUtil.RemoveHtmlTags(this.Text, true).Split(new[] { ' ', ',', '.', '!', '?', ';', ':', '(', ')', '[', ']', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
-                return (60.0 / this.Duration.TotalSeconds) * wordCount;
-            }
         }
 
         /// <summary>
