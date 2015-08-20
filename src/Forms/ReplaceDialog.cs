@@ -1,119 +1,234 @@
-﻿using System;
-using System.Drawing;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.Enums;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ReplaceDialog.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The replace dialog.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Drawing;
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.Enums;
+
+    /// <summary>
+    /// The replace dialog.
+    /// </summary>
     public sealed partial class ReplaceDialog : Form
     {
-        private Regex _regEx;
+        /// <summary>
+        /// The _left.
+        /// </summary>
         private int _left;
+
+        /// <summary>
+        /// The _reg ex.
+        /// </summary>
+        private Regex _regEx;
+
+        /// <summary>
+        /// The _top.
+        /// </summary>
         private int _top;
+
+        /// <summary>
+        /// The _user action.
+        /// </summary>
         private bool _userAction = false;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReplaceDialog"/> class.
+        /// </summary>
         public ReplaceDialog()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            Text = Configuration.Settings.Language.ReplaceDialog.Title;
-            labelFindWhat.Text = Configuration.Settings.Language.ReplaceDialog.FindWhat;
-            radioButtonNormal.Text = Configuration.Settings.Language.ReplaceDialog.Normal;
-            radioButtonCaseSensitive.Text = Configuration.Settings.Language.ReplaceDialog.CaseSensitive;
-            radioButtonRegEx.Text = Configuration.Settings.Language.ReplaceDialog.RegularExpression;
-            labelReplaceWith.Text = Configuration.Settings.Language.ReplaceDialog.ReplaceWith;
-            buttonFind.Text = Configuration.Settings.Language.ReplaceDialog.Find;
-            buttonReplace.Text = Configuration.Settings.Language.ReplaceDialog.Replace;
-            buttonReplaceAll.Text = Configuration.Settings.Language.ReplaceDialog.ReplaceAll;
+            this.Text = Configuration.Settings.Language.ReplaceDialog.Title;
+            this.labelFindWhat.Text = Configuration.Settings.Language.ReplaceDialog.FindWhat;
+            this.radioButtonNormal.Text = Configuration.Settings.Language.ReplaceDialog.Normal;
+            this.radioButtonCaseSensitive.Text = Configuration.Settings.Language.ReplaceDialog.CaseSensitive;
+            this.radioButtonRegEx.Text = Configuration.Settings.Language.ReplaceDialog.RegularExpression;
+            this.labelReplaceWith.Text = Configuration.Settings.Language.ReplaceDialog.ReplaceWith;
+            this.buttonFind.Text = Configuration.Settings.Language.ReplaceDialog.Find;
+            this.buttonReplace.Text = Configuration.Settings.Language.ReplaceDialog.Replace;
+            this.buttonReplaceAll.Text = Configuration.Settings.Language.ReplaceDialog.ReplaceAll;
 
-            if (Width < radioButtonRegEx.Right + 5)
-                Width = radioButtonRegEx.Right + 5;
+            if (this.Width < this.radioButtonRegEx.Right + 5)
+            {
+                this.Width = this.radioButtonRegEx.Right + 5;
+            }
 
-            Utilities.FixLargeFonts(this, buttonReplace);
+            Utilities.FixLargeFonts(this, this.buttonReplace);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether replace all.
+        /// </summary>
         public bool ReplaceAll { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether find only.
+        /// </summary>
         public bool FindOnly { get; set; }
 
+        /// <summary>
+        /// The get find type.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="FindType"/>.
+        /// </returns>
         public FindType GetFindType()
         {
-            if (radioButtonNormal.Checked)
+            if (this.radioButtonNormal.Checked)
+            {
                 return FindType.Normal;
-            if (radioButtonCaseSensitive.Checked)
+            }
+
+            if (this.radioButtonCaseSensitive.Checked)
+            {
                 return FindType.CaseSensitive;
+            }
+
             return FindType.RegEx;
         }
 
+        /// <summary>
+        /// The get find dialog helper.
+        /// </summary>
+        /// <param name="startLineIndex">
+        /// The start line index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="FindReplaceDialogHelper"/>.
+        /// </returns>
         public FindReplaceDialogHelper GetFindDialogHelper(int startLineIndex)
         {
-            return new FindReplaceDialogHelper(GetFindType(), textBoxFind.Text, _regEx, textBoxReplace.Text, _left, _top, startLineIndex);
+            return new FindReplaceDialogHelper(this.GetFindType(), this.textBoxFind.Text, this._regEx, this.textBoxReplace.Text, this._left, this._top, startLineIndex);
         }
 
+        /// <summary>
+        /// The form replace dialog_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void FormReplaceDialog_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
 
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="selectedText">
+        /// The selected text.
+        /// </param>
+        /// <param name="findHelper">
+        /// The find helper.
+        /// </param>
         internal void Initialize(string selectedText, FindReplaceDialogHelper findHelper)
         {
-            textBoxFind.Text = selectedText;
-            //if we are searching for the same thing, then keep the replace text the same.
+            this.textBoxFind.Text = selectedText;
+
+            // if we are searching for the same thing, then keep the replace text the same.
             if (selectedText == findHelper.FindText)
-                textBoxReplace.Text = findHelper.ReplaceText;
-            textBoxFind.SelectAll();
-            _left = findHelper.WindowPositionLeft;
-            _top = findHelper.WindowPositionTop;
+            {
+                this.textBoxReplace.Text = findHelper.ReplaceText;
+            }
+
+            this.textBoxFind.SelectAll();
+            this._left = findHelper.WindowPositionLeft;
+            this._top = findHelper.WindowPositionTop;
 
             if (findHelper.FindType == FindType.RegEx)
-                radioButtonRegEx.Checked = true;
+            {
+                this.radioButtonRegEx.Checked = true;
+            }
             else if (findHelper.FindType == FindType.CaseSensitive)
-                radioButtonCaseSensitive.Checked = true;
+            {
+                this.radioButtonCaseSensitive.Checked = true;
+            }
             else
-                radioButtonNormal.Checked = true;
+            {
+                this.radioButtonNormal.Checked = true;
+            }
         }
 
+        /// <summary>
+        /// The button replace click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonReplaceClick(object sender, EventArgs e)
         {
-            ReplaceAll = false;
-            FindOnly = false;
+            this.ReplaceAll = false;
+            this.FindOnly = false;
 
-            Validate(textBoxFind.Text);
+            this.Validate(this.textBoxFind.Text);
         }
 
+        /// <summary>
+        /// The button replace all click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonReplaceAllClick(object sender, EventArgs e)
         {
-            ReplaceAll = true;
-            FindOnly = false;
+            this.ReplaceAll = true;
+            this.FindOnly = false;
 
-            Validate(textBoxFind.Text);
+            this.Validate(this.textBoxFind.Text);
         }
 
+        /// <summary>
+        /// The validate.
+        /// </summary>
+        /// <param name="searchText">
+        /// The search text.
+        /// </param>
         private void Validate(string searchText)
         {
             if (searchText.Length == 0)
             {
-                DialogResult = DialogResult.Cancel;
+                this.DialogResult = DialogResult.Cancel;
             }
-            else if (radioButtonNormal.Checked)
+            else if (this.radioButtonNormal.Checked)
             {
-                DialogResult = DialogResult.OK;
-                _userAction = true;
+                this.DialogResult = DialogResult.OK;
+                this._userAction = true;
             }
-            else if (radioButtonCaseSensitive.Checked)
+            else if (this.radioButtonCaseSensitive.Checked)
             {
-                DialogResult = DialogResult.OK;
-                _userAction = true;
+                this.DialogResult = DialogResult.OK;
+                this._userAction = true;
             }
-            else if (radioButtonRegEx.Checked)
+            else if (this.radioButtonRegEx.Checked)
             {
                 try
                 {
-                    _regEx = new Regex(textBoxFind.Text, RegexOptions.Compiled);
-                    DialogResult = DialogResult.OK;
-                    _userAction = true;
+                    this._regEx = new Regex(this.textBoxFind.Text, RegexOptions.Compiled);
+                    this.DialogResult = DialogResult.OK;
+                    this._userAction = true;
                 }
                 catch (Exception exception)
                 {
@@ -122,54 +237,109 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The button find click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonFindClick(object sender, EventArgs e)
         {
-            ReplaceAll = false;
-            FindOnly = true;
+            this.ReplaceAll = false;
+            this.FindOnly = true;
 
-            Validate(textBoxFind.Text);
+            this.Validate(this.textBoxFind.Text);
         }
 
+        /// <summary>
+        /// The form replace dialog_ shown.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void FormReplaceDialog_Shown(object sender, EventArgs e)
         {
-            if (_left > 0 && _top > 0)
+            if (this._left > 0 && this._top > 0)
             {
-                Left = _left;
-                Top = _top;
+                this.Left = this._left;
+                this.Top = this._top;
             }
             else
             {
-                _left = Left;
-                _top = Top;
+                this._left = this.Left;
+                this._top = this.Top;
             }
         }
 
+        /// <summary>
+        /// The form replace dialog_ move.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void FormReplaceDialog_Move(object sender, EventArgs e)
         {
-            if (Left > 0 && Top > 0)
+            if (this.Left > 0 && this.Top > 0)
             {
-                _left = Left;
-                _top = Top;
+                this._left = this.Left;
+                this._top = this.Top;
             }
         }
 
+        /// <summary>
+        /// The radio button checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void RadioButtonCheckedChanged(object sender, EventArgs e)
         {
-            if (sender == radioButtonRegEx)
-                textBoxFind.ContextMenu = FindReplaceDialogHelper.GetRegExContextMenu(textBoxFind);
+            if (sender == this.radioButtonRegEx)
+            {
+                this.textBoxFind.ContextMenu = FindReplaceDialogHelper.GetRegExContextMenu(this.textBoxFind);
+            }
             else
-                textBoxFind.ContextMenu = null;
+            {
+                this.textBoxFind.ContextMenu = null;
+            }
         }
 
+        /// <summary>
+        /// The text box find key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void TextBoxFindKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                ButtonFindClick(null, null);
+                this.ButtonFindClick(null, null);
                 e.SuppressKeyPress = true;
             }
         }
 
+        /// <summary>
+        /// The set icon.
+        /// </summary>
+        /// <param name="bitmap">
+        /// The bitmap.
+        /// </param>
         internal void SetIcon(Bitmap bitmap)
         {
             if (bitmap != null)
@@ -179,10 +349,21 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The replace dialog_ form closing.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ReplaceDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!_userAction)
-                DialogResult = DialogResult.Cancel;
+            if (!this._userAction)
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
     }
 }

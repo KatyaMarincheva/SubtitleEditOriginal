@@ -1,13 +1,40 @@
-﻿namespace Nikse.SubtitleEdit.Logic.Ocr
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="OcrImage.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The ocr image.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.Ocr
 {
     using System.Drawing;
 
+    /// <summary>
+    /// The ocr image.
+    /// </summary>
     public class OcrImage
     {
+        /// <summary>
+        /// Gets or sets a value indicating whether italic.
+        /// </summary>
         public bool Italic { get; set; }
 
+        /// <summary>
+        /// Gets or sets the bmp.
+        /// </summary>
         public Bitmap Bmp { get; set; }
 
+        /// <summary>
+        /// The get training data.
+        /// </summary>
+        /// <param name="size">
+        /// The size.
+        /// </param>
+        /// <returns>
+        /// The <see cref="double[]"/>.
+        /// </returns>
         public double[] GetTrainingData(int size)
         {
             int i = 0;

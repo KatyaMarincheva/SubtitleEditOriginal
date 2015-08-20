@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.Ocr
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="OcrFixEngine.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The ocr fix engine.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.Ocr
 {
     using System;
     using System.Collections.Generic;
@@ -16,58 +25,155 @@
     using Nikse.SubtitleEdit.Logic.Dictionaries;
     using Nikse.SubtitleEdit.Logic.SpellCheck;
 
+    /// <summary>
+    /// The ocr fix engine.
+    /// </summary>
     public class OcrFixEngine : IDisposable
     {
+        /// <summary>
+        /// The auto guess level.
+        /// </summary>
+        public enum AutoGuessLevel
+        {
+            /// <summary>
+            /// The none.
+            /// </summary>
+            None, 
+
+            /// <summary>
+            /// The cautious.
+            /// </summary>
+            Cautious, 
+
+            /// <summary>
+            /// The aggressive.
+            /// </summary>
+            Aggressive
+        }
+
+        /// <summary>
+        /// The regex alone i.
+        /// </summary>
         private static readonly Regex RegexAloneI = new Regex(@"\bi\b", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The regex alone ias l.
+        /// </summary>
         private static readonly Regex RegexAloneIasL = new Regex(@"\bl\b", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The regex space between numbers.
+        /// </summary>
         private static readonly Regex RegexSpaceBetweenNumbers = new Regex(@"\d \d", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The reg ex lowercase l.
+        /// </summary>
         private static readonly Regex RegExLowercaseL = new Regex("[A-ZÆØÅÄÖÉÈÀÙÂÊÎÔÛËÏ]l[A-ZÆØÅÄÖÉÈÀÙÂÊÎÔÛËÏ]", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The reg ex uppercase i.
+        /// </summary>
         private static readonly Regex RegExUppercaseI = new Regex("[a-zæøåöääöéèàùâêîôûëï]I.", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The reg ex number 1.
+        /// </summary>
         private static readonly Regex RegExNumber1 = new Regex(@"\d\ 1", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The _ocr fix replace list.
+        /// </summary>
         private readonly OcrFixReplaceList _ocrFixReplaceList;
 
+        /// <summary>
+        /// The _parent form.
+        /// </summary>
         private readonly Form _parentForm;
 
+        /// <summary>
+        /// The _three letter iso language name.
+        /// </summary>
         private readonly string _threeLetterIsoLanguageName;
 
+        /// <summary>
+        /// The _abbreviation list.
+        /// </summary>
         private HashSet<string> _abbreviationList;
 
+        /// <summary>
+        /// The _five letter word list language name.
+        /// </summary>
         private string _fiveLetterWordListLanguageName;
 
+        /// <summary>
+        /// The _hunspell.
+        /// </summary>
         private Hunspell _hunspell;
 
+        /// <summary>
+        /// The _names etc list.
+        /// </summary>
         private HashSet<string> _namesEtcList = new HashSet<string>();
 
+        /// <summary>
+        /// The _names etc list uppercase.
+        /// </summary>
         private HashSet<string> _namesEtcListUppercase = new HashSet<string>();
 
+        /// <summary>
+        /// The _names etc list with apostrophe.
+        /// </summary>
         private HashSet<string> _namesEtcListWithApostrophe = new HashSet<string>();
 
+        /// <summary>
+        /// The _names etc multi word list.
+        /// </summary>
         private HashSet<string> _namesEtcMultiWordList = new HashSet<string>(); // case sensitive phrases
 
+        /// <summary>
+        /// The _names list.
+        /// </summary>
         private NamesList _namesList;
 
+        /// <summary>
+        /// The _spell check.
+        /// </summary>
         private OcrSpellCheck _spellCheck;
 
+        /// <summary>
+        /// The _spell check dictionary name.
+        /// </summary>
         private string _spellCheckDictionaryName;
 
+        /// <summary>
+        /// The _user word list.
+        /// </summary>
         private HashSet<string> _userWordList = new HashSet<string>();
 
+        /// <summary>
+        /// The _user word list xml file name.
+        /// </summary>
         private string _userWordListXmlFileName;
 
+        /// <summary>
+        /// The _word skip list.
+        /// </summary>
         private HashSet<string> _wordSkipList = new HashSet<string>();
 
         /// <summary>
-        ///     Advanced OCR fixing via replace/spelling dictionaries + some hardcoded rules
+        /// Initializes a new instance of the <see cref="OcrFixEngine"/> class. 
+        /// Advanced OCR fixing via replace/spelling dictionaries + some hardcoded rules
         /// </summary>
-        /// <param name="threeLetterIsoLanguageName">E.g. eng for English</param>
-        /// <param name="hunspellName">Name of hunspell dictionary</param>
-        /// <param name="parentForm">Used for centering/show spell check dialog</param>
+        /// <param name="threeLetterIsoLanguageName">
+        /// E.g. eng for English
+        /// </param>
+        /// <param name="hunspellName">
+        /// Name of hunspell dictionary
+        /// </param>
+        /// <param name="parentForm">
+        /// Used for centering/show spell check dialog
+        /// </param>
         public OcrFixEngine(string threeLetterIsoLanguageName, string hunspellName, Form parentForm)
         {
             if (threeLetterIsoLanguageName == "per")
@@ -88,25 +194,34 @@
             this.UnknownWordsFound = new List<string>();
         }
 
-        public enum AutoGuessLevel
-        {
-            None,
-
-            Cautious,
-
-            Aggressive
-        }
-
+        /// <summary>
+        /// Gets or sets a value indicating whether abort.
+        /// </summary>
         public bool Abort { get; set; }
 
+        /// <summary>
+        /// Gets or sets the auto guesses used.
+        /// </summary>
         public List<string> AutoGuessesUsed { get; set; }
 
+        /// <summary>
+        /// Gets or sets the unknown words found.
+        /// </summary>
         public List<string> UnknownWordsFound { get; set; }
 
+        /// <summary>
+        /// Gets a value indicating whether is dictionary loaded.
+        /// </summary>
         public bool IsDictionaryLoaded { get; private set; }
 
+        /// <summary>
+        /// Gets the dictionary culture.
+        /// </summary>
         public CultureInfo DictionaryCulture { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the spell check dictionary name.
+        /// </summary>
         public string SpellCheckDictionaryName
         {
             get
@@ -149,6 +264,9 @@
             }
         }
 
+        /// <summary>
+        /// The dispose.
+        /// </summary>
         public void Dispose()
         {
             if (this._hunspell != null)
@@ -164,6 +282,15 @@
             }
         }
 
+        /// <summary>
+        /// The fix lower case l inside upper case word.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FixLowerCaseLInsideUpperCaseWord(string word)
         {
             if (word.Length > 3 && word.Replace("l", string.Empty).ToUpper() == word.Replace("l", string.Empty))
@@ -177,6 +304,27 @@
             return word;
         }
 
+        /// <summary>
+        /// The fix ocr errors.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="lastLine">
+        /// The last line.
+        /// </param>
+        /// <param name="logSuggestions">
+        /// The log suggestions.
+        /// </param>
+        /// <param name="autoGuess">
+        /// The auto guess.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string FixOcrErrors(string text, int index, string lastLine, bool logSuggestions, AutoGuessLevel autoGuess)
         {
             StringBuilder sb = new StringBuilder();
@@ -287,6 +435,21 @@
             return text;
         }
 
+        /// <summary>
+        /// The fix ocr errors via hardcoded rules.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <param name="lastLine">
+        /// The last line.
+        /// </param>
+        /// <param name="abbreviationList">
+        /// The abbreviation list.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string FixOcrErrorsViaHardcodedRules(string input, string lastLine, HashSet<string> abbreviationList)
         {
             if (!Configuration.Settings.Tools.OcrFixUseHardcodedRules)
@@ -625,11 +788,50 @@
             return input;
         }
 
+        /// <summary>
+        /// The fix ocr error via line replace list.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string FixOcrErrorViaLineReplaceList(string input)
         {
             return this._ocrFixReplaceList.FixOcrErrorViaLineReplaceList(input);
         }
 
+        /// <summary>
+        /// The fix unknown words via guess or prompt.
+        /// </summary>
+        /// <param name="wordsNotFound">
+        /// The words not found.
+        /// </param>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="bitmap">
+        /// The bitmap.
+        /// </param>
+        /// <param name="autoFix">
+        /// The auto fix.
+        /// </param>
+        /// <param name="promptForFixingErrors">
+        /// The prompt for fixing errors.
+        /// </param>
+        /// <param name="log">
+        /// The log.
+        /// </param>
+        /// <param name="autoGuess">
+        /// The auto guess.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string FixUnknownWordsViaGuessOrPrompt(out int wordsNotFound, string line, int index, Bitmap bitmap, bool autoFix, bool promptForFixingErrors, bool log, AutoGuessLevel autoGuess)
         {
             List<string> localIgnoreWords = new List<string>();
@@ -926,16 +1128,43 @@
             return line;
         }
 
+        /// <summary>
+        /// The do spell.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool DoSpell(string word)
         {
             return this._hunspell.Spell(word);
         }
 
+        /// <summary>
+        /// The do suggest.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public List<string> DoSuggest(string word)
         {
             return this._hunspell.Suggest(word);
         }
 
+        /// <summary>
+        /// The is word or words correct.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool IsWordOrWordsCorrect(string word)
         {
             foreach (string s in word.Split(' '))
@@ -981,11 +1210,32 @@
             return true;
         }
 
+        /// <summary>
+        /// The create guesses from letters.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
         public IEnumerable<string> CreateGuessesFromLetters(string word)
         {
             return this._ocrFixReplaceList.CreateGuessesFromLetters(word);
         }
 
+        /// <summary>
+        /// The is word known or number.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool IsWordKnownOrNumber(string word, string line)
         {
             double number;
@@ -1037,6 +1287,18 @@
             return false;
         }
 
+        /// <summary>
+        /// The count unknown words via dictionary.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <param name="numberOfCorrectWords">
+        /// The number of correct words.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public int CountUnknownWordsViaDictionary(string line, out int numberOfCorrectWords)
         {
             numberOfCorrectWords = 0;
@@ -1076,6 +1338,18 @@
             return wordsNotFound;
         }
 
+        /// <summary>
+        /// The load replace list.
+        /// </summary>
+        /// <param name="doc">
+        /// The doc.
+        /// </param>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Dictionary"/>.
+        /// </returns>
         internal static Dictionary<string, string> LoadReplaceList(XmlDocument doc, string name)
         {
             Dictionary<string, string> list = new Dictionary<string, string>();
@@ -1102,6 +1376,18 @@
             return list;
         }
 
+        /// <summary>
+        /// The load reg ex list.
+        /// </summary>
+        /// <param name="doc">
+        /// The doc.
+        /// </param>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Dictionary"/>.
+        /// </returns>
         internal static Dictionary<string, string> LoadRegExList(XmlDocument doc, string name)
         {
             Dictionary<string, string> list = new Dictionary<string, string>();
@@ -1128,6 +1414,21 @@
             return list;
         }
 
+        /// <summary>
+        /// The fix french l apostrophe.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="tag">
+        /// The tag.
+        /// </param>
+        /// <param name="lastLine">
+        /// The last line.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string FixFrenchLApostrophe(string text, string tag, string lastLine)
         {
             bool endingBeforeThis = string.IsNullOrEmpty(lastLine) || lastLine.EndsWith('.') || lastLine.EndsWith('!') || lastLine.EndsWith('?') || lastLine.EndsWith(".</i>") || lastLine.EndsWith("!</i>") || lastLine.EndsWith("?</i>") || lastLine.EndsWith(".</font>") || lastLine.EndsWith("!</font>") || lastLine.EndsWith("?</font>");
@@ -1224,6 +1525,15 @@
             return text;
         }
 
+        /// <summary>
+        /// The remove space between numbers.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveSpaceBetweenNumbers(string text)
         {
             Match match = RegexSpaceBetweenNumbers.Match(text);
@@ -1250,6 +1560,18 @@
             return text;
         }
 
+        /// <summary>
+        /// The ends with abbreviation.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <param name="abbreviationList">
+        /// The abbreviation list.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool EndsWithAbbreviation(string line, HashSet<string> abbreviationList)
         {
             if (string.IsNullOrEmpty(line) || abbreviationList == null)
@@ -1274,6 +1596,24 @@
             return false;
         }
 
+        /// <summary>
+        /// The get dashed word before.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <param name="words">
+        /// The words.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetDashedWordBefore(string word, string line, string[] words, int index)
         {
             if (index > 0 && line.Contains(words[index - 1] + "-" + word))
@@ -1284,6 +1624,24 @@
             return null;
         }
 
+        /// <summary>
+        /// The get dashed word after.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <param name="words">
+        /// The words.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetDashedWordAfter(string word, string line, string[] words, int index)
         {
             if (index < words.Length - 1 && line.Contains(word + "-" + words[index + 1].Replace("</i>", string.Empty)))
@@ -1294,6 +1652,15 @@
             return null;
         }
 
+        /// <summary>
+        /// The get word with dominated casing.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetWordWithDominatedCasing(string word)
         {
             int lowercase = 0;
@@ -1318,6 +1685,15 @@
             return word.ToLower();
         }
 
+        /// <summary>
+        /// The replace words before line fixes.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string ReplaceWordsBeforeLineFixes(string text)
         {
             string lastWord = null;
@@ -1363,6 +1739,18 @@
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The fix commen ocr line errors.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <param name="lastLine">
+        /// The last line.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string FixCommenOcrLineErrors(string input, string lastLine)
         {
             input = this.FixOcrErrorViaLineReplaceList(input);
@@ -1407,6 +1795,18 @@
             return input;
         }
 
+        /// <summary>
+        /// The fix lowercase i to uppercase i.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <param name="lastLine">
+        /// The last line.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string FixLowercaseIToUppercaseI(string input, string lastLine)
         {
             StringBuilder sb = new StringBuilder();
@@ -1440,6 +1840,21 @@
             return sb.ToString().TrimEnd('\r', '\n');
         }
 
+        /// <summary>
+        /// The load spelling dictionaries via dictionary file name.
+        /// </summary>
+        /// <param name="threeLetterIsoLanguageName">
+        /// The three letter iso language name.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <param name="dictionaryFileName">
+        /// The dictionary file name.
+        /// </param>
+        /// <param name="resetSkipList">
+        /// The reset skip list.
+        /// </param>
         private void LoadSpellingDictionariesViaDictionaryFileName(string threeLetterIsoLanguageName, CultureInfo culture, string dictionaryFileName, bool resetSkipList)
         {
             this._fiveLetterWordListLanguageName = Path.GetFileNameWithoutExtension(dictionaryFileName);
@@ -1548,6 +1963,15 @@
             }
         }
 
+        /// <summary>
+        /// The load spelling dictionaries.
+        /// </summary>
+        /// <param name="threeLetterIsoLanguageName">
+        /// The three letter iso language name.
+        /// </param>
+        /// <param name="hunspellName">
+        /// The hunspell name.
+        /// </param>
         private void LoadSpellingDictionaries(string threeLetterIsoLanguageName, string hunspellName)
         {
             string dictionaryFolder = Utilities.DictionaryFolder;
@@ -1672,9 +2096,23 @@
         }
 
         /// <summary>
-        ///     SpellCheck for OCR
+        /// SpellCheck for OCR
         /// </summary>
-        /// <returns>True, if word is fixed</returns>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <param name="bitmap">
+        /// The bitmap.
+        /// </param>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <param name="suggestions">
+        /// The suggestions.
+        /// </param>
+        /// <returns>
+        /// True, if word is fixed
+        /// </returns>
         private SpellCheckOcrTextResult SpellCheckOcrText(string line, Bitmap bitmap, string word, List<string> suggestions)
         {
             SpellCheckOcrTextResult result = new SpellCheckOcrTextResult { Fixed = false, FixedWholeLine = false, Line = null, Word = null };

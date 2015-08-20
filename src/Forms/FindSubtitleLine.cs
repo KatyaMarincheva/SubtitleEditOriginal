@@ -1,196 +1,340 @@
-﻿using System;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Logic;
-using System.Collections.Generic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="FindSubtitleLine.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The find subtitle line.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The find subtitle line.
+    /// </summary>
     public sealed partial class FindSubtitleLine : Form
     {
-        private int _startFindIndex = -1;
-        private List<Paragraph> _paragraphs = new List<Paragraph>();
+        /// <summary>
+        /// The _main general go to next subtitle.
+        /// </summary>
         private readonly Keys _mainGeneralGoToNextSubtitle = Utilities.GetKeys(Configuration.Settings.Shortcuts.GeneralGoToNextSubtitle);
+
+        /// <summary>
+        /// The _main general go to prev subtitle.
+        /// </summary>
         private readonly Keys _mainGeneralGoToPrevSubtitle = Utilities.GetKeys(Configuration.Settings.Shortcuts.GeneralGoToPrevSubtitle);
 
-        public int SelectedIndex
-        {
-            get;
-            private set;
-        }
+        /// <summary>
+        /// The _paragraphs.
+        /// </summary>
+        private List<Paragraph> _paragraphs = new List<Paragraph>();
 
+        /// <summary>
+        /// The _start find index.
+        /// </summary>
+        private int _startFindIndex = -1;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FindSubtitleLine"/> class.
+        /// </summary>
         public FindSubtitleLine()
         {
-            InitializeComponent();
-            Icon = Nikse.SubtitleEdit.Properties.Resources.SubtitleEditFormIcon;
+            this.InitializeComponent();
+            this.Icon = Properties.Resources.SubtitleEditFormIcon;
 
-            Text = Configuration.Settings.Language.FindSubtitleLine.Title;
-            buttonFind.Text = Configuration.Settings.Language.FindSubtitleLine.Find;
-            buttonFindNext.Text = Configuration.Settings.Language.FindSubtitleLine.FindNext;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
-            subtitleListView1.InitializeLanguage(Configuration.Settings.Language.General, Configuration.Settings);
-            FixLargeFonts();
+            this.Text = Configuration.Settings.Language.FindSubtitleLine.Title;
+            this.buttonFind.Text = Configuration.Settings.Language.FindSubtitleLine.Find;
+            this.buttonFindNext.Text = Configuration.Settings.Language.FindSubtitleLine.FindNext;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            this.subtitleListView1.InitializeLanguage(Configuration.Settings.Language.General, Configuration.Settings);
+            this.FixLargeFonts();
         }
 
+        /// <summary>
+        /// Gets the selected index.
+        /// </summary>
+        public int SelectedIndex { get; private set; }
+
+        /// <summary>
+        /// The fix large fonts.
+        /// </summary>
         private void FixLargeFonts()
         {
-            using (var graphics = CreateGraphics())
+            using (var graphics = this.CreateGraphics())
             {
-                var textSize = graphics.MeasureString(buttonOK.Text, Font);
-                if (textSize.Height > buttonOK.Height - 4)
+                var textSize = graphics.MeasureString(this.buttonOK.Text, this.Font);
+                if (textSize.Height > this.buttonOK.Height - 4)
                 {
-                    subtitleListView1.InitializeTimestampColumnWidths(this);
+                    this.subtitleListView1.InitializeTimestampColumnWidths(this);
                     int newButtonHeight = (int)(textSize.Height + 7 + 0.5);
                     Utilities.SetButtonHeight(this, newButtonHeight, 1);
                 }
             }
         }
 
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="paragraphs">
+        /// The paragraphs.
+        /// </param>
+        /// <param name="appendTitle">
+        /// The append title.
+        /// </param>
         public void Initialize(List<Paragraph> paragraphs, string appendTitle)
         {
-            Text += appendTitle;
-            _paragraphs = paragraphs;
-            subtitleListView1.Fill(paragraphs);
-            _startFindIndex = -1;
+            this.Text += appendTitle;
+            this._paragraphs = paragraphs;
+            this.subtitleListView1.Fill(paragraphs);
+            this._startFindIndex = -1;
         }
 
+        /// <summary>
+        /// The button find click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonFindClick(object sender, EventArgs e)
         {
-            _startFindIndex = -1;
-            FindText();
+            this._startFindIndex = -1;
+            this.FindText();
         }
 
+        /// <summary>
+        /// The find text.
+        /// </summary>
         private void FindText()
         {
-            if (string.IsNullOrWhiteSpace(textBoxFindText.Text))
+            if (string.IsNullOrWhiteSpace(this.textBoxFindText.Text))
             {
                 return;
             }
 
-            for (var index = 0; index < _paragraphs.Count; index++)
+            for (var index = 0; index < this._paragraphs.Count; index++)
             {
-                if (index > _startFindIndex
-                    && _paragraphs[index].Text.Contains(textBoxFindText.Text, StringComparison.OrdinalIgnoreCase))
+                if (index > this._startFindIndex && this._paragraphs[index].Text.Contains(this.textBoxFindText.Text, StringComparison.OrdinalIgnoreCase))
                 {
-                    subtitleListView1.Items[index].Selected = true;
-                    subtitleListView1.HideSelection = false;
-                    subtitleListView1.Items[index].EnsureVisible();
-                    subtitleListView1.Items[index].Focused = true;
-                    _startFindIndex = index;
+                    this.subtitleListView1.Items[index].Selected = true;
+                    this.subtitleListView1.HideSelection = false;
+                    this.subtitleListView1.Items[index].EnsureVisible();
+                    this.subtitleListView1.Items[index].Focused = true;
+                    this._startFindIndex = index;
                     return;
                 }
             }
         }
 
+        /// <summary>
+        /// The button cancel click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonCancelClick(object sender, EventArgs e)
         {
-            SelectedIndex = -1;
+            this.SelectedIndex = -1;
         }
 
+        /// <summary>
+        /// The button ok click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonOkClick(object sender, EventArgs e)
         {
-            if (subtitleListView1.SelectedItems.Count > 0)
+            if (this.subtitleListView1.SelectedItems.Count > 0)
             {
-                SelectedIndex = subtitleListView1.SelectedItems[0].Index;
+                this.SelectedIndex = this.subtitleListView1.SelectedItems[0].Index;
             }
             else
             {
-                SelectedIndex = -1;
+                this.SelectedIndex = -1;
             }
         }
 
+        /// <summary>
+        /// The text box find text key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void TextBoxFindTextKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                ButtonFindClick(sender, null);
+            {
+                this.ButtonFindClick(sender, null);
+            }
         }
 
+        /// <summary>
+        /// The text box find text text changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void TextBoxFindTextTextChanged(object sender, EventArgs e)
         {
-            _startFindIndex = -1;
+            this._startFindIndex = -1;
         }
 
+        /// <summary>
+        /// The button find next click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonFindNextClick(object sender, EventArgs e)
         {
-            FindText();
+            this.FindText();
         }
 
+        /// <summary>
+        /// The form find subtitle line_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void FormFindSubtitleLine_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.F3)
-                FindText();
+            {
+                this.FindText();
+            }
             else if (e.KeyCode == Keys.Escape)
             {
-                DialogResult = DialogResult.Cancel;
+                this.DialogResult = DialogResult.Cancel;
             }
-            else if (_mainGeneralGoToNextSubtitle == e.KeyData || (e.KeyCode == Keys.Down && e.Modifiers == Keys.Alt))
+            else if (this._mainGeneralGoToNextSubtitle == e.KeyData || (e.KeyCode == Keys.Down && e.Modifiers == Keys.Alt))
             {
                 int selectedIndex = 0;
-                if (subtitleListView1.SelectedItems.Count > 0)
+                if (this.subtitleListView1.SelectedItems.Count > 0)
                 {
-                    selectedIndex = subtitleListView1.SelectedItems[0].Index;
+                    selectedIndex = this.subtitleListView1.SelectedItems[0].Index;
                     selectedIndex++;
                 }
-                subtitleListView1.SelectIndexAndEnsureVisible(selectedIndex);
+
+                this.subtitleListView1.SelectIndexAndEnsureVisible(selectedIndex);
             }
-            else if (_mainGeneralGoToPrevSubtitle == e.KeyData || (e.KeyCode == Keys.Up && e.Modifiers == Keys.Alt))
+            else if (this._mainGeneralGoToPrevSubtitle == e.KeyData || (e.KeyCode == Keys.Up && e.Modifiers == Keys.Alt))
             {
                 int selectedIndex = 0;
-                if (subtitleListView1.SelectedItems.Count > 0)
+                if (this.subtitleListView1.SelectedItems.Count > 0)
                 {
-                    selectedIndex = subtitleListView1.SelectedItems[0].Index;
+                    selectedIndex = this.subtitleListView1.SelectedItems[0].Index;
                     selectedIndex--;
                 }
-                subtitleListView1.SelectIndexAndEnsureVisible(selectedIndex);
+
+                this.subtitleListView1.SelectIndexAndEnsureVisible(selectedIndex);
             }
             else if (e.KeyCode == Keys.Home && e.Alt)
             {
-                subtitleListView1.SelectIndexAndEnsureVisible(0);
+                this.subtitleListView1.SelectIndexAndEnsureVisible(0);
                 e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.End && e.Alt)
             {
-                subtitleListView1.SelectIndexAndEnsureVisible(subtitleListView1.Items.Count - 1);
+                this.subtitleListView1.SelectIndexAndEnsureVisible(this.subtitleListView1.Items.Count - 1);
                 e.SuppressKeyPress = true;
             }
-            else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.G && subtitleListView1.Items.Count > 1)
+            else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.G && this.subtitleListView1.Items.Count > 1)
             {
                 using (var goToLine = new GoToLine())
                 {
-                    goToLine.Initialize(1, subtitleListView1.Items.Count);
+                    goToLine.Initialize(1, this.subtitleListView1.Items.Count);
                     if (goToLine.ShowDialog(this) == DialogResult.OK)
                     {
-                        subtitleListView1.SelectNone();
-                        subtitleListView1.Items[goToLine.LineNumber - 1].Selected = true;
-                        subtitleListView1.Items[goToLine.LineNumber - 1].EnsureVisible();
-                        subtitleListView1.Items[goToLine.LineNumber - 1].Focused = true;
+                        this.subtitleListView1.SelectNone();
+                        this.subtitleListView1.Items[goToLine.LineNumber - 1].Selected = true;
+                        this.subtitleListView1.Items[goToLine.LineNumber - 1].EnsureVisible();
+                        this.subtitleListView1.Items[goToLine.LineNumber - 1].Focused = true;
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// The form find subtitle line_ load.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void FormFindSubtitleLine_Load(object sender, EventArgs e)
         {
-            SetFocus();
+            this.SetFocus();
         }
 
+        /// <summary>
+        /// The form find subtitle line_ shown.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void FormFindSubtitleLine_Shown(object sender, EventArgs e)
         {
-            SetFocus();
+            this.SetFocus();
         }
 
+        /// <summary>
+        /// The set focus.
+        /// </summary>
         private void SetFocus()
         {
-            if (textBoxFindText.CanFocus)
-                textBoxFindText.Focus();
+            if (this.textBoxFindText.CanFocus)
+            {
+                this.textBoxFindText.Focus();
+            }
         }
 
+        /// <summary>
+        /// The subtitle list view 1 mouse double click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void SubtitleListView1MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            ButtonOkClick(null, null);
-            Close();
+            this.ButtonOkClick(null, null);
+            this.Close();
         }
-
     }
 }

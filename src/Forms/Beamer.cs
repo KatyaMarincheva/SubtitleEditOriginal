@@ -1,184 +1,357 @@
-﻿using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Logic;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
-using System.Text;
-using System.Windows.Forms;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Beamer.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The beamer.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+    using System.Drawing.Text;
+    using System.Text;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The beamer.
+    /// </summary>
     public sealed partial class Beamer : Form
     {
-        private Subtitle _subtitle;
-        private int _index;
-        private bool _fullscreen;
-        private Color _subtitleColor = Color.White;
-        private string _subtitleFontName = "Verdana";
-        private float _subtitleFontSize = 75.0f;
+        /// <summary>
+        /// The _border color.
+        /// </summary>
         private Color _borderColor = Color.Black;
+
+        /// <summary>
+        /// The _border width.
+        /// </summary>
         private float _borderWidth = 2.0f;
+
+        /// <summary>
+        /// The _fullscreen.
+        /// </summary>
+        private bool _fullscreen;
+
+        /// <summary>
+        /// The _index.
+        /// </summary>
+        private int _index;
+
+        /// <summary>
+        /// The _is loading.
+        /// </summary>
         private bool _isLoading = true;
-        private int _marginLeft;
-        private int _marginBottom = 25;
-        private int _showIndex = -2;
-        private double _millisecondsFactor = 1.0;
+
+        /// <summary>
+        /// The _main.
+        /// </summary>
         private Main _main;
-        private bool _noTimerAction;
-        private long _videoStartTick;
-        //Keys _mainGeneralGoToNextSubtitle = Utilities.GetKeys(Configuration.Settings.Shortcuts.GeneralGoToNextSubtitle);
+
+        // Keys _mainGeneralGoToNextSubtitle = Utilities.GetKeys(Configuration.Settings.Shortcuts.GeneralGoToNextSubtitle);
+        /// <summary>
+        /// The _main general go to prev subtitle.
+        /// </summary>
         private Keys _mainGeneralGoToPrevSubtitle = Utilities.GetKeys(Configuration.Settings.Shortcuts.GeneralGoToPrevSubtitle);
 
+        /// <summary>
+        /// The _margin bottom.
+        /// </summary>
+        private int _marginBottom = 25;
+
+        /// <summary>
+        /// The _margin left.
+        /// </summary>
+        private int _marginLeft;
+
+        /// <summary>
+        /// The _milliseconds factor.
+        /// </summary>
+        private double _millisecondsFactor = 1.0;
+
+        /// <summary>
+        /// The _no timer action.
+        /// </summary>
+        private bool _noTimerAction;
+
+        /// <summary>
+        /// The _show index.
+        /// </summary>
+        private int _showIndex = -2;
+
+        /// <summary>
+        /// The _subtitle.
+        /// </summary>
+        private Subtitle _subtitle;
+
+        /// <summary>
+        /// The _subtitle color.
+        /// </summary>
+        private Color _subtitleColor = Color.White;
+
+        /// <summary>
+        /// The _subtitle font name.
+        /// </summary>
+        private string _subtitleFontName = "Verdana";
+
+        /// <summary>
+        /// The _subtitle font size.
+        /// </summary>
+        private float _subtitleFontSize = 75.0f;
+
+        /// <summary>
+        /// The _video start tick.
+        /// </summary>
+        private long _videoStartTick;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Beamer"/> class.
+        /// </summary>
+        /// <param name="main">
+        /// The main.
+        /// </param>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
         public Beamer(Main main, Subtitle subtitle, int index)
         {
-            InitializeComponent();
-            _main = main;
-            _subtitle = subtitle;
-            _index = index;
+            this.InitializeComponent();
+            this._main = main;
+            this._subtitle = subtitle;
+            this._index = index;
 
             LanguageStructure.Beamer language = Configuration.Settings.Language.Beamer;
-            Text = language.Title;
-            groupBoxImageSettings.Text = Configuration.Settings.Language.ExportPngXml.ImageSettings;
-            labelSubtitleFont.Text = Configuration.Settings.Language.ExportPngXml.FontFamily;
-            labelSubtitleFontSize.Text = Configuration.Settings.Language.ExportPngXml.FontSize;
-            buttonColor.Text = Configuration.Settings.Language.ExportPngXml.FontColor;
-            buttonBorderColor.Text = Configuration.Settings.Language.ExportPngXml.BorderColor;
-            labelBorderWidth.Text = Configuration.Settings.Language.ExportPngXml.BorderWidth;
+            this.Text = language.Title;
+            this.groupBoxImageSettings.Text = Configuration.Settings.Language.ExportPngXml.ImageSettings;
+            this.labelSubtitleFont.Text = Configuration.Settings.Language.ExportPngXml.FontFamily;
+            this.labelSubtitleFontSize.Text = Configuration.Settings.Language.ExportPngXml.FontSize;
+            this.buttonColor.Text = Configuration.Settings.Language.ExportPngXml.FontColor;
+            this.buttonBorderColor.Text = Configuration.Settings.Language.ExportPngXml.BorderColor;
+            this.labelBorderWidth.Text = Configuration.Settings.Language.ExportPngXml.BorderWidth;
 
-            _subtitleFontName = Configuration.Settings.SubtitleBeaming.FontName;
-            _subtitleFontSize = Configuration.Settings.SubtitleBeaming.FontSize;
-            if (_subtitleFontSize > 100 || _subtitleFontSize < 10)
-                _subtitleFontSize = 60;
-            _subtitleColor = Configuration.Settings.SubtitleBeaming.FontColor;
-            _borderColor = Configuration.Settings.SubtitleBeaming.BorderColor;
-            _borderWidth = Configuration.Settings.SubtitleBeaming.BorderWidth;
+            this._subtitleFontName = Configuration.Settings.SubtitleBeaming.FontName;
+            this._subtitleFontSize = Configuration.Settings.SubtitleBeaming.FontSize;
+            if (this._subtitleFontSize > 100 || this._subtitleFontSize < 10)
+            {
+                this._subtitleFontSize = 60;
+            }
 
-            panelColor.BackColor = _subtitleColor;
-            panelBorderColor.BackColor = _borderColor;
+            this._subtitleColor = Configuration.Settings.SubtitleBeaming.FontColor;
+            this._borderColor = Configuration.Settings.SubtitleBeaming.BorderColor;
+            this._borderWidth = Configuration.Settings.SubtitleBeaming.BorderWidth;
+
+            this.panelColor.BackColor = this._subtitleColor;
+            this.panelBorderColor.BackColor = this._borderColor;
 
             if (Configuration.Settings.SubtitleBeaming.BorderWidth > 0 && Configuration.Settings.SubtitleBeaming.BorderWidth < 5)
-                comboBoxBorderWidth.SelectedIndex = (int)_borderWidth;
+            {
+                this.comboBoxBorderWidth.SelectedIndex = (int)this._borderWidth;
+            }
             else
-                comboBoxBorderWidth.SelectedIndex = 2;
-            comboBoxHAlign.SelectedIndex = 1;
+            {
+                this.comboBoxBorderWidth.SelectedIndex = 2;
+            }
+
+            this.comboBoxHAlign.SelectedIndex = 1;
 
             foreach (var x in FontFamily.Families)
             {
-                comboBoxSubtitleFont.Items.Add(x.Name);
-                if (x.Name.Equals(_subtitleFontName, StringComparison.OrdinalIgnoreCase))
-                    comboBoxSubtitleFont.SelectedIndex = comboBoxSubtitleFont.Items.Count - 1;
+                this.comboBoxSubtitleFont.Items.Add(x.Name);
+                if (x.Name.Equals(this._subtitleFontName, StringComparison.OrdinalIgnoreCase))
+                {
+                    this.comboBoxSubtitleFont.SelectedIndex = this.comboBoxSubtitleFont.Items.Count - 1;
+                }
             }
-            if (_subtitleFontSize > 10 && _subtitleFontSize < 100)
-                comboBoxSubtitleFontSize.SelectedIndex = (int)(_subtitleFontSize - 10);
+
+            if (this._subtitleFontSize > 10 && this._subtitleFontSize < 100)
+            {
+                this.comboBoxSubtitleFontSize.SelectedIndex = (int)(this._subtitleFontSize - 10);
+            }
             else
-                comboBoxSubtitleFontSize.SelectedIndex = 40;
-            _isLoading = false;
-            ShowCurrent();
+            {
+                this.comboBoxSubtitleFontSize.SelectedIndex = 40;
+            }
+
+            this._isLoading = false;
+            this.ShowCurrent();
         }
 
+        /// <summary>
+        /// The button color click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonColorClick(object sender, EventArgs e)
         {
-            colorDialog1.Color = panelColor.BackColor;
-            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            this.colorDialog1.Color = this.panelColor.BackColor;
+            if (this.colorDialog1.ShowDialog() == DialogResult.OK)
             {
-                panelColor.BackColor = colorDialog1.Color;
-                ShowCurrent();
+                this.panelColor.BackColor = this.colorDialog1.Color;
+                this.ShowCurrent();
             }
         }
 
+        /// <summary>
+        /// The button border color click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonBorderColorClick(object sender, EventArgs e)
         {
-            colorDialog1.Color = panelBorderColor.BackColor;
-            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            this.colorDialog1.Color = this.panelBorderColor.BackColor;
+            if (this.colorDialog1.ShowDialog() == DialogResult.OK)
             {
-                panelBorderColor.BackColor = colorDialog1.Color;
-                ShowCurrent();
+                this.panelBorderColor.BackColor = this.colorDialog1.Color;
+                this.ShowCurrent();
             }
         }
 
+        /// <summary>
+        /// The combo box subtitle font selected value changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ComboBoxSubtitleFontSelectedValueChanged(object sender, EventArgs e)
         {
-            ShowCurrent();
+            this.ShowCurrent();
         }
 
+        /// <summary>
+        /// The combo box subtitle font size selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ComboBoxSubtitleFontSizeSelectedIndexChanged(object sender, EventArgs e)
         {
-            ShowCurrent();
+            this.ShowCurrent();
         }
 
+        /// <summary>
+        /// The combo box border width selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ComboBoxBorderWidthSelectedIndexChanged(object sender, EventArgs e)
         {
-            ShowCurrent();
+            this.ShowCurrent();
         }
 
+        /// <summary>
+        /// The show current.
+        /// </summary>
         private void ShowCurrent()
         {
-            SetupImageParameters();
-            if (_fullscreen)
+            this.SetupImageParameters();
+            if (this._fullscreen)
             {
-                if (_index > 0 && _index < _subtitle.Paragraphs.Count)
+                if (this._index > 0 && this._index < this._subtitle.Paragraphs.Count)
                 {
-                    string text = _subtitle.Paragraphs[_index].Text;
-                    var bmp = GenerateImageFromTextWithStyle(text);
-                    pictureBox1.Image = bmp;
-                    pictureBox1.Height = bmp.Height;
-                    pictureBox1.Width = bmp.Width;
-                    pictureBox1.Left = (Width - bmp.Width) / 2 + _marginLeft;
-                    pictureBox1.Top = Height - (pictureBox1.Height + _marginBottom);
-                    _showIndex = _index;
-                    _main.FocusParagraph(_index);
+                    string text = this._subtitle.Paragraphs[this._index].Text;
+                    var bmp = this.GenerateImageFromTextWithStyle(text);
+                    this.pictureBox1.Image = bmp;
+                    this.pictureBox1.Height = bmp.Height;
+                    this.pictureBox1.Width = bmp.Width;
+                    this.pictureBox1.Left = (this.Width - bmp.Width) / 2 + this._marginLeft;
+                    this.pictureBox1.Top = this.Height - (this.pictureBox1.Height + this._marginBottom);
+                    this._showIndex = this._index;
+                    this._main.FocusParagraph(this._index);
                 }
                 else
                 {
-                    pictureBox1.Image = null;
+                    this.pictureBox1.Image = null;
                 }
             }
             else
             {
                 string text = "Testing 123" + Environment.NewLine + "Subtitle Edit";
-                if (_index >= 0 && _index < _subtitle.Paragraphs.Count && _subtitle.Paragraphs[_index].Text.Length > 1)
+                if (this._index >= 0 && this._index < this._subtitle.Paragraphs.Count && this._subtitle.Paragraphs[this._index].Text.Length > 1)
                 {
-                    text = _subtitle.Paragraphs[_index].Text;
-                    _main.FocusParagraph(_index);
+                    text = this._subtitle.Paragraphs[this._index].Text;
+                    this._main.FocusParagraph(this._index);
                 }
-                var bmp = GenerateImageFromTextWithStyle(text);
-                pictureBox1.Top = groupBoxImageSettings.Top + groupBoxImageSettings.Height + 5;
-                pictureBox1.Left = 5;
-                if (comboBoxHAlign.SelectedIndex == 1) // center
+
+                var bmp = this.GenerateImageFromTextWithStyle(text);
+                this.pictureBox1.Top = this.groupBoxImageSettings.Top + this.groupBoxImageSettings.Height + 5;
+                this.pictureBox1.Left = 5;
+                if (this.comboBoxHAlign.SelectedIndex == 1)
                 {
-                    pictureBox1.Left = ((groupBoxImageSettings.Width - bmp.Width) / 2);
+                    // center
+                    this.pictureBox1.Left = (this.groupBoxImageSettings.Width - bmp.Width) / 2;
                 }
-                pictureBox1.Image = bmp;
-                pictureBox1.Height = bmp.Height;
-                pictureBox1.Width = bmp.Width;
-                _showIndex = -2;
+
+                this.pictureBox1.Image = bmp;
+                this.pictureBox1.Height = bmp.Height;
+                this.pictureBox1.Width = bmp.Width;
+                this._showIndex = -2;
             }
         }
 
+        /// <summary>
+        /// The setup image parameters.
+        /// </summary>
         private void SetupImageParameters()
         {
-            if (_isLoading)
+            if (this._isLoading)
+            {
                 return;
+            }
 
-            _subtitleColor = panelColor.BackColor;
-            _borderColor = panelBorderColor.BackColor;
-            _subtitleFontName = comboBoxSubtitleFont.SelectedItem.ToString();
-            _subtitleFontSize = float.Parse(comboBoxSubtitleFontSize.SelectedItem.ToString());
-            _borderWidth = float.Parse(comboBoxBorderWidth.SelectedItem.ToString());
+            this._subtitleColor = this.panelColor.BackColor;
+            this._borderColor = this.panelBorderColor.BackColor;
+            this._subtitleFontName = this.comboBoxSubtitleFont.SelectedItem.ToString();
+            this._subtitleFontSize = float.Parse(this.comboBoxSubtitleFontSize.SelectedItem.ToString());
+            this._borderWidth = float.Parse(this.comboBoxBorderWidth.SelectedItem.ToString());
 
-            Configuration.Settings.SubtitleBeaming.FontName = _subtitleFontName;
-            Configuration.Settings.SubtitleBeaming.FontSize = (int)_subtitleFontSize;
-            Configuration.Settings.SubtitleBeaming.FontColor = _subtitleColor;
-            Configuration.Settings.SubtitleBeaming.BorderColor = _borderColor;
-            Configuration.Settings.SubtitleBeaming.BorderWidth = (int)_borderWidth;
+            Configuration.Settings.SubtitleBeaming.FontName = this._subtitleFontName;
+            Configuration.Settings.SubtitleBeaming.FontSize = (int)this._subtitleFontSize;
+            Configuration.Settings.SubtitleBeaming.FontColor = this._subtitleColor;
+            Configuration.Settings.SubtitleBeaming.BorderColor = this._borderColor;
+            Configuration.Settings.SubtitleBeaming.BorderWidth = (int)this._borderWidth;
         }
 
+        /// <summary>
+        /// The generate image from text with style.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Bitmap"/>.
+        /// </returns>
         private Bitmap GenerateImageFromTextWithStyle(string text)
         {
             const bool subtitleFontBold = false;
-            bool subtitleAlignLeft = comboBoxHAlign.SelectedIndex == 0;
+            bool subtitleAlignLeft = this.comboBoxHAlign.SelectedIndex == 0;
 
             // remove styles for display text (except italic)
             text = RemoveSubStationAlphaFormatting(text);
@@ -194,18 +367,19 @@ namespace Nikse.SubtitleEdit.Forms
             Font font;
             try
             {
-                font = new Font(_subtitleFontName, _subtitleFontSize, FontStyle.Regular);
+                font = new Font(this._subtitleFontName, this._subtitleFontSize, FontStyle.Regular);
             }
             catch (Exception exception)
             {
                 MessageBox.Show(exception.Message);
-                font = new Font(FontFamily.Families[0].Name, _subtitleFontSize);
+                font = new Font(FontFamily.Families[0].Name, this._subtitleFontSize);
             }
+
             var bmp = new Bitmap(400, 200);
             var g = Graphics.FromImage(bmp);
 
             SizeF textSize = g.MeasureString("Hj!", font);
-            var lineHeight = (textSize.Height * 0.64f);
+            var lineHeight = textSize.Height * 0.64f;
 
             textSize = g.MeasureString(HtmlUtil.RemoveHtmlTags(text), font);
             g.Dispose();
@@ -213,9 +387,15 @@ namespace Nikse.SubtitleEdit.Forms
             int sizeX = (int)(textSize.Width * 0.8) + 40;
             int sizeY = (int)(textSize.Height * 0.8) + 30;
             if (sizeX < 1)
+            {
                 sizeX = 1;
+            }
+
             if (sizeY < 1)
+            {
                 sizeY = 1;
+            }
+
             bmp = new Bitmap(sizeX, sizeY);
             g = Graphics.FromImage(bmp);
 
@@ -223,9 +403,13 @@ namespace Nikse.SubtitleEdit.Forms
             foreach (var line in HtmlUtil.RemoveOpenCloseTags(text, HtmlUtil.TagItalic, HtmlUtil.TagFont).SplitToLines())
             {
                 if (subtitleAlignLeft)
+                {
                     lefts.Add(5);
+                }
                 else
+                {
                     lefts.Add((float)(bmp.Width - g.MeasureString(line, font).Width * 0.8 + 15) / 2);
+                }
             }
 
             g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
@@ -234,7 +418,7 @@ namespace Nikse.SubtitleEdit.Forms
 
             var sf = new StringFormat();
             sf.Alignment = StringAlignment.Near;
-            sf.LineAlignment = StringAlignment.Near;// draw the text to a path
+            sf.LineAlignment = StringAlignment.Near; // draw the text to a path
             var path = new GraphicsPath();
 
             // display italic
@@ -243,14 +427,17 @@ namespace Nikse.SubtitleEdit.Forms
             bool isItalic = false;
             float left = 5;
             if (lefts.Count > 0)
+            {
                 left = lefts[0];
+            }
+
             float top = 5;
             bool newLine = false;
             int lineNumber = 0;
             float leftMargin = left;
             bool italicFromStart = false;
             int newLinePathPoint = -1;
-            Color c = _subtitleColor;
+            Color c = this._subtitleColor;
             var colorStack = new Stack<Color>();
             var lastText = new StringBuilder();
             while (i < text.Length)
@@ -260,27 +447,39 @@ namespace Nikse.SubtitleEdit.Forms
                     float addLeft = 0;
                     int oldPathPointIndex = path.PointCount;
                     if (oldPathPointIndex < 0)
+                    {
                         oldPathPointIndex = 0;
+                    }
 
                     if (sb.Length > 0)
                     {
                         TextDraw.DrawText(font, sf, path, sb, isItalic, subtitleFontBold, false, left, top, ref newLine, leftMargin, ref newLinePathPoint);
                     }
+
                     if (path.PointCount > 0)
                     {
                         PointF[] list = (PointF[])path.PathPoints.Clone(); // avoid using very slow path.PathPoints indexer!!!
                         for (int k = oldPathPointIndex; k < list.Length; k++)
                         {
                             if (list[k].X > addLeft)
+                            {
                                 addLeft = list[k].X;
+                            }
                         }
                     }
+
                     if (addLeft == 0)
+                    {
                         addLeft = left + 2;
+                    }
+
                     left = addLeft;
 
-                    if (_borderWidth > 0)
-                        g.DrawPath(new Pen(_borderColor, _borderWidth), path);
+                    if (this._borderWidth > 0)
+                    {
+                        g.DrawPath(new Pen(this._borderColor, this._borderWidth), path);
+                    }
+
                     g.FillPath(new SolidBrush(c), path);
                     path.Reset();
                     path = new GraphicsPath();
@@ -315,10 +514,11 @@ namespace Nikse.SubtitleEdit.Forms
                                 }
                                 catch
                                 {
-                                    c = _subtitleColor;
+                                    c = this._subtitleColor;
                                 }
                             }
                         }
+
                         i += endIndex;
                     }
                 }
@@ -337,33 +537,50 @@ namespace Nikse.SubtitleEdit.Forms
                         float addLeft = 0;
                         int oldPathPointIndex = path.PointCount - 1;
                         if (oldPathPointIndex < 0)
+                        {
                             oldPathPointIndex = 0;
+                        }
+
                         if (sb.Length > 0)
                         {
                             TextDraw.DrawText(font, sf, path, sb, isItalic, subtitleFontBold, false, left, top, ref newLine, leftMargin, ref newLinePathPoint);
                         }
+
                         if (path.PointCount > 0)
                         {
                             PointF[] list = (PointF[])path.PathPoints.Clone(); // avoid using very slow path.PathPoints indexer!!!
                             for (int k = oldPathPointIndex; k < list.Length; k++)
                             {
                                 if (list[k].X > addLeft)
+                                {
                                     addLeft = list[k].X;
+                                }
                             }
                         }
+
                         if (addLeft == 0)
+                        {
                             addLeft = left + 2;
+                        }
+
                         left = addLeft;
 
-                        if (_borderWidth > 0)
-                            g.DrawPath(new Pen(_borderColor, _borderWidth), path);
+                        if (this._borderWidth > 0)
+                        {
+                            g.DrawPath(new Pen(this._borderColor, this._borderWidth), path);
+                        }
+
                         g.FillPath(new SolidBrush(c), path);
                         path.Reset();
-                        //path = new GraphicsPath();
+
+                        // path = new GraphicsPath();
                         sb = new StringBuilder();
                         if (colorStack.Count > 0)
+                        {
                             c = colorStack.Pop();
+                        }
                     }
+
                     i += 6;
                 }
                 else if (text.Substring(i).StartsWith("<i>", StringComparison.OrdinalIgnoreCase))
@@ -373,6 +590,7 @@ namespace Nikse.SubtitleEdit.Forms
                     {
                         TextDraw.DrawText(font, sf, path, sb, isItalic, subtitleFontBold, false, left, top, ref newLine, leftMargin, ref newLinePathPoint);
                     }
+
                     isItalic = true;
                     i += 2;
                 }
@@ -385,6 +603,7 @@ namespace Nikse.SubtitleEdit.Forms
                         sb.Append(' ');
                         sb.Append(t);
                     }
+
                     TextDraw.DrawText(font, sf, path, sb, isItalic, subtitleFontBold, false, left, top, ref newLine, leftMargin, ref newLinePathPoint);
                     isItalic = false;
                     i += 3;
@@ -402,21 +621,32 @@ namespace Nikse.SubtitleEdit.Forms
                         leftMargin = lefts[lineNumber];
                         left = leftMargin;
                     }
+
                     if (isItalic)
+                    {
                         italicFromStart = true;
+                    }
                 }
                 else
                 {
                     sb.Append(text[i]);
                 }
+
                 i++;
             }
+
             if (sb.Length > 0)
+            {
                 TextDraw.DrawText(font, sf, path, sb, isItalic, subtitleFontBold, false, left, top, ref newLine, leftMargin, ref newLinePathPoint);
+            }
+
             sf.Dispose();
 
-            if (_borderWidth > 0)
-                g.DrawPath(new Pen(_borderColor, _borderWidth), path);
+            if (this._borderWidth > 0)
+            {
+                g.DrawPath(new Pen(this._borderColor, this._borderWidth), path);
+            }
+
             g.FillPath(new SolidBrush(c), path);
             g.Dispose();
             var nbmp = new NikseBitmap(bmp);
@@ -424,6 +654,15 @@ namespace Nikse.SubtitleEdit.Forms
             return nbmp.GetBitmap();
         }
 
+        /// <summary>
+        /// The remove sub station alpha formatting.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveSubStationAlphaFormatting(string s)
         {
             int indexOfBegin = s.IndexOf('{');
@@ -431,261 +670,351 @@ namespace Nikse.SubtitleEdit.Forms
             {
                 int indexOfEnd = s.IndexOf('}', indexOfBegin + 1);
                 if (indexOfEnd < indexOfBegin)
-                    break;
-                s = s.Remove(indexOfBegin, indexOfEnd - indexOfBegin + 1);
-                indexOfBegin = s.IndexOf('{', indexOfBegin);
-            }
-            return s;
-        }
-
-        private void Timer1Tick(object sender, EventArgs e)
-        {
-            if (_noTimerAction)
-                return;
-
-            double positionInMilliseconds = (DateTime.Now.Ticks - _videoStartTick) / 10000.0D; // 10,000 ticks = 1 millisecond
-            positionInMilliseconds *= _millisecondsFactor;
-            int index = 0;
-            foreach (Paragraph p in _subtitle.Paragraphs)
-            {
-                if (p.StartTime.TotalMilliseconds <= positionInMilliseconds &&
-                    p.EndTime.TotalMilliseconds > positionInMilliseconds)
                 {
                     break;
                 }
+
+                s = s.Remove(indexOfBegin, indexOfEnd - indexOfBegin + 1);
+                indexOfBegin = s.IndexOf('{', indexOfBegin);
+            }
+
+            return s;
+        }
+
+        /// <summary>
+        /// The timer 1 tick.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void Timer1Tick(object sender, EventArgs e)
+        {
+            if (this._noTimerAction)
+            {
+                return;
+            }
+
+            double positionInMilliseconds = (DateTime.Now.Ticks - this._videoStartTick) / 10000.0D; // 10,000 ticks = 1 millisecond
+            positionInMilliseconds *= this._millisecondsFactor;
+            int index = 0;
+            foreach (Paragraph p in this._subtitle.Paragraphs)
+            {
+                if (p.StartTime.TotalMilliseconds <= positionInMilliseconds && p.EndTime.TotalMilliseconds > positionInMilliseconds)
+                {
+                    break;
+                }
+
                 index++;
             }
-            if (index == _subtitle.Paragraphs.Count)
+
+            if (index == this._subtitle.Paragraphs.Count)
+            {
                 index = -1;
+            }
 
             if (index == -1)
             {
-                pictureBox1.Image = null;
+                this.pictureBox1.Image = null;
             }
-            else if (index != _showIndex)
+            else if (index != this._showIndex)
             {
-                _index = index;
-                ShowCurrent();
+                this._index = index;
+                this.ShowCurrent();
             }
         }
 
+        /// <summary>
+        /// The button start click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonStartClick(object sender, EventArgs e)
         {
-            if (_index >= _subtitle.Paragraphs.Count - 1)
+            if (this._index >= this._subtitle.Paragraphs.Count - 1)
             {
-                _index = -1;
-                _videoStartTick = DateTime.Now.Ticks;
+                this._index = -1;
+                this._videoStartTick = DateTime.Now.Ticks;
             }
-            else if (_index >= 0)
+            else if (this._index >= 0)
             {
-                _videoStartTick = DateTime.Now.Ticks - ((long)(_subtitle.Paragraphs[_index].StartTime.TotalMilliseconds) * 10000); //10,000 ticks = 1 millisecond
+                this._videoStartTick = DateTime.Now.Ticks - ((long)this._subtitle.Paragraphs[this._index].StartTime.TotalMilliseconds * 10000); // 10,000 ticks = 1 millisecond
             }
 
-            groupBoxImageSettings.Hide();
-            buttonStart.Hide();
-            FormBorderStyle = FormBorderStyle.None;
-            BackColor = Color.Black;
-            WindowState = FormWindowState.Maximized;
-            _fullscreen = true;
-            pictureBox1.Image = null;
+            this.groupBoxImageSettings.Hide();
+            this.buttonStart.Hide();
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.BackColor = Color.Black;
+            this.WindowState = FormWindowState.Maximized;
+            this._fullscreen = true;
+            this.pictureBox1.Image = null;
             Cursor.Hide();
-            _marginBottom = Height - 200;
-            timer1.Start();
+            this._marginBottom = this.Height - 200;
+            this.timer1.Start();
         }
 
+        /// <summary>
+        /// The beamer key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void BeamerKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Home)
             {
-                _index = 0;
-                ShowCurrent();
-                e.Handled = true;
-                return;
-            }
-            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.End)
-            {
-                _index = _subtitle.Paragraphs.Count - 1;
-                ShowCurrent();
+                this._index = 0;
+                this.ShowCurrent();
                 e.Handled = true;
                 return;
             }
 
-            if (!_fullscreen)
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.End)
+            {
+                this._index = this._subtitle.Paragraphs.Count - 1;
+                this.ShowCurrent();
+                e.Handled = true;
+                return;
+            }
+
+            if (!this._fullscreen)
             {
                 if (e.KeyCode == Keys.Escape)
                 {
-                    DialogResult = DialogResult.Cancel;
+                    this.DialogResult = DialogResult.Cancel;
                 }
-                else if (e.KeyCode == Keys.Space || (e.KeyCode == Keys.Down && e.Modifiers == Keys.Alt) || _mainGeneralGoToPrevSubtitle == e.KeyData)
+                else if (e.KeyCode == Keys.Space || (e.KeyCode == Keys.Down && e.Modifiers == Keys.Alt) || this._mainGeneralGoToPrevSubtitle == e.KeyData)
                 {
-                    if (_index < _subtitle.Paragraphs.Count - 1)
-                        _index++;
-                    ShowCurrent();
+                    if (this._index < this._subtitle.Paragraphs.Count - 1)
+                    {
+                        this._index++;
+                    }
+
+                    this.ShowCurrent();
                     e.Handled = true;
                 }
-                else if (_mainGeneralGoToPrevSubtitle == e.KeyData || (e.KeyCode == Keys.Up && e.Modifiers == Keys.Alt))
+                else if (this._mainGeneralGoToPrevSubtitle == e.KeyData || (e.KeyCode == Keys.Up && e.Modifiers == Keys.Alt))
                 {
-                    if (_index > 0)
-                        _index--;
-                    ShowCurrent();
+                    if (this._index > 0)
+                    {
+                        this._index--;
+                    }
+
+                    this.ShowCurrent();
                     e.Handled = true;
                 }
                 else if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageDown)
                 {
-                    if (_index < _subtitle.Paragraphs.Count - 21)
-                        _index += 20;
+                    if (this._index < this._subtitle.Paragraphs.Count - 21)
+                    {
+                        this._index += 20;
+                    }
                     else
-                        _index = _subtitle.Paragraphs.Count - 1;
-                    ShowCurrent();
+                    {
+                        this._index = this._subtitle.Paragraphs.Count - 1;
+                    }
+
+                    this.ShowCurrent();
                     e.Handled = true;
                 }
                 else if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageUp)
                 {
-                    if (_index > 20)
-                        _index -= 20;
+                    if (this._index > 20)
+                    {
+                        this._index -= 20;
+                    }
                     else
-                        _index = 0;
-                    ShowCurrent();
+                    {
+                        this._index = 0;
+                    }
+
+                    this.ShowCurrent();
                     e.Handled = true;
                 }
+
                 return;
             }
 
             if (e.KeyCode == Keys.Escape)
             {
-                groupBoxImageSettings.Show();
-                buttonStart.Show();
-                timer1.Stop();
+                this.groupBoxImageSettings.Show();
+                this.buttonStart.Show();
+                this.timer1.Stop();
                 Cursor.Show();
-                FormBorderStyle = FormBorderStyle.FixedDialog;
-                BackColor = DefaultBackColor;
-                WindowState = FormWindowState.Normal;
-                _showIndex = -2;
-                _fullscreen = false;
-                ShowCurrent();
+                this.FormBorderStyle = FormBorderStyle.FixedDialog;
+                this.BackColor = DefaultBackColor;
+                this.WindowState = FormWindowState.Normal;
+                this._showIndex = -2;
+                this._fullscreen = false;
+                this.ShowCurrent();
                 e.Handled = true;
             }
             else if (e.KeyCode == Keys.Pause)
             {
-                timer1.Stop();
-                timer1.Enabled = false;
+                this.timer1.Stop();
+                this.timer1.Enabled = false;
             }
             else if (e.KeyCode == Keys.Space || (e.KeyCode == Keys.Down && e.Modifiers == Keys.Alt))
             {
-                bool timer1Enabled = timer1.Enabled;
-                timer1.Enabled = false;
+                bool timer1Enabled = this.timer1.Enabled;
+                this.timer1.Enabled = false;
                 System.Threading.Thread.Sleep(100);
-                if (_index < _subtitle.Paragraphs.Count - 1)
-                    _index++;
+                if (this._index < this._subtitle.Paragraphs.Count - 1)
+                {
+                    this._index++;
+                }
 
-                _videoStartTick = DateTime.Now.Ticks - ((long)(_subtitle.Paragraphs[_index].StartTime.TotalMilliseconds) * 10000); //10,000 ticks = 1 millisecond
+                this._videoStartTick = DateTime.Now.Ticks - ((long)this._subtitle.Paragraphs[this._index].StartTime.TotalMilliseconds * 10000); // 10,000 ticks = 1 millisecond
 
-                ShowCurrent();
-                _noTimerAction = false;
-                if (timer1Enabled || _fullscreen)
-                    timer1.Start();
+                this.ShowCurrent();
+                this._noTimerAction = false;
+                if (timer1Enabled || this._fullscreen)
+                {
+                    this.timer1.Start();
+                }
 
                 e.Handled = true;
             }
             else if (e.KeyCode == Keys.Up && e.Modifiers == Keys.Alt)
             {
-                bool timer1Enabled = timer1.Enabled;
-                timer1.Enabled = false;
+                bool timer1Enabled = this.timer1.Enabled;
+                this.timer1.Enabled = false;
                 System.Threading.Thread.Sleep(100);
-                if (_index > 0)
-                    _index--;
-                _videoStartTick = DateTime.Now.Ticks - ((long)(_subtitle.Paragraphs[_index].StartTime.TotalMilliseconds) * 10000); //10,000 ticks = 1 millisecond
-                ShowCurrent();
+                if (this._index > 0)
+                {
+                    this._index--;
+                }
+
+                this._videoStartTick = DateTime.Now.Ticks - ((long)this._subtitle.Paragraphs[this._index].StartTime.TotalMilliseconds * 10000); // 10,000 ticks = 1 millisecond
+                this.ShowCurrent();
                 if (timer1Enabled)
-                    timer1.Start();
+                {
+                    this.timer1.Start();
+                }
             }
             else if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageDown)
             {
-                if (_index < _subtitle.Paragraphs.Count - 21)
-                    _index += 20;
+                if (this._index < this._subtitle.Paragraphs.Count - 21)
+                {
+                    this._index += 20;
+                }
                 else
-                    _index = _subtitle.Paragraphs.Count - 1;
-                ShowCurrent();
+                {
+                    this._index = this._subtitle.Paragraphs.Count - 1;
+                }
+
+                this.ShowCurrent();
                 e.Handled = true;
             }
             else if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageUp)
             {
-                if (_index > 20)
-                    _index -= 20;
+                if (this._index > 20)
+                {
+                    this._index -= 20;
+                }
                 else
-                    _index = 0;
-                ShowCurrent();
+                {
+                    this._index = 0;
+                }
+
+                this.ShowCurrent();
                 e.Handled = true;
             }
             else if (e.Modifiers == Keys.None && e.KeyCode == Keys.Add)
             {
-                if (comboBoxSubtitleFontSize.SelectedIndex < comboBoxSubtitleFontSize.Items.Count - 1)
+                if (this.comboBoxSubtitleFontSize.SelectedIndex < this.comboBoxSubtitleFontSize.Items.Count - 1)
                 {
-                    comboBoxSubtitleFontSize.SelectedIndex = comboBoxSubtitleFontSize.SelectedIndex + 1;
-                    ShowCurrent();
+                    this.comboBoxSubtitleFontSize.SelectedIndex = this.comboBoxSubtitleFontSize.SelectedIndex + 1;
+                    this.ShowCurrent();
                 }
             }
             else if (e.Modifiers == Keys.None && e.KeyCode == Keys.Subtract)
             {
-                if (comboBoxSubtitleFontSize.SelectedIndex > 0)
+                if (this.comboBoxSubtitleFontSize.SelectedIndex > 0)
                 {
-                    comboBoxSubtitleFontSize.SelectedIndex = comboBoxSubtitleFontSize.SelectedIndex - 1;
-                    ShowCurrent();
+                    this.comboBoxSubtitleFontSize.SelectedIndex = this.comboBoxSubtitleFontSize.SelectedIndex - 1;
+                    this.ShowCurrent();
                 }
             }
             else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Add)
             {
-                _millisecondsFactor += 0.001;
+                this._millisecondsFactor += 0.001;
             }
             else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Subtract)
             {
-                _millisecondsFactor -= 0.001;
+                this._millisecondsFactor -= 0.001;
             }
             else if (e.KeyCode == Keys.Up)
             {
-                _marginBottom++;
-                ShowCurrent();
+                this._marginBottom++;
+                this.ShowCurrent();
             }
             else if (e.KeyCode == Keys.Down)
             {
-                _marginBottom--;
-                ShowCurrent();
+                this._marginBottom--;
+                this.ShowCurrent();
             }
             else if (e.KeyCode == Keys.Left)
             {
-                _marginLeft--;
-                ShowCurrent();
+                this._marginLeft--;
+                this.ShowCurrent();
             }
             else if (e.KeyCode == Keys.Right)
             {
-                _marginLeft++;
-                ShowCurrent();
+                this._marginLeft++;
+                this.ShowCurrent();
             }
             else if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)
             {
-                timer1.Stop();
-                int temp = _index;
-                _index = -1;
+                this.timer1.Stop();
+                int temp = this._index;
+                this._index = -1;
                 try
                 {
-                    ShowCurrent();
+                    this.ShowCurrent();
                 }
                 finally
                 {
-                    _index = temp;
+                    this._index = temp;
                 }
             }
         }
 
+        /// <summary>
+        /// The beamer form closing.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void BeamerFormClosing(object sender, FormClosingEventArgs e)
         {
             Cursor.Show();
         }
 
+        /// <summary>
+        /// The combo box h align selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ComboBoxHAlignSelectedIndexChanged(object sender, EventArgs e)
         {
-            ShowCurrent();
+            this.ShowCurrent();
         }
-
     }
 }

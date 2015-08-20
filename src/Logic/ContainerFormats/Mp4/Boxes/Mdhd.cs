@@ -1,22 +1,61 @@
-﻿namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Mdhd.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The mdhd.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
 {
     using System.Globalization;
     using System.IO;
 
+    /// <summary>
+    /// The mdhd.
+    /// </summary>
     public class Mdhd : Box
     {
+        /// <summary>
+        /// The creation time.
+        /// </summary>
         public readonly ulong CreationTime;
 
+        /// <summary>
+        /// The duration.
+        /// </summary>
         public readonly ulong Duration;
 
+        /// <summary>
+        /// The iso 639 three letter code.
+        /// </summary>
         public readonly string Iso639ThreeLetterCode;
 
+        /// <summary>
+        /// The modification time.
+        /// </summary>
         public readonly ulong ModificationTime;
 
+        /// <summary>
+        /// The quality.
+        /// </summary>
         public readonly int Quality;
 
+        /// <summary>
+        /// The time scale.
+        /// </summary>
         public readonly uint TimeScale;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Mdhd"/> class.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
+        /// <param name="size">
+        /// The size.
+        /// </param>
         public Mdhd(FileStream fs, ulong size)
         {
             this.Buffer = new byte[size - 4];
@@ -51,6 +90,9 @@
             this.Iso639ThreeLetterCode = x.ToString(CultureInfo.InvariantCulture) + x2.ToString(CultureInfo.InvariantCulture) + x3.ToString(CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        /// Gets the language string.
+        /// </summary>
         public string LanguageString
         {
             get

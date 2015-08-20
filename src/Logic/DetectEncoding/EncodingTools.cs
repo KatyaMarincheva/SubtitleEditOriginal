@@ -1,5 +1,12 @@
-﻿// Ripped from http://www.codeproject.com/KB/recipes/DetectEncoding.aspx
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright company="" file="EncodingTools.cs">
+//   
+// </copyright>
+// <summary>
+//   The encoding tools.
+// </summary>
+// 
+// --------------------------------------------------------------------------------------------------------------------
 namespace Nikse.SubtitleEdit.Logic.DetectEncoding
 {
     using System;
@@ -10,15 +17,25 @@ namespace Nikse.SubtitleEdit.Logic.DetectEncoding
 
     using MultiLanguage;
 
+    /// <summary>
+    /// The encoding tools.
+    /// </summary>
     public static class EncodingTools
     {
         // this only contains ascii, default windows code page and unicode
+        /// <summary>
+        /// The preferred encodings for stream.
+        /// </summary>
         private static readonly int[] PreferredEncodingsForStream;
 
         // this contains all codepages, sorted by preference and byte usage
+        /// <summary>
+        /// The preferred encodings.
+        /// </summary>
         private static readonly int[] PreferredEncodings;
 
         /// <summary>
+        /// Initializes static members of the <see cref="EncodingTools"/> class. 
         ///     Static constructor that fills the default preferred codepages
         /// </summary>
         static EncodingTools()
@@ -110,31 +127,45 @@ namespace Nikse.SubtitleEdit.Logic.DetectEncoding
         }
 
         /// <summary>
-        ///     Gets the best Encoding for usage in mime encodings
+        /// Gets the best Encoding for usage in mime encodings
         /// </summary>
-        /// <param name="input">text to detect</param>
-        /// <returns>the suggested encoding</returns>
+        /// <param name="input">
+        /// text to detect
+        /// </param>
+        /// <returns>
+        /// the suggested encoding
+        /// </returns>
         public static Encoding GetMostEfficientEncoding(string input)
         {
             return GetMostEfficientEncoding(input, PreferredEncodings);
         }
 
         /// <summary>
-        ///     Gets the best ISO Encoding for usage in a stream
+        /// Gets the best ISO Encoding for usage in a stream
         /// </summary>
-        /// <param name="input">text to detect</param>
-        /// <returns>the suggested encoding</returns>
+        /// <param name="input">
+        /// text to detect
+        /// </param>
+        /// <returns>
+        /// the suggested encoding
+        /// </returns>
         public static Encoding GetMostEfficientEncodingForStream(string input)
         {
             return GetMostEfficientEncoding(input, PreferredEncodingsForStream);
         }
 
         /// <summary>
-        ///     Gets the best fitting encoding from a list of possible encodings
+        /// Gets the best fitting encoding from a list of possible encodings
         /// </summary>
-        /// <param name="input">text to detect</param>
-        /// <param name="preferredEncodings">an array of codepages</param>
-        /// <returns>the suggested encoding</returns>
+        /// <param name="input">
+        /// text to detect
+        /// </param>
+        /// <param name="preferredEncodings">
+        /// an array of codepages
+        /// </param>
+        /// <returns>
+        /// the suggested encoding
+        /// </returns>
         public static Encoding GetMostEfficientEncoding(string input, int[] preferredEncodings)
         {
             Encoding enc = DetectOutgoingEncoding(input, preferredEncodings, true);
@@ -166,26 +197,81 @@ namespace Nikse.SubtitleEdit.Logic.DetectEncoding
             return enc;
         }
 
+        /// <summary>
+        /// The detect outgoing encoding.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Encoding"/>.
+        /// </returns>
         public static Encoding DetectOutgoingEncoding(string input)
         {
             return DetectOutgoingEncoding(input, PreferredEncodings, true);
         }
 
+        /// <summary>
+        /// The detect outgoing stream encoding.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Encoding"/>.
+        /// </returns>
         public static Encoding DetectOutgoingStreamEncoding(string input)
         {
             return DetectOutgoingEncoding(input, PreferredEncodingsForStream, true);
         }
 
+        /// <summary>
+        /// The detect outgoing encodings.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Encoding[]"/>.
+        /// </returns>
         public static Encoding[] DetectOutgoingEncodings(string input)
         {
             return DetectOutgoingEncodings(input, PreferredEncodings, true);
         }
 
+        /// <summary>
+        /// The detect outgoing stream encodings.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Encoding[]"/>.
+        /// </returns>
         public static Encoding[] DetectOutgoingStreamEncodings(string input)
         {
             return DetectOutgoingEncodings(input, PreferredEncodingsForStream, true);
         }
 
+        /// <summary>
+        /// The detect outgoing encodings.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <param name="preferredEncodings">
+        /// The preferred encodings.
+        /// </param>
+        /// <param name="preserveOrder">
+        /// The preserve order.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Encoding[]"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
+        /// <exception cref="COMException">
+        /// </exception>
         public static Encoding[] DetectOutgoingEncodings(string input, int[] preferredEncodings, bool preserveOrder)
         {
             if (input == null)
@@ -268,10 +354,14 @@ namespace Nikse.SubtitleEdit.Logic.DetectEncoding
         }
 
         /// <summary>
-        ///     Detect the most probable codepage from an byte array
+        /// Detect the most probable codepage from an byte array
         /// </summary>
-        /// <param name="input">array containing the raw data</param>
-        /// <returns>the detected encoding or the default encoding if the detection failed</returns>
+        /// <param name="input">
+        /// array containing the raw data
+        /// </param>
+        /// <returns>
+        /// the detected encoding or the default encoding if the detection failed
+        /// </returns>
         public static Encoding DetectInputCodepage(byte[] input)
         {
             try
@@ -293,11 +383,17 @@ namespace Nikse.SubtitleEdit.Logic.DetectEncoding
         }
 
         /// <summary>
-        ///     Rerurns up to maxEncodings codpages that are assumed to be apropriate
+        /// Rerurns up to maxEncodings codpages that are assumed to be apropriate
         /// </summary>
-        /// <param name="input">array containing the raw data</param>
-        /// <param name="maxEncodings">maxiumum number of encodings to detect</param>
-        /// <returns>an array of Encoding with assumed encodings</returns>
+        /// <param name="input">
+        /// array containing the raw data
+        /// </param>
+        /// <param name="maxEncodings">
+        /// maxiumum number of encodings to detect
+        /// </param>
+        /// <returns>
+        /// an array of Encoding with assumed encodings
+        /// </returns>
         public static Encoding[] DetectInputCodepages(byte[] input, int maxEncodings)
         {
             if (maxEncodings < 1)
@@ -377,11 +473,15 @@ namespace Nikse.SubtitleEdit.Logic.DetectEncoding
         }
 
         /// <summary>
-        ///     Opens a text file and returns the content
+        /// Opens a text file and returns the content
         ///     encoded in the most probable encoding
         /// </summary>
-        /// <param name="path">path to the souce file</param>
-        /// <returns>the text content of the file</returns>
+        /// <param name="path">
+        /// path to the souce file
+        /// </param>
+        /// <returns>
+        /// the text content of the file
+        /// </returns>
         public static string ReadTextFile(string path)
         {
             if (path == null)
@@ -398,11 +498,15 @@ namespace Nikse.SubtitleEdit.Logic.DetectEncoding
         }
 
         /// <summary>
-        ///     Returns a stream reader for the given
+        /// Returns a stream reader for the given
         ///     text file with the best encoding applied
         /// </summary>
-        /// <param name="path">path to the file</param>
-        /// <returns>a StreamReader for the file</returns>
+        /// <param name="path">
+        /// path to the file
+        /// </param>
+        /// <returns>
+        /// a StreamReader for the file
+        /// </returns>
         public static StreamReader OpenTextFile(string path)
         {
             if (path == null)
@@ -414,11 +518,15 @@ namespace Nikse.SubtitleEdit.Logic.DetectEncoding
         }
 
         /// <summary>
-        ///     Creates a stream reader from a stream and detects
+        /// Creates a stream reader from a stream and detects
         ///     the encoding form the first bytes in the stream
         /// </summary>
-        /// <param name="stream">a stream to wrap</param>
-        /// <returns>the newly created StreamReader</returns>
+        /// <param name="stream">
+        /// a stream to wrap
+        /// </param>
+        /// <returns>
+        /// the newly created StreamReader
+        /// </returns>
         public static StreamReader OpenTextStream(Stream stream)
         {
             // check stream parameter
@@ -450,6 +558,25 @@ namespace Nikse.SubtitleEdit.Logic.DetectEncoding
             return new StreamReader(stream, detectedEncoding);
         }
 
+        /// <summary>
+        /// The detect outgoing encoding.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <param name="preferredEncodings">
+        /// The preferred encodings.
+        /// </param>
+        /// <param name="preserveOrder">
+        /// The preserve order.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Encoding"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
+        /// <exception cref="COMException">
+        /// </exception>
         private static Encoding DetectOutgoingEncoding(string input, int[] preferredEncodings, bool preserveOrder)
         {
             if (input == null)

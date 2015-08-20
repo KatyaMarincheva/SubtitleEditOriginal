@@ -1,12 +1,27 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="StripableTextTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The stripable text test.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The stripable text test.
+    /// </summary>
     [TestClass]
     public class StripableTextTest
     {
-
+        /// <summary>
+        /// The stripable text italic.
+        /// </summary>
         [TestMethod]
         public void StripableTextItalic()
         {
@@ -16,6 +31,9 @@ namespace Test.Logic
             Assert.AreEqual(st.StrippedText, "Hi");
         }
 
+        /// <summary>
+        /// The stripable text ass.
+        /// </summary>
         [TestMethod]
         public void StripableTextAss()
         {
@@ -25,6 +43,9 @@ namespace Test.Logic
             Assert.AreEqual(st.StrippedText, "Hi");
         }
 
+        /// <summary>
+        /// The stripable text font.
+        /// </summary>
         [TestMethod]
         public void StripableTextFont()
         {
@@ -34,6 +55,9 @@ namespace Test.Logic
             Assert.AreEqual(st.StrippedText, "Hi");
         }
 
+        /// <summary>
+        /// The stripable text italic 2.
+        /// </summary>
         [TestMethod]
         public void StripableTextItalic2()
         {
@@ -43,6 +67,9 @@ namespace Test.Logic
             Assert.AreEqual(st.StrippedText, "O");
         }
 
+        /// <summary>
+        /// The stripable text italic 3.
+        /// </summary>
         [TestMethod]
         public void StripableTextItalic3()
         {
@@ -52,51 +79,69 @@ namespace Test.Logic
             Assert.AreEqual(st.StrippedText, "Hi");
         }
 
+        /// <summary>
+        /// The stripable text font dont touch.
+        /// </summary>
         [TestMethod]
         public void StripableTextFontDontTouch()
         {
             var st = new StripableText("{MAN} Hi, how are you today!");
-            Assert.AreEqual(st.Pre, "");
+            Assert.AreEqual(st.Pre, string.Empty);
             Assert.AreEqual(st.Post, "!");
             Assert.AreEqual(st.StrippedText, "{MAN} Hi, how are you today");
         }
 
+        /// <summary>
+        /// The stripable only pre.
+        /// </summary>
         [TestMethod]
         public void StripableOnlyPre()
         {
             var st = new StripableText("(");
             Assert.AreEqual(st.Pre, "(");
-            Assert.AreEqual(st.Post, "");
-            Assert.AreEqual(st.StrippedText, "");
+            Assert.AreEqual(st.Post, string.Empty);
+            Assert.AreEqual(st.StrippedText, string.Empty);
         }
 
+        /// <summary>
+        /// The stripable only pre 2.
+        /// </summary>
         [TestMethod]
         public void StripableOnlyPre2()
         {
             var st = new StripableText("<");
-            Assert.AreEqual(st.Pre, "");
-            Assert.AreEqual(st.Post, "");
+            Assert.AreEqual(st.Pre, string.Empty);
+            Assert.AreEqual(st.Post, string.Empty);
             Assert.AreEqual(st.StrippedText, "<");
         }
 
+        /// <summary>
+        /// The stripable only pre 3.
+        /// </summary>
         [TestMethod]
         public void StripableOnlyPre3()
         {
             var st = new StripableText("<i>");
             Assert.AreEqual(st.Pre, "<i>");
-            Assert.AreEqual(st.Post, "");
-            Assert.AreEqual(st.StrippedText, "");
+            Assert.AreEqual(st.Post, string.Empty);
+            Assert.AreEqual(st.StrippedText, string.Empty);
         }
 
+        /// <summary>
+        /// The stripable only text.
+        /// </summary>
         [TestMethod]
         public void StripableOnlyText()
         {
             var st = new StripableText("H");
-            Assert.AreEqual(st.Pre, "");
-            Assert.AreEqual(st.Post, "");
+            Assert.AreEqual(st.Pre, string.Empty);
+            Assert.AreEqual(st.Post, string.Empty);
             Assert.AreEqual(st.StrippedText, "H");
         }
 
+        /// <summary>
+        /// The stripable text italic and font.
+        /// </summary>
         [TestMethod]
         public void StripableTextItalicAndFont()
         {
@@ -106,6 +151,9 @@ namespace Test.Logic
             Assert.AreEqual(st.StrippedText, "Hi");
         }
 
+        /// <summary>
+        /// The stripable text italic and more.
+        /// </summary>
         [TestMethod]
         public void StripableTextItalicAndMore()
         {
@@ -114,6 +162,5 @@ namespace Test.Logic
             Assert.AreEqual(st.Post, "!</b></i>");
             Assert.AreEqual(st.StrippedText, "Hi");
         }
-
     }
 }

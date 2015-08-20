@@ -1,13 +1,30 @@
-﻿using System;
-using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nikse.SubtitleEdit.Logic.Dictionaries;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="OcrFixReplaceListTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The ocr fix replace list test.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic.Dictionaries
 {
+    using System;
+    using System.IO;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Nikse.SubtitleEdit.Logic.Dictionaries;
+
+    /// <summary>
+    /// The ocr fix replace list test.
+    /// </summary>
     [TestClass]
     public class OcrFixReplaceListTest
     {
+        /// <summary>
+        /// The ocr fix replace list add word.
+        /// </summary>
         [TestMethod]
         public void OcrFixReplaceListAddWord()
         {
@@ -32,6 +49,9 @@ namespace Test.Logic.Dictionaries
             }
         }
 
+        /// <summary>
+        /// The ocr fix replace list add word reload.
+        /// </summary>
         [TestMethod]
         public void OcrFixReplaceListAddWordReload()
         {
@@ -57,6 +77,9 @@ namespace Test.Logic.Dictionaries
             }
         }
 
+        /// <summary>
+        /// The ocr fix replace list add partial line.
+        /// </summary>
         [TestMethod]
         public void OcrFixReplaceListAddPartialLine()
         {
@@ -81,6 +104,9 @@ namespace Test.Logic.Dictionaries
             }
         }
 
+        /// <summary>
+        /// The ocr fix replace list add partial line reload.
+        /// </summary>
         [TestMethod]
         public void OcrFixReplaceListAddPartialLineReload()
         {
@@ -106,6 +132,9 @@ namespace Test.Logic.Dictionaries
             }
         }
 
+        /// <summary>
+        /// The ocr fix replace list remove word.
+        /// </summary>
         [TestMethod]
         public void OcrFixReplaceListRemoveWord()
         {
@@ -131,6 +160,9 @@ namespace Test.Logic.Dictionaries
             }
         }
 
+        /// <summary>
+        /// The ocr fix replace list remove word reload.
+        /// </summary>
         [TestMethod]
         public void OcrFixReplaceListRemoveWordReload()
         {
@@ -157,6 +189,9 @@ namespace Test.Logic.Dictionaries
             }
         }
 
+        /// <summary>
+        /// The ocr fix replace list remove partial line.
+        /// </summary>
         [TestMethod]
         public void OcrFixReplaceListRemovePartialLine()
         {
@@ -182,6 +217,9 @@ namespace Test.Logic.Dictionaries
             }
         }
 
+        /// <summary>
+        /// The ocr fix replace list remove partial line reload.
+        /// </summary>
         [TestMethod]
         public void OcrFixReplaceListRemovePartialLineReload()
         {
@@ -208,6 +246,5 @@ namespace Test.Logic.Dictionaries
             {
             }
         }
-
     }
 }

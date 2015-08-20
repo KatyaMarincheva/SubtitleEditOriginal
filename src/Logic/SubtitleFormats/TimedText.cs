@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TimedText.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The timed text.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -8,8 +17,14 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The timed text.
+    /// </summary>
     public class TimedText : SubtitleFormat
     {
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -18,6 +33,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -26,6 +44,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -34,6 +55,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the alternate extensions.
+        /// </summary>
         public override List<string> AlternateExtensions
         {
             get
@@ -42,6 +66,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             StringBuilder sb = new StringBuilder();
@@ -81,6 +117,18 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<tt xmlns=\"http://www.w3.org/2006/10/ttaf1\" xmlns:ttp=\"http://www.w3.org/2006/10/ttaf1#parameter\" ttp:timeBase=\"media\" xmlns:tts=\"http://www.w3.org/2006/10/ttaf1#style\" xml:lang=\"en\" xmlns:ttm=\"http://www.w3.org/2006/10/ttaf1#metadata\">" + Environment.NewLine + "   <head>" + Environment.NewLine + "       <metadata>" + Environment.NewLine + "           <ttm:title></ttm:title>" + Environment.NewLine + "      </metadata>" + Environment.NewLine + "       <styling>" + Environment.NewLine + "         <style id=\"s0\" tts:backgroundColor=\"black\" tts:fontStyle=\"normal\" tts:fontSize=\"16\" tts:fontFamily=\"sansSerif\" tts:color=\"white\" />" + Environment.NewLine + "      </styling>" + Environment.NewLine + "   </head>" + Environment.NewLine + "   <body tts:textAlign=\"center\" style=\"s0\">" + Environment.NewLine + "       <div />" + Environment.NewLine + "   </body>" + Environment.NewLine + "</tt>";
@@ -135,6 +183,18 @@
             return s;
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -300,6 +360,15 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The convert to time string.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string ConvertToTimeString(TimeCode time)
         {
             return string.Format("{0:00}:{1:00}:{2:00}.{3:000}", time.Hours, time.Minutes, time.Seconds, time.Milliseconds);

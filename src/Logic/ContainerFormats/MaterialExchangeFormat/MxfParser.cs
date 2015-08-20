@@ -1,16 +1,40 @@
-﻿namespace Nikse.SubtitleEdit.Logic.ContainerFormats.MaterialExchangeFormat
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MxfParser.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The mxf parser.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.ContainerFormats.MaterialExchangeFormat
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
 
+    /// <summary>
+    /// The mxf parser.
+    /// </summary>
     public class MxfParser
     {
+        /// <summary>
+        /// The _subtitle list.
+        /// </summary>
         private readonly List<string> _subtitleList = new List<string>();
 
+        /// <summary>
+        /// The _start position.
+        /// </summary>
         private long _startPosition;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MxfParser"/> class.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public MxfParser(string fileName)
         {
             this.FileName = fileName;
@@ -20,21 +44,45 @@
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MxfParser"/> class.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
         public MxfParser(Stream stream)
         {
             this.FileName = null;
             this.ParseMxf(stream);
         }
 
+        /// <summary>
+        /// Gets the file name.
+        /// </summary>
         public string FileName { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether is valid.
+        /// </summary>
         public bool IsValid { get; private set; }
 
+        /// <summary>
+        /// The get subtitles.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public List<string> GetSubtitles()
         {
             return this._subtitleList;
         }
 
+        /// <summary>
+        /// The parse mxf.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
         private void ParseMxf(Stream stream)
         {
             stream.Seek(0, SeekOrigin.Begin);
@@ -72,6 +120,15 @@
             }
         }
 
+        /// <summary>
+        /// The is subtitle.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool IsSubtitle(string s)
         {
             if (s.Contains("\0"))
@@ -94,6 +151,12 @@
             return subtitle.ReloadLoadSubtitle(list, null) != null;
         }
 
+        /// <summary>
+        /// The read header partition pack.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
         private void ReadHeaderPartitionPack(Stream stream)
         {
             this.IsValid = false;

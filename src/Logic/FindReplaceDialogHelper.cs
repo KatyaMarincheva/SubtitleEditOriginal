@@ -1,150 +1,323 @@
-﻿using Nikse.SubtitleEdit.Logic.Enums;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="FindReplaceDialogHelper.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The find replace dialog helper.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic
 {
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic.Enums;
+
+    /// <summary>
+    /// The find replace dialog helper.
+    /// </summary>
     public class FindReplaceDialogHelper
     {
+        /// <summary>
+        /// The _find text.
+        /// </summary>
         private readonly string _findText = string.Empty;
-        private readonly string _replaceText = string.Empty;
+
+        /// <summary>
+        /// The _reg ex.
+        /// </summary>
         private readonly Regex _regEx;
+
+        /// <summary>
+        /// The _replace text.
+        /// </summary>
+        private readonly string _replaceText = string.Empty;
+
+        /// <summary>
+        /// The _find text lenght.
+        /// </summary>
         private int _findTextLenght;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FindReplaceDialogHelper"/> class.
+        /// </summary>
+        /// <param name="findType">
+        /// The find type.
+        /// </param>
+        /// <param name="findText">
+        /// The find text.
+        /// </param>
+        /// <param name="regEx">
+        /// The reg ex.
+        /// </param>
+        /// <param name="replaceText">
+        /// The replace text.
+        /// </param>
+        /// <param name="left">
+        /// The left.
+        /// </param>
+        /// <param name="top">
+        /// The top.
+        /// </param>
+        /// <param name="startLineIndex">
+        /// The start line index.
+        /// </param>
+        public FindReplaceDialogHelper(FindType findType, string findText, Regex regEx, string replaceText, int left, int top, int startLineIndex)
+        {
+            this.FindType = findType;
+            this._findText = findText;
+            this._replaceText = replaceText;
+            this._regEx = regEx;
+            this._findTextLenght = findText.Length;
+            this.WindowPositionLeft = left;
+            this.WindowPositionTop = top;
+            this.StartLineIndex = startLineIndex;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether success.
+        /// </summary>
         public bool Success { get; set; }
+
+        /// <summary>
+        /// Gets or sets the find type.
+        /// </summary>
         public FindType FindType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the selected index.
+        /// </summary>
         public int SelectedIndex { get; set; }
+
+        /// <summary>
+        /// Gets or sets the selected position.
+        /// </summary>
         public int SelectedPosition { get; set; }
+
+        /// <summary>
+        /// Gets or sets the window position left.
+        /// </summary>
         public int WindowPositionLeft { get; set; }
+
+        /// <summary>
+        /// Gets or sets the window position top.
+        /// </summary>
         public int WindowPositionTop { get; set; }
+
+        /// <summary>
+        /// Gets or sets the start line index.
+        /// </summary>
         public int StartLineIndex { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether match in original.
+        /// </summary>
         public bool MatchInOriginal { get; set; }
 
+        /// <summary>
+        /// Gets the find text length.
+        /// </summary>
         public int FindTextLength
         {
             get
             {
-                return _findTextLenght;
+                return this._findTextLenght;
             }
         }
 
+        /// <summary>
+        /// Gets the find text.
+        /// </summary>
         public string FindText
         {
             get
             {
-                return _findText;
+                return this._findText;
             }
         }
 
+        /// <summary>
+        /// Gets the replace text.
+        /// </summary>
         public string ReplaceText
         {
             get
             {
-                return _replaceText;
+                return this._replaceText;
             }
         }
 
-        public FindReplaceDialogHelper(FindType findType, string findText, Regex regEx, string replaceText, int left, int top, int startLineIndex)
-        {
-            FindType = findType;
-            _findText = findText;
-            _replaceText = replaceText;
-            _regEx = regEx;
-            _findTextLenght = findText.Length;
-            WindowPositionLeft = left;
-            WindowPositionTop = top;
-            StartLineIndex = startLineIndex;
-        }
-
+        /// <summary>
+        /// The find.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="originalSubtitle">
+        /// The original subtitle.
+        /// </param>
+        /// <param name="startIndex">
+        /// The start index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool Find(Subtitle subtitle, Subtitle originalSubtitle, int startIndex)
         {
-            return FindNext(subtitle, originalSubtitle, startIndex, 0, Configuration.Settings.General.AllowEditOfOriginalSubtitle);
+            return this.FindNext(subtitle, originalSubtitle, startIndex, 0, Configuration.Settings.General.AllowEditOfOriginalSubtitle);
         }
 
+        /// <summary>
+        /// The find.
+        /// </summary>
+        /// <param name="textBox">
+        /// The text box.
+        /// </param>
+        /// <param name="startIndex">
+        /// The start index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool Find(TextBox textBox, int startIndex)
         {
-            return FindNext(textBox, startIndex);
+            return this.FindNext(textBox, startIndex);
         }
 
+        /// <summary>
+        /// The find position in text.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="startIndex">
+        /// The start index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private int FindPositionInText(string text, int startIndex)
         {
-            if (startIndex >= text.Length && !(FindType == FindType.RegEx && startIndex == 0))
+            if (startIndex >= text.Length && !(this.FindType == FindType.RegEx && startIndex == 0))
+            {
                 return -1;
+            }
 
-            switch (FindType)
+            switch (this.FindType)
             {
                 case FindType.Normal:
-                    return (text.IndexOf(_findText, startIndex, System.StringComparison.OrdinalIgnoreCase));
+                    return text.IndexOf(this._findText, startIndex, System.StringComparison.OrdinalIgnoreCase);
                 case FindType.CaseSensitive:
-                    return (text.IndexOf(_findText, startIndex, System.StringComparison.Ordinal));
+                    return text.IndexOf(this._findText, startIndex, System.StringComparison.Ordinal);
                 case FindType.RegEx:
                     {
-                        Match match = _regEx.Match(text, startIndex);
+                        Match match = this._regEx.Match(text, startIndex);
                         if (match.Success)
                         {
-                            string groupName = Utilities.GetRegExGroup(_findText);
+                            string groupName = Utilities.GetRegExGroup(this._findText);
                             if (groupName != null && match.Groups[groupName] != null && match.Groups[groupName].Success)
                             {
-                                _findTextLenght = match.Groups[groupName].Length;
+                                this._findTextLenght = match.Groups[groupName].Length;
                                 return match.Groups[groupName].Index;
                             }
-                            _findTextLenght = match.Length;
+
+                            this._findTextLenght = match.Length;
                             return match.Index;
                         }
+
                         return -1;
                     }
             }
+
             return -1;
         }
 
+        /// <summary>
+        /// The find next.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="originalSubtitle">
+        /// The original subtitle.
+        /// </param>
+        /// <param name="startIndex">
+        /// The start index.
+        /// </param>
+        /// <param name="position">
+        /// The position.
+        /// </param>
+        /// <param name="allowEditOfOriginalSubtitle">
+        /// The allow edit of original subtitle.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool FindNext(Subtitle subtitle, Subtitle originalSubtitle, int startIndex, int position, bool allowEditOfOriginalSubtitle)
         {
-            Success = false;
+            this.Success = false;
             int index = 0;
             if (position < 0)
+            {
                 position = 0;
+            }
+
             foreach (Paragraph p in subtitle.Paragraphs)
             {
                 if (index >= startIndex)
                 {
                     int pos = 0;
-                    if (!MatchInOriginal)
+                    if (!this.MatchInOriginal)
                     {
-                        pos = FindPositionInText(p.Text, position);
+                        pos = this.FindPositionInText(p.Text, position);
                         if (pos >= 0)
                         {
-                            MatchInOriginal = false;
-                            SelectedIndex = index;
-                            SelectedPosition = pos;
-                            Success = true;
+                            this.MatchInOriginal = false;
+                            this.SelectedIndex = index;
+                            this.SelectedPosition = pos;
+                            this.Success = true;
                             return true;
                         }
+
                         position = 0;
                     }
-                    MatchInOriginal = false;
+
+                    this.MatchInOriginal = false;
 
                     if (originalSubtitle != null && allowEditOfOriginalSubtitle)
                     {
                         Paragraph o = Utilities.GetOriginalParagraph(index, p, originalSubtitle.Paragraphs);
                         if (o != null)
                         {
-                            pos = FindPositionInText(o.Text, position);
+                            pos = this.FindPositionInText(o.Text, position);
                             if (pos >= 0)
                             {
-                                MatchInOriginal = true;
-                                SelectedIndex = index;
-                                SelectedPosition = pos;
-                                Success = true;
+                                this.MatchInOriginal = true;
+                                this.SelectedIndex = index;
+                                this.SelectedPosition = pos;
+                                this.Success = true;
                                 return true;
                             }
                         }
                     }
                 }
+
                 index++;
             }
+
             return false;
         }
 
+        /// <summary>
+        /// The get reg ex context menu.
+        /// </summary>
+        /// <param name="textBox">
+        /// The text box.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ContextMenu"/>.
+        /// </returns>
         public static ContextMenu GetRegExContextMenu(TextBox textBox)
         {
             var cm = new ContextMenu();
@@ -164,6 +337,15 @@ namespace Nikse.SubtitleEdit.Logic
             return cm;
         }
 
+        /// <summary>
+        /// The get reg ex context menu.
+        /// </summary>
+        /// <param name="comboBox">
+        /// The combo box.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ContextMenu"/>.
+        /// </returns>
         public static ContextMenu GetRegExContextMenu(ComboBox comboBox)
         {
             var cm = new ContextMenu();
@@ -183,6 +365,15 @@ namespace Nikse.SubtitleEdit.Logic
             return cm;
         }
 
+        /// <summary>
+        /// The get replace text context menu.
+        /// </summary>
+        /// <param name="textBox">
+        /// The text box.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ContextMenu"/>.
+        /// </returns>
         public static ContextMenu GetReplaceTextContextMenu(TextBox textBox)
         {
             var cm = new ContextMenu();
@@ -190,42 +381,57 @@ namespace Nikse.SubtitleEdit.Logic
             return cm;
         }
 
+        /// <summary>
+        /// The find next.
+        /// </summary>
+        /// <param name="textBox">
+        /// The text box.
+        /// </param>
+        /// <param name="startIndex">
+        /// The start index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool FindNext(TextBox textBox, int startIndex)
         {
-            Success = false;
+            this.Success = false;
             startIndex++;
             if (startIndex < textBox.Text.Length)
             {
-                if (FindType == FindType.RegEx)
+                if (this.FindType == FindType.RegEx)
                 {
-                    Match match = _regEx.Match(textBox.Text, startIndex);
+                    Match match = this._regEx.Match(textBox.Text, startIndex);
                     if (match.Success)
                     {
-                        string groupName = Utilities.GetRegExGroup(_findText);
+                        string groupName = Utilities.GetRegExGroup(this._findText);
                         if (groupName != null && match.Groups[groupName] != null && match.Groups[groupName].Success)
                         {
-                            _findTextLenght = match.Groups[groupName].Length;
-                            SelectedIndex = match.Groups[groupName].Index;
+                            this._findTextLenght = match.Groups[groupName].Length;
+                            this.SelectedIndex = match.Groups[groupName].Index;
                         }
                         else
                         {
-                            _findTextLenght = match.Length;
-                            SelectedIndex = match.Index;
+                            this._findTextLenght = match.Length;
+                            this.SelectedIndex = match.Index;
                         }
-                        Success = true;
+
+                        this.Success = true;
                     }
+
                     return match.Success;
                 }
+
                 string searchText = textBox.Text.Substring(startIndex);
-                int pos = FindPositionInText(searchText, 0);
+                int pos = this.FindPositionInText(searchText, 0);
                 if (pos >= 0)
                 {
-                    SelectedIndex = pos + startIndex;
+                    this.SelectedIndex = pos + startIndex;
                     return true;
                 }
             }
+
             return false;
         }
-
     }
 }

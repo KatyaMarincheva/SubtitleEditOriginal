@@ -1,101 +1,173 @@
-﻿using System;
-using System.Drawing;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.Enums;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="FindDialog.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The find dialog.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Drawing;
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.Enums;
+
+    /// <summary>
+    /// The find dialog.
+    /// </summary>
     public sealed partial class FindDialog : Form
     {
+        /// <summary>
+        /// The _reg ex.
+        /// </summary>
         private Regex _regEx;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FindDialog"/> class.
+        /// </summary>
         public FindDialog()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            Text = Configuration.Settings.Language.FindDialog.Title;
-            buttonFind.Text = Configuration.Settings.Language.FindDialog.Find;
-            radioButtonNormal.Text = Configuration.Settings.Language.FindDialog.Normal;
-            radioButtonCaseSensitive.Text = Configuration.Settings.Language.FindDialog.CaseSensitive;
-            radioButtonRegEx.Text = Configuration.Settings.Language.FindDialog.RegularExpression;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            this.Text = Configuration.Settings.Language.FindDialog.Title;
+            this.buttonFind.Text = Configuration.Settings.Language.FindDialog.Find;
+            this.radioButtonNormal.Text = Configuration.Settings.Language.FindDialog.Normal;
+            this.radioButtonCaseSensitive.Text = Configuration.Settings.Language.FindDialog.CaseSensitive;
+            this.radioButtonRegEx.Text = Configuration.Settings.Language.FindDialog.RegularExpression;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
 
-            if (Width < radioButtonRegEx.Right + 5)
-                Width = radioButtonRegEx.Right + 5;
+            if (this.Width < this.radioButtonRegEx.Right + 5)
+            {
+                this.Width = this.radioButtonRegEx.Right + 5;
+            }
 
-            Utilities.FixLargeFonts(this, buttonCancel);
+            Utilities.FixLargeFonts(this, this.buttonCancel);
         }
 
+        /// <summary>
+        /// Gets or sets the find type.
+        /// </summary>
         private FindType FindType
         {
             get
             {
-                if (radioButtonNormal.Checked)
+                if (this.radioButtonNormal.Checked)
+                {
                     return FindType.Normal;
-                if (radioButtonCaseSensitive.Checked)
+                }
+
+                if (this.radioButtonCaseSensitive.Checked)
+                {
                     return FindType.CaseSensitive;
+                }
+
                 return FindType.RegEx;
             }
+
             set
             {
                 if (value == FindType.CaseSensitive)
-                    radioButtonCaseSensitive.Checked = true;
+                {
+                    this.radioButtonCaseSensitive.Checked = true;
+                }
+
                 if (value == FindType.Normal)
-                    radioButtonNormal.Checked = true;
+                {
+                    this.radioButtonNormal.Checked = true;
+                }
+
                 if (value == FindType.RegEx)
-                    radioButtonRegEx.Checked = true;
+                {
+                    this.radioButtonRegEx.Checked = true;
+                }
             }
         }
 
+        /// <summary>
+        /// Gets the find text.
+        /// </summary>
         private string FindText
         {
             get
             {
-                if (textBoxFind.Visible)
-                    return textBoxFind.Text;
-                return comboBoxFind.Text;
+                if (this.textBoxFind.Visible)
+                {
+                    return this.textBoxFind.Text;
+                }
+
+                return this.comboBoxFind.Text;
             }
         }
 
+        /// <summary>
+        /// The get find dialog helper.
+        /// </summary>
+        /// <param name="startLineIndex">
+        /// The start line index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="FindReplaceDialogHelper"/>.
+        /// </returns>
         public FindReplaceDialogHelper GetFindDialogHelper(int startLineIndex)
         {
-            return new FindReplaceDialogHelper(FindType, FindText, _regEx, string.Empty, 200, 300, startLineIndex);
+            return new FindReplaceDialogHelper(this.FindType, this.FindText, this._regEx, string.Empty, 200, 300, startLineIndex);
         }
 
+        /// <summary>
+        /// The form find dialog_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void FormFindDialog_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                DialogResult = DialogResult.Cancel;
+                this.DialogResult = DialogResult.Cancel;
             }
         }
 
+        /// <summary>
+        /// The button find_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonFind_Click(object sender, EventArgs e)
         {
-            string searchText = FindText;
-            textBoxFind.Text = searchText;
-            comboBoxFind.Text = searchText;
+            string searchText = this.FindText;
+            this.textBoxFind.Text = searchText;
+            this.comboBoxFind.Text = searchText;
 
             if (searchText.Length == 0)
             {
-                DialogResult = DialogResult.Cancel;
+                this.DialogResult = DialogResult.Cancel;
             }
-            else if (radioButtonNormal.Checked)
+            else if (this.radioButtonNormal.Checked)
             {
-                DialogResult = DialogResult.OK;
+                this.DialogResult = DialogResult.OK;
             }
-            else if (radioButtonCaseSensitive.Checked)
+            else if (this.radioButtonCaseSensitive.Checked)
             {
-                DialogResult = DialogResult.OK;
+                this.DialogResult = DialogResult.OK;
             }
-            else if (radioButtonRegEx.Checked)
+            else if (this.radioButtonRegEx.Checked)
             {
                 try
                 {
-                    _regEx = new Regex(FindText, RegexOptions.Compiled);
-                    DialogResult = DialogResult.OK;
+                    this._regEx = new Regex(this.FindText, RegexOptions.Compiled);
+                    this.DialogResult = DialogResult.OK;
                 }
                 catch (Exception exception)
                 {
@@ -104,69 +176,115 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The text box find_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void TextBoxFind_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                ButtonFind_Click(null, null);
+            {
+                this.ButtonFind_Click(null, null);
+            }
         }
 
+        /// <summary>
+        /// The combo box find_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ComboBoxFind_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                ButtonFind_Click(null, null);
+            {
+                this.ButtonFind_Click(null, null);
+            }
         }
 
+        /// <summary>
+        /// The radio button_ checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void RadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (sender == radioButtonRegEx)
+            if (sender == this.radioButtonRegEx)
             {
-                if (textBoxFind.Visible)
+                if (this.textBoxFind.Visible)
                 {
-                    comboBoxFind.ContextMenu = null;
-                    textBoxFind.ContextMenu = FindReplaceDialogHelper.GetRegExContextMenu(textBoxFind);
+                    this.comboBoxFind.ContextMenu = null;
+                    this.textBoxFind.ContextMenu = FindReplaceDialogHelper.GetRegExContextMenu(this.textBoxFind);
                 }
                 else
                 {
-                    textBoxFind.ContextMenu = null;
-                    comboBoxFind.ContextMenu = FindReplaceDialogHelper.GetRegExContextMenu(comboBoxFind);
+                    this.textBoxFind.ContextMenu = null;
+                    this.comboBoxFind.ContextMenu = FindReplaceDialogHelper.GetRegExContextMenu(this.comboBoxFind);
                 }
             }
             else
             {
-                textBoxFind.ContextMenu = null;
-                comboBoxFind.ContextMenu = null;
+                this.textBoxFind.ContextMenu = null;
+                this.comboBoxFind.ContextMenu = null;
             }
         }
 
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="selectedText">
+        /// The selected text.
+        /// </param>
+        /// <param name="findHelper">
+        /// The find helper.
+        /// </param>
         internal void Initialize(string selectedText, FindReplaceDialogHelper findHelper)
         {
             if (Configuration.Settings.Tools.FindHistory.Count > 0)
             {
-                textBoxFind.Visible = false;
-                comboBoxFind.Visible = true;
-                comboBoxFind.Text = selectedText;
-                comboBoxFind.SelectAll();
-                comboBoxFind.Items.Clear();
+                this.textBoxFind.Visible = false;
+                this.comboBoxFind.Visible = true;
+                this.comboBoxFind.Text = selectedText;
+                this.comboBoxFind.SelectAll();
+                this.comboBoxFind.Items.Clear();
                 for (int index = 0; index < Configuration.Settings.Tools.FindHistory.Count; index++)
                 {
                     string s = Configuration.Settings.Tools.FindHistory[index];
-                    comboBoxFind.Items.Add(s);
+                    this.comboBoxFind.Items.Add(s);
                 }
             }
             else
             {
-                comboBoxFind.Visible = false;
-                textBoxFind.Visible = true;
-                textBoxFind.Text = selectedText;
-                textBoxFind.SelectAll();
+                this.comboBoxFind.Visible = false;
+                this.textBoxFind.Visible = true;
+                this.textBoxFind.Text = selectedText;
+                this.textBoxFind.SelectAll();
             }
 
             if (findHelper != null)
             {
-                FindType = findHelper.FindType;
+                this.FindType = findHelper.FindType;
             }
         }
 
+        /// <summary>
+        /// The set icon.
+        /// </summary>
+        /// <param name="bitmap">
+        /// The bitmap.
+        /// </param>
         internal void SetIcon(Bitmap bitmap)
         {
             if (bitmap != null)
@@ -175,6 +293,5 @@ namespace Nikse.SubtitleEdit.Forms
                 this.Icon = Icon.FromHandle(Hicon);
             }
         }
-
     }
 }

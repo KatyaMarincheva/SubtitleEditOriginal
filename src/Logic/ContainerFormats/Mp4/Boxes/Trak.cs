@@ -1,13 +1,40 @@
-﻿namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Trak.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The trak.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
 {
     using System.IO;
 
+    /// <summary>
+    /// The trak.
+    /// </summary>
     public class Trak : Box
     {
+        /// <summary>
+        /// The mdia.
+        /// </summary>
         public Mdia Mdia;
 
+        /// <summary>
+        /// The tkhd.
+        /// </summary>
         public Tkhd Tkhd;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Trak"/> class.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
+        /// <param name="maximumLength">
+        /// The maximum length.
+        /// </param>
         public Trak(FileStream fs, ulong maximumLength)
         {
             this.Position = (ulong)fs.Position;

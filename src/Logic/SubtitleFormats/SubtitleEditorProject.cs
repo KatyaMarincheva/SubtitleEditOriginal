@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SubtitleEditorProject.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The subtitle editor project.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -9,8 +18,14 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The subtitle editor project.
+    /// </summary>
     public class SubtitleEditorProject : SubtitleFormat
     {
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -19,6 +34,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -27,6 +45,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -35,6 +56,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             StringBuilder sb = new StringBuilder();
@@ -61,6 +94,18 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             string xmlStructure = "<?xml version=\"1.0\"?>" + Environment.NewLine + "<SubtitleEditorProject version=\"1.0\">" + Environment.NewLine + "  <player />" + Environment.NewLine + "  <waveform />" + Environment.NewLine + "  <styles />" + Environment.NewLine + "  <subtitles timing_mode=\"TIME\" edit_timing_mode=\"TIME\" framerate=\"25\">" + Environment.NewLine + "  </subtitles>" + Environment.NewLine + "  <subtitles-selection />" + Environment.NewLine + "</SubtitleEditorProject>";
@@ -137,6 +182,18 @@
             return ToUtf8XmlString(xml);
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;

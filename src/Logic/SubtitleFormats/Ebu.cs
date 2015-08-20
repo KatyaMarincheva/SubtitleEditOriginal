@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Ebu.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   EBU Subtitling data exchange format
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -16,14 +25,29 @@
     /// </summary>
     public class Ebu : SubtitleFormat
     {
-        public EbuGeneralSubtitleInformation Header;
-
-        public List<int> JustificationCodes = new List<int>();
-
-        public List<int> VerticalPositions = new List<int>();
-
+        /// <summary>
+        /// The reg expr.
+        /// </summary>
         private static readonly Regex RegExpr = new Regex(@"^[a-f0-9]{6}$", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The header.
+        /// </summary>
+        public EbuGeneralSubtitleInformation Header;
+
+        /// <summary>
+        /// The justification codes.
+        /// </summary>
+        public List<int> JustificationCodes = new List<int>();
+
+        /// <summary>
+        /// The vertical positions.
+        /// </summary>
+        public List<int> VerticalPositions = new List<int>();
+
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -32,6 +56,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -40,6 +67,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -48,6 +78,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is text based.
+        /// </summary>
         public override bool IsTextBased
         {
             get
@@ -56,11 +89,32 @@
             }
         }
 
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         public static void Save(string fileName, Subtitle subtitle)
         {
             Save(fileName, subtitle, false);
         }
 
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="batchMode">
+        /// The batch mode.
+        /// </param>
         public static void Save(string fileName, Subtitle subtitle, bool batchMode)
         {
             EbuGeneralSubtitleInformation header = new EbuGeneralSubtitleInformation();
@@ -187,6 +241,15 @@
             }
         }
 
+        /// <summary>
+        /// The read header.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <returns>
+        /// The <see cref="EbuGeneralSubtitleInformation"/>.
+        /// </returns>
         public static EbuGeneralSubtitleInformation ReadHeader(byte[] buffer)
         {
             EbuGeneralSubtitleInformation header = new EbuGeneralSubtitleInformation();
@@ -219,6 +282,18 @@
             return header;
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
@@ -246,11 +321,35 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             return "Not supported!";
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             subtitle.Paragraphs.Clear();
@@ -291,13 +390,23 @@
         }
 
         /// <summary>
-        ///     Get text with regard code page from header
+        /// Get text with regard code page from header
         /// </summary>
-        /// <param name="skipNext">Skip next character</param>
-        /// <param name="header">EBU header</param>
-        /// <param name="buffer">data buffer</param>
-        /// <param name="index">index to current byte in buffer</param>
-        /// <returns>Character at index</returns>
+        /// <param name="skipNext">
+        /// Skip next character
+        /// </param>
+        /// <param name="header">
+        /// EBU header
+        /// </param>
+        /// <param name="buffer">
+        /// data buffer
+        /// </param>
+        /// <param name="index">
+        /// index to current byte in buffer
+        /// </param>
+        /// <returns>
+        /// Character at index
+        /// </returns>
         private static string GetCharacter(out bool skipNext, EbuGeneralSubtitleInformation header, byte[] buffer, int index)
         {
             skipNext = false;
@@ -747,6 +856,18 @@
             return string.Empty;
         }
 
+        /// <summary>
+        /// The read tti.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="header">
+        /// The header.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
         private IEnumerable<EbuTextTimingInformation> ReadTTI(byte[] buffer, EbuGeneralSubtitleInformation header)
         {
             const int startOfTTI = 1024;
@@ -963,6 +1084,9 @@
         /// </summary>
         public class EbuGeneralSubtitleInformation
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="EbuGeneralSubtitleInformation"/> class.
+            /// </summary>
             public EbuGeneralSubtitleInformation()
             {
                 this.CodePageNumber = "437";
@@ -998,68 +1122,164 @@
                 this.UserDefinedArea = string.Empty.PadLeft(576, ' ');
             }
 
+            /// <summary>
+            /// Gets or sets the code page number.
+            /// </summary>
             public string CodePageNumber { get; set; } // 0..2
 
+            /// <summary>
+            /// Gets or sets the disk format code.
+            /// </summary>
             public string DiskFormatCode { get; set; } // 3..10
 
+            /// <summary>
+            /// Gets or sets the display standard code.
+            /// </summary>
             public string DisplayStandardCode { get; set; } // 11
 
+            /// <summary>
+            /// Gets or sets the character code table number.
+            /// </summary>
             public string CharacterCodeTableNumber { get; set; } // 12..13
 
+            /// <summary>
+            /// Gets or sets the language code.
+            /// </summary>
             public string LanguageCode { get; set; } // 14..15
 
+            /// <summary>
+            /// Gets or sets the original programme title.
+            /// </summary>
             public string OriginalProgrammeTitle { get; set; } // 16..47
 
+            /// <summary>
+            /// Gets or sets the original episode title.
+            /// </summary>
             public string OriginalEpisodeTitle { get; set; }
 
+            /// <summary>
+            /// Gets or sets the translated programme title.
+            /// </summary>
             public string TranslatedProgrammeTitle { get; set; }
 
+            /// <summary>
+            /// Gets or sets the translated episode title.
+            /// </summary>
             public string TranslatedEpisodeTitle { get; set; }
 
+            /// <summary>
+            /// Gets or sets the translators name.
+            /// </summary>
             public string TranslatorsName { get; set; }
 
+            /// <summary>
+            /// Gets or sets the translators contact details.
+            /// </summary>
             public string TranslatorsContactDetails { get; set; }
 
+            /// <summary>
+            /// Gets or sets the subtitle list reference code.
+            /// </summary>
             public string SubtitleListReferenceCode { get; set; }
 
+            /// <summary>
+            /// Gets or sets the creation date.
+            /// </summary>
             public string CreationDate { get; set; }
 
+            /// <summary>
+            /// Gets or sets the revision date.
+            /// </summary>
             public string RevisionDate { get; set; }
 
+            /// <summary>
+            /// Gets or sets the revision number.
+            /// </summary>
             public string RevisionNumber { get; set; }
 
+            /// <summary>
+            /// Gets or sets the total number of text and timing information blocks.
+            /// </summary>
             public string TotalNumberOfTextAndTimingInformationBlocks { get; set; }
 
+            /// <summary>
+            /// Gets or sets the total number of subtitles.
+            /// </summary>
             public string TotalNumberOfSubtitles { get; set; }
 
+            /// <summary>
+            /// Gets or sets the total number of subtitle groups.
+            /// </summary>
             public string TotalNumberOfSubtitleGroups { get; set; }
 
+            /// <summary>
+            /// Gets or sets the maximum number of displayable characters in any text row.
+            /// </summary>
             public string MaximumNumberOfDisplayableCharactersInAnyTextRow { get; set; }
 
+            /// <summary>
+            /// Gets or sets the maximum number of displayable rows.
+            /// </summary>
             public string MaximumNumberOfDisplayableRows { get; set; }
 
+            /// <summary>
+            /// Gets or sets the time code status.
+            /// </summary>
             public string TimeCodeStatus { get; set; }
 
+            /// <summary>
+            /// Gets or sets the time code start of programme.
+            /// </summary>
             public string TimeCodeStartOfProgramme { get; set; }
 
+            /// <summary>
+            /// Gets or sets the time code first in cue.
+            /// </summary>
             public string TimeCodeFirstInCue { get; set; }
 
+            /// <summary>
+            /// Gets or sets the total number of disks.
+            /// </summary>
             public string TotalNumberOfDisks { get; set; }
 
+            /// <summary>
+            /// Gets or sets the disk sequence number.
+            /// </summary>
             public string DiskSequenceNumber { get; set; }
 
+            /// <summary>
+            /// Gets or sets the country of origin.
+            /// </summary>
             public string CountryOfOrigin { get; set; }
 
+            /// <summary>
+            /// Gets or sets the publisher.
+            /// </summary>
             public string Publisher { get; set; }
 
+            /// <summary>
+            /// Gets or sets the editors name.
+            /// </summary>
             public string EditorsName { get; set; }
 
+            /// <summary>
+            /// Gets or sets the editors contact details.
+            /// </summary>
             public string EditorsContactDetails { get; set; }
 
+            /// <summary>
+            /// Gets or sets the spare bytes.
+            /// </summary>
             public string SpareBytes { get; set; }
 
+            /// <summary>
+            /// Gets or sets the user defined area.
+            /// </summary>
             public string UserDefinedArea { get; set; }
 
+            /// <summary>
+            /// Gets the frame rate.
+            /// </summary>
             public double FrameRate
             {
                 get
@@ -1108,6 +1328,12 @@
                 }
             }
 
+            /// <summary>
+            /// The to string.
+            /// </summary>
+            /// <returns>
+            /// The <see cref="string"/>.
+            /// </returns>
             public override string ToString()
             {
                 string result = this.CodePageNumber + this.DiskFormatCode + this.DisplayStandardCode + this.CharacterCodeTableNumber + this.LanguageCode + this.OriginalProgrammeTitle + this.OriginalEpisodeTitle + this.TranslatedProgrammeTitle + this.TranslatedEpisodeTitle + this.TranslatorsName + this.TranslatorsContactDetails + this.SubtitleListReferenceCode + this.CreationDate + this.RevisionDate + this.RevisionNumber + this.TotalNumberOfTextAndTimingInformationBlocks + this.TotalNumberOfSubtitles + this.TotalNumberOfSubtitleGroups + this.MaximumNumberOfDisplayableCharactersInAnyTextRow + this.MaximumNumberOfDisplayableRows + this.TimeCodeStatus + this.TimeCodeStartOfProgramme + this.TimeCodeFirstInCue + this.TotalNumberOfDisks + this.DiskSequenceNumber + this.CountryOfOrigin + this.Publisher + this.EditorsName + this.EditorsContactDetails + this.SpareBytes + this.UserDefinedArea;
@@ -1125,6 +1351,9 @@
         /// </summary>
         private class EbuTextTimingInformation
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="EbuTextTimingInformation"/> class.
+            /// </summary>
             public EbuTextTimingInformation()
             {
                 this.SubtitleGroupNumber = 0;
@@ -1135,44 +1364,113 @@
                 this.CommentFlag = 0;
             }
 
+            /// <summary>
+            /// Gets or sets the subtitle group number.
+            /// </summary>
             public byte SubtitleGroupNumber { get; set; }
 
+            /// <summary>
+            /// Gets or sets the subtitle number.
+            /// </summary>
             public ushort SubtitleNumber { get; set; }
 
+            /// <summary>
+            /// Gets or sets the extension block number.
+            /// </summary>
             public byte ExtensionBlockNumber { get; set; }
 
+            /// <summary>
+            /// Gets or sets the cumulative status.
+            /// </summary>
             public byte CumulativeStatus { get; set; }
 
+            /// <summary>
+            /// Gets or sets the time code in hours.
+            /// </summary>
             public int TimeCodeInHours { get; set; }
 
+            /// <summary>
+            /// Gets or sets the time code in minutes.
+            /// </summary>
             public int TimeCodeInMinutes { get; set; }
 
+            /// <summary>
+            /// Gets or sets the time code in seconds.
+            /// </summary>
             public int TimeCodeInSeconds { get; set; }
 
+            /// <summary>
+            /// Gets or sets the time code in milliseconds.
+            /// </summary>
             public int TimeCodeInMilliseconds { get; set; }
 
+            /// <summary>
+            /// Gets or sets the time code out hours.
+            /// </summary>
             public int TimeCodeOutHours { get; set; }
 
+            /// <summary>
+            /// Gets or sets the time code out minutes.
+            /// </summary>
             public int TimeCodeOutMinutes { get; set; }
 
+            /// <summary>
+            /// Gets or sets the time code out seconds.
+            /// </summary>
             public int TimeCodeOutSeconds { get; set; }
 
+            /// <summary>
+            /// Gets or sets the time code out milliseconds.
+            /// </summary>
             public int TimeCodeOutMilliseconds { get; set; }
 
+            /// <summary>
+            /// Gets or sets the vertical position.
+            /// </summary>
             public byte VerticalPosition { get; set; }
 
+            /// <summary>
+            /// Gets or sets the justification code.
+            /// </summary>
             public byte JustificationCode { get; set; }
 
+            /// <summary>
+            /// Gets or sets the comment flag.
+            /// </summary>
             public byte CommentFlag { get; set; }
 
+            /// <summary>
+            /// Gets or sets the text field.
+            /// </summary>
             public string TextField { get; set; }
 
+            /// <summary>
+            /// The get frame from milliseconds.
+            /// </summary>
+            /// <param name="milliseconds">
+            /// The milliseconds.
+            /// </param>
+            /// <param name="frameRate">
+            /// The frame rate.
+            /// </param>
+            /// <returns>
+            /// The <see cref="byte"/>.
+            /// </returns>
             public static byte GetFrameFromMilliseconds(int milliseconds, double frameRate)
             {
                 int frame = (int)(milliseconds / (TimeCode.BaseUnit / frameRate));
                 return (byte)frame;
             }
 
+            /// <summary>
+            /// The get bytes.
+            /// </summary>
+            /// <param name="header">
+            /// The header.
+            /// </param>
+            /// <returns>
+            /// The <see cref="byte[]"/>.
+            /// </returns>
             public byte[] GetBytes(EbuGeneralSubtitleInformation header)
             {
                 byte[] buffer = new byte[128]; // Text and Timing Information (TTI) block consists of 128 bytes
@@ -1393,6 +1691,18 @@
                 return buffer;
             }
 
+            /// <summary>
+            /// The get nearest ebu color code.
+            /// </summary>
+            /// <param name="color">
+            /// The color.
+            /// </param>
+            /// <param name="encoding">
+            /// The encoding.
+            /// </param>
+            /// <returns>
+            /// The <see cref="string"/>.
+            /// </returns>
             private static string GetNearestEbuColorCode(string color, Encoding encoding)
             {
                 color = color.ToLower();
@@ -1489,6 +1799,26 @@
                 return string.Empty;
             }
 
+            /// <summary>
+            /// The replace special characters with two byte encoding.
+            /// </summary>
+            /// <param name="text">
+            /// The text.
+            /// </param>
+            /// <param name="specialCharacter">
+            /// The special character.
+            /// </param>
+            /// <param name="originalCharacters">
+            /// The original characters.
+            /// </param>
+            /// <param name="newCharacters">
+            /// The new characters.
+            /// </param>
+            /// <returns>
+            /// The <see cref="string"/>.
+            /// </returns>
+            /// <exception cref="ArgumentException">
+            /// </exception>
             private static string ReplaceSpecialCharactersWithTwoByteEncoding(string text, string specialCharacter, string originalCharacters, string newCharacters)
             {
                 if (originalCharacters.Length != newCharacters.Length)

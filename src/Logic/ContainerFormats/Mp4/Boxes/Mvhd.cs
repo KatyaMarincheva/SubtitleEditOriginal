@@ -1,17 +1,47 @@
-﻿namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Mvhd.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The mvhd.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
 {
     using System.IO;
 
+    /// <summary>
+    /// The mvhd.
+    /// </summary>
     public class Mvhd : Box
     {
+        /// <summary>
+        /// The creation time.
+        /// </summary>
         public readonly uint CreationTime;
 
+        /// <summary>
+        /// The duration.
+        /// </summary>
         public readonly uint Duration;
 
+        /// <summary>
+        /// The modification time.
+        /// </summary>
         public readonly uint ModificationTime;
 
+        /// <summary>
+        /// The time scale.
+        /// </summary>
         public readonly uint TimeScale;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Mvhd"/> class.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
         public Mvhd(FileStream fs)
         {
             this.Buffer = new byte[20];

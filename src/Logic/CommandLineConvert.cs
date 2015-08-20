@@ -1,23 +1,47 @@
-﻿using System.Windows.Forms.VisualStyles;
-using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Forms;
-using Nikse.SubtitleEdit.Logic.BluRaySup;
-using Nikse.SubtitleEdit.Logic.ContainerFormats.Matroska;
-using Nikse.SubtitleEdit.Logic.SubtitleFormats;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="CommandLineConvert.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The command line convert.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Forms;
+    using Nikse.SubtitleEdit.Logic.BluRaySup;
+    using Nikse.SubtitleEdit.Logic.ContainerFormats.Matroska;
+    using Nikse.SubtitleEdit.Logic.SubtitleFormats;
+
+    /// <summary>
+    /// The command line convert.
+    /// </summary>
     public static class CommandLineConvert
     {
-        public static void Convert(string title, string[] args) // E.g.: /convert *.txt SubRip
+        /// <summary>
+        /// The convert.
+        /// </summary>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        public static void Convert(string title, string[] args)
         {
+            // E.g.: /convert *.txt SubRip
             const int ATTACH_PARENT_PROCESS = -1;
             if (!Configuration.IsRunningOnMac() && !Configuration.IsRunningOnLinux())
+            {
                 NativeMethods.AttachConsole(ATTACH_PARENT_PROCESS);
+            }
 
             Console.WriteLine();
             Console.WriteLine();
@@ -40,6 +64,7 @@ namespace Nikse.SubtitleEdit.Logic
                     {
                         Console.WriteLine("    " + format.Name.Replace(" ", string.Empty));
                     }
+
                     Console.WriteLine();
                     Console.WriteLine("- Supported formats (input only):");
                     Console.WriteLine("    " + CapMakerPlus.NameOfFormat);
@@ -59,7 +84,10 @@ namespace Nikse.SubtitleEdit.Logic
                 Console.WriteLine();
                 Console.Write(currentDir + ">");
                 if (!Configuration.IsRunningOnMac() && !Configuration.IsRunningOnLinux())
+                {
                     NativeMethods.FreeConsole();
+                }
+
                 Environment.Exit(1);
             }
 
@@ -95,7 +123,8 @@ namespace Nikse.SubtitleEdit.Logic
                     }
                 }
 
-                var targetEncodingName = GetArgument(args, "/encoding:"); ;
+                var targetEncodingName = GetArgument(args, "/encoding:");
+                
                 var targetEncoding = Encoding.UTF8;
                 try
                 {
@@ -103,7 +132,9 @@ namespace Nikse.SubtitleEdit.Logic
                     {
                         targetEncodingName = targetEncodingName.Substring(10);
                         if (!string.IsNullOrEmpty(targetEncodingName))
+                        {
                             targetEncoding = Encoding.GetEncoding(targetEncodingName);
+                        }
                     }
                 }
                 catch (Exception exception)
@@ -112,12 +143,15 @@ namespace Nikse.SubtitleEdit.Logic
                     targetEncoding = Encoding.UTF8;
                 }
 
-                var outputFolder = GetArgument(args, "/outputfolder:"); ;
+                var outputFolder = GetArgument(args, "/outputfolder:");
+                
                 if (outputFolder.Length > "/outputFolder:".Length)
                 {
                     outputFolder = outputFolder.Remove(0, "/outputFolder:".Length);
                     if (!Directory.Exists(outputFolder))
+                    {
                         outputFolder = string.Empty;
+                    }
                 }
 
                 var inputFolder = GetArgument(args, "/inputFolder:", Directory.GetCurrentDirectory());
@@ -125,7 +159,9 @@ namespace Nikse.SubtitleEdit.Logic
                 {
                     inputFolder = inputFolder.Remove(0, "/inputFolder:".Length);
                     if (!Directory.Exists(inputFolder))
+                    {
                         inputFolder = Directory.GetCurrentDirectory();
+                    }
                 }
 
                 var pacCodePage = GetArgument(args, "/pac-codepage:");
@@ -133,19 +169,33 @@ namespace Nikse.SubtitleEdit.Logic
                 {
                     pacCodePage = pacCodePage.Remove(0, "/pac-codepage:".Length);
                     if (string.Compare("Latin", pacCodePage, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
                         pacCodePage = "0";
+                    }
                     else if (string.Compare("Greek", pacCodePage, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
                         pacCodePage = "1";
+                    }
                     else if (string.Compare("Czech", pacCodePage, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
                         pacCodePage = "2";
+                    }
                     else if (string.Compare("Arabic", pacCodePage, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
                         pacCodePage = "3";
+                    }
                     else if (string.Compare("Hebrew", pacCodePage, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
                         pacCodePage = "4";
+                    }
                     else if (string.Compare("Encoding", pacCodePage, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
                         pacCodePage = "5";
+                    }
                     else if (string.Compare("Cyrillic", pacCodePage, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
                         pacCodePage = "6";
+                    }
                 }
 
                 bool overwrite = GetArgument(args, "/overwrite", string.Empty).Equals("/overwrite");
@@ -153,13 +203,17 @@ namespace Nikse.SubtitleEdit.Logic
                 string[] files;
                 string inputDirectory = Directory.GetCurrentDirectory();
                 if (!string.IsNullOrEmpty(inputFolder))
+                {
                     inputDirectory = inputFolder;
+                }
 
                 if (pattern.Contains(',') && !File.Exists(pattern))
                 {
                     files = pattern.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     for (int k = 0; k < files.Length; k++)
+                    {
                         files[k] = files[k].Trim();
+                    }
                 }
                 else
                 {
@@ -169,6 +223,7 @@ namespace Nikse.SubtitleEdit.Logic
                         pattern = pattern.Substring(indexOfDirectorySeparatorChar + 1);
                         inputDirectory = args[2].Substring(0, indexOfDirectorySeparatorChar);
                     }
+
                     files = Directory.GetFiles(inputDirectory, pattern);
                 }
 
@@ -214,12 +269,13 @@ namespace Nikse.SubtitleEdit.Logic
                                                 format = Utilities.LoadMatroskaTextSubtitle(track, matroska, ss, sub);
                                                 string newFileName = fileName;
                                                 if (tracks.Count > 1)
+                                                {
                                                     newFileName = fileName.Insert(fileName.Length - 4, "_" + track.TrackNumber + "_" + track.Language.Replace("?", string.Empty).Replace("!", string.Empty).Replace("*", string.Empty).Replace(",", string.Empty).Replace("/", string.Empty).Trim());
+                                                }
 
                                                 if (format.GetType() == typeof(AdvancedSubStationAlpha) || format.GetType() == typeof(SubStationAlpha))
                                                 {
-                                                    if (toFormat.ToLower() != AdvancedSubStationAlpha.NameOfFormat.ToLower().Replace(" ", string.Empty) &&
-                                                        toFormat.ToLower() != SubStationAlpha.NameOfFormat.ToLower().Replace(" ", string.Empty))
+                                                    if (toFormat.ToLower() != AdvancedSubStationAlpha.NameOfFormat.ToLower().Replace(" ", string.Empty) && toFormat.ToLower() != SubStationAlpha.NameOfFormat.ToLower().Replace(" ", string.Empty))
                                                     {
                                                         foreach (SubtitleFormat sf in formats)
                                                         {
@@ -247,6 +303,7 @@ namespace Nikse.SubtitleEdit.Logic
                             ConvertBluRaySubtitle(fileName, toFormat, offset, targetEncoding, outputFolder, count, ref converted, ref errors, formats, overwrite, pacCodePage, targetFrameRate);
                             done = true;
                         }
+
                         if (!done && FileUtil.IsVobSub(fileName))
                         {
                             Console.WriteLine("Found VobSub subtitle format");
@@ -255,8 +312,9 @@ namespace Nikse.SubtitleEdit.Logic
                         }
 
                         var fi = new FileInfo(fileName);
-                        if (fi.Length < 10 * 1024 * 1024 && !done) // max 10 mb
+                        if (fi.Length < 10 * 1024 * 1024 && !done)
                         {
+                            // max 10 mb
                             Encoding encoding;
                             format = sub.LoadSubtitle(fileName, out encoding, null, true);
 
@@ -269,6 +327,7 @@ namespace Nikse.SubtitleEdit.Logic
                                     format = ebu;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var pac = new Pac();
@@ -277,14 +336,19 @@ namespace Nikse.SubtitleEdit.Logic
                                     pac.BatchMode = true;
 
                                     if (!string.IsNullOrEmpty(pacCodePage) && Utilities.IsInteger(pacCodePage))
+                                    {
                                         pac.CodePage = int.Parse(pacCodePage);
+                                    }
                                     else
+                                    {
                                         pac.CodePage = -1;
+                                    }
 
                                     pac.LoadSubtitle(sub, null, fileName);
                                     format = pac;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var cavena890 = new Cavena890();
@@ -294,6 +358,7 @@ namespace Nikse.SubtitleEdit.Logic
                                     format = cavena890;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var spt = new Spt();
@@ -303,6 +368,7 @@ namespace Nikse.SubtitleEdit.Logic
                                     format = spt;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var cheetahCaption = new CheetahCaption();
@@ -312,6 +378,7 @@ namespace Nikse.SubtitleEdit.Logic
                                     format = cheetahCaption;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var chk = new Chk();
@@ -321,6 +388,7 @@ namespace Nikse.SubtitleEdit.Logic
                                     format = chk;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var ayato = new Ayato();
@@ -330,6 +398,7 @@ namespace Nikse.SubtitleEdit.Logic
                                     format = ayato;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var capMakerPlus = new CapMakerPlus();
@@ -339,6 +408,7 @@ namespace Nikse.SubtitleEdit.Logic
                                     format = capMakerPlus;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var captionate = new Captionate();
@@ -348,6 +418,7 @@ namespace Nikse.SubtitleEdit.Logic
                                     format = captionate;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var ultech130 = new Ultech130();
@@ -357,6 +428,7 @@ namespace Nikse.SubtitleEdit.Logic
                                     format = ultech130;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var nciCaption = new NciCaption();
@@ -366,6 +438,7 @@ namespace Nikse.SubtitleEdit.Logic
                                     format = nciCaption;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var tsb4 = new TSB4();
@@ -375,6 +448,7 @@ namespace Nikse.SubtitleEdit.Logic
                                     format = tsb4;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var avidStl = new AvidStl();
@@ -384,6 +458,7 @@ namespace Nikse.SubtitleEdit.Logic
                                     format = avidStl;
                                 }
                             }
+
                             if (format == null)
                             {
                                 var elr = new ELRStudioClosedCaption();
@@ -397,10 +472,15 @@ namespace Nikse.SubtitleEdit.Logic
 
                         if (format == null)
                         {
-                            if (fi.Length < 1024 * 1024) // max 1 mb
+                            if (fi.Length < 1024 * 1024)
+                            {
+                                // max 1 mb
                                 Console.WriteLine("{0}: {1} - input file format unknown!", fileName, toFormat);
+                            }
                             else
+                            {
                                 Console.WriteLine("{0}: {1} - input file too large!", fileName, toFormat);
+                            }
                         }
                         else if (!done)
                         {
@@ -427,14 +507,59 @@ namespace Nikse.SubtitleEdit.Logic
             Console.Write(currentDir + ">");
 
             if (!Configuration.IsRunningOnMac() && !Configuration.IsRunningOnLinux())
+            {
                 NativeMethods.FreeConsole();
+            }
 
             if (count == converted && errors == 0)
+            {
                 Environment.Exit(0);
+            }
             else
+            {
                 Environment.Exit(1);
+            }
         }
 
+        /// <summary>
+        /// The convert blu ray subtitle.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="toFormat">
+        /// The to format.
+        /// </param>
+        /// <param name="offset">
+        /// The offset.
+        /// </param>
+        /// <param name="targetEncoding">
+        /// The target encoding.
+        /// </param>
+        /// <param name="outputFolder">
+        /// The output folder.
+        /// </param>
+        /// <param name="count">
+        /// The count.
+        /// </param>
+        /// <param name="converted">
+        /// The converted.
+        /// </param>
+        /// <param name="errors">
+        /// The errors.
+        /// </param>
+        /// <param name="formats">
+        /// The formats.
+        /// </param>
+        /// <param name="overwrite">
+        /// The overwrite.
+        /// </param>
+        /// <param name="pacCodePage">
+        /// The pac code page.
+        /// </param>
+        /// <param name="targetFrameRate">
+        /// The target frame rate.
+        /// </param>
         private static void ConvertBluRaySubtitle(string fileName, string toFormat, string offset, Encoding targetEncoding, string outputFolder, int count, ref int converted, ref int errors, IList<SubtitleFormat> formats, bool overwrite, string pacCodePage, double? targetFrameRate)
         {
             SubtitleFormat format = Utilities.GetSubtitleFormatByFriendlyName(toFormat) ?? new SubRip();
@@ -459,6 +584,45 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// The convert vob sub subtitle.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="toFormat">
+        /// The to format.
+        /// </param>
+        /// <param name="offset">
+        /// The offset.
+        /// </param>
+        /// <param name="targetEncoding">
+        /// The target encoding.
+        /// </param>
+        /// <param name="outputFolder">
+        /// The output folder.
+        /// </param>
+        /// <param name="count">
+        /// The count.
+        /// </param>
+        /// <param name="converted">
+        /// The converted.
+        /// </param>
+        /// <param name="errors">
+        /// The errors.
+        /// </param>
+        /// <param name="formats">
+        /// The formats.
+        /// </param>
+        /// <param name="overwrite">
+        /// The overwrite.
+        /// </param>
+        /// <param name="pacCodePage">
+        /// The pac code page.
+        /// </param>
+        /// <param name="targetFrameRate">
+        /// The target frame rate.
+        /// </param>
         private static void ConvertVobSubSubtitle(string fileName, string toFormat, string offset, Encoding targetEncoding, string outputFolder, int count, ref int converted, ref int errors, IList<SubtitleFormat> formats, bool overwrite, string pacCodePage, double? targetFrameRate)
         {
             var format = Utilities.GetSubtitleFormatByFriendlyName(toFormat) ?? new SubRip();
@@ -480,12 +644,18 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
-
         /// <summary>
         /// Gets a argument from the command line
         /// </summary>
-        /// <param name="commandLineArguments">All arguments from the command line</param>
-        /// <param name="requestedArgumentName">The name of the argument that is requested</param>
+        /// <param name="commandLineArguments">
+        /// All arguments from the command line
+        /// </param>
+        /// <param name="requestedArgumentName">
+        /// The name of the argument that is requested
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetArgument(string[] commandLineArguments, string requestedArgumentName)
         {
             return GetArgument(commandLineArguments, requestedArgumentName, string.Empty);
@@ -494,9 +664,18 @@ namespace Nikse.SubtitleEdit.Logic
         /// <summary>
         /// Gets a argument from the command line
         /// </summary>
-        /// <param name="commandLineArguments">All arguments from the command line</param>
-        /// <param name="requestedArgumentName">The name of the argument that is requested</param>
-        /// <param name="defaultValue">The default value, if the parameter could not be found</param>
+        /// <param name="commandLineArguments">
+        /// All arguments from the command line
+        /// </param>
+        /// <param name="requestedArgumentName">
+        /// The name of the argument that is requested
+        /// </param>
+        /// <param name="defaultValue">
+        /// The default value, if the parameter could not be found
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetArgument(string[] commandLineArguments, string requestedArgumentName, string defaultValue)
         {
             var result = defaultValue;
@@ -507,9 +686,58 @@ namespace Nikse.SubtitleEdit.Logic
                     result = commandLineArguments[i].ToLower();
                 }
             }
+
             return result;
         }
 
+        /// <summary>
+        /// The batch convert save.
+        /// </summary>
+        /// <param name="toFormat">
+        /// The to format.
+        /// </param>
+        /// <param name="offset">
+        /// The offset.
+        /// </param>
+        /// <param name="targetEncoding">
+        /// The target encoding.
+        /// </param>
+        /// <param name="outputFolder">
+        /// The output folder.
+        /// </param>
+        /// <param name="count">
+        /// The count.
+        /// </param>
+        /// <param name="converted">
+        /// The converted.
+        /// </param>
+        /// <param name="errors">
+        /// The errors.
+        /// </param>
+        /// <param name="formats">
+        /// The formats.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="sub">
+        /// The sub.
+        /// </param>
+        /// <param name="format">
+        /// The format.
+        /// </param>
+        /// <param name="overwrite">
+        /// The overwrite.
+        /// </param>
+        /// <param name="pacCodePage">
+        /// The pac code page.
+        /// </param>
+        /// <param name="targetFrameRate">
+        /// The target frame rate.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         internal static bool BatchConvertSave(string toFormat, string offset, Encoding targetEncoding, string outputFolder, int count, ref int converted, ref int errors, IList<SubtitleFormat> formats, string fileName, Subtitle sub, SubtitleFormat format, bool overwrite, string pacCodePage, double? targetFrameRate)
         {
             double oldFrameRate = Configuration.Settings.General.CurrentFrameRate;
@@ -525,9 +753,13 @@ namespace Nikse.SubtitleEdit.Logic
                         {
                             var ts = new TimeSpan(0, int.Parse(parts[1].TrimStart('-')), int.Parse(parts[2]), int.Parse(parts[3]), int.Parse(parts[4]));
                             if (parts[1].StartsWith('-'))
+                            {
                                 sub.AddTimeToAllParagraphs(ts.Negate());
+                            }
                             else
+                            {
                                 sub.AddTimeToAllParagraphs(ts);
+                            }
                         }
                         catch
                         {
@@ -554,11 +786,15 @@ namespace Nikse.SubtitleEdit.Logic
                         outputFileName = FormatOutputFileNameForBatchConvert(fileName, sf.Extension, outputFolder, overwrite);
                         Console.Write("{0}: {1} -> {2}...", count, Path.GetFileName(fileName), outputFileName);
                         if (sf.IsFrameBased && !sub.WasLoadedWithFrameNumbers)
+                        {
                             sub.CalculateFrameNumbersFromTimeCodesNoCheck(Configuration.Settings.General.CurrentFrameRate);
+                        }
                         else if (sf.IsTimeBased && sub.WasLoadedWithFrameNumbers)
+                        {
                             sub.CalculateTimeCodesFromFrameNumbers(Configuration.Settings.General.CurrentFrameRate);
+                        }
 
-                        if ((sf.GetType() == typeof(WebVTT) || sf.GetType() == typeof(WebVTTFileWithLineNumber)))
+                        if (sf.GetType() == typeof(WebVTT) || sf.GetType() == typeof(WebVTTFileWithLineNumber))
                         {
                             targetEncoding = Encoding.UTF8;
                         }
@@ -566,18 +802,22 @@ namespace Nikse.SubtitleEdit.Logic
                         if (sf.GetType() == typeof(ItunesTimedText) || sf.GetType() == typeof(ScenaristClosedCaptions) || sf.GetType() == typeof(ScenaristClosedCaptionsDropFrame))
                         {
                             Encoding outputEnc = new UTF8Encoding(false); // create encoding with no BOM
-                            using (var file = new StreamWriter(outputFileName, false, outputEnc)) // open file with encoding
+                            using (var file = new StreamWriter(outputFileName, false, outputEnc))
                             {
+                                // open file with encoding
                                 file.Write(sub.ToText(sf));
-                            } // save and close it
+                            }
+ // save and close it
                         }
                         else if (targetEncoding == Encoding.UTF8 && (format.GetType() == typeof(TmpegEncAW5) || format.GetType() == typeof(TmpegEncXml)))
                         {
                             Encoding outputEnc = new UTF8Encoding(false); // create encoding with no BOM
-                            using (var file = new StreamWriter(outputFileName, false, outputEnc)) // open file with encoding
+                            using (var file = new StreamWriter(outputFileName, false, outputEnc))
                             {
+                                // open file with encoding
                                 file.Write(sub.ToText(sf));
-                            } // save and close it
+                            }
+ // save and close it
                         }
                         else
                         {
@@ -602,24 +842,34 @@ namespace Nikse.SubtitleEdit.Logic
                                 foreach (Paragraph p in sub.Paragraphs)
                                 {
                                     if (p.Extra != null && p.Extra.Trim().Equals(className.Trim(), StringComparison.OrdinalIgnoreCase))
+                                    {
                                         newSub.Paragraphs.Add(p);
+                                    }
                                 }
+
                                 if (newSub.Paragraphs.Count > 0 && newSub.Paragraphs.Count < sub.Paragraphs.Count)
                                 {
                                     string s = fileName;
                                     if (s.LastIndexOf('.') > 0)
+                                    {
                                         s = s.Insert(s.LastIndexOf('.'), "_" + className);
+                                    }
                                     else
+                                    {
                                         s += "_" + className + format.Extension;
+                                    }
+
                                     outputFileName = FormatOutputFileNameForBatchConvert(s, sf.Extension, outputFolder, overwrite);
                                     File.WriteAllText(outputFileName, newSub.ToText(sf), targetEncoding);
                                 }
                             }
                         }
+
                         Console.WriteLine(" done.");
                         break;
                     }
                 }
+
                 if (!targetFormatFound)
                 {
                     var ebu = new Ebu();
@@ -632,6 +882,7 @@ namespace Nikse.SubtitleEdit.Logic
                         Console.WriteLine(" done.");
                     }
                 }
+
                 if (!targetFormatFound)
                 {
                     var pac = new Pac();
@@ -640,7 +891,10 @@ namespace Nikse.SubtitleEdit.Logic
                         pac.BatchMode = true;
                         int codePage;
                         if (!string.IsNullOrEmpty(pacCodePage) && int.TryParse(pacCodePage, out codePage))
+                        {
                             pac.CodePage = codePage;
+                        }
+
                         targetFormatFound = true;
                         outputFileName = FormatOutputFileNameForBatchConvert(fileName, pac.Extension, outputFolder, overwrite);
                         Console.Write("{0}: {1} -> {2}...", count, Path.GetFileName(fileName), outputFileName);
@@ -648,6 +902,7 @@ namespace Nikse.SubtitleEdit.Logic
                         Console.WriteLine(" done.");
                     }
                 }
+
                 if (!targetFormatFound)
                 {
                     var cavena890 = new Cavena890();
@@ -660,6 +915,7 @@ namespace Nikse.SubtitleEdit.Logic
                         Console.WriteLine(" done.");
                     }
                 }
+
                 if (!targetFormatFound)
                 {
                     var cheetahCaption = new CheetahCaption();
@@ -672,6 +928,7 @@ namespace Nikse.SubtitleEdit.Logic
                         Console.WriteLine(" done.");
                     }
                 }
+
                 if (!targetFormatFound)
                 {
                     var capMakerPlus = new CapMakerPlus();
@@ -684,6 +941,7 @@ namespace Nikse.SubtitleEdit.Logic
                         Console.WriteLine(" done.");
                     }
                 }
+
                 if (!targetFormatFound)
                 {
                     if (Configuration.Settings.Language.BatchConvert.PlainText == toFormat || Configuration.Settings.Language.BatchConvert.PlainText.Replace(" ", string.Empty).Equals(toFormat.Replace(" ", string.Empty), StringComparison.OrdinalIgnoreCase))
@@ -695,12 +953,14 @@ namespace Nikse.SubtitleEdit.Logic
                         Console.WriteLine(" done.");
                     }
                 }
+
                 if (!targetFormatFound)
                 {
                     Console.WriteLine("{0}: {1} - target format '{2}' not found!", count, fileName, toFormat);
                     errors++;
                     return false;
                 }
+
                 converted++;
                 return true;
             }
@@ -710,15 +970,38 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// The format output file name for batch convert.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="extension">
+        /// The extension.
+        /// </param>
+        /// <param name="outputFolder">
+        /// The output folder.
+        /// </param>
+        /// <param name="overwrite">
+        /// The overwrite.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string FormatOutputFileNameForBatchConvert(string fileName, string extension, string outputFolder, bool overwrite)
         {
             string outputFileName = Path.ChangeExtension(fileName, extension);
             if (!string.IsNullOrEmpty(outputFolder))
+            {
                 outputFileName = Path.Combine(outputFolder, Path.GetFileName(outputFileName));
+            }
+
             if (File.Exists(outputFileName) && !overwrite)
+            {
                 outputFileName = Path.ChangeExtension(outputFileName, Guid.NewGuid() + extension);
+            }
+
             return outputFileName;
         }
-
     }
 }

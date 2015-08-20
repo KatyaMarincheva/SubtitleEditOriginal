@@ -1,33 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using System.Xml;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="DoNotBreakAfterListEdit.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The do not break after list edit.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The do not break after list edit.
+    /// </summary>
     public sealed partial class DoNotBreakAfterListEdit : Form
     {
+        /// <summary>
+        /// The _languages.
+        /// </summary>
         private readonly List<string> _languages = new List<string>();
+
+        /// <summary>
+        /// The _no break after list.
+        /// </summary>
         private List<NoBreakAfterItem> _noBreakAfterList = new List<NoBreakAfterItem>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DoNotBreakAfterListEdit"/> class.
+        /// </summary>
         public DoNotBreakAfterListEdit()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            Text = Configuration.Settings.Language.Settings.UseDoNotBreakAfterList;
-            labelLanguage.Text = Configuration.Settings.Language.ChooseLanguage.Language;
-            buttonRemoveNoBreakAfter.Text = Configuration.Settings.Language.DvdSubRip.Remove;
-            buttonAddNoBreakAfter.Text = Configuration.Settings.Language.DvdSubRip.Add;
-            radioButtonText.Text = Configuration.Settings.Language.General.Text;
-            radioButtonRegEx.Text = Configuration.Settings.Language.MultipleReplace.RegularExpression;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            this.Text = Configuration.Settings.Language.Settings.UseDoNotBreakAfterList;
+            this.labelLanguage.Text = Configuration.Settings.Language.ChooseLanguage.Language;
+            this.buttonRemoveNoBreakAfter.Text = Configuration.Settings.Language.DvdSubRip.Remove;
+            this.buttonAddNoBreakAfter.Text = Configuration.Settings.Language.DvdSubRip.Add;
+            this.radioButtonText.Text = Configuration.Settings.Language.General.Text;
+            this.radioButtonRegEx.Text = Configuration.Settings.Language.MultipleReplace.RegularExpression;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
 
-            radioButtonRegEx.Left = radioButtonText.Left + radioButtonText.Width + 10;
+            this.radioButtonRegEx.Left = this.radioButtonText.Left + this.radioButtonText.Width + 10;
             foreach (string fileName in Directory.GetFiles(Configuration.DictionariesFolder, "*_NoBreakAfterList.xml"))
             {
                 try
@@ -35,31 +58,54 @@ namespace Nikse.SubtitleEdit.Forms
                     string s = Path.GetFileName(fileName);
                     string languageId = s.Substring(0, s.IndexOf('_'));
                     var ci = CultureInfo.GetCultureInfoByIetfLanguageTag(languageId);
-                    comboBoxDictionaries.Items.Add(ci.EnglishName + " (" + ci.NativeName + ")");
-                    _languages.Add(fileName);
+                    this.comboBoxDictionaries.Items.Add(ci.EnglishName + " (" + ci.NativeName + ")");
+                    this._languages.Add(fileName);
                 }
                 catch
                 {
                 }
             }
-            if (comboBoxDictionaries.Items.Count > 0)
-                comboBoxDictionaries.SelectedIndex = 0;
+
+            if (this.comboBoxDictionaries.Items.Count > 0)
+            {
+                this.comboBoxDictionaries.SelectedIndex = 0;
+            }
         }
 
+        /// <summary>
+        /// The do not break after list edit_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void DoNotBreakAfterListEdit_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
 
+        /// <summary>
+        /// The combo box dictionaries_ selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void comboBoxDictionaries_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int idx = comboBoxDictionaries.SelectedIndex;
+            int idx = this.comboBoxDictionaries.SelectedIndex;
             if (idx >= 0)
             {
-                _noBreakAfterList = new List<NoBreakAfterItem>();
+                this._noBreakAfterList = new List<NoBreakAfterItem>();
                 var doc = new XmlDocument();
-                doc.Load(_languages[idx]);
+                doc.Load(this._languages[idx]);
                 foreach (XmlNode node in doc.DocumentElement)
                 {
                     if (!string.IsNullOrEmpty(node.InnerText))
@@ -67,60 +113,98 @@ namespace Nikse.SubtitleEdit.Forms
                         if (node.Attributes["RegEx"] != null && node.Attributes["RegEx"].InnerText.Equals("true", StringComparison.OrdinalIgnoreCase))
                         {
                             var r = new Regex(node.InnerText, RegexOptions.Compiled);
-                            _noBreakAfterList.Add(new NoBreakAfterItem(r, node.InnerText));
+                            this._noBreakAfterList.Add(new NoBreakAfterItem(r, node.InnerText));
                         }
                         else
                         {
-                            _noBreakAfterList.Add(new NoBreakAfterItem(node.InnerText));
+                            this._noBreakAfterList.Add(new NoBreakAfterItem(node.InnerText));
                         }
                     }
                 }
-                _noBreakAfterList.Sort();
-                ShowBreakAfterList(_noBreakAfterList);
+
+                this._noBreakAfterList.Sort();
+                this.ShowBreakAfterList(this._noBreakAfterList);
             }
         }
 
+        /// <summary>
+        /// The show break after list.
+        /// </summary>
+        /// <param name="noBreakAfterList">
+        /// The no break after list.
+        /// </param>
         private void ShowBreakAfterList(List<NoBreakAfterItem> noBreakAfterList)
         {
-            listBoxNoBreakAfter.Items.Clear();
+            this.listBoxNoBreakAfter.Items.Clear();
             foreach (var item in noBreakAfterList)
             {
                 if (item.Text != null)
-                    listBoxNoBreakAfter.Items.Add(item);
+                {
+                    this.listBoxNoBreakAfter.Items.Add(item);
+                }
             }
         }
 
+        /// <summary>
+        /// The button remove name etc_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonRemoveNameEtc_Click(object sender, EventArgs e)
         {
             int first = 0;
             var list = new List<int>();
-            foreach (int i in listBoxNoBreakAfter.SelectedIndices)
+            foreach (int i in this.listBoxNoBreakAfter.SelectedIndices)
+            {
                 list.Add(i);
+            }
+
             if (list.Count > 0)
+            {
                 first = list[0];
+            }
+
             list.Sort();
             for (int i = list.Count - 1; i >= 0; i--)
             {
-                _noBreakAfterList.RemoveAt(list[i]);
+                this._noBreakAfterList.RemoveAt(list[i]);
             }
-            ShowBreakAfterList(_noBreakAfterList);
-            if (first >= _noBreakAfterList.Count)
-                first = _noBreakAfterList.Count - 1;
+
+            this.ShowBreakAfterList(this._noBreakAfterList);
+            if (first >= this._noBreakAfterList.Count)
+            {
+                first = this._noBreakAfterList.Count - 1;
+            }
+
             if (first >= 0)
             {
-                listBoxNoBreakAfter.SelectedIndex = first;
+                this.listBoxNoBreakAfter.SelectedIndex = first;
             }
-            comboBoxDictionaries.Enabled = false;
+
+            this.comboBoxDictionaries.Enabled = false;
         }
 
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            int idx = comboBoxDictionaries.SelectedIndex;
+            int idx = this.comboBoxDictionaries.SelectedIndex;
             if (idx >= 0)
             {
                 var doc = new XmlDocument();
                 doc.LoadXml("<NoBreakAfterList />");
-                foreach (NoBreakAfterItem item in _noBreakAfterList)
+                foreach (NoBreakAfterItem item in this._noBreakAfterList)
                 {
                     XmlNode node = doc.CreateElement("Item");
                     node.InnerText = item.Text;
@@ -130,83 +214,132 @@ namespace Nikse.SubtitleEdit.Forms
                         attribute.InnerText = true.ToString();
                         node.Attributes.Append(attribute);
                     }
+
                     doc.DocumentElement.AppendChild(node);
                 }
-                doc.Save(_languages[idx]);
+
+                doc.Save(this._languages[idx]);
             }
-            DialogResult = DialogResult.OK;
+
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The button add names etc_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonAddNamesEtc_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBoxNoBreakAfter.Text))
+            if (string.IsNullOrWhiteSpace(this.textBoxNoBreakAfter.Text))
+            {
                 return;
+            }
 
             NoBreakAfterItem item;
-            if (radioButtonText.Checked)
+            if (this.radioButtonText.Checked)
             {
-                item = new NoBreakAfterItem(textBoxNoBreakAfter.Text);
+                item = new NoBreakAfterItem(this.textBoxNoBreakAfter.Text);
             }
             else
             {
-                if (!Utilities.IsValidRegex(textBoxNoBreakAfter.Text))
+                if (!Utilities.IsValidRegex(this.textBoxNoBreakAfter.Text))
                 {
                     MessageBox.Show(Configuration.Settings.Language.General.RegularExpressionIsNotValid);
                     return;
                 }
-                item = new NoBreakAfterItem(new Regex(textBoxNoBreakAfter.Text), textBoxNoBreakAfter.Text);
+
+                item = new NoBreakAfterItem(new Regex(this.textBoxNoBreakAfter.Text), this.textBoxNoBreakAfter.Text);
             }
 
-            foreach (NoBreakAfterItem nbai in _noBreakAfterList)
+            foreach (NoBreakAfterItem nbai in this._noBreakAfterList)
             {
                 if ((nbai.Regex == null && item.Regex == null) || (nbai.Regex != null && item.Regex != null) && nbai.Text == item.Text)
                 {
                     MessageBox.Show("Text already defined");
-                    textBoxNoBreakAfter.Focus();
-                    textBoxNoBreakAfter.SelectAll();
+                    this.textBoxNoBreakAfter.Focus();
+                    this.textBoxNoBreakAfter.SelectAll();
                     return;
                 }
             }
-            _noBreakAfterList.Add(item);
-            comboBoxDictionaries.Enabled = false;
-            ShowBreakAfterList(_noBreakAfterList);
-            for (int i = 0; i < listBoxNoBreakAfter.Items.Count; i++)
+
+            this._noBreakAfterList.Add(item);
+            this.comboBoxDictionaries.Enabled = false;
+            this.ShowBreakAfterList(this._noBreakAfterList);
+            for (int i = 0; i < this.listBoxNoBreakAfter.Items.Count; i++)
             {
-                if (listBoxNoBreakAfter.Items[i].ToString() == item.Text)
+                if (this.listBoxNoBreakAfter.Items[i].ToString() == item.Text)
                 {
-                    listBoxNoBreakAfter.SelectedIndex = i;
+                    this.listBoxNoBreakAfter.SelectedIndex = i;
                     return;
                 }
             }
-            textBoxNoBreakAfter.Text = string.Empty;
+
+            this.textBoxNoBreakAfter.Text = string.Empty;
         }
 
+        /// <summary>
+        /// The radio button checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void RadioButtonCheckedChanged(object sender, EventArgs e)
         {
-            if (sender == radioButtonRegEx)
-                textBoxNoBreakAfter.ContextMenu = FindReplaceDialogHelper.GetRegExContextMenu(textBoxNoBreakAfter);
-            else
-                textBoxNoBreakAfter.ContextMenuStrip = null;
-        }
-
-        private void listBoxNamesEtc_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            int idx = listBoxNoBreakAfter.SelectedIndex;
-            if (idx >= 0 && idx < _noBreakAfterList.Count)
+            if (sender == this.radioButtonRegEx)
             {
-                NoBreakAfterItem item = _noBreakAfterList[idx];
-                textBoxNoBreakAfter.Text = item.Text;
-                bool isRegEx = item.Regex != null;
-                radioButtonRegEx.Checked = isRegEx;
-                radioButtonText.Checked = !isRegEx;
+                this.textBoxNoBreakAfter.ContextMenu = FindReplaceDialogHelper.GetRegExContextMenu(this.textBoxNoBreakAfter);
+            }
+            else
+            {
+                this.textBoxNoBreakAfter.ContextMenuStrip = null;
             }
         }
 
+        /// <summary>
+        /// The list box names etc_ selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void listBoxNamesEtc_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int idx = this.listBoxNoBreakAfter.SelectedIndex;
+            if (idx >= 0 && idx < this._noBreakAfterList.Count)
+            {
+                NoBreakAfterItem item = this._noBreakAfterList[idx];
+                this.textBoxNoBreakAfter.Text = item.Text;
+                bool isRegEx = item.Regex != null;
+                this.radioButtonRegEx.Checked = isRegEx;
+                this.radioButtonText.Checked = !isRegEx;
+            }
+        }
+
+        /// <summary>
+        /// The text box no break after_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void textBoxNoBreakAfter_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                buttonAddNamesEtc_Click(sender, e);
+            {
+                this.buttonAddNamesEtc_Click(sender, e);
+            }
         }
-
     }
 }

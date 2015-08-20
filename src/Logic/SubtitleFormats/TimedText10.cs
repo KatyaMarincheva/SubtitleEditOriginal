@@ -1,8 +1,12 @@
-﻿// http://www.w3.org/TR/ttaf1-dfxp/
-
-// Timed Text Markup Language (TTML) 1.0
-
-// W3C Recommendation 18 November 2010
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright company="" file="TimedText10.cs">
+//   
+// </copyright>
+// <summary>
+//   The timed text 10.
+// </summary>
+// 
+// --------------------------------------------------------------------------------------------------------------------
 namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
@@ -14,8 +18,14 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The timed text 10.
+    /// </summary>
     public class TimedText10 : SubtitleFormat
     {
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -24,6 +34,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -32,6 +45,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -40,6 +56,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
         }
 
+        /// <summary>
+        /// Gets the alternate extensions.
+        /// </summary>
         public override List<string> AlternateExtensions
         {
             get
@@ -48,6 +67,9 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether has style support.
+        /// </summary>
         public override bool HasStyleSupport
         {
             get
@@ -56,6 +78,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             StringBuilder sb = new StringBuilder();
@@ -100,6 +134,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return false;
         }
 
+        /// <summary>
+        /// The convert to time string.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         internal static string ConvertToTimeString(TimeCode time)
         {
             string timeCodeFormat = Configuration.Settings.SubtitleSettings.TimedText10TimeCodeFormat.Trim().ToLowerInvariant();
@@ -123,6 +166,36 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
         }
 
+        /// <summary>
+        /// The add style to xml.
+        /// </summary>
+        /// <param name="xml">
+        /// The xml.
+        /// </param>
+        /// <param name="head">
+        /// The head.
+        /// </param>
+        /// <param name="nsmgr">
+        /// The nsmgr.
+        /// </param>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <param name="fontFamily">
+        /// The font family.
+        /// </param>
+        /// <param name="fontWeight">
+        /// The font weight.
+        /// </param>
+        /// <param name="fontStyle">
+        /// The font style.
+        /// </param>
+        /// <param name="color">
+        /// The color.
+        /// </param>
+        /// <param name="fontSize">
+        /// The font size.
+        /// </param>
         public static void AddStyleToXml(XmlDocument xml, XmlNode head, XmlNamespaceManager nsmgr, string name, string fontFamily, string fontWeight, string fontStyle, string color, string fontSize)
         {
             XmlNode styleNode = xml.CreateNode(XmlNodeType.Element, string.Empty, "style", nsmgr.LookupNamespace("ttml"));
@@ -161,6 +234,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             XmlNode styleHead = null;
@@ -372,6 +457,33 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return ToUtf8XmlString(xml).Replace(" xmlns=\"\"", string.Empty).Replace(" xmlns:tts=\"http://www.w3.org/ns/10/ttml#style\">", ">");
         }
 
+        /// <summary>
+        /// The make paragraph.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="xml">
+        /// The xml.
+        /// </param>
+        /// <param name="defaultStyle">
+        /// The default style.
+        /// </param>
+        /// <param name="no">
+        /// The no.
+        /// </param>
+        /// <param name="headerStyles">
+        /// The header styles.
+        /// </param>
+        /// <param name="regions">
+        /// The regions.
+        /// </param>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <returns>
+        /// The <see cref="XmlNode"/>.
+        /// </returns>
         private static XmlNode MakeParagraph(Subtitle subtitle, XmlDocument xml, string defaultStyle, int no, List<string> headerStyles, List<string> regions, Paragraph p)
         {
             XmlNode paragraph = xml.CreateElement("p", "http://www.w3.org/ns/ttml");
@@ -516,6 +628,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return paragraph;
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -700,6 +824,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The is frames.
+        /// </summary>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool IsFrames(string timeCode)
         {
             if (timeCode.Length == 12 && timeCode[8] == '.')
@@ -711,6 +844,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return true;
         }
 
+        /// <summary>
+        /// The set extra.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string SetExtra(Paragraph p)
         {
             string style = p.Style;
@@ -728,6 +870,21 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return string.Format("{0} / {1}", style, lang);
         }
 
+        /// <summary>
+        /// The read span.
+        /// </summary>
+        /// <param name="pText">
+        /// The p text.
+        /// </param>
+        /// <param name="innerNode">
+        /// The inner node.
+        /// </param>
+        /// <param name="styles">
+        /// The styles.
+        /// </param>
+        /// <param name="header">
+        /// The header.
+        /// </param>
         private static void ReadSpan(StringBuilder pText, XmlNode innerNode, List<string> styles, string header)
         {
             bool italic = false;
@@ -812,6 +969,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             }
         }
 
+        /// <summary>
+        /// The get time code.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="frames">
+        /// The frames.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         public static TimeCode GetTimeCode(string s, bool frames)
         {
             if (s.EndsWith("ms", StringComparison.Ordinal))
@@ -852,6 +1021,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return new TimeCode(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]));
         }
 
+        /// <summary>
+        /// The get styles from header.
+        /// </summary>
+        /// <param name="xmlAsString">
+        /// The xml as string.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public static List<string> GetStylesFromHeader(string xmlAsString)
         {
             List<string> list = new List<string>();
@@ -881,6 +1059,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return list;
         }
 
+        /// <summary>
+        /// The is style italic.
+        /// </summary>
+        /// <param name="styleName">
+        /// The style name.
+        /// </param>
+        /// <param name="xmlAsString">
+        /// The xml as string.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool IsStyleItalic(string styleName, string xmlAsString)
         {
             XmlDocument xml = new XmlDocument();
@@ -923,6 +1113,18 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return false;
         }
 
+        /// <summary>
+        /// The is style bold.
+        /// </summary>
+        /// <param name="styleName">
+        /// The style name.
+        /// </param>
+        /// <param name="xmlAsString">
+        /// The xml as string.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool IsStyleBold(string styleName, string xmlAsString)
         {
             XmlDocument xml = new XmlDocument();
@@ -965,6 +1167,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return false;
         }
 
+        /// <summary>
+        /// The get regions from header.
+        /// </summary>
+        /// <param name="xmlAsString">
+        /// The xml as string.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public static List<string> GetRegionsFromHeader(string xmlAsString)
         {
             List<string> list = new List<string>();
@@ -994,6 +1205,15 @@ namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
             return list;
         }
 
+        /// <summary>
+        /// The get used languages.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public static List<string> GetUsedLanguages(Subtitle subtitle)
         {
             List<string> list = new List<string>();

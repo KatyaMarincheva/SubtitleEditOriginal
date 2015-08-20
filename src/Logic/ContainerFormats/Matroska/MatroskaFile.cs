@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Matroska
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MatroskaFile.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The matroska file.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Matroska
 {
     using System;
     using System.Collections.Generic;
@@ -10,36 +19,93 @@
     using Nikse.SubtitleEdit.Core;
     using Nikse.SubtitleEdit.Logic.ContainerFormats.Ebml;
 
+    /// <summary>
+    /// The matroska file.
+    /// </summary>
     internal class MatroskaFile : IDisposable
     {
-        private readonly string _path;
-
-        private readonly Element _segmentElement;
-
-        private readonly FileStream _stream;
-
-        private readonly List<MatroskaSubtitle> _subtitleRip = new List<MatroskaSubtitle>();
-
-        private readonly bool _valid;
-
-        private double _duration;
-
-        private double _frameRate;
-
-        private int _pixelHeight;
-
-        private int _pixelWidth;
-
-        private int _subtitleRipTrackNumber;
-
-        private long _timecodeScale = 1000000;
-
-        private List<MatroskaTrackInfo> _tracks;
-
-        private string _videoCodecId;
-
+        /// <summary>
+        /// The load matroska callback.
+        /// </summary>
+        /// <param name="position">
+        /// The position.
+        /// </param>
+        /// <param name="total">
+        /// The total.
+        /// </param>
         public delegate void LoadMatroskaCallback(long position, long total);
 
+        /// <summary>
+        /// The _path.
+        /// </summary>
+        private readonly string _path;
+
+        /// <summary>
+        /// The _segment element.
+        /// </summary>
+        private readonly Element _segmentElement;
+
+        /// <summary>
+        /// The _stream.
+        /// </summary>
+        private readonly FileStream _stream;
+
+        /// <summary>
+        /// The _subtitle rip.
+        /// </summary>
+        private readonly List<MatroskaSubtitle> _subtitleRip = new List<MatroskaSubtitle>();
+
+        /// <summary>
+        /// The _valid.
+        /// </summary>
+        private readonly bool _valid;
+
+        /// <summary>
+        /// The _duration.
+        /// </summary>
+        private double _duration;
+
+        /// <summary>
+        /// The _frame rate.
+        /// </summary>
+        private double _frameRate;
+
+        /// <summary>
+        /// The _pixel height.
+        /// </summary>
+        private int _pixelHeight;
+
+        /// <summary>
+        /// The _pixel width.
+        /// </summary>
+        private int _pixelWidth;
+
+        /// <summary>
+        /// The _subtitle rip track number.
+        /// </summary>
+        private int _subtitleRipTrackNumber;
+
+        /// <summary>
+        /// The _timecode scale.
+        /// </summary>
+        private long _timecodeScale = 1000000;
+
+        /// <summary>
+        /// The _tracks.
+        /// </summary>
+        private List<MatroskaTrackInfo> _tracks;
+
+        /// <summary>
+        /// The _video codec id.
+        /// </summary>
+        private string _videoCodecId;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MatroskaFile"/> class.
+        /// </summary>
+        /// <param name="path">
+        /// The path.
+        /// </param>
         public MatroskaFile(string path)
         {
             this._path = path;
@@ -59,6 +125,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is valid.
+        /// </summary>
         public bool IsValid
         {
             get
@@ -67,6 +136,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the path.
+        /// </summary>
         public string Path
         {
             get
@@ -75,6 +147,9 @@
             }
         }
 
+        /// <summary>
+        /// The dispose.
+        /// </summary>
         public void Dispose()
         {
             if (this._stream != null)
@@ -83,6 +158,15 @@
             }
         }
 
+        /// <summary>
+        /// The get tracks.
+        /// </summary>
+        /// <param name="subtitleOnly">
+        /// The subtitle only.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public List<MatroskaTrackInfo> GetTracks(bool subtitleOnly = false)
         {
             this.ReadSegmentInfoAndTracks();
@@ -96,10 +180,14 @@
         }
 
         /// <summary>
-        ///     Get first time of track
+        /// Get first time of track
         /// </summary>
-        /// <param name="trackNumber">Track number</param>
-        /// <returns>Start time in milliseconds</returns>
+        /// <param name="trackNumber">
+        /// Track number
+        /// </param>
+        /// <returns>
+        /// Start time in milliseconds
+        /// </returns>
         public long GetTrackStartTime(int trackNumber)
         {
             // go to segment
@@ -126,7 +214,24 @@
             return 0;
         }
 
-        /// <param name="duration">Duration of the segment in milliseconds.</param>
+        /// <summary>
+        /// The get info.
+        /// </summary>
+        /// <param name="frameRate">
+        /// The frame Rate.
+        /// </param>
+        /// <param name="pixelWidth">
+        /// The pixel Width.
+        /// </param>
+        /// <param name="pixelHeight">
+        /// The pixel Height.
+        /// </param>
+        /// <param name="duration">
+        /// Duration of the segment in milliseconds.
+        /// </param>
+        /// <param name="videoCodec">
+        /// The video Codec.
+        /// </param>
         public void GetInfo(out double frameRate, out int pixelWidth, out int pixelHeight, out double duration, out string videoCodec)
         {
             this.ReadSegmentInfoAndTracks();
@@ -138,6 +243,18 @@
             videoCodec = this._videoCodecId;
         }
 
+        /// <summary>
+        /// The get subtitle.
+        /// </summary>
+        /// <param name="trackNumber">
+        /// The track number.
+        /// </param>
+        /// <param name="progressCallback">
+        /// The progress callback.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public List<MatroskaSubtitle> GetSubtitle(int trackNumber, LoadMatroskaCallback progressCallback)
         {
             this._subtitleRipTrackNumber = trackNumber;
@@ -145,6 +262,18 @@
             return this._subtitleRip;
         }
 
+        /// <summary>
+        /// The find track start in cluster.
+        /// </summary>
+        /// <param name="cluster">
+        /// The cluster.
+        /// </param>
+        /// <param name="targetTrackNumber">
+        /// The target track number.
+        /// </param>
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
         private long FindTrackStartInCluster(Element cluster, int targetTrackNumber)
         {
             long clusterTimeCode = 0L;
@@ -185,6 +314,12 @@
             return (clusterTimeCode + trackStartTime) * this._timecodeScale / 1000000;
         }
 
+        /// <summary>
+        /// The read video element.
+        /// </summary>
+        /// <param name="videoElement">
+        /// The video element.
+        /// </param>
         private void ReadVideoElement(Element videoElement)
         {
             Element element;
@@ -205,6 +340,12 @@
             }
         }
 
+        /// <summary>
+        /// The read track entry element.
+        /// </summary>
+        /// <param name="trackEntryElement">
+        /// The track entry element.
+        /// </param>
         private void ReadTrackEntryElement(Element trackEntryElement)
         {
             long defaultDuration = 0;
@@ -298,6 +439,18 @@
             }
         }
 
+        /// <summary>
+        /// The read content encoding element.
+        /// </summary>
+        /// <param name="contentEncodingElement">
+        /// The content encoding element.
+        /// </param>
+        /// <param name="contentCompressionAlgorithm">
+        /// The content compression algorithm.
+        /// </param>
+        /// <param name="contentEncodingType">
+        /// The content encoding type.
+        /// </param>
         private void ReadContentEncodingElement(Element contentEncodingElement, ref int contentCompressionAlgorithm, ref int contentEncodingType)
         {
             Element element;
@@ -343,6 +496,12 @@
             }
         }
 
+        /// <summary>
+        /// The read info element.
+        /// </summary>
+        /// <param name="infoElement">
+        /// The info element.
+        /// </param>
         private void ReadInfoElement(Element infoElement)
         {
             Element element;
@@ -368,6 +527,12 @@
             }
         }
 
+        /// <summary>
+        /// The read tracks element.
+        /// </summary>
+        /// <param name="tracksElement">
+        /// The tracks element.
+        /// </param>
         private void ReadTracksElement(Element tracksElement)
         {
             this._tracks = new List<MatroskaTrackInfo>();
@@ -386,6 +551,12 @@
             }
         }
 
+        /// <summary>
+        /// The read cluster.
+        /// </summary>
+        /// <param name="clusterElement">
+        /// The cluster element.
+        /// </param>
         private void ReadCluster(Element clusterElement)
         {
             long clusterTimeCode = 0;
@@ -416,6 +587,15 @@
             }
         }
 
+        /// <summary>
+        /// The read block group element.
+        /// </summary>
+        /// <param name="clusterElement">
+        /// The cluster element.
+        /// </param>
+        /// <param name="clusterTimeCode">
+        /// The cluster time code.
+        /// </param>
         private void ReadBlockGroupElement(Element clusterElement, long clusterTimeCode)
         {
             MatroskaSubtitle subtitle = null;
@@ -449,6 +629,18 @@
             }
         }
 
+        /// <summary>
+        /// The read subtitle block.
+        /// </summary>
+        /// <param name="blockElement">
+        /// The block element.
+        /// </param>
+        /// <param name="clusterTimeCode">
+        /// The cluster time code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MatroskaSubtitle"/>.
+        /// </returns>
         private MatroskaSubtitle ReadSubtitleBlock(Element blockElement, long clusterTimeCode)
         {
             int trackNumber = (int)this.ReadVariableLengthUInt();
@@ -495,6 +687,9 @@
             return new MatroskaSubtitle(data, clusterTimeCode + timeCode);
         }
 
+        /// <summary>
+        /// The read segment info and tracks.
+        /// </summary>
         private void ReadSegmentInfoAndTracks()
         {
             // go to segment
@@ -518,6 +713,12 @@
             }
         }
 
+        /// <summary>
+        /// The read segment cluster.
+        /// </summary>
+        /// <param name="progressCallback">
+        /// The progress callback.
+        /// </param>
         private void ReadSegmentCluster(LoadMatroskaCallback progressCallback)
         {
             // go to segment
@@ -542,6 +743,12 @@
             }
         }
 
+        /// <summary>
+        /// The read element.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Element"/>.
+        /// </returns>
         private Element ReadElement()
         {
             ElementId id = (ElementId)this.ReadVariableLengthUInt(false);
@@ -554,6 +761,15 @@
             return new Element(id, this._stream.Position, size);
         }
 
+        /// <summary>
+        /// The read variable length u int.
+        /// </summary>
+        /// <param name="unsetFirstBit">
+        /// The unset first bit.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ulong"/>.
+        /// </returns>
         private ulong ReadVariableLengthUInt(bool unsetFirstBit = true)
         {
             // Begin loop with byte set to newly read byte
@@ -591,11 +807,15 @@
         }
 
         /// <summary>
-        ///     Reads a fixed length unsigned integer from the current stream and advances the current
+        /// Reads a fixed length unsigned integer from the current stream and advances the current
         ///     position of the stream by the integer length in bytes.
         /// </summary>
-        /// <param name="length">The length in bytes of the integer.</param>
-        /// <returns>A 64-bit unsigned integer.</returns>
+        /// <param name="length">
+        /// The length in bytes of the integer.
+        /// </param>
+        /// <returns>
+        /// A 64-bit unsigned integer.
+        /// </returns>
         private ulong ReadUInt(int length)
         {
             byte[] data = new byte[length];
@@ -656,11 +876,17 @@
         }
 
         /// <summary>
-        ///     Reads a fixed length string from the current stream using the specified encoding.
+        /// Reads a fixed length string from the current stream using the specified encoding.
         /// </summary>
-        /// <param name="length">The length in bytes of the string.</param>
-        /// <param name="encoding">The encoding of the string.</param>
-        /// <returns>The string being read.</returns>
+        /// <param name="length">
+        /// The length in bytes of the string.
+        /// </param>
+        /// <param name="encoding">
+        /// The encoding of the string.
+        /// </param>
+        /// <returns>
+        /// The string being read.
+        /// </returns>
         private string ReadString(int length, Encoding encoding)
         {
             byte[] buffer = new byte[length];

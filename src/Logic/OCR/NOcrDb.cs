@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.Ocr
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NOcrDb.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The n ocr db.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.Ocr
 {
     using System;
     using System.Collections.Generic;
@@ -6,25 +15,52 @@
     using System.IO;
     using System.IO.Compression;
 
+    /// <summary>
+    /// The n ocr db.
+    /// </summary>
     public class NOcrDb
     {
+        /// <summary>
+        /// The ocr characters.
+        /// </summary>
         public List<NOcrChar> OcrCharacters = new List<NOcrChar>();
 
+        /// <summary>
+        /// The ocr characters expanded.
+        /// </summary>
         public List<NOcrChar> OcrCharactersExpanded = new List<NOcrChar>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NOcrDb"/> class.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public NOcrDb(string fileName)
         {
             this.FileName = fileName;
             this.LoadOcrCharacters();
         }
 
+        /// <summary>
+        /// Gets the file name.
+        /// </summary>
         public string FileName { get; private set; }
 
+        /// <summary>
+        /// The find exact match.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int FindExactMatch()
         {
             return -1;
         }
 
+        /// <summary>
+        /// The save.
+        /// </summary>
         public void Save()
         {
             using (Stream gz = new GZipStream(File.OpenWrite(this.FileName), CompressionMode.Compress))
@@ -41,6 +77,9 @@
             }
         }
 
+        /// <summary>
+        /// The load ocr characters.
+        /// </summary>
         public void LoadOcrCharacters()
         {
             List<NOcrChar> list = new List<NOcrChar>();
@@ -81,6 +120,12 @@
             this.OcrCharactersExpanded = listExpanded;
         }
 
+        /// <summary>
+        /// The add.
+        /// </summary>
+        /// <param name="ocrChar">
+        /// The ocr char.
+        /// </param>
         public void Add(NOcrChar ocrChar)
         {
             if (ocrChar.ExpandCount > 0)
@@ -93,6 +138,15 @@
             }
         }
 
+        /// <summary>
+        /// The get match.
+        /// </summary>
+        /// <param name="nbmp">
+        /// The nbmp.
+        /// </param>
+        /// <returns>
+        /// The <see cref="NOcrChar"/>.
+        /// </returns>
         public NOcrChar GetMatch(NikseBitmap nbmp)
         {
             const int NocrMinColor = 300;

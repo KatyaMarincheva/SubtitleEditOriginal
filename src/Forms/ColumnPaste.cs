@@ -1,62 +1,130 @@
-﻿using System;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ColumnPaste.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The column paste.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The column paste.
+    /// </summary>
     public partial class ColumnPaste : Form
     {
-        public bool PasteAll { get; set; }
-        public bool PasteTimeCodesOnly { get; set; }
-        public bool PasteTextOnly { get; set; }
-        public bool PasteOriginalTextOnly { get; set; }
-
-        public bool PasteOverwrite { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ColumnPaste"/> class.
+        /// </summary>
+        /// <param name="isOriginalAvailable">
+        /// The is original available.
+        /// </param>
+        /// <param name="onlyText">
+        /// The only text.
+        /// </param>
         public ColumnPaste(bool isOriginalAvailable, bool onlyText)
         {
-            InitializeComponent();
-            Utilities.FixLargeFonts(this, buttonOK);
+            this.InitializeComponent();
+            Utilities.FixLargeFonts(this, this.buttonOK);
 
-            radioButtonAll.Enabled = !onlyText;
-            radioButtonTimeCodes.Enabled = !onlyText;
-            radioButtonOriginalText.Visible = isOriginalAvailable;
+            this.radioButtonAll.Enabled = !onlyText;
+            this.radioButtonTimeCodes.Enabled = !onlyText;
+            this.radioButtonOriginalText.Visible = isOriginalAvailable;
 
-            Text = Configuration.Settings.Language.ColumnPaste.Title;
-            groupBoxChooseColumn.Text = Configuration.Settings.Language.ColumnPaste.ChooseColumn;
-            groupBoxOverwriteOrInsert.Text = Configuration.Settings.Language.ColumnPaste.OverwriteShiftCellsDown;
-            radioButtonOverwrite.Text = Configuration.Settings.Language.ColumnPaste.Overwrite;
-            radioButtonShiftCellsDown.Text = Configuration.Settings.Language.ColumnPaste.ShiftCellsDown;
-            radioButtonAll.Text = Configuration.Settings.Language.General.All;
-            radioButtonTimeCodes.Text = Configuration.Settings.Language.ColumnPaste.TimeCodesOnly;
-            radioButtonTextOnly.Text = Configuration.Settings.Language.ColumnPaste.TextOnly;
-            radioButtonOriginalText.Text = Configuration.Settings.Language.ColumnPaste.OriginalTextOnly;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            this.Text = Configuration.Settings.Language.ColumnPaste.Title;
+            this.groupBoxChooseColumn.Text = Configuration.Settings.Language.ColumnPaste.ChooseColumn;
+            this.groupBoxOverwriteOrInsert.Text = Configuration.Settings.Language.ColumnPaste.OverwriteShiftCellsDown;
+            this.radioButtonOverwrite.Text = Configuration.Settings.Language.ColumnPaste.Overwrite;
+            this.radioButtonShiftCellsDown.Text = Configuration.Settings.Language.ColumnPaste.ShiftCellsDown;
+            this.radioButtonAll.Text = Configuration.Settings.Language.General.All;
+            this.radioButtonTimeCodes.Text = Configuration.Settings.Language.ColumnPaste.TimeCodesOnly;
+            this.radioButtonTextOnly.Text = Configuration.Settings.Language.ColumnPaste.TextOnly;
+            this.radioButtonOriginalText.Text = Configuration.Settings.Language.ColumnPaste.OriginalTextOnly;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether paste all.
+        /// </summary>
+        public bool PasteAll { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether paste time codes only.
+        /// </summary>
+        public bool PasteTimeCodesOnly { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether paste text only.
+        /// </summary>
+        public bool PasteTextOnly { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether paste original text only.
+        /// </summary>
+        public bool PasteOriginalTextOnly { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether paste overwrite.
+        /// </summary>
+        public bool PasteOverwrite { get; set; }
+
+        /// <summary>
+        /// The paste special_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void PasteSpecial_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
 
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            PasteAll = radioButtonAll.Checked;
-            PasteTimeCodesOnly = radioButtonTimeCodes.Checked;
-            PasteTextOnly = radioButtonTextOnly.Checked;
-            PasteOriginalTextOnly = radioButtonOriginalText.Checked;
+            this.PasteAll = this.radioButtonAll.Checked;
+            this.PasteTimeCodesOnly = this.radioButtonTimeCodes.Checked;
+            this.PasteTextOnly = this.radioButtonTextOnly.Checked;
+            this.PasteOriginalTextOnly = this.radioButtonOriginalText.Checked;
 
-            PasteOverwrite = radioButtonOverwrite.Checked;
+            this.PasteOverwrite = this.radioButtonOverwrite.Checked;
 
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
-
     }
 }

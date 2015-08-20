@@ -1,12 +1,28 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TransportStreamTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The transport stream test.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic.TransportStream
 {
+    using System.IO;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    /// <summary>
+    /// The transport stream test.
+    /// </summary>
     [TestClass]
     [DeploymentItem("Files")]
     public class TransportStreamTest
     {
+        /// <summary>
+        /// The transport stream test 1.
+        /// </summary>
         [TestMethod]
         public void TransportStreamTest1()
         {

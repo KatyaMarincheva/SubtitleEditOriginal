@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="YouTubeAnnotations.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The you tube annotations.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -10,10 +19,19 @@
     using Nikse.SubtitleEdit.Forms;
     using Nikse.SubtitleEdit.Logic.Enums;
 
+    /// <summary>
+    /// The you tube annotations.
+    /// </summary>
     public class YouTubeAnnotations : SubtitleFormat
     {
+        /// <summary>
+        /// The _promt for styles.
+        /// </summary>
         private bool _promtForStyles = true;
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -22,6 +40,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -30,6 +51,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -38,6 +62,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -47,6 +83,18 @@
             return subtitle.Paragraphs.Count > 0;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + Environment.NewLine + "<document>" + Environment.NewLine + "   <requestheader video_id=\"X\"/>" + Environment.NewLine + "  <annotations/>" + Environment.NewLine + "</document>";
@@ -125,6 +173,18 @@
             return ToUtf8XmlString(xml);
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -248,6 +308,15 @@
             }
         }
 
+        /// <summary>
+        /// The decode time code.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode DecodeTimeCode(string time)
         {
             string[] arr = time.Split(new[] { '.', ':' }, StringSplitOptions.RemoveEmptyEntries);
@@ -259,6 +328,15 @@
             return new TimeCode(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]), int.Parse(arr[3]));
         }
 
+        /// <summary>
+        /// The encode time.
+        /// </summary>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string EncodeTime(TimeCode timeCode)
         {
             // 0:01:08.0

@@ -1,99 +1,163 @@
-﻿using Nikse.SubtitleEdit.Logic;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.IO.Compression;
-using System.Net;
-using System.Windows.Forms;
-using System.Xml;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="PluginsGet.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The plugins get.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Globalization;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Net;
+    using System.Reflection;
+    using System.Windows.Forms;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The plugins get.
+    /// </summary>
     public sealed partial class PluginsGet : Form
     {
-        private readonly XmlDocument _pluginDoc = new XmlDocument();
-        private string _downloadedPluginName;
+        /// <summary>
+        /// The _language.
+        /// </summary>
         private readonly LanguageStructure.PluginsGet _language;
-        private List<string> _updateAllListUrls;
+
+        /// <summary>
+        /// The _plugin doc.
+        /// </summary>
+        private readonly XmlDocument _pluginDoc = new XmlDocument();
+
+        /// <summary>
+        /// The _downloaded plugin name.
+        /// </summary>
+        private string _downloadedPluginName;
+
+        /// <summary>
+        /// The _update all list names.
+        /// </summary>
         private List<string> _updateAllListNames;
+
+        /// <summary>
+        /// The _update all list urls.
+        /// </summary>
+        private List<string> _updateAllListUrls;
+
+        /// <summary>
+        /// The _updating all plugins.
+        /// </summary>
         private bool _updatingAllPlugins;
+
+        /// <summary>
+        /// The _updating all plugins count.
+        /// </summary>
         private int _updatingAllPluginsCount;
 
-        private static string GetPluginXmlFileUrl()
-        {
-            if (Environment.Version.Major < 4)
-                return "https://raw.github.com/SubtitleEdit/plugins/master/Plugins2.xml"; // .net 2-3.5
-            return "https://raw.github.com/SubtitleEdit/plugins/master/Plugins4.xml"; // .net 4-?
-        }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PluginsGet"/> class.
+        /// </summary>
         public PluginsGet()
         {
-            InitializeComponent();
-            _language = Configuration.Settings.Language.PluginsGet;
-            Text = _language.Title;
-            tabPageInstalledPlugins.Text = _language.InstalledPlugins;
-            tabPageGetPlugins.Text = _language.GetPlugins;
+            this.InitializeComponent();
+            this._language = Configuration.Settings.Language.PluginsGet;
+            this.Text = this._language.Title;
+            this.tabPageInstalledPlugins.Text = this._language.InstalledPlugins;
+            this.tabPageGetPlugins.Text = this._language.GetPlugins;
 
-            buttonDownload.Text = _language.Download;
-            buttonRemove.Text = _language.Remove;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            linkLabelOpenPluginFolder.Text = _language.OpenPluginsFolder;
-            labelDescription1.Text = _language.GetPluginsInfo1;
-            labelClickDownload.Text = _language.GetPluginsInfo2;
+            this.buttonDownload.Text = this._language.Download;
+            this.buttonRemove.Text = this._language.Remove;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.linkLabelOpenPluginFolder.Text = this._language.OpenPluginsFolder;
+            this.labelDescription1.Text = this._language.GetPluginsInfo1;
+            this.labelClickDownload.Text = this._language.GetPluginsInfo2;
 
-            columnHeaderName.Text = Configuration.Settings.Language.General.Name;
-            columnHeaderDescription.Text = _language.Description;
-            columnHeaderVersion.Text = _language.Version;
-            columnHeaderDate.Text = _language.Date;
+            this.columnHeaderName.Text = Configuration.Settings.Language.General.Name;
+            this.columnHeaderDescription.Text = this._language.Description;
+            this.columnHeaderVersion.Text = this._language.Version;
+            this.columnHeaderDate.Text = this._language.Date;
 
-            columnHeaderInsName.Text = Configuration.Settings.Language.General.Name;
-            columnHeaderInsDescription.Text = _language.Description;
-            columnHeaderInsVersion.Text = _language.Version;
-            columnHeaderInsType.Text = _language.Type;
+            this.columnHeaderInsName.Text = Configuration.Settings.Language.General.Name;
+            this.columnHeaderInsDescription.Text = this._language.Description;
+            this.columnHeaderInsVersion.Text = this._language.Version;
+            this.columnHeaderInsType.Text = this._language.Type;
 
-            buttonUpdateAll.Visible = false;
+            this.buttonUpdateAll.Visible = false;
             try
             {
-                labelPleaseWait.Text = Configuration.Settings.Language.General.PleaseWait;
-                Refresh();
-                ShowInstalledPlugins();
+                this.labelPleaseWait.Text = Configuration.Settings.Language.General.PleaseWait;
+                this.Refresh();
+                this.ShowInstalledPlugins();
                 string url = GetPluginXmlFileUrl();
                 var wc = new WebClient { Proxy = Utilities.GetProxy(), Encoding = System.Text.Encoding.UTF8 };
-                wc.Headers.Add("Accept-Encoding", "");
-                wc.DownloadStringCompleted += wc_DownloadStringCompleted;
+                wc.Headers.Add("Accept-Encoding", string.Empty);
+                wc.DownloadStringCompleted += this.wc_DownloadStringCompleted;
                 wc.DownloadStringAsync(new Uri(url));
             }
             catch (Exception exception)
             {
-                labelPleaseWait.Text = string.Empty;
-                buttonOK.Enabled = true;
-                buttonDownload.Enabled = true;
-                listViewGetPlugins.Enabled = true;
+                this.labelPleaseWait.Text = string.Empty;
+                this.buttonOK.Enabled = true;
+                this.buttonDownload.Enabled = true;
+                this.listViewGetPlugins.Enabled = true;
                 MessageBox.Show(exception.Message + Environment.NewLine + Environment.NewLine + exception.StackTrace);
             }
         }
 
+        /// <summary>
+        /// The get plugin xml file url.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string GetPluginXmlFileUrl()
+        {
+            if (Environment.Version.Major < 4)
+            {
+                return "https://raw.github.com/SubtitleEdit/plugins/master/Plugins2.xml"; // .net 2-3.5
+            }
+
+            return "https://raw.github.com/SubtitleEdit/plugins/master/Plugins4.xml"; // .net 4-?
+        }
+
+        /// <summary>
+        /// The wc_ download string completed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void wc_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
-            labelPleaseWait.Text = string.Empty;
+            this.labelPleaseWait.Text = string.Empty;
             if (e.Error != null)
             {
-                MessageBox.Show(string.Format(_language.UnableToDownloadPluginListX, e.Error.Message));
+                MessageBox.Show(string.Format(this._language.UnableToDownloadPluginListX, e.Error.Message));
                 if (e.Error.InnerException != null)
                 {
                     MessageBox.Show(e.Error.InnerException.Source + ": " + e.Error.InnerException.Message + Environment.NewLine + Environment.NewLine + e.Error.InnerException.StackTrace);
                 }
+
                 return;
             }
-            _updateAllListUrls = new List<string>();
-            _updateAllListNames = new List<string>();
-            listViewGetPlugins.BeginUpdate();
+
+            this._updateAllListUrls = new List<string>();
+            this._updateAllListNames = new List<string>();
+            this.listViewGetPlugins.BeginUpdate();
             try
             {
-                _pluginDoc.LoadXml(e.Result);
-                string[] arr = _pluginDoc.DocumentElement.SelectSingleNode("SubtitleEditVersion").InnerText.Split(new[] { '.', ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                this._pluginDoc.LoadXml(e.Result);
+                string[] arr = this._pluginDoc.DocumentElement.SelectSingleNode("SubtitleEditVersion").InnerText.Split(new[] { '.', ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 double requiredVersion = Convert.ToDouble(arr[0] + "." + arr[1], CultureInfo.InvariantCulture);
 
                 string[] versionInfo = Utilities.AssemblyVersion.Split('.');
@@ -101,66 +165,77 @@ namespace Nikse.SubtitleEdit.Forms
 
                 if (currentVersion < requiredVersion)
                 {
-                    MessageBox.Show(_language.NewVersionOfSubtitleEditRequired);
-                    DialogResult = DialogResult.Cancel;
+                    MessageBox.Show(this._language.NewVersionOfSubtitleEditRequired);
+                    this.DialogResult = DialogResult.Cancel;
                     return;
                 }
 
-                foreach (XmlNode node in _pluginDoc.DocumentElement.SelectNodes("Plugin"))
+                foreach (XmlNode node in this._pluginDoc.DocumentElement.SelectNodes("Plugin"))
                 {
                     var item = new ListViewItem(node.SelectSingleNode("Name").InnerText.Trim('.'));
                     item.SubItems.Add(node.SelectSingleNode("Description").InnerText);
                     item.SubItems.Add(node.SelectSingleNode("Version").InnerText);
                     item.SubItems.Add(node.SelectSingleNode("Date").InnerText);
-                    listViewGetPlugins.Items.Add(item);
+                    this.listViewGetPlugins.Items.Add(item);
 
-                    foreach (ListViewItem installed in listViewInstalledPlugins.Items)
+                    foreach (ListViewItem installed in this.listViewInstalledPlugins.Items)
                     {
                         var installedVer = Convert.ToDouble(installed.SubItems[2].Text.Replace(',', '.'), CultureInfo.InvariantCulture);
                         var currentVer = Convert.ToDouble(node.SelectSingleNode("Version").InnerText.Replace(',', '.'), CultureInfo.InvariantCulture);
 
                         if (string.Compare(installed.Text, node.SelectSingleNode("Name").InnerText.Trim('.'), StringComparison.OrdinalIgnoreCase) == 0 && installedVer < currentVer)
                         {
-                            //item.BackColor = Color.LightGreen;
+                            // item.BackColor = Color.LightGreen;
                             installed.BackColor = Color.LightPink;
-                            installed.SubItems[1].Text = _language.UpdateAvailable + " " + installed.SubItems[1].Text;
-                            buttonUpdateAll.Visible = true;
-                            _updateAllListUrls.Add(node.SelectSingleNode("Url").InnerText);
-                            _updateAllListNames.Add(node.SelectSingleNode("Name").InnerText);
+                            installed.SubItems[1].Text = this._language.UpdateAvailable + " " + installed.SubItems[1].Text;
+                            this.buttonUpdateAll.Visible = true;
+                            this._updateAllListUrls.Add(node.SelectSingleNode("Url").InnerText);
+                            this._updateAllListNames.Add(node.SelectSingleNode("Name").InnerText);
                         }
                     }
                 }
             }
             catch (Exception exception)
             {
-                MessageBox.Show(string.Format(_language.UnableToDownloadPluginListX, exception.Source + ": " + exception.Message + Environment.NewLine + Environment.NewLine + exception.StackTrace));
+                MessageBox.Show(string.Format(this._language.UnableToDownloadPluginListX, exception.Source + ": " + exception.Message + Environment.NewLine + Environment.NewLine + exception.StackTrace));
             }
-            listViewGetPlugins.EndUpdate();
 
-            if (_updateAllListUrls.Count > 0)
+            this.listViewGetPlugins.EndUpdate();
+
+            if (this._updateAllListUrls.Count > 0)
             {
-                buttonUpdateAll.BackColor = Color.LightGreen;
+                this.buttonUpdateAll.BackColor = Color.LightGreen;
                 if (Configuration.Settings.Language.PluginsGet.UpdateAllX != null)
-                    buttonUpdateAll.Text = string.Format(Configuration.Settings.Language.PluginsGet.UpdateAllX, _updateAllListUrls.Count);
+                {
+                    this.buttonUpdateAll.Text = string.Format(Configuration.Settings.Language.PluginsGet.UpdateAllX, this._updateAllListUrls.Count);
+                }
                 else
-                    buttonUpdateAll.Text = Configuration.Settings.Language.PluginsGet.UpdateAll;
-                buttonUpdateAll.Visible = true;
+                {
+                    this.buttonUpdateAll.Text = Configuration.Settings.Language.PluginsGet.UpdateAll;
+                }
+
+                this.buttonUpdateAll.Visible = true;
             }
         }
 
+        /// <summary>
+        /// The show installed plugins.
+        /// </summary>
         private void ShowInstalledPlugins()
         {
             string path = Configuration.PluginsDirectory;
             if (!Directory.Exists(path))
+            {
                 return;
+            }
 
-            listViewInstalledPlugins.BeginUpdate();
-            listViewInstalledPlugins.Items.Clear();
+            this.listViewInstalledPlugins.BeginUpdate();
+            this.listViewInstalledPlugins.Items.Clear();
             foreach (string pluginFileName in Directory.GetFiles(path, "*.DLL"))
             {
                 string name, description, text, shortcut, actionType;
                 decimal version;
-                System.Reflection.MethodInfo mi;
+                MethodInfo mi;
                 Main.GetPropertiesAndDoAction(pluginFileName, out name, out text, out version, out description, out actionType, out shortcut, out mi);
                 if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(actionType) && mi != null)
                 {
@@ -171,7 +246,7 @@ namespace Nikse.SubtitleEdit.Forms
                         item.SubItems.Add(description);
                         item.SubItems.Add(version.ToString());
                         item.SubItems.Add(actionType);
-                        listViewInstalledPlugins.Items.Add(item);
+                        this.listViewInstalledPlugins.Items.Add(item);
                     }
                     catch (Exception exception)
                     {
@@ -179,50 +254,71 @@ namespace Nikse.SubtitleEdit.Forms
                     }
                 }
             }
-            listViewInstalledPlugins.EndUpdate();
+
+            this.listViewInstalledPlugins.EndUpdate();
         }
 
+        /// <summary>
+        /// The button download_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonDownload_Click(object sender, EventArgs e)
         {
-            if (listViewGetPlugins.SelectedItems.Count == 0)
+            if (this.listViewGetPlugins.SelectedItems.Count == 0)
+            {
                 return;
+            }
 
             try
             {
-                labelPleaseWait.Text = Configuration.Settings.Language.General.PleaseWait;
-                buttonOK.Enabled = false;
-                buttonDownload.Enabled = false;
-                listViewGetPlugins.Enabled = false;
-                Refresh();
-                Cursor = Cursors.WaitCursor;
+                this.labelPleaseWait.Text = Configuration.Settings.Language.General.PleaseWait;
+                this.buttonOK.Enabled = false;
+                this.buttonDownload.Enabled = false;
+                this.listViewGetPlugins.Enabled = false;
+                this.Refresh();
+                this.Cursor = Cursors.WaitCursor;
 
-                int index = listViewGetPlugins.SelectedItems[0].Index;
-                string url = _pluginDoc.DocumentElement.SelectNodes("Plugin")[index].SelectSingleNode("Url").InnerText;
-                _downloadedPluginName = _pluginDoc.DocumentElement.SelectNodes("Plugin")[index].SelectSingleNode("Name").InnerText;
+                int index = this.listViewGetPlugins.SelectedItems[0].Index;
+                string url = this._pluginDoc.DocumentElement.SelectNodes("Plugin")[index].SelectSingleNode("Url").InnerText;
+                this._downloadedPluginName = this._pluginDoc.DocumentElement.SelectNodes("Plugin")[index].SelectSingleNode("Name").InnerText;
 
                 var wc = new WebClient { Proxy = Utilities.GetProxy() };
-                wc.DownloadDataCompleted += wc_DownloadDataCompleted;
+                wc.DownloadDataCompleted += this.wc_DownloadDataCompleted;
                 wc.DownloadDataAsync(new Uri(url));
-                Cursor = Cursors.Default;
+                this.Cursor = Cursors.Default;
             }
             catch (Exception exception)
             {
-                labelPleaseWait.Text = string.Empty;
-                buttonOK.Enabled = true;
-                buttonDownload.Enabled = true;
-                listViewGetPlugins.Enabled = true;
-                Cursor = Cursors.Default;
+                this.labelPleaseWait.Text = string.Empty;
+                this.buttonOK.Enabled = true;
+                this.buttonDownload.Enabled = true;
+                this.listViewGetPlugins.Enabled = true;
+                this.Cursor = Cursors.Default;
                 MessageBox.Show(exception.Message + Environment.NewLine + Environment.NewLine + exception.StackTrace);
             }
         }
 
+        /// <summary>
+        /// The wc_ download data completed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void wc_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
         {
-            labelPleaseWait.Text = string.Empty;
+            this.labelPleaseWait.Text = string.Empty;
             if (e.Error != null)
             {
                 MessageBox.Show(Configuration.Settings.Language.GetTesseractDictionaries.DownloadFailed);
-                DialogResult = DialogResult.Cancel;
+                this.DialogResult = DialogResult.Cancel;
                 return;
             }
 
@@ -259,37 +355,49 @@ namespace Nikse.SubtitleEdit.Forms
                         catch
                         {
                             MessageBox.Show(string.Format("{0} already exists - unable to overwrite it", fullPath));
-                            Cursor = Cursors.Default;
-                            labelPleaseWait.Text = string.Empty;
-                            buttonOK.Enabled = true;
-                            buttonDownload.Enabled = true;
-                            listViewGetPlugins.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            this.labelPleaseWait.Text = string.Empty;
+                            this.buttonOK.Enabled = true;
+                            this.buttonDownload.Enabled = true;
+                            this.listViewGetPlugins.Enabled = true;
                             return;
                         }
                     }
+
                     zip.ExtractFile(entry, fullPath);
                 }
             }
-            Cursor = Cursors.Default;
-            labelPleaseWait.Text = string.Empty;
-            buttonOK.Enabled = true;
-            buttonDownload.Enabled = true;
-            listViewGetPlugins.Enabled = true;
-            if (_updatingAllPlugins)
+
+            this.Cursor = Cursors.Default;
+            this.labelPleaseWait.Text = string.Empty;
+            this.buttonOK.Enabled = true;
+            this.buttonDownload.Enabled = true;
+            this.listViewGetPlugins.Enabled = true;
+            if (this._updatingAllPlugins)
             {
-                _updatingAllPluginsCount++;
-                if (_updatingAllPluginsCount == _updateAllListUrls.Count)
+                this._updatingAllPluginsCount++;
+                if (this._updatingAllPluginsCount == this._updateAllListUrls.Count)
                 {
-                    MessageBox.Show(string.Format(_language.XPluginsUpdated, _updatingAllPluginsCount));
+                    MessageBox.Show(string.Format(this._language.XPluginsUpdated, this._updatingAllPluginsCount));
                 }
             }
             else
             {
-                MessageBox.Show(string.Format(_language.PluginXDownloaded, _downloadedPluginName));
+                MessageBox.Show(string.Format(this._language.PluginXDownloaded, this._downloadedPluginName));
             }
-            ShowInstalledPlugins();
+
+            this.ShowInstalledPlugins();
         }
 
+        /// <summary>
+        /// The link label open dictionary folder_ link clicked.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void linkLabelOpenDictionaryFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string pluginsFolder = Configuration.PluginsDirectory;
@@ -305,6 +413,7 @@ namespace Nikse.SubtitleEdit.Forms
                     return;
                 }
             }
+
             try
             {
                 System.Diagnostics.Process.Start(pluginsFolder);
@@ -315,11 +424,20 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The plugins get_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void PluginsGet_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                DialogResult = DialogResult.Cancel;
+                this.DialogResult = DialogResult.Cancel;
             }
             else if (e.KeyCode == Keys.F1)
             {
@@ -328,13 +446,24 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The button remove_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonRemove_Click(object sender, EventArgs e)
         {
-            if (listViewInstalledPlugins.SelectedItems.Count < 1)
+            if (this.listViewInstalledPlugins.SelectedItems.Count < 1)
+            {
                 return;
+            }
 
-            string fileName = listViewInstalledPlugins.SelectedItems[0].Tag.ToString();
-            int index = listViewInstalledPlugins.SelectedItems[0].Index;
+            string fileName = this.listViewInstalledPlugins.SelectedItems[0].Tag.ToString();
+            int index = this.listViewInstalledPlugins.SelectedItems[0].Index;
             if (File.Exists(fileName))
             {
                 try
@@ -347,48 +476,61 @@ namespace Nikse.SubtitleEdit.Forms
                     return;
                 }
             }
-            listViewInstalledPlugins.Items.RemoveAt(index);
-            if (index >= listViewInstalledPlugins.Items.Count)
+
+            this.listViewInstalledPlugins.Items.RemoveAt(index);
+            if (index >= this.listViewInstalledPlugins.Items.Count)
+            {
                 index--;
+            }
+
             if (index >= 0)
             {
-                listViewInstalledPlugins.Items[index].Selected = true;
-                listViewInstalledPlugins.Items[index].Focused = true;
+                this.listViewInstalledPlugins.Items[index].Selected = true;
+                this.listViewInstalledPlugins.Items[index].Focused = true;
             }
         }
 
+        /// <summary>
+        /// The button update all_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonUpdateAll_Click(object sender, EventArgs e)
         {
-            buttonUpdateAll.Enabled = false;
-            buttonUpdateAll.BackColor = DefaultBackColor;
+            this.buttonUpdateAll.Enabled = false;
+            this.buttonUpdateAll.BackColor = DefaultBackColor;
             try
             {
-                labelPleaseWait.Text = Configuration.Settings.Language.General.PleaseWait;
-                buttonOK.Enabled = false;
-                buttonDownload.Enabled = false;
-                listViewGetPlugins.Enabled = false;
-                Refresh();
-                Cursor = Cursors.WaitCursor;
-                _updatingAllPluginsCount = 0;
-                _updatingAllPlugins = true;
-                for (int i = 0; i < _updateAllListUrls.Count; i++)
+                this.labelPleaseWait.Text = Configuration.Settings.Language.General.PleaseWait;
+                this.buttonOK.Enabled = false;
+                this.buttonDownload.Enabled = false;
+                this.listViewGetPlugins.Enabled = false;
+                this.Refresh();
+                this.Cursor = Cursors.WaitCursor;
+                this._updatingAllPluginsCount = 0;
+                this._updatingAllPlugins = true;
+                for (int i = 0; i < this._updateAllListUrls.Count; i++)
                 {
                     var wc = new WebClient { Proxy = Utilities.GetProxy() };
-                    wc.DownloadDataCompleted += wc_DownloadDataCompleted;
-                    wc.DownloadDataAsync(new Uri(_updateAllListUrls[i]));
+                    wc.DownloadDataCompleted += this.wc_DownloadDataCompleted;
+                    wc.DownloadDataAsync(new Uri(this._updateAllListUrls[i]));
                 }
-                Cursor = Cursors.Default;
+
+                this.Cursor = Cursors.Default;
             }
             catch (Exception exception)
             {
-                labelPleaseWait.Text = string.Empty;
-                buttonOK.Enabled = true;
-                buttonDownload.Enabled = true;
-                listViewGetPlugins.Enabled = true;
-                Cursor = Cursors.Default;
+                this.labelPleaseWait.Text = string.Empty;
+                this.buttonOK.Enabled = true;
+                this.buttonDownload.Enabled = true;
+                this.listViewGetPlugins.Enabled = true;
+                this.Cursor = Cursors.Default;
                 MessageBox.Show(exception.Message + Environment.NewLine + Environment.NewLine + exception.StackTrace);
             }
         }
-
     }
 }

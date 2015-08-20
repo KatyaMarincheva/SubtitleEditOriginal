@@ -1,83 +1,196 @@
-﻿using System.Drawing;
-using System.Text;
-using Nikse.SubtitleEdit.Logic.SubtitleFormats;
-using System;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SsaStyle.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The ssa style.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic
 {
+    using System;
+    using System.Drawing;
+    using System.Text;
+
+    using Nikse.SubtitleEdit.Logic.SubtitleFormats;
+
+    /// <summary>
+    /// The ssa style.
+    /// </summary>
     public class SsaStyle
     {
-        public string Name { get; set; }
-        public string FontName { get; set; }
-        public int FontSize { get; set; }
-        public bool Italic { get; set; }
-        public bool Bold { get; set; }
-        public bool Underline { get; set; }
-        public Color Primary { get; set; }
-        public Color Secondary { get; set; }
-        public Color Tertiary { get; set; }
-        public Color Outline { get; set; }
-        public Color Background { get; set; }
-        public int ShadowWidth { get; set; }
-        public int OutlineWidth { get; set; }
-        public string Alignment { get; set; }
-        public int MarginLeft { get; set; }
-        public int MarginRight { get; set; }
-        public int MarginVertical { get; set; }
-        public string BorderStyle { get; set; }
-        public string RawLine { get; set; }
-        public bool LoadedFromHeader { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SsaStyle"/> class.
+        /// </summary>
         public SsaStyle()
         {
-            FontName = Configuration.Settings.SubtitleSettings.SsaFontName;
-            FontSize = (int)Configuration.Settings.SubtitleSettings.SsaFontSize;
-            Primary = Color.FromArgb(Configuration.Settings.SubtitleSettings.SsaFontColorArgb);
-            Secondary = Color.Yellow;
-            Outline = Color.Black;
-            Background = Color.Black;
-            Alignment = "2";
-            OutlineWidth = Configuration.Settings.SubtitleSettings.SsaOutline;
-            ShadowWidth = Configuration.Settings.SubtitleSettings.SsaShadow;
-            MarginLeft = 10;
-            MarginRight = 10;
-            MarginVertical = 10;
-            BorderStyle = "1";
+            this.FontName = Configuration.Settings.SubtitleSettings.SsaFontName;
+            this.FontSize = (int)Configuration.Settings.SubtitleSettings.SsaFontSize;
+            this.Primary = Color.FromArgb(Configuration.Settings.SubtitleSettings.SsaFontColorArgb);
+            this.Secondary = Color.Yellow;
+            this.Outline = Color.Black;
+            this.Background = Color.Black;
+            this.Alignment = "2";
+            this.OutlineWidth = Configuration.Settings.SubtitleSettings.SsaOutline;
+            this.ShadowWidth = Configuration.Settings.SubtitleSettings.SsaShadow;
+            this.MarginLeft = 10;
+            this.MarginRight = 10;
+            this.MarginVertical = 10;
+            this.BorderStyle = "1";
             if (Configuration.Settings.SubtitleSettings.SsaOpaqueBox)
-                BorderStyle = "3";
-            RawLine = string.Empty;
-            LoadedFromHeader = false;
+            {
+                this.BorderStyle = "3";
+            }
+
+            this.RawLine = string.Empty;
+            this.LoadedFromHeader = false;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SsaStyle"/> class.
+        /// </summary>
+        /// <param name="ssaStyle">
+        /// The ssa style.
+        /// </param>
         public SsaStyle(SsaStyle ssaStyle)
         {
-            Name = ssaStyle.Name;
-            FontName = ssaStyle.FontName;
-            FontSize = ssaStyle.FontSize;
+            this.Name = ssaStyle.Name;
+            this.FontName = ssaStyle.FontName;
+            this.FontSize = ssaStyle.FontSize;
 
-            Italic = ssaStyle.Italic;
-            Bold = ssaStyle.Bold;
-            Underline = ssaStyle.Underline;
+            this.Italic = ssaStyle.Italic;
+            this.Bold = ssaStyle.Bold;
+            this.Underline = ssaStyle.Underline;
 
-            Primary = ssaStyle.Primary;
-            Secondary = ssaStyle.Secondary;
-            Tertiary = ssaStyle.Tertiary;
-            Outline = ssaStyle.Outline;
-            Background = ssaStyle.Background;
+            this.Primary = ssaStyle.Primary;
+            this.Secondary = ssaStyle.Secondary;
+            this.Tertiary = ssaStyle.Tertiary;
+            this.Outline = ssaStyle.Outline;
+            this.Background = ssaStyle.Background;
 
-            ShadowWidth = ssaStyle.ShadowWidth;
-            OutlineWidth = ssaStyle.OutlineWidth;
+            this.ShadowWidth = ssaStyle.ShadowWidth;
+            this.OutlineWidth = ssaStyle.OutlineWidth;
 
-            Alignment = ssaStyle.Alignment;
-            MarginLeft = ssaStyle.MarginLeft;
-            MarginRight = ssaStyle.MarginRight;
-            MarginVertical = ssaStyle.MarginVertical;
+            this.Alignment = ssaStyle.Alignment;
+            this.MarginLeft = ssaStyle.MarginLeft;
+            this.MarginRight = ssaStyle.MarginRight;
+            this.MarginVertical = ssaStyle.MarginVertical;
 
-            BorderStyle = ssaStyle.BorderStyle;
-            RawLine = ssaStyle.RawLine;
-            LoadedFromHeader = ssaStyle.LoadedFromHeader;
+            this.BorderStyle = ssaStyle.BorderStyle;
+            this.RawLine = ssaStyle.RawLine;
+            this.LoadedFromHeader = ssaStyle.LoadedFromHeader;
         }
 
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the font name.
+        /// </summary>
+        public string FontName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the font size.
+        /// </summary>
+        public int FontSize { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether italic.
+        /// </summary>
+        public bool Italic { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether bold.
+        /// </summary>
+        public bool Bold { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether underline.
+        /// </summary>
+        public bool Underline { get; set; }
+
+        /// <summary>
+        /// Gets or sets the primary.
+        /// </summary>
+        public Color Primary { get; set; }
+
+        /// <summary>
+        /// Gets or sets the secondary.
+        /// </summary>
+        public Color Secondary { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tertiary.
+        /// </summary>
+        public Color Tertiary { get; set; }
+
+        /// <summary>
+        /// Gets or sets the outline.
+        /// </summary>
+        public Color Outline { get; set; }
+
+        /// <summary>
+        /// Gets or sets the background.
+        /// </summary>
+        public Color Background { get; set; }
+
+        /// <summary>
+        /// Gets or sets the shadow width.
+        /// </summary>
+        public int ShadowWidth { get; set; }
+
+        /// <summary>
+        /// Gets or sets the outline width.
+        /// </summary>
+        public int OutlineWidth { get; set; }
+
+        /// <summary>
+        /// Gets or sets the alignment.
+        /// </summary>
+        public string Alignment { get; set; }
+
+        /// <summary>
+        /// Gets or sets the margin left.
+        /// </summary>
+        public int MarginLeft { get; set; }
+
+        /// <summary>
+        /// Gets or sets the margin right.
+        /// </summary>
+        public int MarginRight { get; set; }
+
+        /// <summary>
+        /// Gets or sets the margin vertical.
+        /// </summary>
+        public int MarginVertical { get; set; }
+
+        /// <summary>
+        /// Gets or sets the border style.
+        /// </summary>
+        public string BorderStyle { get; set; }
+
+        /// <summary>
+        /// Gets or sets the raw line.
+        /// </summary>
+        public string RawLine { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether loaded from header.
+        /// </summary>
+        public bool LoadedFromHeader { get; set; }
+
+        /// <summary>
+        /// The to raw ssa.
+        /// </summary>
+        /// <param name="styleFormat">
+        /// The style format.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         internal string ToRawSsa(string styleFormat)
         {
             var sb = new StringBuilder();
@@ -158,12 +271,23 @@ namespace Nikse.SubtitleEdit.Logic
                         sb.Append('0');
                         break;
                 }
+
                 sb.Append(',');
             }
+
             string s = sb.ToString().Trim();
             return s.Substring(0, s.Length - 1);
         }
 
+        /// <summary>
+        /// The to raw ass.
+        /// </summary>
+        /// <param name="styleFormat">
+        /// The style format.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         internal string ToRawAss(string styleFormat)
         {
             var sb = new StringBuilder();
@@ -247,8 +371,10 @@ namespace Nikse.SubtitleEdit.Logic
                         sb.Append('0');
                         break;
                 }
+
                 sb.Append(',');
             }
+
             string s = sb.ToString().Trim();
             return s.Substring(0, s.Length - 1);
         }

@@ -1,39 +1,59 @@
-﻿using System.IO;
-using System.Xml;
-using System.Text;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="LanguageDeserializer.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The language deserializer.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
+ // !!! THIS FILE IS AUTO-GENERATED!!!
 // !!! THIS FILE IS AUTO-GENERATED!!!
 // !!! THIS FILE IS AUTO-GENERATED!!!
-// !!! THIS FILE IS AUTO-GENERATED!!!
-
 namespace Nikse.SubtitleEdit.Logic
 {
+    using System.IO;
+    using System.Text;
+    using System.Xml;
 
-    public class LanguageDeserializer // NOTE: This class is AUTO-GENERATED!!!!
+    /// <summary>
+    /// The language deserializer.
+    /// </summary>
+    public class LanguageDeserializer
     {
-
+        // NOTE: This class is AUTO-GENERATED!!!!
+        /// <summary>
+        /// The custom deserialize language.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Language"/>.
+        /// </returns>
         public static Language CustomDeserializeLanguage(string fileName)
         {
             var name = new StringBuilder(100, 1000);
             var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var language = new Language();
 
-            using (XmlReader reader = XmlReader.Create(stream, new XmlReaderSettings {
-                   IgnoreWhitespace = true, IgnoreProcessingInstructions = true, IgnoreComments = true,
-                   DtdProcessing = DtdProcessing.Ignore, CheckCharacters = false, CloseInput = true }))
+            using (XmlReader reader = XmlReader.Create(stream, new XmlReaderSettings { IgnoreWhitespace = true, IgnoreProcessingInstructions = true, IgnoreComments = true, DtdProcessing = DtdProcessing.Ignore, CheckCharacters = false, CloseInput = true }))
             {
                 while (reader.Read())
                 {
                     if (reader.NodeType == XmlNodeType.Element)
                     {
                         if (!reader.IsEmptyElement && reader.Depth > 0)
+                        {
                             name.Append('/').Append(reader.Name);
+                        }
                     }
                     else if (reader.NodeType == XmlNodeType.EndElement)
                     {
                         if (name.Length > 0)
+                        {
                             name.Length -= reader.Name.Length + 1;
+                        }
                     }
                     else if (reader.NodeType == XmlNodeType.Text)
                     {
@@ -41,9 +61,22 @@ namespace Nikse.SubtitleEdit.Logic
                     }
                 }
             }
+
             return language;
         }
 
+        /// <summary>
+        /// The set value.
+        /// </summary>
+        /// <param name="language">
+        /// The language.
+        /// </param>
+        /// <param name="reader">
+        /// The reader.
+        /// </param>
+        /// <param name="name">
+        /// The name.
+        /// </param>
         private static void SetValue(Language language, XmlReader reader, string name)
         {
             switch (name)
@@ -5646,7 +5679,6 @@ namespace Nikse.SubtitleEdit.Logic
                 case "WebVttNewVoice/VoiceName":
                     language.WebVttNewVoice.VoiceName = reader.Value;
                     break;
-
             }
         }
     }

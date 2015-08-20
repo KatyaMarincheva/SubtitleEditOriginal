@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="CaptionsInc.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The captions inc.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -8,8 +17,14 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The captions inc.
+    /// </summary>
     public class CaptionsInc : SubtitleFormat
     {
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -18,6 +33,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -26,6 +44,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -34,6 +55,15 @@
             }
         }
 
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         public static void Save(string fileName, Subtitle subtitle)
         {
             using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
@@ -120,6 +150,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
@@ -137,11 +179,35 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             return "Not supported!";
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             subtitle.Paragraphs.Clear();
@@ -293,6 +359,18 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The write time.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
+        /// <param name="addEndBytes">
+        /// The add end bytes.
+        /// </param>
         private static void WriteTime(FileStream fs, TimeCode timeCode, bool addEndBytes)
         {
             string time = timeCode.ToHHMMSSFF();
@@ -305,6 +383,15 @@
             }
         }
 
+        /// <summary>
+        /// The decode timestamp.
+        /// </summary>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode DecodeTimestamp(string timeCode)
         {
             try

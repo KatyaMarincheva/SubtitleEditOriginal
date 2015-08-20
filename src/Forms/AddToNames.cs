@@ -1,87 +1,157 @@
-﻿using Nikse.SubtitleEdit.Logic;
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic.Dictionaries;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AddToNames.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The add to names list.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.Dictionaries;
+
+    /// <summary>
+    /// The add to names list.
+    /// </summary>
     public sealed partial class AddToNamesList : PositionAndSizeForm
     {
+        /// <summary>
+        /// The _language.
+        /// </summary>
         private LanguageStructure.Main _language;
+
+        /// <summary>
+        /// The _subtitle.
+        /// </summary>
         private Subtitle _subtitle;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddToNamesList"/> class.
+        /// </summary>
         public AddToNamesList()
         {
-            InitializeComponent();
-            Text = Configuration.Settings.Language.AddToNames.Title;
-            labelDescription.Text = Configuration.Settings.Language.AddToNames.Description;
-            labelLanguage.Text = Configuration.Settings.Language.SpellCheck.Language;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            FixLargeFonts();
+            this.InitializeComponent();
+            this.Text = Configuration.Settings.Language.AddToNames.Title;
+            this.labelDescription.Text = Configuration.Settings.Language.AddToNames.Description;
+            this.labelLanguage.Text = Configuration.Settings.Language.SpellCheck.Language;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.FixLargeFonts();
         }
 
+        /// <summary>
+        /// Gets the new name.
+        /// </summary>
         public string NewName { get; private set; }
 
+        /// <summary>
+        /// The fix large fonts.
+        /// </summary>
         private void FixLargeFonts()
         {
-            if (labelDescription.Left + labelDescription.Width + 5 > Width)
-                Width = labelDescription.Left + labelDescription.Width + 5;
-            Utilities.FixLargeFonts(this, buttonOK);
+            if (this.labelDescription.Left + this.labelDescription.Width + 5 > this.Width)
+            {
+                this.Width = this.labelDescription.Left + this.labelDescription.Width + 5;
+            }
+
+            Utilities.FixLargeFonts(this, this.buttonOK);
         }
 
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
         public void Initialize(Subtitle subtitle, string text)
         {
-            _subtitle = subtitle;
+            this._subtitle = subtitle;
 
             if (!string.IsNullOrEmpty(text))
             {
-                textBoxAddName.Text = text.Trim().TrimEnd('.').TrimEnd('!').TrimEnd('?');
-                if (textBoxAddName.Text.Length > 1)
-                    textBoxAddName.Text = char.ToUpper(textBoxAddName.Text[0]) + textBoxAddName.Text.Substring(1);
+                this.textBoxAddName.Text = text.Trim().TrimEnd('.').TrimEnd('!').TrimEnd('?');
+                if (this.textBoxAddName.Text.Length > 1)
+                {
+                    this.textBoxAddName.Text = char.ToUpper(this.textBoxAddName.Text[0]) + this.textBoxAddName.Text.Substring(1);
+                }
             }
 
-            comboBoxDictionaries.Items.Clear();
-            string languageName = Utilities.AutoDetectLanguageName(Configuration.Settings.General.SpellCheckLanguage, _subtitle);
+            this.comboBoxDictionaries.Items.Clear();
+            string languageName = Utilities.AutoDetectLanguageName(Configuration.Settings.General.SpellCheckLanguage, this._subtitle);
             foreach (string name in Utilities.GetDictionaryLanguages())
             {
-                comboBoxDictionaries.Items.Add(name);
+                this.comboBoxDictionaries.Items.Add(name);
                 if (name.Contains("[" + languageName + "]"))
-                    comboBoxDictionaries.SelectedIndex = comboBoxDictionaries.Items.Count - 1;
+                {
+                    this.comboBoxDictionaries.SelectedIndex = this.comboBoxDictionaries.Items.Count - 1;
+                }
             }
         }
 
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="hunspellName">
+        /// The hunspell name.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
         internal void Initialize(Subtitle subtitle, string hunspellName, string text)
         {
-            _subtitle = subtitle;
+            this._subtitle = subtitle;
 
             if (!string.IsNullOrEmpty(text))
             {
-                textBoxAddName.Text = text.Trim().TrimEnd('.').TrimEnd('!').TrimEnd('?');
-                if (textBoxAddName.Text.Length > 1)
-                    textBoxAddName.Text = char.ToUpper(textBoxAddName.Text[0]) + textBoxAddName.Text.Substring(1);
+                this.textBoxAddName.Text = text.Trim().TrimEnd('.').TrimEnd('!').TrimEnd('?');
+                if (this.textBoxAddName.Text.Length > 1)
+                {
+                    this.textBoxAddName.Text = char.ToUpper(this.textBoxAddName.Text[0]) + this.textBoxAddName.Text.Substring(1);
+                }
             }
 
-            comboBoxDictionaries.Items.Clear();
+            this.comboBoxDictionaries.Items.Clear();
             foreach (string name in Utilities.GetDictionaryLanguages())
             {
-                comboBoxDictionaries.Items.Add(name);
+                this.comboBoxDictionaries.Items.Add(name);
                 if (hunspellName != null && name.Equals(hunspellName, StringComparison.OrdinalIgnoreCase))
-                    comboBoxDictionaries.SelectedIndex = comboBoxDictionaries.Items.Count - 1;
+                {
+                    this.comboBoxDictionaries.SelectedIndex = this.comboBoxDictionaries.Items.Count - 1;
+                }
             }
         }
 
+        /// <summary>
+        /// The button ok click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonOkClick(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBoxAddName.Text))
+            if (string.IsNullOrWhiteSpace(this.textBoxAddName.Text))
             {
                 return;
             }
 
-            NewName = textBoxAddName.Text.Trim();
+            this.NewName = this.textBoxAddName.Text.Trim();
             string languageName = null;
-            _language = Configuration.Settings.Language.Main;
+            this._language = Configuration.Settings.Language.Main;
 
             if (!string.IsNullOrEmpty(Configuration.Settings.General.SpellCheckLanguage))
             {
@@ -103,16 +173,16 @@ namespace Nikse.SubtitleEdit.Forms
                     }
                     else
                     {
-                        MessageBox.Show(string.Format(_language.InvalidLanguageNameX, name));
+                        MessageBox.Show(string.Format(this._language.InvalidLanguageNameX, name));
                         return;
                     }
                 }
             }
 
-            languageName = Utilities.AutoDetectLanguageName(languageName, _subtitle);
-            if (comboBoxDictionaries.Items.Count > 0)
+            languageName = Utilities.AutoDetectLanguageName(languageName, this._subtitle);
+            if (this.comboBoxDictionaries.Items.Count > 0)
             {
-                string name = comboBoxDictionaries.SelectedItem.ToString();
+                string name = this.comboBoxDictionaries.SelectedItem.ToString();
                 int start = name.LastIndexOf('[');
                 int end = name.LastIndexOf(']');
                 if (start >= 0 && end > start)
@@ -124,14 +194,19 @@ namespace Nikse.SubtitleEdit.Forms
             }
 
             if (string.IsNullOrEmpty(languageName))
+            {
                 languageName = "en_US";
+            }
 
             var namesList = new NamesList(Configuration.DictionariesFolder, languageName, Configuration.Settings.WordLists.UseOnlineNamesEtc, Configuration.Settings.WordLists.NamesEtcUrl);
-            if (namesList.Add(textBoxAddName.Text))
-                DialogResult = DialogResult.OK;
+            if (namesList.Add(this.textBoxAddName.Text))
+            {
+                this.DialogResult = DialogResult.OK;
+            }
             else
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
-
     }
 }

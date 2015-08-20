@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AvidStl.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The avid stl.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -7,12 +16,24 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The avid stl.
+    /// </summary>
     public class AvidStl : SubtitleFormat
     {
+        /// <summary>
+        /// The name of format.
+        /// </summary>
         public const string NameOfFormat = "Avid STL";
 
+        /// <summary>
+        /// The text length.
+        /// </summary>
         private const int TextLength = 112;
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -21,6 +42,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -29,6 +53,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -37,6 +64,18 @@
             }
         }
 
+        /// <summary>
+        /// The write subtitle block.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <param name="number">
+        /// The number.
+        /// </param>
         public static void WriteSubtitleBlock(FileStream fs, Paragraph p, int number)
         {
             fs.WriteByte(0);
@@ -67,6 +106,15 @@
             }
         }
 
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         public static void Save(string fileName, Subtitle subtitle)
         {
             using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
@@ -103,6 +151,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
@@ -134,11 +194,35 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             return "Not supported!";
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             subtitle.Paragraphs.Clear();
@@ -156,6 +240,18 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The read subtitle block.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Paragraph"/>.
+        /// </returns>
         private static Paragraph ReadSubtitleBlock(byte[] buffer, int index)
         {
             index += 5;
@@ -180,6 +276,18 @@
             return p;
         }
 
+        /// <summary>
+        /// The read time code.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode ReadTimeCode(byte[] buffer, ref int index)
         {
             int hours = buffer[index];
@@ -190,6 +298,15 @@
             return new TimeCode(hours, minutes, seconds, milliseconds);
         }
 
+        /// <summary>
+        /// The write time code.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
+        /// <param name="tc">
+        /// The tc.
+        /// </param>
         private static void WriteTimeCode(FileStream fs, TimeCode tc)
         {
             fs.WriteByte((byte)tc.Hours);

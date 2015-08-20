@@ -1,21 +1,12 @@
-﻿/*
- * Copyright 2009 Volker Oth (0xdeadbeef)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * NOTE: Converted to C# and modified by Nikse.dk@gmail.com
- */
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright company="" file="BluRaySupParser.cs">
+//   
+// </copyright>
+// <summary>
+//   The blu ray sup parser.
+// </summary>
+// 
+// --------------------------------------------------------------------------------------------------------------------
 namespace Nikse.SubtitleEdit.Logic.BluRaySup
 {
     using System;
@@ -26,6 +17,9 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
     using System.IO;
     using System.Text;
 
+    /// <summary>
+    /// The blu ray sup parser.
+    /// </summary>
     public static class BluRaySupParser
     {
         /// <summary>
@@ -59,14 +53,23 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             Invalid
         }
 
+        /// <summary>
+        /// The header size.
+        /// </summary>
         private const int HeaderSize = 13;
 
         /// <summary>
-        ///     Parses a Blu-ray sup file
+        /// Parses a Blu-ray sup file
         /// </summary>
-        /// <param name="fileName">BluRay sup file name</param>
-        /// <param name="log">Parsing info is logged here</param>
-        /// <returns>List of BluRaySupPictures</returns>
+        /// <param name="fileName">
+        /// BluRay sup file name
+        /// </param>
+        /// <param name="log">
+        /// Parsing info is logged here
+        /// </param>
+        /// <returns>
+        /// List of BluRaySupPictures
+        /// </returns>
         public static List<PcsData> ParseBluRaySup(string fileName, StringBuilder log)
         {
             using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -75,6 +78,21 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             }
         }
 
+        /// <summary>
+        /// The parse blu ray sup.
+        /// </summary>
+        /// <param name="ms">
+        /// The ms.
+        /// </param>
+        /// <param name="log">
+        /// The log.
+        /// </param>
+        /// <param name="fromMatroskaFile">
+        /// The from matroska file.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public static List<PcsData> ParseBluRaySup(Stream ms, StringBuilder log, bool fromMatroskaFile)
         {
             long position = ms.Position;
@@ -320,6 +338,18 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             return pcsList;
         }
 
+        /// <summary>
+        /// The parse segment header.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="log">
+        /// The log.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SupSegment"/>.
+        /// </returns>
         private static SupSegment ParseSegmentHeader(byte[] buffer, StringBuilder log)
         {
             SupSegment segment = new SupSegment();
@@ -339,6 +369,15 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             return segment;
         }
 
+        /// <summary>
+        /// The parse segment header from matroska.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SupSegment"/>.
+        /// </returns>
         private static SupSegment ParseSegmentHeaderFromMatroska(byte[] buffer)
         {
             SupSegment segment = new SupSegment();
@@ -348,9 +387,17 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
         }
 
         /// <summary>
-        ///     Parse an PCS packet which contains width/height info
+        /// Parse an PCS packet which contains width/height info
         /// </summary>
-        /// <param name="buffer">Raw data buffer, starting right after segment</param>
+        /// <param name="buffer">
+        /// Raw data buffer, starting right after segment
+        /// </param>
+        /// <param name="offset">
+        /// The offset.
+        /// </param>
+        /// <returns>
+        /// The <see cref="PcsObject"/>.
+        /// </returns>
         private static PcsObject ParsePcs(byte[] buffer, int offset)
         {
             PcsObject pcs = new PcsObject();
@@ -367,6 +414,18 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             return pcs;
         }
 
+        /// <summary>
+        /// The parse picture.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="segment">
+        /// The segment.
+        /// </param>
+        /// <returns>
+        /// The <see cref="PcsData"/>.
+        /// </returns>
         private static PcsData ParsePicture(byte[] buffer, SupSegment segment)
         {
             StringBuilder sb = new StringBuilder();
@@ -406,6 +465,21 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             return pcs;
         }
 
+        /// <summary>
+        /// The complete pcs.
+        /// </summary>
+        /// <param name="pcs">
+        /// The pcs.
+        /// </param>
+        /// <param name="bitmapObjects">
+        /// The bitmap objects.
+        /// </param>
+        /// <param name="palettes">
+        /// The palettes.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool CompletePcs(PcsData pcs, Dictionary<int, List<OdsData>> bitmapObjects, Dictionary<int, List<PaletteInfo>> palettes)
         {
             if (pcs == null || pcs.PcsObjects == null || palettes == null)
@@ -440,11 +514,17 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
         }
 
         /// <summary>
-        ///     parse an PDS packet which contain palette info
+        /// parse an PDS packet which contain palette info
         /// </summary>
-        /// <param name="buffer">Buffer of raw byte data, starting right after segment</param>
-        /// <param name="segment">object containing info about the current segment</param>
-        /// <returns>number of valid palette entries (-1 for fault)</returns>
+        /// <param name="buffer">
+        /// Buffer of raw byte data, starting right after segment
+        /// </param>
+        /// <param name="segment">
+        /// object containing info about the current segment
+        /// </param>
+        /// <returns>
+        /// number of valid palette entries (-1 for fault)
+        /// </returns>
         private static PdsData ParsePds(byte[] buffer, SupSegment segment)
         {
             int paletteId = buffer[0]; // 8bit palette ID (0..7)
@@ -467,11 +547,20 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
         }
 
         /// <summary>
-        ///     parse an ODS packet which contain the image data
+        /// parse an ODS packet which contain the image data
         /// </summary>
-        /// <param name="buffer">raw byte date, starting right after segment</param>
-        /// <param name="segment">object containing info about the current segment</param>
-        /// <returns>true if this is a valid new object (neither invalid nor a fragment)</returns>
+        /// <param name="buffer">
+        /// raw byte date, starting right after segment
+        /// </param>
+        /// <param name="segment">
+        /// object containing info about the current segment
+        /// </param>
+        /// <param name="forceFirst">
+        /// The force First.
+        /// </param>
+        /// <returns>
+        /// true if this is a valid new object (neither invalid nor a fragment)
+        /// </returns>
         private static OdsData ParseOds(byte[] buffer, SupSegment segment, bool forceFirst)
         {
             int objId = BigEndianInt16(buffer, 0); // 16bit object_id
@@ -502,6 +591,18 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             return new OdsData { IsFirst = false, ObjectId = objId, ObjectVersion = objVer, Fragment = info, Message = "Continued ObjId: " + objId + ", ver: " + objVer + ", seq: " + (last ? string.Empty + "last" : string.Empty) };
         }
 
+        /// <summary>
+        /// The byte arrays equal.
+        /// </summary>
+        /// <param name="b1">
+        /// The b 1.
+        /// </param>
+        /// <param name="b2">
+        /// The b 2.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool ByteArraysEqual(byte[] b1, byte[] b2)
         {
             if (b1 == b2)
@@ -530,6 +631,15 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             return true;
         }
 
+        /// <summary>
+        /// The get composition state.
+        /// </summary>
+        /// <param name="type">
+        /// The type.
+        /// </param>
+        /// <returns>
+        /// The <see cref="CompositionState"/>.
+        /// </returns>
         private static CompositionState GetCompositionState(byte type)
         {
             switch (type)
@@ -547,6 +657,18 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             }
         }
 
+        /// <summary>
+        /// The big endian int 16.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private static int BigEndianInt16(byte[] buffer, int index)
         {
             if (buffer.Length < 2)
@@ -557,6 +679,18 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             return buffer[index + 1] + (buffer[index + 0] << 8);
         }
 
+        /// <summary>
+        /// The big endian int 32.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="uint"/>.
+        /// </returns>
         private static uint BigEndianInt32(byte[] buffer, int index)
         {
             if (buffer.Length < 4)
@@ -567,6 +701,9 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             return (uint)(buffer[index + 3] + (buffer[index + 2] << 8) + (buffer[index + 1] << 0x10) + (buffer[index + 0] << 0x18));
         }
 
+        /// <summary>
+        /// The sup segment.
+        /// </summary>
         private class SupSegment
         {
             /// <summary>
@@ -590,21 +727,51 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             public int Type;
         }
 
+        /// <summary>
+        /// The pcs object.
+        /// </summary>
         public class PcsObject
         {
+            /// <summary>
+            /// The is forced.
+            /// </summary>
             public bool IsForced;
 
+            /// <summary>
+            /// The object id.
+            /// </summary>
             public int ObjectId;
 
+            /// <summary>
+            /// The origin.
+            /// </summary>
             public Point Origin;
 
+            /// <summary>
+            /// The window id.
+            /// </summary>
             public int WindowId;
         }
 
+        /// <summary>
+        /// The sup decoder.
+        /// </summary>
         public static class SupDecoder
         {
+            /// <summary>
+            /// The alpha crop.
+            /// </summary>
             private const int AlphaCrop = 14;
 
+            /// <summary>
+            /// The decode palette.
+            /// </summary>
+            /// <param name="paletteInfos">
+            /// The palette infos.
+            /// </param>
+            /// <returns>
+            /// The <see cref="BluRaySupPalette"/>.
+            /// </returns>
             public static BluRaySupPalette DecodePalette(IList<PaletteInfo> paletteInfos)
             {
                 BluRaySupPalette palette = new BluRaySupPalette(256);
@@ -659,9 +826,20 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             }
 
             /// <summary>
-            ///     Decode caption from the input stream
+            /// Decode caption from the input stream
             /// </summary>
-            /// <returns>bitmap of the decoded caption</returns>
+            /// <param name="pcs">
+            /// The pcs.
+            /// </param>
+            /// <param name="data">
+            /// The data.
+            /// </param>
+            /// <param name="palettes">
+            /// The palettes.
+            /// </param>
+            /// <returns>
+            /// bitmap of the decoded caption
+            /// </returns>
             public static Bitmap DecodeImage(PcsObject pcs, IList<OdsData> data, List<PaletteInfo> palettes)
             {
                 long ticks = DateTime.Now.Ticks;
@@ -776,6 +954,21 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
                 return bm.GetBitmap();
             }
 
+            /// <summary>
+            /// The put pixel.
+            /// </summary>
+            /// <param name="bmp">
+            /// The bmp.
+            /// </param>
+            /// <param name="index">
+            /// The index.
+            /// </param>
+            /// <param name="color">
+            /// The color.
+            /// </param>
+            /// <param name="palette">
+            /// The palette.
+            /// </param>
             private static void PutPixel(FastBitmap bmp, int index, int color, BluRaySupPalette palette)
             {
                 int x = index % bmp.Width;
@@ -786,6 +979,18 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
                 }
             }
 
+            /// <summary>
+            /// The put pixel.
+            /// </summary>
+            /// <param name="bmp">
+            /// The bmp.
+            /// </param>
+            /// <param name="index">
+            /// The index.
+            /// </param>
+            /// <param name="color">
+            /// The color.
+            /// </param>
             private static void PutPixel(FastBitmap bmp, int index, Color color)
             {
                 if (color.A > 0)
@@ -800,30 +1005,69 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             }
         }
 
+        /// <summary>
+        /// The pcs data.
+        /// </summary>
         public class PcsData
         {
+            /// <summary>
+            /// The bitmap objects.
+            /// </summary>
             public List<List<OdsData>> BitmapObjects;
 
+            /// <summary>
+            /// The comp num.
+            /// </summary>
             public int CompNum;
 
+            /// <summary>
+            /// The composition state.
+            /// </summary>
             public CompositionState CompositionState;
 
+            /// <summary>
+            /// The end time.
+            /// </summary>
             public long EndTime; // end Pts
 
+            /// <summary>
+            /// The frames per second type.
+            /// </summary>
             public int FramesPerSecondType;
 
+            /// <summary>
+            /// The message.
+            /// </summary>
             public string Message;
 
+            /// <summary>
+            /// The palette id.
+            /// </summary>
             public int PaletteId;
 
+            /// <summary>
+            /// The palette infos.
+            /// </summary>
             public List<PaletteInfo> PaletteInfos;
 
+            /// <summary>
+            /// The palette update.
+            /// </summary>
             public bool PaletteUpdate;
 
+            /// <summary>
+            /// The pcs objects.
+            /// </summary>
             public List<PcsObject> PcsObjects;
 
+            /// <summary>
+            /// The size.
+            /// </summary>
             public Size Size;
 
+            /// <summary>
+            /// The start time.
+            /// </summary>
             public long StartTime; // Pts
 
             /// <summary>
@@ -845,6 +1089,12 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
                 }
             }
 
+            /// <summary>
+            /// The get bitmap.
+            /// </summary>
+            /// <returns>
+            /// The <see cref="Bitmap"/>.
+            /// </returns>
             public Bitmap GetBitmap()
             {
                 if (this.PcsObjects.Count == 1)
@@ -881,29 +1131,65 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             }
         }
 
+        /// <summary>
+        /// The pds data.
+        /// </summary>
         public class PdsData
         {
+            /// <summary>
+            /// The message.
+            /// </summary>
             public string Message;
 
+            /// <summary>
+            /// The palette id.
+            /// </summary>
             public int PaletteId;
 
+            /// <summary>
+            /// The palette info.
+            /// </summary>
             public PaletteInfo PaletteInfo;
 
+            /// <summary>
+            /// The palette version.
+            /// </summary>
             public int PaletteVersion;
         }
 
+        /// <summary>
+        /// The ods data.
+        /// </summary>
         public class OdsData
         {
+            /// <summary>
+            /// The fragment.
+            /// </summary>
             public ImageObjectFragment Fragment;
 
+            /// <summary>
+            /// The is first.
+            /// </summary>
             public bool IsFirst;
 
+            /// <summary>
+            /// The message.
+            /// </summary>
             public string Message;
 
+            /// <summary>
+            /// The object id.
+            /// </summary>
             public int ObjectId;
 
+            /// <summary>
+            /// The object version.
+            /// </summary>
             public int ObjectVersion;
 
+            /// <summary>
+            /// The size.
+            /// </summary>
             public Size Size;
         }
     }

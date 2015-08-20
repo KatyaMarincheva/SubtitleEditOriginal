@@ -1,4 +1,24 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TimelineFootageAscii.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   Timeline Ascii export - THE MOVIE TITRE EDITOR - http://www.pld.ttu.ee/~priidu/timeline/ by priidu@pld.ttu.ee
+//   Sample:
+//   1.
+//   41,10
+//   46,10
+//   ±NE/SEVÎ
+//   ³ÂÍÅ/ÑÅÁß
+//   2.
+//   49,05
+//   51,09
+//   ±Viòð ir klât.
+//   ³Îí ïðèøåë.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -24,19 +44,14 @@
     /// </summary>
     public class TimeLineFootageAscii : SubtitleFormat
     {
+        /// <summary>
+        /// The regex time code.
+        /// </summary>
         private static readonly Regex RegexTimeCode = new Regex(@"^\s*\d+,\d\d$", RegexOptions.Compiled);
 
-        private enum ExpectingLine
-        {
-            Number,
-
-            TimeStart,
-
-            TimeEnd,
-
-            Text
-        }
-
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -45,6 +60,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -53,6 +71,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -61,6 +82,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (fileName == null || !fileName.EndsWith(this.Extension, StringComparison.OrdinalIgnoreCase))
@@ -73,11 +106,35 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             return string.Empty;
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             Paragraph paragraph = null;
@@ -197,6 +254,15 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The decode time code.
+        /// </summary>
+        /// <param name="parts">
+        /// The parts.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode DecodeTimeCode(string[] parts)
         {
             int frames16 = int.Parse(parts[0]);
@@ -204,6 +270,15 @@
             return new TimeCode(0, 0, 0, FramesToMilliseconds(16 * frames16 + frames));
         }
 
+        /// <summary>
+        /// The split bytes to lines.
+        /// </summary>
+        /// <param name="bytes">
+        /// The bytes.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
         private IEnumerable<byte[]> SplitBytesToLines(byte[] bytes)
         {
             List<byte[]> list = new List<byte[]>();
@@ -229,6 +304,15 @@
             return list;
         }
 
+        /// <summary>
+        /// The get encoding from language.
+        /// </summary>
+        /// <param name="language">
+        /// The language.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Encoding"/>.
+        /// </returns>
         private Encoding GetEncodingFromLanguage(byte language)
         {
             if (language == 179)
@@ -244,6 +328,32 @@
             }
 
             return Encoding.GetEncoding(1252);
+        }
+
+        /// <summary>
+        /// The expecting line.
+        /// </summary>
+        private enum ExpectingLine
+        {
+            /// <summary>
+            /// The number.
+            /// </summary>
+            Number, 
+
+            /// <summary>
+            /// The time start.
+            /// </summary>
+            TimeStart, 
+
+            /// <summary>
+            /// The time end.
+            /// </summary>
+            TimeEnd, 
+
+            /// <summary>
+            /// The text.
+            /// </summary>
+            Text
         }
     }
 }

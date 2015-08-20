@@ -1,11 +1,28 @@
-﻿using System;
-using System.Text;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="LanguageDeserializerGenerator.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The language deserializer generator.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic
 {
+    using System;
+    using System.Text;
+
+    /// <summary>
+    /// The language deserializer generator.
+    /// </summary>
     public static class LanguageDeserializerGenerator
     {
-
+        /// <summary>
+        /// The generate c sharp xml deserializer for language.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GenerateCSharpXmlDeserializerForLanguage()
         {
             var sb = new StringBuilder(@"using System.IO;
@@ -69,6 +86,21 @@ namespace Nikse.SubtitleEdit.Logic
             return sb.ToString().Replace("Nikse.SubtitleEdit.Logic.", string.Empty).Replace("\t", "    ").Replace(" " + Environment.NewLine, Environment.NewLine);
         }
 
+        /// <summary>
+        /// The sub element deserializer.
+        /// </summary>
+        /// <param name="classType">
+        /// The class type.
+        /// </param>
+        /// <param name="currentName">
+        /// The current name.
+        /// </param>
+        /// <param name="xmlPath">
+        /// The xml path.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string SubElementDeserializer(Type classType, string currentName, string xmlPath)
         {
             xmlPath = xmlPath.Trim('/');
@@ -88,6 +120,7 @@ namespace Nikse.SubtitleEdit.Logic
                         sb.AppendLine("\t\t\t\t\tbreak;");
                     }
                 }
+
                 foreach (var fieldInfo in fields)
                 {
                     if (fieldInfo.FieldType.Name != "String" && fieldInfo.FieldType.FullName.Contains("LanguageStructure"))
@@ -107,6 +140,7 @@ namespace Nikse.SubtitleEdit.Logic
                         sb.AppendLine("\t\t\t\t\tbreak;");
                     }
                 }
+
                 foreach (var prp in properties)
                 {
                     if (prp.PropertyType.Name != "String" && prp.PropertyType.FullName.Contains("LanguageStructure"))
@@ -115,8 +149,8 @@ namespace Nikse.SubtitleEdit.Logic
                     }
                 }
             }
+
             return sb.ToString();
         }
-
     }
 }

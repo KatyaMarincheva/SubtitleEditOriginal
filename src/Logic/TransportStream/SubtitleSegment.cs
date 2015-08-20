@@ -1,83 +1,179 @@
-﻿namespace Nikse.SubtitleEdit.Logic.TransportStream
-{
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SubtitleSegment.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The subtitle segment.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
+namespace Nikse.SubtitleEdit.Logic.TransportStream
+{
+    /// <summary>
+    /// The subtitle segment.
+    /// </summary>
     public class SubtitleSegment
     {
+        /// <summary>
+        /// The page composition segment.
+        /// </summary>
         public const int PageCompositionSegment = 0x10;
+
+        /// <summary>
+        /// The region composition segment.
+        /// </summary>
         public const int RegionCompositionSegment = 0x11;
+
+        /// <summary>
+        /// The clut definition segment.
+        /// </summary>
         public const int ClutDefinitionSegment = 0x12;
+
+        /// <summary>
+        /// The object data segment.
+        /// </summary>
         public const int ObjectDataSegment = 0x13;
+
+        /// <summary>
+        /// The display definition segment.
+        /// </summary>
         public const int DisplayDefinitionSegment = 0x14;
+
+        /// <summary>
+        /// The end of display set segment.
+        /// </summary>
         public const int EndOfDisplaySetSegment = 0x80;
 
-        public int SyncByte { get; set; }
-        public int SegmentType { get; set; }
-        public int PageId { get; set; }
-        public int SegmentLength { get; set; }
-        public bool IsValid { get; set; }
-
+        /// <summary>
+        /// The clut definition.
+        /// </summary>
         public ClutDefinitionSegment ClutDefinition;
-        public ObjectDataSegment ObjectData;
+
+        /// <summary>
+        /// The display definition.
+        /// </summary>
         public DisplayDefinitionSegment DisplayDefinition;
+
+        /// <summary>
+        /// The object data.
+        /// </summary>
+        public ObjectDataSegment ObjectData;
+
+        /// <summary>
+        /// The page composition.
+        /// </summary>
         public PageCompositionSegment PageComposition;
+
+        /// <summary>
+        /// The region composition.
+        /// </summary>
         public RegionCompositionSegment RegionComposition;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SubtitleSegment"/> class.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
         public SubtitleSegment(byte[] buffer, int index)
         {
             if (buffer == null || buffer.Length < 7)
+            {
                 return;
+            }
 
-            SyncByte = buffer[index];
-            SegmentType = buffer[index + 1];
-            PageId = Helper.GetEndianWord(buffer, index + 2);
-            SegmentLength = Helper.GetEndianWord(buffer, index + 4);
+            this.SyncByte = buffer[index];
+            this.SegmentType = buffer[index + 1];
+            this.PageId = Helper.GetEndianWord(buffer, index + 2);
+            this.SegmentLength = Helper.GetEndianWord(buffer, index + 4);
 
-            if (buffer.Length - 6 < SegmentLength)
+            if (buffer.Length - 6 < this.SegmentLength)
+            {
                 return;
+            }
 
-            if (index + 6 + SegmentLength > buffer.Length)
+            if (index + 6 + this.SegmentLength > buffer.Length)
+            {
                 return;
+            }
 
-            IsValid = true;
+            this.IsValid = true;
 
-            switch (SegmentType)
+            switch (this.SegmentType)
             {
                 case PageCompositionSegment:
-                    PageComposition = new PageCompositionSegment(buffer, index + 6, SegmentLength - 2);
+                    this.PageComposition = new PageCompositionSegment(buffer, index + 6, this.SegmentLength - 2);
                     break;
                 case RegionCompositionSegment:
-                    RegionComposition = new RegionCompositionSegment(buffer, index + 6, SegmentLength - 10);
+                    this.RegionComposition = new RegionCompositionSegment(buffer, index + 6, this.SegmentLength - 10);
                     break;
                 case ClutDefinitionSegment:
-                    ClutDefinition = new ClutDefinitionSegment(buffer, index + 6, SegmentLength);
+                    this.ClutDefinition = new ClutDefinitionSegment(buffer, index + 6, this.SegmentLength);
                     break;
                 case ObjectDataSegment:
-                    ObjectData = new ObjectDataSegment(buffer, index + 6);
+                    this.ObjectData = new ObjectDataSegment(buffer, index + 6);
                     break;
                 case DisplayDefinitionSegment:
-                    DisplayDefinition = new DisplayDefinitionSegment(buffer, index + 6);
+                    this.DisplayDefinition = new DisplayDefinitionSegment(buffer, index + 6);
                     break;
                 case EndOfDisplaySetSegment:
                     break;
             }
         }
 
+        /// <summary>
+        /// Gets or sets the sync byte.
+        /// </summary>
+        public int SyncByte { get; set; }
+
+        /// <summary>
+        /// Gets or sets the segment type.
+        /// </summary>
+        public int SegmentType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the page id.
+        /// </summary>
+        public int PageId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the segment length.
+        /// </summary>
+        public int SegmentLength { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is valid.
+        /// </summary>
+        public bool IsValid { get; set; }
+
+        /// <summary>
+        /// Gets the segment type description.
+        /// </summary>
         public string SegmentTypeDescription
         {
             get
             {
-                switch (SegmentType)
+                switch (this.SegmentType)
                 {
-                    case PageCompositionSegment: return "Page composition segment";
-                    case RegionCompositionSegment: return "Region composition segment";
-                    case ClutDefinitionSegment: return "CLUT definition segment";
-                    case ObjectDataSegment: return "Object data segment";
-                    case DisplayDefinitionSegment: return "Display definition segment";
-                    case EndOfDisplaySetSegment: return "End of display set segment";
-                    default: return "Unknown";
+                    case PageCompositionSegment:
+                        return "Page composition segment";
+                    case RegionCompositionSegment:
+                        return "Region composition segment";
+                    case ClutDefinitionSegment:
+                        return "CLUT definition segment";
+                    case ObjectDataSegment:
+                        return "Object data segment";
+                    case DisplayDefinitionSegment:
+                        return "Display definition segment";
+                    case EndOfDisplaySetSegment:
+                        return "End of display set segment";
+                    default:
+                        return "Unknown";
                 }
             }
         }
     }
-
 }

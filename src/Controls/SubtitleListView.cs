@@ -1,175 +1,348 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Core;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SubtitleListView.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The subtitle list view.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Controls
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Globalization;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The subtitle list view.
+    /// </summary>
     public sealed class SubtitleListView : ListView
     {
+        /// <summary>
+        /// The column index number.
+        /// </summary>
         public const int ColumnIndexNumber = 0;
-        public const int ColumnIndexStart = 1;
-        public const int ColumnIndexEnd = 2;
-        public const int ColumnIndexDuration = 3;
-        public const int ColumnIndexText = 4;
-        public const int ColumnIndexTextAlternate = 5;
-        public int ColumnIndexExtra = 5;
 
+        /// <summary>
+        /// The column index start.
+        /// </summary>
+        public const int ColumnIndexStart = 1;
+
+        /// <summary>
+        /// The column index end.
+        /// </summary>
+        public const int ColumnIndexEnd = 2;
+
+        /// <summary>
+        /// The column index duration.
+        /// </summary>
+        public const int ColumnIndexDuration = 3;
+
+        /// <summary>
+        /// The column index text.
+        /// </summary>
+        public const int ColumnIndexText = 4;
+
+        /// <summary>
+        /// The column index text alternate.
+        /// </summary>
+        public const int ColumnIndexTextAlternate = 5;
+
+        /// <summary>
+        /// The _first visible index.
+        /// </summary>
         private int _firstVisibleIndex = -1;
+
+        /// <summary>
+        /// The _line separator string.
+        /// </summary>
         private string _lineSeparatorString = " || ";
 
-        private Font _subtitleFont = new Font("Tahoma", 8.25F);
-
-        private string _subtitleFontName = "Tahoma";
-        public string SubtitleFontName
-        {
-            get { return _subtitleFontName; }
-            set
-            {
-                _subtitleFontName = value;
-                if (SubtitleFontBold)
-                    _subtitleFont = new Font(_subtitleFontName, SubtitleFontSize, FontStyle.Bold);
-                else
-                    _subtitleFont = new Font(_subtitleFontName, SubtitleFontSize);
-            }
-        }
-
-        private bool _subtitleFontBold;
-        public bool SubtitleFontBold
-        {
-            get { return _subtitleFontBold; }
-            set
-            {
-                _subtitleFontBold = value;
-                if (SubtitleFontBold)
-                    _subtitleFont = new Font(_subtitleFontName, SubtitleFontSize, FontStyle.Bold);
-                else
-                    _subtitleFont = new Font(_subtitleFontName, SubtitleFontSize);
-            }
-        }
-
-        private int _subtitleFontSize = 8;
-        public int SubtitleFontSize
-        {
-            get { return _subtitleFontSize; }
-            set
-            {
-                _subtitleFontSize = value;
-                if (SubtitleFontBold)
-                    _subtitleFont = new Font(_subtitleFontName, SubtitleFontSize, FontStyle.Bold);
-                else
-                    _subtitleFont = new Font(_subtitleFontName, SubtitleFontSize);
-            }
-        }
-
-        public bool IsAlternateTextColumnVisible { get; private set; }
-        public bool IsExtraColumnVisible { get; private set; }
-        public bool DisplayExtraFromExtra { get; set; }
-        public bool UseSyntaxColoring { get; set; }
-        private Settings _settings;
+        /// <summary>
+        /// The _save column width changes.
+        /// </summary>
         private bool _saveColumnWidthChanges;
 
+        /// <summary>
+        /// The _settings.
+        /// </summary>
+        private Settings _settings;
+
+        /// <summary>
+        /// The _subtitle font.
+        /// </summary>
+        private Font _subtitleFont = new Font("Tahoma", 8.25F);
+
+        /// <summary>
+        /// The _subtitle font bold.
+        /// </summary>
+        private bool _subtitleFontBold;
+
+        /// <summary>
+        /// The _subtitle font name.
+        /// </summary>
+        private string _subtitleFontName = "Tahoma";
+
+        /// <summary>
+        /// The _subtitle font size.
+        /// </summary>
+        private int _subtitleFontSize = 8;
+
+        /// <summary>
+        /// The column index extra.
+        /// </summary>
+        public int ColumnIndexExtra = 5;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SubtitleListView"/> class.
+        /// </summary>
+        public SubtitleListView()
+        {
+            this.UseSyntaxColoring = true;
+            this.Font = new Font("Tahoma", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            this.Columns.AddRange(new[] { new ColumnHeader { Text = "#", Width = 55 }, new ColumnHeader { Width = 80 }, new ColumnHeader { Width = 80 }, new ColumnHeader { Width = 55 }, new ColumnHeader { Width = -2 } // -2 = as rest of space (300)
+                                        });
+            this.SubtitleListViewResize(this, null);
+
+            this.FullRowSelect = true;
+            this.View = View.Details;
+            this.Resize += this.SubtitleListViewResize;
+            this.GridLines = true;
+            this.ColumnWidthChanged += this.SubtitleListViewColumnWidthChanged;
+            this.OwnerDraw = true;
+            this.DrawItem += this.SubtitleListView_DrawItem;
+            this.DrawSubItem += this.SubtitleListView_DrawSubItem;
+            this.DrawColumnHeader += this.SubtitleListView_DrawColumnHeader;
+        }
+
+        /// <summary>
+        /// Gets or sets the subtitle font name.
+        /// </summary>
+        public string SubtitleFontName
+        {
+            get
+            {
+                return this._subtitleFontName;
+            }
+
+            set
+            {
+                this._subtitleFontName = value;
+                if (this.SubtitleFontBold)
+                {
+                    this._subtitleFont = new Font(this._subtitleFontName, this.SubtitleFontSize, FontStyle.Bold);
+                }
+                else
+                {
+                    this._subtitleFont = new Font(this._subtitleFontName, this.SubtitleFontSize);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether subtitle font bold.
+        /// </summary>
+        public bool SubtitleFontBold
+        {
+            get
+            {
+                return this._subtitleFontBold;
+            }
+
+            set
+            {
+                this._subtitleFontBold = value;
+                if (this.SubtitleFontBold)
+                {
+                    this._subtitleFont = new Font(this._subtitleFontName, this.SubtitleFontSize, FontStyle.Bold);
+                }
+                else
+                {
+                    this._subtitleFont = new Font(this._subtitleFontName, this.SubtitleFontSize);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the subtitle font size.
+        /// </summary>
+        public int SubtitleFontSize
+        {
+            get
+            {
+                return this._subtitleFontSize;
+            }
+
+            set
+            {
+                this._subtitleFontSize = value;
+                if (this.SubtitleFontBold)
+                {
+                    this._subtitleFont = new Font(this._subtitleFontName, this.SubtitleFontSize, FontStyle.Bold);
+                }
+                else
+                {
+                    this._subtitleFont = new Font(this._subtitleFontName, this.SubtitleFontSize);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether is alternate text column visible.
+        /// </summary>
+        public bool IsAlternateTextColumnVisible { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether is extra column visible.
+        /// </summary>
+        public bool IsExtraColumnVisible { get; private set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether display extra from extra.
+        /// </summary>
+        public bool DisplayExtraFromExtra { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether use syntax coloring.
+        /// </summary>
+        public bool UseSyntaxColoring { get; set; }
+
+        /// <summary>
+        /// Gets or sets the first visible index.
+        /// </summary>
         public int FirstVisibleIndex
         {
-            get { return _firstVisibleIndex; }
-            set { _firstVisibleIndex = value; }
+            get
+            {
+                return this._firstVisibleIndex;
+            }
+
+            set
+            {
+                this._firstVisibleIndex = value;
+            }
         }
 
+        /// <summary>
+        /// The initialize language.
+        /// </summary>
+        /// <param name="general">
+        /// The general.
+        /// </param>
+        /// <param name="settings">
+        /// The settings.
+        /// </param>
         public void InitializeLanguage(LanguageStructure.General general, Settings settings)
         {
-            Columns[ColumnIndexNumber].Text = general.NumberSymbol;
-            Columns[ColumnIndexStart].Text = general.StartTime;
-            Columns[ColumnIndexEnd].Text = general.EndTime;
-            Columns[ColumnIndexDuration].Text = general.Duration;
-            Columns[ColumnIndexText].Text = general.Text;
+            this.Columns[ColumnIndexNumber].Text = general.NumberSymbol;
+            this.Columns[ColumnIndexStart].Text = general.StartTime;
+            this.Columns[ColumnIndexEnd].Text = general.EndTime;
+            this.Columns[ColumnIndexDuration].Text = general.Duration;
+            this.Columns[ColumnIndexText].Text = general.Text;
             if (settings.General.ListViewLineSeparatorString != null)
-                _lineSeparatorString = settings.General.ListViewLineSeparatorString;
+            {
+                this._lineSeparatorString = settings.General.ListViewLineSeparatorString;
+            }
 
             if (!string.IsNullOrEmpty(settings.General.SubtitleFontName))
-                _subtitleFontName = settings.General.SubtitleFontName;
-            SubtitleFontBold = settings.General.SubtitleFontBold;
+            {
+                this._subtitleFontName = settings.General.SubtitleFontName;
+            }
+
+            this.SubtitleFontBold = settings.General.SubtitleFontBold;
             if (settings.General.SubtitleFontSize > 6 && settings.General.SubtitleFontSize < 72)
-                SubtitleFontSize = settings.General.SubtitleFontSize;
-            ForeColor = settings.General.SubtitleFontColor;
-            BackColor = settings.General.SubtitleBackgroundColor;
-            _settings = settings;
+            {
+                this.SubtitleFontSize = settings.General.SubtitleFontSize;
+            }
+
+            this.ForeColor = settings.General.SubtitleFontColor;
+            this.BackColor = settings.General.SubtitleBackgroundColor;
+            this._settings = settings;
         }
 
+        /// <summary>
+        /// The initialize timestamp column widths.
+        /// </summary>
+        /// <param name="parentForm">
+        /// The parent form.
+        /// </param>
         public void InitializeTimestampColumnWidths(Form parentForm)
         {
-            if (_settings != null && _settings.General.ListViewColumnsRememberSize && _settings.General.ListViewNumberWidth > 1 &&
-                _settings.General.ListViewStartWidth > 1 && _settings.General.ListViewEndWidth > 1 && _settings.General.ListViewDurationWidth > 1)
+            if (this._settings != null && this._settings.General.ListViewColumnsRememberSize && this._settings.General.ListViewNumberWidth > 1 && this._settings.General.ListViewStartWidth > 1 && this._settings.General.ListViewEndWidth > 1 && this._settings.General.ListViewDurationWidth > 1)
             {
-                Columns[ColumnIndexNumber].Width = _settings.General.ListViewNumberWidth;
-                Columns[ColumnIndexStart].Width = _settings.General.ListViewStartWidth;
-                Columns[ColumnIndexEnd].Width = _settings.General.ListViewEndWidth;
-                Columns[ColumnIndexDuration].Width = _settings.General.ListViewDurationWidth;
-                Columns[ColumnIndexText].Width = _settings.General.ListViewTextWidth;
-                _saveColumnWidthChanges = true;
+                this.Columns[ColumnIndexNumber].Width = this._settings.General.ListViewNumberWidth;
+                this.Columns[ColumnIndexStart].Width = this._settings.General.ListViewStartWidth;
+                this.Columns[ColumnIndexEnd].Width = this._settings.General.ListViewEndWidth;
+                this.Columns[ColumnIndexDuration].Width = this._settings.General.ListViewDurationWidth;
+                this.Columns[ColumnIndexText].Width = this._settings.General.ListViewTextWidth;
+                this._saveColumnWidthChanges = true;
             }
             else
             {
                 using (var graphics = parentForm.CreateGraphics())
                 {
-                    var timestampSizeF = graphics.MeasureString("00:00:33,527", Font);
+                    var timestampSizeF = graphics.MeasureString("00:00:33,527", this.Font);
                     var timestampWidth = (int)(timestampSizeF.Width + 0.5) + 11;
-                    Columns[ColumnIndexStart].Width = timestampWidth;
-                    Columns[ColumnIndexEnd].Width = timestampWidth;
-                    Columns[ColumnIndexDuration].Width = (int)(timestampWidth * 0.8);
+                    this.Columns[ColumnIndexStart].Width = timestampWidth;
+                    this.Columns[ColumnIndexEnd].Width = timestampWidth;
+                    this.Columns[ColumnIndexDuration].Width = (int)(timestampWidth * 0.8);
                 }
             }
 
-            SubtitleListViewResize(this, null);
+            this.SubtitleListViewResize(this, null);
         }
 
-        public SubtitleListView()
-        {
-            UseSyntaxColoring = true;
-            Font = new Font("Tahoma", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            Columns.AddRange(new[]
-            {
-                new ColumnHeader { Text="#", Width=55 },
-                new ColumnHeader { Width = 80 },
-                new ColumnHeader { Width = 80 },
-                new ColumnHeader { Width= 55 },
-                new ColumnHeader { Width = -2 } // -2 = as rest of space (300)
-            });
-            SubtitleListViewResize(this, null);
-
-            FullRowSelect = true;
-            View = View.Details;
-            Resize += SubtitleListViewResize;
-            GridLines = true;
-            ColumnWidthChanged += SubtitleListViewColumnWidthChanged;
-            OwnerDraw = true;
-            DrawItem += SubtitleListView_DrawItem;
-            DrawSubItem += SubtitleListView_DrawSubItem;
-            DrawColumnHeader += SubtitleListView_DrawColumnHeader;
-        }
-
+        /// <summary>
+        /// The subtitle list view_ draw column header.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void SubtitleListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
             e.DrawDefault = true;
         }
 
+        /// <summary>
+        /// The is vertical scrollbar visible.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool IsVerticalScrollbarVisible()
         {
-            if (Items.Count < 2)
+            if (this.Items.Count < 2)
+            {
                 return false;
+            }
 
-            int singleRowHeight = GetItemRect(0).Height;
-            int maxVisibleItems = (Height - TopItem.Bounds.Top) / singleRowHeight;
+            int singleRowHeight = this.GetItemRect(0).Height;
+            int maxVisibleItems = (this.Height - this.TopItem.Bounds.Top) / singleRowHeight;
 
-            return Items.Count > maxVisibleItems;
+            return this.Items.Count > maxVisibleItems;
         }
 
+        /// <summary>
+        /// The subtitle list view_ draw sub item.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void SubtitleListView_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
-            Color backgroundColor = Items[e.ItemIndex].SubItems[e.ColumnIndex].BackColor;
-            if (Focused && backgroundColor == BackColor)
+            Color backgroundColor = this.Items[e.ItemIndex].SubItems[e.ColumnIndex].BackColor;
+            if (this.Focused && backgroundColor == this.BackColor)
             {
                 e.DrawDefault = true;
                 return;
@@ -189,15 +362,17 @@ namespace Nikse.SubtitleEdit.Controls
 
                 if (e.Item.Selected)
                 {
-                    if (RightToLeftLayout)
+                    if (this.RightToLeftLayout)
                     {
-                        int w = Columns.Count;
-                        for (int i = 0; i < Columns.Count; i++)
-                            w += Columns[i].Width;
+                        int w = this.Columns.Count;
+                        for (int i = 0; i < this.Columns.Count; i++)
+                        {
+                            w += this.Columns[i].Width;
+                        }
 
                         int extra = 0;
                         int extra2 = 0;
-                        if (!IsVerticalScrollbarVisible())
+                        if (!this.IsVerticalScrollbarVisible())
                         {
                             // no vertical scrollbar
                             extra = 14;
@@ -213,21 +388,33 @@ namespace Nikse.SubtitleEdit.Controls
                         var rect = new Rectangle(w - (e.Bounds.Left + e.Bounds.Width + 2) + extra, e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
                         if (Configuration.Settings != null)
                         {
-                            if (backgroundColor == BackColor)
+                            if (backgroundColor == this.BackColor)
+                            {
                                 backgroundColor = Configuration.Settings.Tools.ListViewUnfocusedSelectedColor;
+                            }
                             else
                             {
                                 int r = backgroundColor.R - 39;
                                 int g = backgroundColor.G - 39;
                                 int b = backgroundColor.B - 39;
                                 if (r < 0)
+                                {
                                     r = 0;
+                                }
+
                                 if (g < 0)
+                                {
                                     g = 0;
+                                }
+
                                 if (b < 0)
+                                {
                                     b = 0;
+                                }
+
                                 backgroundColor = Color.FromArgb(backgroundColor.A, r, g, b);
                             }
+
                             var sb = new SolidBrush(backgroundColor);
                             e.Graphics.FillRectangle(sb, rect);
                         }
@@ -235,30 +422,43 @@ namespace Nikse.SubtitleEdit.Controls
                         {
                             e.Graphics.FillRectangle(Brushes.LightBlue, rect);
                         }
+
                         var rtlBounds = new Rectangle(w - (e.Bounds.Left + e.Bounds.Width) + extra2, e.Bounds.Top + 2, e.Bounds.Width, e.Bounds.Height);
                         sf.FormatFlags = StringFormatFlags.DirectionRightToLeft;
-                        e.Graphics.DrawString(e.SubItem.Text, Font, new SolidBrush(e.Item.ForeColor), rtlBounds, sf);
+                        e.Graphics.DrawString(e.SubItem.Text, this.Font, new SolidBrush(e.Item.ForeColor), rtlBounds, sf);
                     }
                     else
                     {
                         Rectangle rect = e.Bounds;
                         if (Configuration.Settings != null)
                         {
-                            if (backgroundColor == BackColor)
+                            if (backgroundColor == this.BackColor)
+                            {
                                 backgroundColor = Configuration.Settings.Tools.ListViewUnfocusedSelectedColor;
+                            }
                             else
                             {
                                 int r = backgroundColor.R - 39;
                                 int g = backgroundColor.G - 39;
                                 int b = backgroundColor.B - 39;
                                 if (r < 0)
+                                {
                                     r = 0;
+                                }
+
                                 if (g < 0)
+                                {
                                     g = 0;
+                                }
+
                                 if (b < 0)
+                                {
                                     b = 0;
+                                }
+
                                 backgroundColor = Color.FromArgb(backgroundColor.A, r, g, b);
                             }
+
                             var sb = new SolidBrush(backgroundColor);
                             e.Graphics.FillRectangle(sb, rect);
                         }
@@ -266,7 +466,8 @@ namespace Nikse.SubtitleEdit.Controls
                         {
                             e.Graphics.FillRectangle(Brushes.LightBlue, rect);
                         }
-                        TextRenderer.DrawText(e.Graphics, e.Item.SubItems[e.ColumnIndex].Text, _subtitleFont, new Point(e.Bounds.Left + 3, e.Bounds.Top + 2), e.Item.ForeColor, TextFormatFlags.NoPrefix);
+
+                        TextRenderer.DrawText(e.Graphics, e.Item.SubItems[e.ColumnIndex].Text, this._subtitleFont, new Point(e.Bounds.Left + 3, e.Bounds.Top + 2), e.Item.ForeColor, TextFormatFlags.NoPrefix);
                     }
                 }
                 else
@@ -276,14 +477,25 @@ namespace Nikse.SubtitleEdit.Controls
             }
         }
 
+        /// <summary>
+        /// The subtitle list view_ draw item.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void SubtitleListView_DrawItem(object sender, DrawListViewItemEventArgs e)
         {
-            if (!Focused && (e.State & ListViewItemStates.Selected) != 0)
+            if (!this.Focused && (e.State & ListViewItemStates.Selected) != 0)
             {
-                //Rectangle r = new Rectangle(e.Bounds.Left + 1, e.Bounds.Top + 1, e.Bounds.Width - 2, e.Bounds.Height - 2);
-                //e.Graphics.FillRectangle(Brushes.LightGoldenrodYellow, r);
+                // Rectangle r = new Rectangle(e.Bounds.Left + 1, e.Bounds.Top + 1, e.Bounds.Width - 2, e.Bounds.Height - 2);
+                // e.Graphics.FillRectangle(Brushes.LightGoldenrodYellow, r);
                 if (e.Item.Focused)
+                {
                     e.DrawFocusRectangle();
+                }
             }
             else
             {
@@ -291,237 +503,350 @@ namespace Nikse.SubtitleEdit.Controls
             }
         }
 
+        /// <summary>
+        /// The subtitle list view column width changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void SubtitleListViewColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
         {
-            if (_settings != null && _saveColumnWidthChanges)
+            if (this._settings != null && this._saveColumnWidthChanges)
             {
                 switch (e.ColumnIndex)
                 {
                     case ColumnIndexNumber:
-                        Configuration.Settings.General.ListViewNumberWidth = Columns[ColumnIndexNumber].Width;
+                        Configuration.Settings.General.ListViewNumberWidth = this.Columns[ColumnIndexNumber].Width;
                         break;
                     case ColumnIndexStart:
-                        Configuration.Settings.General.ListViewStartWidth = Columns[ColumnIndexStart].Width;
+                        Configuration.Settings.General.ListViewStartWidth = this.Columns[ColumnIndexStart].Width;
                         break;
                     case ColumnIndexEnd:
-                        Configuration.Settings.General.ListViewEndWidth = Columns[ColumnIndexEnd].Width;
+                        Configuration.Settings.General.ListViewEndWidth = this.Columns[ColumnIndexEnd].Width;
                         break;
                     case ColumnIndexDuration:
-                        Configuration.Settings.General.ListViewDurationWidth = Columns[ColumnIndexDuration].Width;
+                        Configuration.Settings.General.ListViewDurationWidth = this.Columns[ColumnIndexDuration].Width;
                         break;
                     case ColumnIndexText:
-                        Configuration.Settings.General.ListViewTextWidth = Columns[ColumnIndexText].Width;
+                        Configuration.Settings.General.ListViewTextWidth = this.Columns[ColumnIndexText].Width;
                         break;
                 }
             }
         }
 
+        /// <summary>
+        /// The auto size all columns.
+        /// </summary>
+        /// <param name="parentForm">
+        /// The parent form.
+        /// </param>
         public void AutoSizeAllColumns(Form parentForm)
         {
-            if (_settings != null && _settings.General.ListViewColumnsRememberSize && _settings.General.ListViewNumberWidth > 1)
-                Columns[ColumnIndexNumber].Width = _settings.General.ListViewNumberWidth;
+            if (this._settings != null && this._settings.General.ListViewColumnsRememberSize && this._settings.General.ListViewNumberWidth > 1)
+            {
+                this.Columns[ColumnIndexNumber].Width = this._settings.General.ListViewNumberWidth;
+            }
             else
-                Columns[ColumnIndexNumber].Width = 55;
+            {
+                this.Columns[ColumnIndexNumber].Width = 55;
+            }
 
-            InitializeTimestampColumnWidths(parentForm);
+            this.InitializeTimestampColumnWidths(parentForm);
 
-            int length = Columns[ColumnIndexNumber].Width + Columns[ColumnIndexStart].Width + Columns[ColumnIndexEnd].Width + Columns[ColumnIndexDuration].Width;
-            int lengthAvailable = Width - length;
+            int length = this.Columns[ColumnIndexNumber].Width + this.Columns[ColumnIndexStart].Width + this.Columns[ColumnIndexEnd].Width + this.Columns[ColumnIndexDuration].Width;
+            int lengthAvailable = this.Width - length;
 
             int numberOfRestColumns = 1;
-            if (IsAlternateTextColumnVisible)
-                numberOfRestColumns++;
-            if (IsExtraColumnVisible)
-                numberOfRestColumns++;
-
-            if (IsAlternateTextColumnVisible && !IsExtraColumnVisible)
+            if (this.IsAlternateTextColumnVisible)
             {
-                if (_settings != null && _settings.General.ListViewColumnsRememberSize && _settings.General.ListViewNumberWidth > 1 &&
-                    _settings.General.ListViewStartWidth > 1 && _settings.General.ListViewEndWidth > 1 && _settings.General.ListViewDurationWidth > 1)
+                numberOfRestColumns++;
+            }
+
+            if (this.IsExtraColumnVisible)
+            {
+                numberOfRestColumns++;
+            }
+
+            if (this.IsAlternateTextColumnVisible && !this.IsExtraColumnVisible)
+            {
+                if (this._settings != null && this._settings.General.ListViewColumnsRememberSize && this._settings.General.ListViewNumberWidth > 1 && this._settings.General.ListViewStartWidth > 1 && this._settings.General.ListViewEndWidth > 1 && this._settings.General.ListViewDurationWidth > 1)
                 {
-                    int restWidth = lengthAvailable - 15 - Columns[ColumnIndexText].Width;
+                    int restWidth = lengthAvailable - 15 - this.Columns[ColumnIndexText].Width;
                     if (restWidth > 0)
-                        Columns[ColumnIndexTextAlternate].Width = restWidth;
+                    {
+                        this.Columns[ColumnIndexTextAlternate].Width = restWidth;
+                    }
                 }
                 else
                 {
                     int restWidth = (lengthAvailable / 2) - 15;
-                    Columns[ColumnIndexText].Width = restWidth;
-                    Columns[ColumnIndexTextAlternate].Width = restWidth;
+                    this.Columns[ColumnIndexText].Width = restWidth;
+                    this.Columns[ColumnIndexTextAlternate].Width = restWidth;
                 }
             }
-            else if (!IsAlternateTextColumnVisible && !IsExtraColumnVisible)
+            else if (!this.IsAlternateTextColumnVisible && !this.IsExtraColumnVisible)
             {
                 int restWidth = lengthAvailable - 23;
-                Columns[ColumnIndexText].Width = restWidth;
+                this.Columns[ColumnIndexText].Width = restWidth;
             }
-            else if (!IsAlternateTextColumnVisible && IsExtraColumnVisible)
+            else if (!this.IsAlternateTextColumnVisible && this.IsExtraColumnVisible)
             {
                 int restWidth = lengthAvailable - 15;
-                Columns[ColumnIndexText].Width = (int)(restWidth * 0.6);
-                Columns[ColumnIndexExtra].Width = (int)(restWidth * 0.4);
+                this.Columns[ColumnIndexText].Width = (int)(restWidth * 0.6);
+                this.Columns[this.ColumnIndexExtra].Width = (int)(restWidth * 0.4);
             }
             else
             {
                 int restWidth = lengthAvailable - 15;
-                Columns[ColumnIndexText].Width = (int)(restWidth * 0.4);
-                Columns[ColumnIndexTextAlternate].Width = (int)(restWidth * 0.4);
-                Columns[ColumnIndexExtra].Width = (int)(restWidth * 0.2);
+                this.Columns[ColumnIndexText].Width = (int)(restWidth * 0.4);
+                this.Columns[ColumnIndexTextAlternate].Width = (int)(restWidth * 0.4);
+                this.Columns[this.ColumnIndexExtra].Width = (int)(restWidth * 0.2);
             }
         }
 
+        /// <summary>
+        /// The show alternate text column.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
         public void ShowAlternateTextColumn(string text)
         {
-            if (!IsAlternateTextColumnVisible)
+            if (!this.IsAlternateTextColumnVisible)
             {
-                ColumnIndexExtra = ColumnIndexTextAlternate + 1;
-                if (IsExtraColumnVisible)
+                this.ColumnIndexExtra = ColumnIndexTextAlternate + 1;
+                if (this.IsExtraColumnVisible)
                 {
-                    Columns.Insert(ColumnIndexTextAlternate, new ColumnHeader { Text = text, Width = -2 });
+                    this.Columns.Insert(ColumnIndexTextAlternate, new ColumnHeader { Text = text, Width = -2 });
                 }
                 else
                 {
-                    Columns.Add(new ColumnHeader { Text = text, Width = -2 });
+                    this.Columns.Add(new ColumnHeader { Text = text, Width = -2 });
                 }
 
-                int length = Columns[ColumnIndexNumber].Width + Columns[ColumnIndexStart].Width + Columns[ColumnIndexEnd].Width + Columns[ColumnIndexDuration].Width;
-                int lengthAvailable = Width - length;
-                Columns[ColumnIndexText].Width = (lengthAvailable / 2) - 15;
-                Columns[ColumnIndexTextAlternate].Width = -2;
+                int length = this.Columns[ColumnIndexNumber].Width + this.Columns[ColumnIndexStart].Width + this.Columns[ColumnIndexEnd].Width + this.Columns[ColumnIndexDuration].Width;
+                int lengthAvailable = this.Width - length;
+                this.Columns[ColumnIndexText].Width = (lengthAvailable / 2) - 15;
+                this.Columns[ColumnIndexTextAlternate].Width = -2;
 
-                IsAlternateTextColumnVisible = true;
+                this.IsAlternateTextColumnVisible = true;
             }
         }
 
+        /// <summary>
+        /// The hide alternate text column.
+        /// </summary>
         public void HideAlternateTextColumn()
         {
-            if (IsAlternateTextColumnVisible)
+            if (this.IsAlternateTextColumnVisible)
             {
-                IsAlternateTextColumnVisible = false;
-                Columns.RemoveAt(ColumnIndexTextAlternate);
-                ColumnIndexExtra = ColumnIndexTextAlternate;
-                SubtitleListViewResize(null, null);
+                this.IsAlternateTextColumnVisible = false;
+                this.Columns.RemoveAt(ColumnIndexTextAlternate);
+                this.ColumnIndexExtra = ColumnIndexTextAlternate;
+                this.SubtitleListViewResize(null, null);
             }
         }
 
+        /// <summary>
+        /// The subtitle list view resize.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void SubtitleListViewResize(object sender, EventArgs e)
         {
             int width = 0;
-            for (int i = 0; i < Columns.Count - 1; i++)
+            for (int i = 0; i < this.Columns.Count - 1; i++)
             {
-                width += Columns[i].Width;
+                width += this.Columns[i].Width;
             }
-            Columns[Columns.Count - 1].Width = Width - (width + 25);
+
+            this.Columns[this.Columns.Count - 1].Width = this.Width - (width + 25);
         }
 
+        /// <summary>
+        /// The get first visible item.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ListViewItem"/>.
+        /// </returns>
         private ListViewItem GetFirstVisibleItem()
         {
-            foreach (ListViewItem item in Items)
+            foreach (ListViewItem item in this.Items)
             {
-                if (ClientRectangle.Contains(new Rectangle(item.Bounds.Left, item.Bounds.Top, item.Bounds.Height, 10)))
+                if (this.ClientRectangle.Contains(new Rectangle(item.Bounds.Left, item.Bounds.Top, item.Bounds.Height, 10)))
                 {
                     return item;
                 }
             }
+
             return null;
         }
 
+        /// <summary>
+        /// The save first visible index.
+        /// </summary>
         public void SaveFirstVisibleIndex()
         {
-            ListViewItem first = GetFirstVisibleItem();
-            if (Items.Count > 0 && first != null)
-                FirstVisibleIndex = first.Index;
-            else
-                FirstVisibleIndex = -1;
-        }
-
-        private void RestoreFirstVisibleIndex()
-        {
-            if (FirstVisibleIndex >= 0 && FirstVisibleIndex < Items.Count)
+            ListViewItem first = this.GetFirstVisibleItem();
+            if (this.Items.Count > 0 && first != null)
             {
-                if (FirstVisibleIndex + 1 < Items.Count)
-                    FirstVisibleIndex++;
-
-                Items[Items.Count - 1].EnsureVisible();
-                Items[FirstVisibleIndex].EnsureVisible();
+                this.FirstVisibleIndex = first.Index;
+            }
+            else
+            {
+                this.FirstVisibleIndex = -1;
             }
         }
 
+        /// <summary>
+        /// The restore first visible index.
+        /// </summary>
+        private void RestoreFirstVisibleIndex()
+        {
+            if (this.FirstVisibleIndex >= 0 && this.FirstVisibleIndex < this.Items.Count)
+            {
+                if (this.FirstVisibleIndex + 1 < this.Items.Count)
+                {
+                    this.FirstVisibleIndex++;
+                }
+
+                this.Items[this.Items.Count - 1].EnsureVisible();
+                this.Items[this.FirstVisibleIndex].EnsureVisible();
+            }
+        }
+
+        /// <summary>
+        /// The fill.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="subtitleAlternate">
+        /// The subtitle alternate.
+        /// </param>
         internal void Fill(Subtitle subtitle, Subtitle subtitleAlternate = null)
         {
             if (subtitleAlternate == null)
             {
-                Fill(subtitle.Paragraphs);
+                this.Fill(subtitle.Paragraphs);
             }
             else
             {
-                Fill(subtitle.Paragraphs, subtitleAlternate.Paragraphs);
+                this.Fill(subtitle.Paragraphs, subtitleAlternate.Paragraphs);
             }
         }
 
+        /// <summary>
+        /// The fill.
+        /// </summary>
+        /// <param name="paragraphs">
+        /// The paragraphs.
+        /// </param>
         internal void Fill(List<Paragraph> paragraphs)
         {
-            SaveFirstVisibleIndex();
-            BeginUpdate();
-            Items.Clear();
-            var x = ListViewItemSorter;
-            ListViewItemSorter = null;
+            this.SaveFirstVisibleIndex();
+            this.BeginUpdate();
+            this.Items.Clear();
+            var x = this.ListViewItemSorter;
+            this.ListViewItemSorter = null;
             int i = 0;
             foreach (Paragraph paragraph in paragraphs)
             {
-                Add(paragraph);
-                if (DisplayExtraFromExtra && IsExtraColumnVisible && Items[i].SubItems.Count > ColumnIndexExtra)
-                    Items[i].SubItems[ColumnIndexExtra].Text = paragraph.Extra;
-                SyntaxColorLine(paragraphs, i, paragraph);
+                this.Add(paragraph);
+                if (this.DisplayExtraFromExtra && this.IsExtraColumnVisible && this.Items[i].SubItems.Count > this.ColumnIndexExtra)
+                {
+                    this.Items[i].SubItems[this.ColumnIndexExtra].Text = paragraph.Extra;
+                }
+
+                this.SyntaxColorLine(paragraphs, i, paragraph);
                 i++;
             }
 
-            ListViewItemSorter = x;
-            EndUpdate();
+            this.ListViewItemSorter = x;
+            this.EndUpdate();
 
-            if (FirstVisibleIndex == 0)
-                FirstVisibleIndex = -1;
+            if (this.FirstVisibleIndex == 0)
+            {
+                this.FirstVisibleIndex = -1;
+            }
         }
 
+        /// <summary>
+        /// The fill.
+        /// </summary>
+        /// <param name="paragraphs">
+        /// The paragraphs.
+        /// </param>
+        /// <param name="paragraphsAlternate">
+        /// The paragraphs alternate.
+        /// </param>
         internal void Fill(List<Paragraph> paragraphs, List<Paragraph> paragraphsAlternate)
         {
-            SaveFirstVisibleIndex();
-            BeginUpdate();
-            Items.Clear();
-            var x = ListViewItemSorter;
-            ListViewItemSorter = null;
+            this.SaveFirstVisibleIndex();
+            this.BeginUpdate();
+            this.Items.Clear();
+            var x = this.ListViewItemSorter;
+            this.ListViewItemSorter = null;
             int i = 0;
             foreach (Paragraph paragraph in paragraphs)
             {
-                Add(paragraph);
+                this.Add(paragraph);
                 Paragraph alternate = Utilities.GetOriginalParagraph(i, paragraph, paragraphsAlternate);
                 if (alternate != null)
-                    SetAlternateText(i, alternate.Text);
-                if (DisplayExtraFromExtra && IsExtraColumnVisible)
-                    SetExtraText(i, paragraph.Extra, ForeColor);
-                SyntaxColorLine(paragraphs, i, paragraph);
+                {
+                    this.SetAlternateText(i, alternate.Text);
+                }
+
+                if (this.DisplayExtraFromExtra && this.IsExtraColumnVisible)
+                {
+                    this.SetExtraText(i, paragraph.Extra, this.ForeColor);
+                }
+
+                this.SyntaxColorLine(paragraphs, i, paragraph);
                 i++;
             }
 
-            ListViewItemSorter = x;
-            EndUpdate();
+            this.ListViewItemSorter = x;
+            this.EndUpdate();
 
-            if (FirstVisibleIndex == 0)
-                FirstVisibleIndex = -1;
+            if (this.FirstVisibleIndex == 0)
+            {
+                this.FirstVisibleIndex = -1;
+            }
         }
 
+        /// <summary>
+        /// The syntax color line.
+        /// </summary>
+        /// <param name="paragraphs">
+        /// The paragraphs.
+        /// </param>
+        /// <param name="i">
+        /// The i.
+        /// </param>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
         public void SyntaxColorLine(List<Paragraph> paragraphs, int i, Paragraph paragraph)
         {
-            if (UseSyntaxColoring && _settings != null && Items.Count > 0 && i < Items.Count)
+            if (this.UseSyntaxColoring && this._settings != null && this.Items.Count > 0 && i < this.Items.Count)
             {
-                var item = Items[i];
+                var item = this.Items[i];
                 if (item.UseItemStyleForSubItems)
                 {
                     item.UseItemStyleForSubItems = false;
-                    item.SubItems[ColumnIndexDuration].BackColor = BackColor;
+                    item.SubItems[ColumnIndexDuration].BackColor = this.BackColor;
                 }
+
                 bool durationChanged = false;
-                if (_settings.Tools.ListViewSyntaxColorDurationSmall)
+                if (this._settings.Tools.ListViewSyntaxColorDurationSmall)
                 {
                     double charactersPerSecond = Utilities.GetCharactersPerSecond(paragraph);
                     if (charactersPerSecond > Configuration.Settings.General.SubtitleMaximumCharactersPerSeconds)
@@ -535,36 +860,45 @@ namespace Nikse.SubtitleEdit.Controls
                         durationChanged = true;
                     }
                 }
-                if (_settings.Tools.ListViewSyntaxColorDurationBig)
+
+                if (this._settings.Tools.ListViewSyntaxColorDurationBig)
                 {
-                    //    double charactersPerSecond = Utilities.GetCharactersPerSecond(paragraph);
+                    // double charactersPerSecond = Utilities.GetCharactersPerSecond(paragraph);
                     if (paragraph.Duration.TotalMilliseconds > Configuration.Settings.General.SubtitleMaximumDisplayMilliseconds)
                     {
                         item.SubItems[ColumnIndexDuration].BackColor = Configuration.Settings.Tools.ListViewSyntaxErrorColor;
                         durationChanged = true;
                     }
                 }
-                if (!durationChanged && item.SubItems[ColumnIndexDuration].BackColor != BackColor)
-                    item.SubItems[ColumnIndexDuration].BackColor = BackColor;
 
-                if (_settings.Tools.ListViewSyntaxColorOverlap && i > 0 && i < paragraphs.Count)
+                if (!durationChanged && item.SubItems[ColumnIndexDuration].BackColor != this.BackColor)
+                {
+                    item.SubItems[ColumnIndexDuration].BackColor = this.BackColor;
+                }
+
+                if (this._settings.Tools.ListViewSyntaxColorOverlap && i > 0 && i < paragraphs.Count)
                 {
                     Paragraph prev = paragraphs[i - 1];
                     if (paragraph.StartTime.TotalMilliseconds < prev.EndTime.TotalMilliseconds)
                     {
-                        Items[i - 1].SubItems[ColumnIndexEnd].BackColor = Configuration.Settings.Tools.ListViewSyntaxErrorColor;
+                        this.Items[i - 1].SubItems[ColumnIndexEnd].BackColor = Configuration.Settings.Tools.ListViewSyntaxErrorColor;
                         item.SubItems[ColumnIndexStart].BackColor = Configuration.Settings.Tools.ListViewSyntaxErrorColor;
                     }
                     else
                     {
-                        if (Items[i - 1].SubItems[ColumnIndexEnd].BackColor != BackColor)
-                            Items[i - 1].SubItems[ColumnIndexEnd].BackColor = BackColor;
-                        if (item.SubItems[ColumnIndexStart].BackColor != BackColor)
-                            item.SubItems[ColumnIndexStart].BackColor = BackColor;
+                        if (this.Items[i - 1].SubItems[ColumnIndexEnd].BackColor != this.BackColor)
+                        {
+                            this.Items[i - 1].SubItems[ColumnIndexEnd].BackColor = this.BackColor;
+                        }
+
+                        if (item.SubItems[ColumnIndexStart].BackColor != this.BackColor)
+                        {
+                            item.SubItems[ColumnIndexStart].BackColor = this.BackColor;
+                        }
                     }
                 }
 
-                if (_settings.Tools.ListViewSyntaxColorLongLines)
+                if (this._settings.Tools.ListViewSyntaxColorLongLines)
                 {
                     int noOfLines = paragraph.Text.Split(Environment.NewLine[0]).Length;
                     string s = HtmlUtil.RemoveHtmlTags(paragraph.Text, true);
@@ -576,29 +910,42 @@ namespace Nikse.SubtitleEdit.Controls
                             return;
                         }
                     }
+
                     s = s.Replace(Environment.NewLine, string.Empty); // we don't count new line in total length... correct?
                     if (s.Length <= Configuration.Settings.General.SubtitleLineMaximumLength * noOfLines)
                     {
-                        if (noOfLines > Configuration.Settings.Tools.ListViewSyntaxMoreThanXLinesX && _settings.Tools.ListViewSyntaxMoreThanXLines)
+                        if (noOfLines > Configuration.Settings.Tools.ListViewSyntaxMoreThanXLinesX && this._settings.Tools.ListViewSyntaxMoreThanXLines)
+                        {
                             item.SubItems[ColumnIndexText].BackColor = Configuration.Settings.Tools.ListViewSyntaxErrorColor;
-                        else if (item.SubItems[ColumnIndexText].BackColor != BackColor)
-                            item.SubItems[ColumnIndexText].BackColor = BackColor;
+                        }
+                        else if (item.SubItems[ColumnIndexText].BackColor != this.BackColor)
+                        {
+                            item.SubItems[ColumnIndexText].BackColor = this.BackColor;
+                        }
                     }
                     else
                     {
                         item.SubItems[ColumnIndexText].BackColor = Configuration.Settings.Tools.ListViewSyntaxErrorColor;
                     }
                 }
-                if (_settings.Tools.ListViewSyntaxMoreThanXLines &&
-                    item.SubItems[ColumnIndexText].BackColor != Configuration.Settings.Tools.ListViewSyntaxErrorColor)
+
+                if (this._settings.Tools.ListViewSyntaxMoreThanXLines && item.SubItems[ColumnIndexText].BackColor != Configuration.Settings.Tools.ListViewSyntaxErrorColor)
                 {
                     int newLines = paragraph.Text.SplitToLines().Length;
                     if (newLines > Configuration.Settings.Tools.ListViewSyntaxMoreThanXLinesX)
+                    {
                         item.SubItems[ColumnIndexText].BackColor = Configuration.Settings.Tools.ListViewSyntaxErrorColor;
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// The add.
+        /// </summary>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
         private void Add(Paragraph paragraph)
         {
             var item = new ListViewItem(paragraph.Number.ToString(CultureInfo.InvariantCulture)) { Tag = paragraph };
@@ -607,15 +954,25 @@ namespace Nikse.SubtitleEdit.Controls
             if (Configuration.Settings != null && Configuration.Settings.General.UseTimeFormatHHMMSSFF)
             {
                 if (paragraph.StartTime.IsMaxTime)
+                {
                     subItem = new ListViewItem.ListViewSubItem(item, "-");
+                }
                 else
+                {
                     subItem = new ListViewItem.ListViewSubItem(item, paragraph.StartTime.ToHHMMSSFF());
+                }
+
                 item.SubItems.Add(subItem);
 
                 if (paragraph.EndTime.IsMaxTime)
+                {
                     subItem = new ListViewItem.ListViewSubItem(item, "-");
+                }
                 else
+                {
                     subItem = new ListViewItem.ListViewSubItem(item, paragraph.EndTime.ToHHMMSSFF());
+                }
+
                 item.SubItems.Add(subItem);
 
                 subItem = new ListViewItem.ListViewSubItem(item, string.Format("{0},{1:00}", paragraph.Duration.Seconds, Logic.SubtitleFormats.SubtitleFormat.MillisecondsToFramesMaxFrameRate(paragraph.Duration.Milliseconds)));
@@ -624,98 +981,153 @@ namespace Nikse.SubtitleEdit.Controls
             else
             {
                 if (paragraph.StartTime.IsMaxTime)
+                {
                     subItem = new ListViewItem.ListViewSubItem(item, "-");
+                }
                 else
+                {
                     subItem = new ListViewItem.ListViewSubItem(item, paragraph.StartTime.ToString());
+                }
+
                 item.SubItems.Add(subItem);
 
                 if (paragraph.EndTime.IsMaxTime)
+                {
                     subItem = new ListViewItem.ListViewSubItem(item, "-");
+                }
                 else
+                {
                     subItem = new ListViewItem.ListViewSubItem(item, paragraph.EndTime.ToString());
+                }
+
                 item.SubItems.Add(subItem);
 
                 subItem = new ListViewItem.ListViewSubItem(item, string.Format("{0},{1:000}", paragraph.Duration.Seconds, paragraph.Duration.Milliseconds));
                 item.SubItems.Add(subItem);
             }
 
-            subItem = new ListViewItem.ListViewSubItem(item, paragraph.Text.Replace(Environment.NewLine, _lineSeparatorString));
-            if (SubtitleFontBold)
-                subItem.Font = new Font(_subtitleFontName, SubtitleFontSize, FontStyle.Bold);
+            subItem = new ListViewItem.ListViewSubItem(item, paragraph.Text.Replace(Environment.NewLine, this._lineSeparatorString));
+            if (this.SubtitleFontBold)
+            {
+                subItem.Font = new Font(this._subtitleFontName, this.SubtitleFontSize, FontStyle.Bold);
+            }
             else
-                subItem.Font = new Font(_subtitleFontName, SubtitleFontSize);
+            {
+                subItem.Font = new Font(this._subtitleFontName, this.SubtitleFontSize);
+            }
 
             item.UseItemStyleForSubItems = false;
             item.SubItems.Add(subItem);
 
-            Items.Add(item);
+            this.Items.Add(item);
         }
 
+        /// <summary>
+        /// The select none.
+        /// </summary>
         public void SelectNone()
         {
-            foreach (ListViewItem item in SelectedItems)
+            foreach (ListViewItem item in this.SelectedItems)
+            {
                 item.Selected = false;
+            }
         }
 
+        /// <summary>
+        /// The select index and ensure visible.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="focus">
+        /// The focus.
+        /// </param>
         public void SelectIndexAndEnsureVisible(int index, bool focus)
         {
-            if (index < 0 || index >= Items.Count || Items.Count == 0)
-                return;
-            if (TopItem == null)
-                return;
-
-            int bottomIndex = TopItem.Index + ((Height - 25) / 16);
-            int itemsBeforeAfterCount = ((bottomIndex - TopItem.Index) / 2) - 1;
-            if (itemsBeforeAfterCount < 0)
-                itemsBeforeAfterCount = 1;
-
-            int beforeIndex = index - itemsBeforeAfterCount;
-            if (beforeIndex < 0)
-                beforeIndex = 0;
-
-            int afterIndex = index + itemsBeforeAfterCount;
-            if (afterIndex >= Items.Count)
-                afterIndex = Items.Count - 1;
-
-            SelectNone();
-            if (TopItem.Index <= beforeIndex && bottomIndex > afterIndex)
+            if (index < 0 || index >= this.Items.Count || this.Items.Count == 0)
             {
-                Items[index].Selected = true;
-                Items[index].EnsureVisible();
-                if (focus)
-                    Items[index].Focused = true;
                 return;
             }
 
-            Items[beforeIndex].EnsureVisible();
-            EnsureVisible(beforeIndex);
-            Items[afterIndex].EnsureVisible();
-            EnsureVisible(afterIndex);
-            Items[index].Selected = true;
-            Items[index].EnsureVisible();
+            if (this.TopItem == null)
+            {
+                return;
+            }
+
+            int bottomIndex = this.TopItem.Index + ((this.Height - 25) / 16);
+            int itemsBeforeAfterCount = ((bottomIndex - this.TopItem.Index) / 2) - 1;
+            if (itemsBeforeAfterCount < 0)
+            {
+                itemsBeforeAfterCount = 1;
+            }
+
+            int beforeIndex = index - itemsBeforeAfterCount;
+            if (beforeIndex < 0)
+            {
+                beforeIndex = 0;
+            }
+
+            int afterIndex = index + itemsBeforeAfterCount;
+            if (afterIndex >= this.Items.Count)
+            {
+                afterIndex = this.Items.Count - 1;
+            }
+
+            this.SelectNone();
+            if (this.TopItem.Index <= beforeIndex && bottomIndex > afterIndex)
+            {
+                this.Items[index].Selected = true;
+                this.Items[index].EnsureVisible();
+                if (focus)
+                {
+                    this.Items[index].Focused = true;
+                }
+
+                return;
+            }
+
+            this.Items[beforeIndex].EnsureVisible();
+            this.EnsureVisible(beforeIndex);
+            this.Items[afterIndex].EnsureVisible();
+            this.EnsureVisible(afterIndex);
+            this.Items[index].Selected = true;
+            this.Items[index].EnsureVisible();
             if (focus)
-                Items[index].Focused = true;
+            {
+                this.Items[index].Focused = true;
+            }
         }
 
+        /// <summary>
+        /// The select index and ensure visible.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
         public void SelectIndexAndEnsureVisible(int index)
         {
-            SelectIndexAndEnsureVisible(index, false);
+            this.SelectIndexAndEnsureVisible(index, false);
         }
 
+        /// <summary>
+        /// The select index and ensure visible.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
         public void SelectIndexAndEnsureVisible(Paragraph p)
         {
-            SelectNone();
+            this.SelectNone();
             if (p == null)
-                return;
-
-            foreach (ListViewItem item in Items)
             {
-                if (item.Text == p.Number.ToString(CultureInfo.InvariantCulture) &&
-                    item.SubItems[ColumnIndexStart].Text == p.StartTime.ToString() &&
-                    item.SubItems[ColumnIndexEnd].Text == p.EndTime.ToString() &&
-                    item.SubItems[ColumnIndexText].Text == p.Text)
+                return;
+            }
+
+            foreach (ListViewItem item in this.Items)
+            {
+                if (item.Text == p.Number.ToString(CultureInfo.InvariantCulture) && item.SubItems[ColumnIndexStart].Text == p.StartTime.ToString() && item.SubItems[ColumnIndexEnd].Text == p.EndTime.ToString() && item.SubItems[ColumnIndexText].Text == p.Text)
                 {
-                    RestoreFirstVisibleIndex();
+                    this.RestoreFirstVisibleIndex();
                     item.Selected = true;
                     item.EnsureVisible();
                     return;
@@ -723,172 +1135,306 @@ namespace Nikse.SubtitleEdit.Controls
             }
         }
 
+        /// <summary>
+        /// The get selected paragraph.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Paragraph"/>.
+        /// </returns>
         public Paragraph GetSelectedParagraph(Subtitle subtitle)
         {
-            if (subtitle != null && SelectedItems.Count > 0)
-                return subtitle.GetParagraphOrDefault(SelectedItems[0].Index);
+            if (subtitle != null && this.SelectedItems.Count > 0)
+            {
+                return subtitle.GetParagraphOrDefault(this.SelectedItems[0].Index);
+            }
+
             return null;
         }
 
+        /// <summary>
+        /// The get text.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string GetText(int index)
         {
-            if (index >= 0 && index < Items.Count)
-                return Items[index].SubItems[ColumnIndexText].Text.Replace(_lineSeparatorString, Environment.NewLine);
+            if (index >= 0 && index < this.Items.Count)
+            {
+                return this.Items[index].SubItems[ColumnIndexText].Text.Replace(this._lineSeparatorString, Environment.NewLine);
+            }
+
             return null;
         }
 
+        /// <summary>
+        /// The get text alternate.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string GetTextAlternate(int index)
         {
-            if (index >= 0 && index < Items.Count && IsAlternateTextColumnVisible)
-                return Items[index].SubItems[ColumnIndexTextAlternate].Text.Replace(_lineSeparatorString, Environment.NewLine);
+            if (index >= 0 && index < this.Items.Count && this.IsAlternateTextColumnVisible)
+            {
+                return this.Items[index].SubItems[ColumnIndexTextAlternate].Text.Replace(this._lineSeparatorString, Environment.NewLine);
+            }
+
             return null;
         }
 
+        /// <summary>
+        /// The set text.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
         public void SetText(int index, string text)
         {
-            if (index >= 0 && index < Items.Count)
-                Items[index].SubItems[ColumnIndexText].Text = text.Replace(Environment.NewLine, _lineSeparatorString);
+            if (index >= 0 && index < this.Items.Count)
+            {
+                this.Items[index].SubItems[ColumnIndexText].Text = text.Replace(Environment.NewLine, this._lineSeparatorString);
+            }
         }
 
+        /// <summary>
+        /// The set time and text.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
         public void SetTimeAndText(int index, Paragraph paragraph)
         {
-            if (index >= 0 && index < Items.Count)
+            if (index >= 0 && index < this.Items.Count)
             {
-                ListViewItem item = Items[index];
+                ListViewItem item = this.Items[index];
 
                 if (Configuration.Settings != null && Configuration.Settings.General.UseTimeFormatHHMMSSFF)
                 {
                     if (paragraph.StartTime.IsMaxTime)
+                    {
                         item.SubItems[ColumnIndexStart].Text = "-";
+                    }
                     else
+                    {
                         item.SubItems[ColumnIndexStart].Text = paragraph.StartTime.ToHHMMSSFF();
+                    }
 
                     if (paragraph.EndTime.IsMaxTime)
+                    {
                         item.SubItems[ColumnIndexEnd].Text = "-";
+                    }
                     else
+                    {
                         item.SubItems[ColumnIndexEnd].Text = paragraph.EndTime.ToHHMMSSFF();
+                    }
 
                     item.SubItems[ColumnIndexDuration].Text = string.Format("{0},{1:00}", paragraph.Duration.Seconds, Logic.SubtitleFormats.SubtitleFormat.MillisecondsToFramesMaxFrameRate(paragraph.Duration.Milliseconds));
                 }
                 else
                 {
                     if (paragraph.StartTime.IsMaxTime)
+                    {
                         item.SubItems[ColumnIndexStart].Text = "-";
+                    }
                     else
+                    {
                         item.SubItems[ColumnIndexStart].Text = paragraph.StartTime.ToString();
+                    }
 
                     if (paragraph.EndTime.IsMaxTime)
+                    {
                         item.SubItems[ColumnIndexEnd].Text = "-";
+                    }
                     else
+                    {
                         item.SubItems[ColumnIndexEnd].Text = paragraph.EndTime.ToString();
+                    }
 
                     item.SubItems[ColumnIndexDuration].Text = string.Format("{0},{1:000}", paragraph.Duration.Seconds, paragraph.Duration.Milliseconds);
                 }
-                Items[index].SubItems[ColumnIndexText].Text = paragraph.Text.Replace(Environment.NewLine, _lineSeparatorString);
+
+                this.Items[index].SubItems[ColumnIndexText].Text = paragraph.Text.Replace(Environment.NewLine, this._lineSeparatorString);
             }
         }
 
+        /// <summary>
+        /// The show extra column.
+        /// </summary>
+        /// <param name="title">
+        /// The title.
+        /// </param>
         public void ShowExtraColumn(string title)
         {
-            if (!IsExtraColumnVisible)
+            if (!this.IsExtraColumnVisible)
             {
-                if (IsAlternateTextColumnVisible)
-                    ColumnIndexExtra = ColumnIndexTextAlternate + 1;
+                if (this.IsAlternateTextColumnVisible)
+                {
+                    this.ColumnIndexExtra = ColumnIndexTextAlternate + 1;
+                }
                 else
-                    ColumnIndexExtra = ColumnIndexTextAlternate;
+                {
+                    this.ColumnIndexExtra = ColumnIndexTextAlternate;
+                }
 
-                Columns.Add(new ColumnHeader { Text = title, Width = 80 });
+                this.Columns.Add(new ColumnHeader { Text = title, Width = 80 });
 
-                int length = Columns[ColumnIndexNumber].Width + Columns[ColumnIndexStart].Width + Columns[ColumnIndexEnd].Width + Columns[ColumnIndexDuration].Width;
-                int lengthAvailable = Width - length;
+                int length = this.Columns[ColumnIndexNumber].Width + this.Columns[ColumnIndexStart].Width + this.Columns[ColumnIndexEnd].Width + this.Columns[ColumnIndexDuration].Width;
+                int lengthAvailable = this.Width - length;
 
-                if (IsAlternateTextColumnVisible)
+                if (this.IsAlternateTextColumnVisible)
                 {
                     int part = lengthAvailable / 5;
-                    Columns[ColumnIndexText].Width = part * 2;
-                    Columns[ColumnIndexTextAlternate].Width = part * 2;
-                    Columns[ColumnIndexTextAlternate].Width = part;
+                    this.Columns[ColumnIndexText].Width = part * 2;
+                    this.Columns[ColumnIndexTextAlternate].Width = part * 2;
+                    this.Columns[ColumnIndexTextAlternate].Width = part;
                 }
                 else
                 {
                     int part = lengthAvailable / 6;
-                    Columns[ColumnIndexText].Width = part * 4;
-                    Columns[ColumnIndexTextAlternate].Width = part * 2;
+                    this.Columns[ColumnIndexText].Width = part * 4;
+                    this.Columns[ColumnIndexTextAlternate].Width = part * 2;
                 }
-                IsExtraColumnVisible = true;
+
+                this.IsExtraColumnVisible = true;
             }
         }
 
+        /// <summary>
+        /// The hide extra column.
+        /// </summary>
         public void HideExtraColumn()
         {
-            if (IsExtraColumnVisible)
+            if (this.IsExtraColumnVisible)
             {
-                IsExtraColumnVisible = false;
+                this.IsExtraColumnVisible = false;
 
-                if (IsAlternateTextColumnVisible)
-                    ColumnIndexExtra = ColumnIndexTextAlternate + 1;
-                else
-                    ColumnIndexExtra = ColumnIndexTextAlternate;
-
-                for (int i = 0; i < Items.Count; i++)
+                if (this.IsAlternateTextColumnVisible)
                 {
-                    if (Items[i].SubItems.Count == ColumnIndexExtra + 1)
+                    this.ColumnIndexExtra = ColumnIndexTextAlternate + 1;
+                }
+                else
+                {
+                    this.ColumnIndexExtra = ColumnIndexTextAlternate;
+                }
+
+                for (int i = 0; i < this.Items.Count; i++)
+                {
+                    if (this.Items[i].SubItems.Count == this.ColumnIndexExtra + 1)
                     {
-                        Items[i].SubItems[ColumnIndexExtra].Text = string.Empty;
-                        Items[i].SubItems[ColumnIndexExtra].BackColor = BackColor;
-                        Items[i].SubItems[ColumnIndexExtra].ForeColor = ForeColor;
+                        this.Items[i].SubItems[this.ColumnIndexExtra].Text = string.Empty;
+                        this.Items[i].SubItems[this.ColumnIndexExtra].BackColor = this.BackColor;
+                        this.Items[i].SubItems[this.ColumnIndexExtra].ForeColor = this.ForeColor;
                     }
                 }
-                Columns.RemoveAt(ColumnIndexExtra);
-                SubtitleListViewResize(null, null);
+
+                this.Columns.RemoveAt(this.ColumnIndexExtra);
+                this.SubtitleListViewResize(null, null);
             }
         }
 
+        /// <summary>
+        /// The set extra text.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="color">
+        /// The color.
+        /// </param>
         public void SetExtraText(int index, string text, Color color)
         {
-            if (index >= 0 && index < Items.Count)
+            if (index >= 0 && index < this.Items.Count)
             {
-                if (IsAlternateTextColumnVisible)
-                    ColumnIndexExtra = ColumnIndexTextAlternate + 1;
-                else
-                    ColumnIndexExtra = ColumnIndexTextAlternate;
-                if (!IsExtraColumnVisible)
+                if (this.IsAlternateTextColumnVisible)
                 {
-                    ShowExtraColumn(string.Empty);
+                    this.ColumnIndexExtra = ColumnIndexTextAlternate + 1;
                 }
-                if (Items[index].SubItems.Count <= ColumnIndexExtra)
-                    Items[index].SubItems.Add(new ListViewItem.ListViewSubItem());
-                if (Items[index].SubItems.Count <= ColumnIndexExtra)
-                    Items[index].SubItems.Add(new ListViewItem.ListViewSubItem());
-                Items[index].SubItems[ColumnIndexExtra].Text = text;
+                else
+                {
+                    this.ColumnIndexExtra = ColumnIndexTextAlternate;
+                }
 
-                Items[index].UseItemStyleForSubItems = false;
-                Items[index].SubItems[ColumnIndexExtra].BackColor = Color.AntiqueWhite;
-                Items[index].SubItems[ColumnIndexExtra].ForeColor = color;
+                if (!this.IsExtraColumnVisible)
+                {
+                    this.ShowExtraColumn(string.Empty);
+                }
+
+                if (this.Items[index].SubItems.Count <= this.ColumnIndexExtra)
+                {
+                    this.Items[index].SubItems.Add(new ListViewItem.ListViewSubItem());
+                }
+
+                if (this.Items[index].SubItems.Count <= this.ColumnIndexExtra)
+                {
+                    this.Items[index].SubItems.Add(new ListViewItem.ListViewSubItem());
+                }
+
+                this.Items[index].SubItems[this.ColumnIndexExtra].Text = text;
+
+                this.Items[index].UseItemStyleForSubItems = false;
+                this.Items[index].SubItems[this.ColumnIndexExtra].BackColor = Color.AntiqueWhite;
+                this.Items[index].SubItems[this.ColumnIndexExtra].ForeColor = color;
             }
         }
 
+        /// <summary>
+        /// The set alternate text.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
         public void SetAlternateText(int index, string text)
         {
-            if (index >= 0 && index < Items.Count && Columns.Count >= ColumnIndexTextAlternate + 1)
+            if (index >= 0 && index < this.Items.Count && this.Columns.Count >= ColumnIndexTextAlternate + 1)
             {
-                if (Items[index].SubItems.Count <= ColumnIndexTextAlternate)
+                if (this.Items[index].SubItems.Count <= ColumnIndexTextAlternate)
                 {
-                    var subItem = new ListViewItem.ListViewSubItem(Items[index], text.Replace(Environment.NewLine, _lineSeparatorString));
-                    Items[index].SubItems.Add(subItem);
+                    var subItem = new ListViewItem.ListViewSubItem(this.Items[index], text.Replace(Environment.NewLine, this._lineSeparatorString));
+                    this.Items[index].SubItems.Add(subItem);
                 }
                 else
                 {
-                    Items[index].SubItems[ColumnIndexTextAlternate].Text = text.Replace(Environment.NewLine, _lineSeparatorString);
+                    this.Items[index].SubItems[ColumnIndexTextAlternate].Text = text.Replace(Environment.NewLine, this._lineSeparatorString);
                 }
             }
         }
 
+        /// <summary>
+        /// The set duration.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
         public void SetDuration(int index, Paragraph paragraph)
         {
-            if (index >= 0 && index < Items.Count)
+            if (index >= 0 && index < this.Items.Count)
             {
-                ListViewItem item = Items[index];
+                ListViewItem item = this.Items[index];
                 if (Configuration.Settings != null && Configuration.Settings.General.UseTimeFormatHHMMSSFF)
                 {
                     item.SubItems[ColumnIndexDuration].Text = string.Format("{0},{1:00}", paragraph.Duration.Seconds, Logic.SubtitleFormats.SubtitleFormat.MillisecondsToFramesMaxFrameRate(paragraph.Duration.Milliseconds));
@@ -902,51 +1448,84 @@ namespace Nikse.SubtitleEdit.Controls
             }
         }
 
+        /// <summary>
+        /// The set number.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="number">
+        /// The number.
+        /// </param>
         public void SetNumber(int index, string number)
         {
-            if (index >= 0 && index < Items.Count)
+            if (index >= 0 && index < this.Items.Count)
             {
-                ListViewItem item = Items[index];
+                ListViewItem item = this.Items[index];
                 item.SubItems[ColumnIndexNumber].Text = number;
             }
         }
 
+        /// <summary>
+        /// The update frames.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         public void UpdateFrames(Subtitle subtitle)
         {
             if (Configuration.Settings != null && Configuration.Settings.General.UseTimeFormatHHMMSSFF)
             {
-                BeginUpdate();
+                this.BeginUpdate();
                 for (int i = 0; i < subtitle.Paragraphs.Count; i++)
                 {
-                    if (i >= 0 && i < Items.Count)
+                    if (i >= 0 && i < this.Items.Count)
                     {
-                        ListViewItem item = Items[i];
+                        ListViewItem item = this.Items[i];
                         Paragraph p = subtitle.Paragraphs[i];
                         item.SubItems[ColumnIndexStart].Text = p.StartTime.ToHHMMSSFF();
                         item.SubItems[ColumnIndexEnd].Text = p.EndTime.ToHHMMSSFF();
                         item.SubItems[ColumnIndexDuration].Text = string.Format("{0},{1:00}", p.Duration.Seconds, Logic.SubtitleFormats.SubtitleFormat.MillisecondsToFramesMaxFrameRate(p.Duration.Milliseconds));
                     }
                 }
-                EndUpdate();
+
+                this.EndUpdate();
             }
         }
 
+        /// <summary>
+        /// The set start time.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
         public void SetStartTime(int index, Paragraph paragraph)
         {
-            if (index >= 0 && index < Items.Count)
+            if (index >= 0 && index < this.Items.Count)
             {
-                ListViewItem item = Items[index];
+                ListViewItem item = this.Items[index];
                 if (Configuration.Settings != null && Configuration.Settings.General.UseTimeFormatHHMMSSFF)
                 {
                     if (paragraph.StartTime.IsMaxTime)
+                    {
                         item.SubItems[ColumnIndexStart].Text = "-";
+                    }
                     else
+                    {
                         item.SubItems[ColumnIndexStart].Text = paragraph.StartTime.ToHHMMSSFF();
+                    }
 
                     if (paragraph.EndTime.IsMaxTime)
+                    {
                         item.SubItems[ColumnIndexEnd].Text = "-";
+                    }
                     else
+                    {
                         item.SubItems[ColumnIndexEnd].Text = paragraph.EndTime.ToHHMMSSFF();
+                    }
 
                     item.SubItems[ColumnIndexDuration].Text = string.Format("{0},{1:00}", paragraph.Duration.Seconds, Logic.SubtitleFormats.SubtitleFormat.MillisecondsToFramesMaxFrameRate(paragraph.Duration.Milliseconds));
                     item.SubItems[ColumnIndexEnd].Text = paragraph.EndTime.ToHHMMSSFF();
@@ -954,14 +1533,22 @@ namespace Nikse.SubtitleEdit.Controls
                 else
                 {
                     if (paragraph.StartTime.IsMaxTime)
+                    {
                         item.SubItems[ColumnIndexStart].Text = "-";
+                    }
                     else
+                    {
                         item.SubItems[ColumnIndexStart].Text = paragraph.StartTime.ToString();
+                    }
 
                     if (paragraph.EndTime.IsMaxTime)
+                    {
                         item.SubItems[ColumnIndexEnd].Text = "-";
+                    }
                     else
+                    {
                         item.SubItems[ColumnIndexEnd].Text = paragraph.EndTime.ToString();
+                    }
 
                     item.SubItems[ColumnIndexDuration].Text = string.Format("{0},{1:000}", paragraph.Duration.Seconds, paragraph.Duration.Milliseconds);
                     item.SubItems[ColumnIndexEnd].Text = paragraph.EndTime.ToString();
@@ -969,140 +1556,208 @@ namespace Nikse.SubtitleEdit.Controls
             }
         }
 
+        /// <summary>
+        /// The set start time and duration.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
         public void SetStartTimeAndDuration(int index, Paragraph paragraph)
         {
-            if (index >= 0 && index < Items.Count)
+            if (index >= 0 && index < this.Items.Count)
             {
-                ListViewItem item = Items[index];
+                ListViewItem item = this.Items[index];
                 if (Configuration.Settings != null && Configuration.Settings.General.UseTimeFormatHHMMSSFF)
                 {
                     if (paragraph.StartTime.IsMaxTime)
+                    {
                         item.SubItems[ColumnIndexStart].Text = "-";
+                    }
                     else
+                    {
                         item.SubItems[ColumnIndexStart].Text = paragraph.StartTime.ToHHMMSSFF();
+                    }
 
                     if (paragraph.EndTime.IsMaxTime)
+                    {
                         item.SubItems[ColumnIndexEnd].Text = "-";
+                    }
                     else
+                    {
                         item.SubItems[ColumnIndexEnd].Text = paragraph.EndTime.ToHHMMSSFF();
+                    }
 
                     item.SubItems[ColumnIndexDuration].Text = string.Format("{0},{1:00}", paragraph.Duration.Seconds, Logic.SubtitleFormats.SubtitleFormat.MillisecondsToFramesMaxFrameRate(paragraph.Duration.Milliseconds));
                 }
                 else
                 {
                     if (paragraph.StartTime.IsMaxTime)
+                    {
                         item.SubItems[ColumnIndexStart].Text = "-";
+                    }
                     else
+                    {
                         item.SubItems[ColumnIndexStart].Text = paragraph.StartTime.ToString();
+                    }
 
                     if (paragraph.EndTime.IsMaxTime)
+                    {
                         item.SubItems[ColumnIndexEnd].Text = "-";
+                    }
                     else
+                    {
                         item.SubItems[ColumnIndexEnd].Text = paragraph.EndTime.ToString();
+                    }
 
                     item.SubItems[ColumnIndexDuration].Text = string.Format("{0},{1:000}", paragraph.Duration.Seconds, paragraph.Duration.Milliseconds);
                 }
             }
         }
 
+        /// <summary>
+        /// The set background color.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="color">
+        /// The color.
+        /// </param>
+        /// <param name="columnNumber">
+        /// The column number.
+        /// </param>
         public void SetBackgroundColor(int index, Color color, int columnNumber)
         {
-            if (index >= 0 && index < Items.Count)
+            if (index >= 0 && index < this.Items.Count)
             {
-                ListViewItem item = Items[index];
+                ListViewItem item = this.Items[index];
                 if (item.UseItemStyleForSubItems)
+                {
                     item.UseItemStyleForSubItems = false;
+                }
+
                 if (columnNumber >= 0 && columnNumber < item.SubItems.Count)
+                {
                     item.SubItems[columnNumber].BackColor = color;
+                }
             }
         }
 
+        /// <summary>
+        /// The set background color.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="color">
+        /// The color.
+        /// </param>
         public void SetBackgroundColor(int index, Color color)
         {
-            if (index >= 0 && index < Items.Count)
+            if (index >= 0 && index < this.Items.Count)
             {
-                ListViewItem item = Items[index];
+                ListViewItem item = this.Items[index];
                 item.BackColor = color;
-                Items[index].SubItems[ColumnIndexStart].BackColor = color;
-                Items[index].SubItems[ColumnIndexEnd].BackColor = color;
-                Items[index].SubItems[ColumnIndexDuration].BackColor = color;
-                Items[index].SubItems[ColumnIndexText].BackColor = color;
+                this.Items[index].SubItems[ColumnIndexStart].BackColor = color;
+                this.Items[index].SubItems[ColumnIndexEnd].BackColor = color;
+                this.Items[index].SubItems[ColumnIndexDuration].BackColor = color;
+                this.Items[index].SubItems[ColumnIndexText].BackColor = color;
             }
         }
 
+        /// <summary>
+        /// The get background color.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Color"/>.
+        /// </returns>
         public Color GetBackgroundColor(int index)
         {
-            if (index >= 0 && index < Items.Count)
+            if (index >= 0 && index < this.Items.Count)
             {
-                ListViewItem item = Items[index];
+                ListViewItem item = this.Items[index];
                 return item.BackColor;
             }
+
             return DefaultBackColor;
         }
 
         /// <summary>
         /// Removes all text and set background color
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="color"></param>
+        /// <param name="index">
+        /// </param>
+        /// <param name="color">
+        /// </param>
         public void ColorOut(int index, Color color)
         {
-            if (index >= 0 && index < Items.Count)
+            if (index >= 0 && index < this.Items.Count)
             {
-                ListViewItem item = Items[index];
+                ListViewItem item = this.Items[index];
                 item.Text = string.Empty;
                 item.SubItems[ColumnIndexStart].Text = string.Empty;
                 item.SubItems[ColumnIndexEnd].Text = string.Empty;
                 item.SubItems[ColumnIndexDuration].Text = string.Empty;
                 item.SubItems[ColumnIndexText].Text = string.Empty;
 
-                SetBackgroundColor(index, color);
+                this.SetBackgroundColor(index, color);
             }
         }
 
+        /// <summary>
+        /// The hide non vob sub columns.
+        /// </summary>
         public void HideNonVobSubColumns()
         {
-            Columns[ColumnIndexNumber].Width = 0;
-            Columns[ColumnIndexEnd].Width = 0;
-            Columns[ColumnIndexDuration].Width = 0;
-            Columns[ColumnIndexText].Width = 0;
+            this.Columns[ColumnIndexNumber].Width = 0;
+            this.Columns[ColumnIndexEnd].Width = 0;
+            this.Columns[ColumnIndexDuration].Width = 0;
+            this.Columns[ColumnIndexText].Width = 0;
         }
 
+        /// <summary>
+        /// The show all columns.
+        /// </summary>
         public void ShowAllColumns()
         {
-            if (_settings != null && _settings.General.ListViewColumnsRememberSize && _settings.General.ListViewNumberWidth > 1 &&
-                _settings.General.ListViewStartWidth > 1 && _settings.General.ListViewEndWidth > 1 && _settings.General.ListViewDurationWidth > 1)
+            if (this._settings != null && this._settings.General.ListViewColumnsRememberSize && this._settings.General.ListViewNumberWidth > 1 && this._settings.General.ListViewStartWidth > 1 && this._settings.General.ListViewEndWidth > 1 && this._settings.General.ListViewDurationWidth > 1)
             {
-                Columns[ColumnIndexNumber].Width = _settings.General.ListViewNumberWidth;
-                Columns[ColumnIndexStart].Width = _settings.General.ListViewStartWidth;
-                Columns[ColumnIndexEnd].Width = _settings.General.ListViewEndWidth;
-                Columns[ColumnIndexDuration].Width = _settings.General.ListViewDurationWidth;
-                Columns[ColumnIndexText].Width = _settings.General.ListViewTextWidth;
+                this.Columns[ColumnIndexNumber].Width = this._settings.General.ListViewNumberWidth;
+                this.Columns[ColumnIndexStart].Width = this._settings.General.ListViewStartWidth;
+                this.Columns[ColumnIndexEnd].Width = this._settings.General.ListViewEndWidth;
+                this.Columns[ColumnIndexDuration].Width = this._settings.General.ListViewDurationWidth;
+                this.Columns[ColumnIndexText].Width = this._settings.General.ListViewTextWidth;
 
-                if (IsAlternateTextColumnVisible)
+                if (this.IsAlternateTextColumnVisible)
                 {
-                    Columns[ColumnIndexTextAlternate].Width = -2;
+                    this.Columns[ColumnIndexTextAlternate].Width = -2;
                 }
                 else
                 {
-                    Columns[ColumnIndexText].Width = -2;
+                    this.Columns[ColumnIndexText].Width = -2;
                 }
+
                 return;
             }
 
-            Columns[ColumnIndexNumber].Width = 45;
-            Columns[ColumnIndexEnd].Width = 80;
-            Columns[ColumnIndexDuration].Width = 55;
-            if (IsAlternateTextColumnVisible)
+            this.Columns[ColumnIndexNumber].Width = 45;
+            this.Columns[ColumnIndexEnd].Width = 80;
+            this.Columns[ColumnIndexDuration].Width = 55;
+            if (this.IsAlternateTextColumnVisible)
             {
-                Columns[ColumnIndexText].Width = 250;
-                Columns[ColumnIndexTextAlternate].Width = -2;
+                this.Columns[ColumnIndexText].Width = 250;
+                this.Columns[ColumnIndexTextAlternate].Width = -2;
             }
             else
             {
-                Columns[ColumnIndexText].Width = -2;
+                this.Columns[ColumnIndexText].Width = -2;
             }
         }
-
     }
 }

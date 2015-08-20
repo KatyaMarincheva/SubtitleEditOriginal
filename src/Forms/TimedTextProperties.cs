@@ -1,286 +1,368 @@
-﻿using System;
-using System.Globalization;
-using System.Windows.Forms;
-using System.Xml;
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.SubtitleFormats;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TimedTextProperties.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The timed text properties.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Globalization;
+    using System.Windows.Forms;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.SubtitleFormats;
+
+    /// <summary>
+    /// The timed text properties.
+    /// </summary>
     public partial class TimedTextProperties : PositionAndSizeForm
     {
-        private Subtitle _subtitle;
-        private XmlDocument _xml;
-        private XmlNamespaceManager _nsmgr;
+        /// <summary>
+        /// The _ na.
+        /// </summary>
         private string _NA;
 
+        /// <summary>
+        /// The _nsmgr.
+        /// </summary>
+        private XmlNamespaceManager _nsmgr;
+
+        /// <summary>
+        /// The _subtitle.
+        /// </summary>
+        private Subtitle _subtitle;
+
+        /// <summary>
+        /// The _xml.
+        /// </summary>
+        private XmlDocument _xml;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimedTextProperties"/> class.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         public TimedTextProperties(Subtitle subtitle)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             Application.DoEvents();
 
             this._subtitle = subtitle;
-            _NA = "[" + Configuration.Settings.Language.General.NotAvailable + "]";
-            comboBoxDropMode.Items[0] = _NA;
-            comboBoxTimeBase.Items[0] = _NA;
-            comboBoxDefaultStyle.Items.Add(_NA);
-            comboBoxDefaultRegion.Items.Add(_NA);
+            this._NA = "[" + Configuration.Settings.Language.General.NotAvailable + "]";
+            this.comboBoxDropMode.Items[0] = this._NA;
+            this.comboBoxTimeBase.Items[0] = this._NA;
+            this.comboBoxDefaultStyle.Items.Add(this._NA);
+            this.comboBoxDefaultRegion.Items.Add(this._NA);
 
-            _xml = new XmlDocument();
+            this._xml = new XmlDocument();
             try
             {
-                _xml.LoadXml(subtitle.Header);
+                this._xml.LoadXml(subtitle.Header);
             }
             catch
             {
                 subtitle.Header = new TimedText10().ToText(new Subtitle(), "tt");
-                _xml.LoadXml(subtitle.Header); // load default xml
+                this._xml.LoadXml(subtitle.Header); // load default xml
             }
-            _nsmgr = new XmlNamespaceManager(_xml.NameTable);
-            _nsmgr.AddNamespace("ttml", "http://www.w3.org/ns/ttml");
 
-            XmlNode node = _xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata/ttml:title", _nsmgr);
-            if (node != null)
-                textBoxTitle.Text = node.InnerText;
+            this._nsmgr = new XmlNamespaceManager(this._xml.NameTable);
+            this._nsmgr.AddNamespace("ttml", "http://www.w3.org/ns/ttml");
 
-            node = _xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata/ttml:desc", _nsmgr);
+            XmlNode node = this._xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata/ttml:title", this._nsmgr);
             if (node != null)
-                textBoxDescription.Text = node.InnerText;
+            {
+                this.textBoxTitle.Text = node.InnerText;
+            }
+
+            node = this._xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata/ttml:desc", this._nsmgr);
+            if (node != null)
+            {
+                this.textBoxDescription.Text = node.InnerText;
+            }
 
             foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
             {
-                comboBoxLanguage.Items.Add(ci.Name);
+                this.comboBoxLanguage.Items.Add(ci.Name);
             }
-            XmlAttribute attr = _xml.DocumentElement.Attributes["xml:lang"];
-            if (attr != null)
-                comboBoxLanguage.Text = attr.InnerText;
 
-            attr = _xml.DocumentElement.Attributes["ttp:timeBase"];
+            XmlAttribute attr = this._xml.DocumentElement.Attributes["xml:lang"];
             if (attr != null)
-                comboBoxTimeBase.Text = attr.InnerText;
-
-            comboBoxFrameRate.Items.Add("23.976");
-            comboBoxFrameRate.Items.Add("24.0");
-            comboBoxFrameRate.Items.Add("25.0");
-            comboBoxFrameRate.Items.Add("29.97");
-            comboBoxFrameRate.Items.Add("30.0");
-            attr = _xml.DocumentElement.Attributes["ttp:frameRate"];
-            if (attr != null)
-                comboBoxFrameRate.Text = attr.InnerText;
-
-            attr = _xml.DocumentElement.Attributes["ttp:frameRateMultiplier"];
-            if (attr != null)
-                comboBoxFrameRateMultiplier.Text = attr.InnerText;
-
-            attr = _xml.DocumentElement.Attributes["ttp:dropMode"];
-            if (attr != null)
-                comboBoxDropMode.Text = attr.InnerText;
-
-            foreach (string style in TimedText10.GetStylesFromHeader(_subtitle.Header))
             {
-                comboBoxDefaultStyle.Items.Add(style);
-                node = _xml.DocumentElement.SelectSingleNode("ttml:body", _nsmgr);
+                this.comboBoxLanguage.Text = attr.InnerText;
+            }
+
+            attr = this._xml.DocumentElement.Attributes["ttp:timeBase"];
+            if (attr != null)
+            {
+                this.comboBoxTimeBase.Text = attr.InnerText;
+            }
+
+            this.comboBoxFrameRate.Items.Add("23.976");
+            this.comboBoxFrameRate.Items.Add("24.0");
+            this.comboBoxFrameRate.Items.Add("25.0");
+            this.comboBoxFrameRate.Items.Add("29.97");
+            this.comboBoxFrameRate.Items.Add("30.0");
+            attr = this._xml.DocumentElement.Attributes["ttp:frameRate"];
+            if (attr != null)
+            {
+                this.comboBoxFrameRate.Text = attr.InnerText;
+            }
+
+            attr = this._xml.DocumentElement.Attributes["ttp:frameRateMultiplier"];
+            if (attr != null)
+            {
+                this.comboBoxFrameRateMultiplier.Text = attr.InnerText;
+            }
+
+            attr = this._xml.DocumentElement.Attributes["ttp:dropMode"];
+            if (attr != null)
+            {
+                this.comboBoxDropMode.Text = attr.InnerText;
+            }
+
+            foreach (string style in TimedText10.GetStylesFromHeader(this._subtitle.Header))
+            {
+                this.comboBoxDefaultStyle.Items.Add(style);
+                node = this._xml.DocumentElement.SelectSingleNode("ttml:body", this._nsmgr);
                 if (node != null && node.Attributes["style"] != null && style == node.Attributes["style"].Value)
-                    comboBoxDefaultStyle.SelectedIndex = comboBoxDefaultStyle.Items.Count - 1;
+                {
+                    this.comboBoxDefaultStyle.SelectedIndex = this.comboBoxDefaultStyle.Items.Count - 1;
+                }
             }
-            foreach (string region in TimedText10.GetRegionsFromHeader(_subtitle.Header))
+
+            foreach (string region in TimedText10.GetRegionsFromHeader(this._subtitle.Header))
             {
-                comboBoxDefaultRegion.Items.Add(region);
-                node = _xml.DocumentElement.SelectSingleNode("ttml:body", _nsmgr);
+                this.comboBoxDefaultRegion.Items.Add(region);
+                node = this._xml.DocumentElement.SelectSingleNode("ttml:body", this._nsmgr);
                 if (node != null && node.Attributes["region"] != null && region == node.Attributes["region"].Value)
-                    comboBoxDefaultRegion.SelectedIndex = comboBoxDefaultRegion.Items.Count - 1;
+                {
+                    this.comboBoxDefaultRegion.SelectedIndex = this.comboBoxDefaultRegion.Items.Count - 1;
+                }
             }
 
             var timeCodeFormat = Configuration.Settings.SubtitleSettings.TimedText10TimeCodeFormat.Trim().ToLowerInvariant();
             switch (timeCodeFormat)
             {
                 case "seconds":
-                    comboBoxTimeCodeFormat.SelectedIndex = 2;
+                    this.comboBoxTimeCodeFormat.SelectedIndex = 2;
                     break;
                 case "milliseconds":
-                    comboBoxTimeCodeFormat.SelectedIndex = 3;
+                    this.comboBoxTimeCodeFormat.SelectedIndex = 3;
                     break;
                 case "ticks":
-                    comboBoxTimeCodeFormat.SelectedIndex = 4;
+                    this.comboBoxTimeCodeFormat.SelectedIndex = 4;
                     break;
                 case "hh:mm:ss.ms":
-                    comboBoxTimeCodeFormat.SelectedIndex = 1;
+                    this.comboBoxTimeCodeFormat.SelectedIndex = 1;
                     break;
                 case "default":
-                    comboBoxTimeCodeFormat.SelectedIndex = 5;
+                    this.comboBoxTimeCodeFormat.SelectedIndex = 5;
                     break;
                 default: // hh:mm:ss:ff
-                    comboBoxTimeCodeFormat.SelectedIndex = 0;
+                    this.comboBoxTimeCodeFormat.SelectedIndex = 0;
                     break;
             }
         }
 
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
 
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            XmlNode node = _xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata/ttml:title", _nsmgr);
+            XmlNode node = this._xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata/ttml:title", this._nsmgr);
             if (node != null)
             {
-                if (string.IsNullOrWhiteSpace(textBoxTitle.Text) && string.IsNullOrWhiteSpace(textBoxDescription.Text))
+                if (string.IsNullOrWhiteSpace(this.textBoxTitle.Text) && string.IsNullOrWhiteSpace(this.textBoxDescription.Text))
                 {
-                    _xml.DocumentElement.SelectSingleNode("ttml:head", _nsmgr).RemoveChild(_xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata", _nsmgr));
+                    this._xml.DocumentElement.SelectSingleNode("ttml:head", this._nsmgr).RemoveChild(this._xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata", this._nsmgr));
                 }
                 else
                 {
-                    node.InnerText = textBoxTitle.Text;
+                    node.InnerText = this.textBoxTitle.Text;
                 }
             }
-            else if (!string.IsNullOrWhiteSpace(textBoxTitle.Text))
+            else if (!string.IsNullOrWhiteSpace(this.textBoxTitle.Text))
             {
-                var head = _xml.DocumentElement.SelectSingleNode("ttml:head", _nsmgr);
+                var head = this._xml.DocumentElement.SelectSingleNode("ttml:head", this._nsmgr);
                 if (head == null)
                 {
-                    head = _xml.CreateElement("ttml", "head", _nsmgr.LookupNamespace("ttml"));
-                    _xml.DocumentElement.PrependChild(head);
+                    head = this._xml.CreateElement("ttml", "head", this._nsmgr.LookupNamespace("ttml"));
+                    this._xml.DocumentElement.PrependChild(head);
                 }
 
-                var metadata = _xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata", _nsmgr);
+                var metadata = this._xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata", this._nsmgr);
                 if (metadata == null)
                 {
-                    metadata = _xml.CreateElement("ttml", "metadata", _nsmgr.LookupNamespace("ttml"));
+                    metadata = this._xml.CreateElement("ttml", "metadata", this._nsmgr.LookupNamespace("ttml"));
                     head.PrependChild(metadata);
                 }
 
-                var title = _xml.CreateElement("ttml", "title", _nsmgr.LookupNamespace("ttml"));
-                metadata.InnerText = textBoxTitle.Text;
+                var title = this._xml.CreateElement("ttml", "title", this._nsmgr.LookupNamespace("ttml"));
+                metadata.InnerText = this.textBoxTitle.Text;
                 metadata.AppendChild(title);
             }
 
-            node = _xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata/ttml:desc", _nsmgr);
+            node = this._xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata/ttml:desc", this._nsmgr);
             if (node != null)
             {
-                node.InnerText = textBoxDescription.Text;
+                node.InnerText = this.textBoxDescription.Text;
             }
-            else if (!string.IsNullOrWhiteSpace(textBoxDescription.Text))
+            else if (!string.IsNullOrWhiteSpace(this.textBoxDescription.Text))
             {
-                var head = _xml.DocumentElement.SelectSingleNode("ttml:head", _nsmgr);
+                var head = this._xml.DocumentElement.SelectSingleNode("ttml:head", this._nsmgr);
                 if (head == null)
                 {
-                    head = _xml.CreateElement("ttml", "head", _nsmgr.LookupNamespace("ttml"));
-                    _xml.DocumentElement.PrependChild(head);
+                    head = this._xml.CreateElement("ttml", "head", this._nsmgr.LookupNamespace("ttml"));
+                    this._xml.DocumentElement.PrependChild(head);
                 }
 
-                var metadata = _xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata", _nsmgr);
+                var metadata = this._xml.DocumentElement.SelectSingleNode("ttml:head/ttml:metadata", this._nsmgr);
                 if (metadata == null)
                 {
-                    metadata = _xml.CreateElement("ttml", "metadata", _nsmgr.LookupNamespace("ttml"));
+                    metadata = this._xml.CreateElement("ttml", "metadata", this._nsmgr.LookupNamespace("ttml"));
                     head.PrependChild(metadata);
                 }
 
-                var desc = _xml.CreateElement("ttml", "desc", _nsmgr.LookupNamespace("ttml"));
-                desc.InnerText = textBoxDescription.Text;
+                var desc = this._xml.CreateElement("ttml", "desc", this._nsmgr.LookupNamespace("ttml"));
+                desc.InnerText = this.textBoxDescription.Text;
                 metadata.AppendChild(desc);
             }
 
-            XmlAttribute attr = _xml.DocumentElement.Attributes["xml:lang"];
+            XmlAttribute attr = this._xml.DocumentElement.Attributes["xml:lang"];
             if (attr != null)
             {
-                attr.Value = comboBoxLanguage.Text;
+                attr.Value = this.comboBoxLanguage.Text;
                 if (attr.Value.Length == 0)
-                    _xml.DocumentElement.Attributes.Remove(attr);
+                {
+                    this._xml.DocumentElement.Attributes.Remove(attr);
+                }
             }
-            else if (comboBoxLanguage.Text.Length > 0)
+            else if (this.comboBoxLanguage.Text.Length > 0)
             {
-                attr = _xml.CreateAttribute("xml", "lang", _nsmgr.LookupNamespace("xml"));
-                attr.Value = comboBoxLanguage.Text;
-                _xml.DocumentElement.Attributes.Prepend(attr);
+                attr = this._xml.CreateAttribute("xml", "lang", this._nsmgr.LookupNamespace("xml"));
+                attr.Value = this.comboBoxLanguage.Text;
+                this._xml.DocumentElement.Attributes.Prepend(attr);
             }
 
-            attr = _xml.DocumentElement.Attributes["ttp:timeBase"];
+            attr = this._xml.DocumentElement.Attributes["ttp:timeBase"];
             if (attr != null)
             {
-                attr.InnerText = comboBoxTimeBase.Text;
+                attr.InnerText = this.comboBoxTimeBase.Text;
                 if (attr.Value.Length == 0)
-                    _xml.DocumentElement.Attributes.Remove(attr);
+                {
+                    this._xml.DocumentElement.Attributes.Remove(attr);
+                }
             }
-            else if (comboBoxTimeBase.Text.Length > 0)
+            else if (this.comboBoxTimeBase.Text.Length > 0)
             {
-                attr = _xml.CreateAttribute("ttp", "timeBase", _nsmgr.LookupNamespace("ttp"));
-                attr.Value = comboBoxTimeBase.Text;
-                _xml.DocumentElement.Attributes.Append(attr);
+                attr = this._xml.CreateAttribute("ttp", "timeBase", this._nsmgr.LookupNamespace("ttp"));
+                attr.Value = this.comboBoxTimeBase.Text;
+                this._xml.DocumentElement.Attributes.Append(attr);
             }
 
-            attr = _xml.DocumentElement.Attributes["ttp:frameRate"];
+            attr = this._xml.DocumentElement.Attributes["ttp:frameRate"];
             if (attr != null)
             {
-                attr.InnerText = comboBoxFrameRate.Text;
+                attr.InnerText = this.comboBoxFrameRate.Text;
                 if (attr.Value.Length == 0)
-                    _xml.DocumentElement.Attributes.Remove(attr);
+                {
+                    this._xml.DocumentElement.Attributes.Remove(attr);
+                }
             }
-            else if (comboBoxFrameRate.Text.Length > 0)
+            else if (this.comboBoxFrameRate.Text.Length > 0)
             {
-                attr = _xml.CreateAttribute("ttp", "frameRate", _nsmgr.LookupNamespace("ttp"));
-                attr.Value = comboBoxFrameRate.Text;
-                _xml.DocumentElement.Attributes.Append(attr);
+                attr = this._xml.CreateAttribute("ttp", "frameRate", this._nsmgr.LookupNamespace("ttp"));
+                attr.Value = this.comboBoxFrameRate.Text;
+                this._xml.DocumentElement.Attributes.Append(attr);
             }
 
-            attr = _xml.DocumentElement.Attributes["ttp:frameRateMultiplier"];
+            attr = this._xml.DocumentElement.Attributes["ttp:frameRateMultiplier"];
             if (attr != null)
             {
-                attr.InnerText = comboBoxFrameRateMultiplier.Text;
+                attr.InnerText = this.comboBoxFrameRateMultiplier.Text;
                 if (attr.Value.Length == 0)
-                    _xml.DocumentElement.Attributes.Remove(attr);
+                {
+                    this._xml.DocumentElement.Attributes.Remove(attr);
+                }
             }
-            else if (comboBoxFrameRateMultiplier.Text.Length > 0)
+            else if (this.comboBoxFrameRateMultiplier.Text.Length > 0)
             {
-                attr = _xml.CreateAttribute("ttp", "frameRateMultiplier", _nsmgr.LookupNamespace("ttp"));
-                attr.Value = comboBoxFrameRateMultiplier.Text;
-                _xml.DocumentElement.Attributes.Append(attr);
+                attr = this._xml.CreateAttribute("ttp", "frameRateMultiplier", this._nsmgr.LookupNamespace("ttp"));
+                attr.Value = this.comboBoxFrameRateMultiplier.Text;
+                this._xml.DocumentElement.Attributes.Append(attr);
             }
 
-            attr = _xml.DocumentElement.Attributes["ttp:dropMode"];
+            attr = this._xml.DocumentElement.Attributes["ttp:dropMode"];
             if (attr != null)
             {
-                attr.InnerText = comboBoxDropMode.Text;
+                attr.InnerText = this.comboBoxDropMode.Text;
                 if (attr.Value.Length == 0)
-                    _xml.DocumentElement.Attributes.Remove(attr);
+                {
+                    this._xml.DocumentElement.Attributes.Remove(attr);
+                }
             }
-            else if (comboBoxDropMode.Text.Length > 0)
+            else if (this.comboBoxDropMode.Text.Length > 0)
             {
-                attr = _xml.CreateAttribute("ttp", "dropMode", _nsmgr.LookupNamespace("ttp"));
-                attr.Value = comboBoxDropMode.Text;
-                _xml.DocumentElement.Attributes.Append(attr);
+                attr = this._xml.CreateAttribute("ttp", "dropMode", this._nsmgr.LookupNamespace("ttp"));
+                attr.Value = this.comboBoxDropMode.Text;
+                this._xml.DocumentElement.Attributes.Append(attr);
             }
 
-            node = _xml.DocumentElement.SelectSingleNode("ttml:body", _nsmgr);
+            node = this._xml.DocumentElement.SelectSingleNode("ttml:body", this._nsmgr);
             if (node != null && node.Attributes["style"] != null)
             {
-                node.Attributes["style"].Value = comboBoxDefaultStyle.Text;
+                node.Attributes["style"].Value = this.comboBoxDefaultStyle.Text;
             }
-            else if (comboBoxDefaultStyle.Text.Length > 0 && node != null)
+            else if (this.comboBoxDefaultStyle.Text.Length > 0 && node != null)
             {
-                attr = _xml.CreateAttribute("style");
-                attr.Value = comboBoxDefaultStyle.Text;
+                attr = this._xml.CreateAttribute("style");
+                attr.Value = this.comboBoxDefaultStyle.Text;
                 node.Attributes.Append(attr);
             }
 
-            node = _xml.DocumentElement.SelectSingleNode("ttml:body", _nsmgr);
+            node = this._xml.DocumentElement.SelectSingleNode("ttml:body", this._nsmgr);
             if (node != null && node.Attributes["region"] != null)
             {
-                node.Attributes["region"].Value = comboBoxDefaultRegion.Text;
+                node.Attributes["region"].Value = this.comboBoxDefaultRegion.Text;
             }
-            else if (comboBoxDefaultRegion.Text.Length > 0 && node != null)
+            else if (this.comboBoxDefaultRegion.Text.Length > 0 && node != null)
             {
-                attr = _xml.CreateAttribute("region");
-                attr.Value = comboBoxDefaultRegion.Text;
+                attr = this._xml.CreateAttribute("region");
+                attr.Value = this.comboBoxDefaultRegion.Text;
                 node.Attributes.Append(attr);
             }
 
-            _subtitle.Header = _xml.OuterXml;
+            this._subtitle.Header = this._xml.OuterXml;
 
-            Configuration.Settings.SubtitleSettings.TimedText10TimeCodeFormat = comboBoxTimeCodeFormat.SelectedItem.ToString();
+            Configuration.Settings.SubtitleSettings.TimedText10TimeCodeFormat = this.comboBoxTimeCodeFormat.SelectedItem.ToString();
 
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
-
     }
 }

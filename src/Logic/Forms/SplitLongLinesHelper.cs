@@ -1,12 +1,39 @@
-﻿namespace Nikse.SubtitleEdit.Logic.Forms
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SplitLongLinesHelper.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The split long lines helper.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.Forms
 {
     using System;
     using System.Collections.Generic;
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The split long lines helper.
+    /// </summary>
     public static class SplitLongLinesHelper
     {
+        /// <summary>
+        /// The qualifies for split.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="singleLineMaxCharacters">
+        /// The single line max characters.
+        /// </param>
+        /// <param name="totalLineMaxCharacters">
+        /// The total line max characters.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public static bool QualifiesForSplit(string text, int singleLineMaxCharacters, int totalLineMaxCharacters)
         {
             string s = HtmlUtil.RemoveHtmlTags(text.Trim(), true);
@@ -45,6 +72,21 @@
             return false;
         }
 
+        /// <summary>
+        /// The split long lines in subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="totalLineMaxCharacters">
+        /// The total line max characters.
+        /// </param>
+        /// <param name="singleLineMaxCharacters">
+        /// The single line max characters.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Subtitle"/>.
+        /// </returns>
         public static Subtitle SplitLongLinesInSubtitle(Subtitle subtitle, int totalLineMaxCharacters, int singleLineMaxCharacters)
         {
             List<int> splittedIndexes = new List<int>();

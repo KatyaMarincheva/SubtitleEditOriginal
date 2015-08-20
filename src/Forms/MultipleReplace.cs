@@ -1,171 +1,259 @@
-﻿using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Logic;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using System.Xml;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MultipleReplace.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The multiple replace.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The multiple replace.
+    /// </summary>
     public sealed partial class MultipleReplace : PositionAndSizeForm
     {
-
-        internal class ReplaceExpression
-        {
-            internal const int SearchNormal = 0;
-            internal const int SearchRegEx = 1;
-            internal const int SearchCaseSensitive = 2;
-
-            internal string FindWhat { get; set; }
-            internal string ReplaceWith { get; set; }
-            internal int SearchType { get; set; }
-
-            internal ReplaceExpression(string findWhat, string replaceWith, string searchType)
-            {
-                FindWhat = findWhat;
-                ReplaceWith = replaceWith;
-                if (string.CompareOrdinal(searchType, Configuration.Settings.Language.MultipleReplace.RegularExpression) == 0)
-                    SearchType = SearchRegEx;
-                else if (string.CompareOrdinal(searchType, Configuration.Settings.Language.MultipleReplace.CaseSensitive) == 0)
-                    SearchType = SearchCaseSensitive;
-            }
-        }
-
+        /// <summary>
+        /// The search type normal.
+        /// </summary>
         public const string SearchTypeNormal = "Normal";
-        public const string SearchTypeCaseSensitive = "CaseSensitive";
-        public const string SearchTypeRegularExpression = "RegularExpression";
-        private readonly List<MultipleSearchAndReplaceSetting> _oldMultipleSearchAndReplaceList = new List<MultipleSearchAndReplaceSetting>();
-        private readonly Dictionary<string, Regex> _compiledRegExList = new Dictionary<string, Regex>();
-        private Subtitle _subtitle;
-        public List<int> DeleteIndices { get; private set; }
-        public Subtitle FixedSubtitle { get; private set; }
-        public int FixCount { get; private set; }
 
+        /// <summary>
+        /// The search type case sensitive.
+        /// </summary>
+        public const string SearchTypeCaseSensitive = "CaseSensitive";
+
+        /// <summary>
+        /// The search type regular expression.
+        /// </summary>
+        public const string SearchTypeRegularExpression = "RegularExpression";
+
+        /// <summary>
+        /// The _compiled reg ex list.
+        /// </summary>
+        private readonly Dictionary<string, Regex> _compiledRegExList = new Dictionary<string, Regex>();
+
+        /// <summary>
+        /// The _old multiple search and replace list.
+        /// </summary>
+        private readonly List<MultipleSearchAndReplaceSetting> _oldMultipleSearchAndReplaceList = new List<MultipleSearchAndReplaceSetting>();
+
+        /// <summary>
+        /// The _subtitle.
+        /// </summary>
+        private Subtitle _subtitle;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MultipleReplace"/> class.
+        /// </summary>
         public MultipleReplace()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            openFileDialog1.FileName = string.Empty;
-            saveFileDialog1.FileName = string.Empty;
+            this.openFileDialog1.FileName = string.Empty;
+            this.saveFileDialog1.FileName = string.Empty;
 
-            textBoxReplace.ContextMenu = FindReplaceDialogHelper.GetReplaceTextContextMenu(textBoxReplace);
-            buttonUpdate.Enabled = false;
+            this.textBoxReplace.ContextMenu = FindReplaceDialogHelper.GetReplaceTextContextMenu(this.textBoxReplace);
+            this.buttonUpdate.Enabled = false;
 
-            Text = Configuration.Settings.Language.MultipleReplace.Title;
-            labelFindWhat.Text = Configuration.Settings.Language.MultipleReplace.FindWhat;
-            labelReplaceWith.Text = Configuration.Settings.Language.MultipleReplace.ReplaceWith;
-            radioButtonNormal.Text = Configuration.Settings.Language.MultipleReplace.Normal;
-            radioButtonRegEx.Text = Configuration.Settings.Language.MultipleReplace.RegularExpression;
-            radioButtonCaseSensitive.Text = Configuration.Settings.Language.MultipleReplace.CaseSensitive;
-            buttonAdd.Text = Configuration.Settings.Language.MultipleReplace.Add;
-            buttonUpdate.Text = Configuration.Settings.Language.MultipleReplace.Update;
-            listViewReplaceList.Columns[0].Text = Configuration.Settings.Language.MultipleReplace.Enabled;
-            listViewReplaceList.Columns[1].Text = Configuration.Settings.Language.MultipleReplace.FindWhat;
-            listViewReplaceList.Columns[2].Text = Configuration.Settings.Language.MultipleReplace.ReplaceWith;
-            listViewReplaceList.Columns[3].Text = Configuration.Settings.Language.MultipleReplace.SearchType;
-            groupBoxLinesFound.Text = string.Empty;
-            listViewFixes.Columns[0].Text = Configuration.Settings.Language.General.Apply;
-            listViewFixes.Columns[1].Text = Configuration.Settings.Language.General.LineNumber;
-            listViewFixes.Columns[2].Text = Configuration.Settings.Language.General.Before;
-            listViewFixes.Columns[3].Text = Configuration.Settings.Language.General.After;
-            deleteToolStripMenuItem.Text = Configuration.Settings.Language.MultipleReplace.Delete;
-            buttonRemoveAll.Text = Configuration.Settings.Language.MultipleReplace.RemoveAll;
-            buttonImport.Text = Configuration.Settings.Language.MultipleReplace.Import;
-            buttonExport.Text = Configuration.Settings.Language.MultipleReplace.Export;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
-            buttonReplacesSelectAll.Text = Configuration.Settings.Language.FixCommonErrors.SelectAll;
-            buttonReplacesInverseSelection.Text = Configuration.Settings.Language.FixCommonErrors.InverseSelection;
-            Utilities.FixLargeFonts(this, buttonOK);
-            splitContainer1.Panel1MinSize = 200;
-            splitContainer1.Panel2MinSize = 200;
+            this.Text = Configuration.Settings.Language.MultipleReplace.Title;
+            this.labelFindWhat.Text = Configuration.Settings.Language.MultipleReplace.FindWhat;
+            this.labelReplaceWith.Text = Configuration.Settings.Language.MultipleReplace.ReplaceWith;
+            this.radioButtonNormal.Text = Configuration.Settings.Language.MultipleReplace.Normal;
+            this.radioButtonRegEx.Text = Configuration.Settings.Language.MultipleReplace.RegularExpression;
+            this.radioButtonCaseSensitive.Text = Configuration.Settings.Language.MultipleReplace.CaseSensitive;
+            this.buttonAdd.Text = Configuration.Settings.Language.MultipleReplace.Add;
+            this.buttonUpdate.Text = Configuration.Settings.Language.MultipleReplace.Update;
+            this.listViewReplaceList.Columns[0].Text = Configuration.Settings.Language.MultipleReplace.Enabled;
+            this.listViewReplaceList.Columns[1].Text = Configuration.Settings.Language.MultipleReplace.FindWhat;
+            this.listViewReplaceList.Columns[2].Text = Configuration.Settings.Language.MultipleReplace.ReplaceWith;
+            this.listViewReplaceList.Columns[3].Text = Configuration.Settings.Language.MultipleReplace.SearchType;
+            this.groupBoxLinesFound.Text = string.Empty;
+            this.listViewFixes.Columns[0].Text = Configuration.Settings.Language.General.Apply;
+            this.listViewFixes.Columns[1].Text = Configuration.Settings.Language.General.LineNumber;
+            this.listViewFixes.Columns[2].Text = Configuration.Settings.Language.General.Before;
+            this.listViewFixes.Columns[3].Text = Configuration.Settings.Language.General.After;
+            this.deleteToolStripMenuItem.Text = Configuration.Settings.Language.MultipleReplace.Delete;
+            this.buttonRemoveAll.Text = Configuration.Settings.Language.MultipleReplace.RemoveAll;
+            this.buttonImport.Text = Configuration.Settings.Language.MultipleReplace.Import;
+            this.buttonExport.Text = Configuration.Settings.Language.MultipleReplace.Export;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            this.buttonReplacesSelectAll.Text = Configuration.Settings.Language.FixCommonErrors.SelectAll;
+            this.buttonReplacesInverseSelection.Text = Configuration.Settings.Language.FixCommonErrors.InverseSelection;
+            Utilities.FixLargeFonts(this, this.buttonOK);
+            this.splitContainer1.Panel1MinSize = 200;
+            this.splitContainer1.Panel2MinSize = 200;
 
-            moveUpToolStripMenuItem.Text = Configuration.Settings.Language.DvdSubRip.MoveUp;
-            moveDownToolStripMenuItem.Text = Configuration.Settings.Language.DvdSubRip.MoveDown;
-            moveTopToolStripMenuItem.Text = Configuration.Settings.Language.MultipleReplace.MoveToTop;
-            moveBottomToolStripMenuItem.Text = Configuration.Settings.Language.MultipleReplace.MoveToBottom;
+            this.moveUpToolStripMenuItem.Text = Configuration.Settings.Language.DvdSubRip.MoveUp;
+            this.moveDownToolStripMenuItem.Text = Configuration.Settings.Language.DvdSubRip.MoveDown;
+            this.moveTopToolStripMenuItem.Text = Configuration.Settings.Language.MultipleReplace.MoveToTop;
+            this.moveBottomToolStripMenuItem.Text = Configuration.Settings.Language.MultipleReplace.MoveToBottom;
 
-            radioButtonCaseSensitive.Left = radioButtonNormal.Left + radioButtonNormal.Width + 40;
-            radioButtonRegEx.Left = radioButtonCaseSensitive.Left + radioButtonCaseSensitive.Width + 40;
+            this.radioButtonCaseSensitive.Left = this.radioButtonNormal.Left + this.radioButtonNormal.Width + 40;
+            this.radioButtonRegEx.Left = this.radioButtonCaseSensitive.Left + this.radioButtonCaseSensitive.Width + 40;
         }
 
+        /// <summary>
+        /// Gets the delete indices.
+        /// </summary>
+        public List<int> DeleteIndices { get; private set; }
+
+        /// <summary>
+        /// Gets the fixed subtitle.
+        /// </summary>
+        public Subtitle FixedSubtitle { get; private set; }
+
+        /// <summary>
+        /// Gets the fix count.
+        /// </summary>
+        public int FixCount { get; private set; }
+
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
         public void Initialize(Subtitle subtitle)
         {
             if (subtitle == null)
+            {
                 throw new ArgumentNullException("subtitle");
+            }
 
-            _subtitle = subtitle;
+            this._subtitle = subtitle;
             foreach (var item in Configuration.Settings.MultipleSearchAndReplaceList)
             {
-                AddToReplaceListView(item.Enabled, item.FindWhat, item.ReplaceWith, EnglishSearchTypeToLocal(item.SearchType));
-                _oldMultipleSearchAndReplaceList.Add(item);
+                this.AddToReplaceListView(item.Enabled, item.FindWhat, item.ReplaceWith, EnglishSearchTypeToLocal(item.SearchType));
+                this._oldMultipleSearchAndReplaceList.Add(item);
             }
 
             if (subtitle.Paragraphs == null || subtitle.Paragraphs.Count == 0)
-                groupBoxLinesFound.Enabled = false;
+            {
+                this.groupBoxLinesFound.Enabled = false;
+            }
         }
 
+        /// <summary>
+        /// The multiple replace_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void MultipleReplace_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                buttonCancel_Click(null, null);
+            {
+                this.buttonCancel_Click(null, null);
+            }
             else if (e.KeyCode == Keys.F1)
+            {
                 Utilities.ShowHelp("#multiple_replace");
+            }
         }
 
+        /// <summary>
+        /// The radio button checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void RadioButtonCheckedChanged(object sender, EventArgs e)
         {
-            if (sender == radioButtonRegEx)
-                textBoxFind.ContextMenu = FindReplaceDialogHelper.GetRegExContextMenu(textBoxFind);
+            if (sender == this.radioButtonRegEx)
+            {
+                this.textBoxFind.ContextMenu = FindReplaceDialogHelper.GetRegExContextMenu(this.textBoxFind);
+            }
             else
-                textBoxFind.ContextMenu = null;
+            {
+                this.textBoxFind.ContextMenu = null;
+            }
         }
 
+        /// <summary>
+        /// The button add click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonAddClick(object sender, EventArgs e)
         {
-            if (textBoxFind.Text.Length > 0)
+            if (this.textBoxFind.Text.Length > 0)
             {
                 string searchType = SearchTypeNormal;
-                if (radioButtonCaseSensitive.Checked)
+                if (this.radioButtonCaseSensitive.Checked)
+                {
                     searchType = SearchTypeCaseSensitive;
-                else if (radioButtonRegEx.Checked)
+                }
+                else if (this.radioButtonRegEx.Checked)
                 {
                     searchType = SearchTypeRegularExpression;
-                    if (!Utilities.IsValidRegex(textBoxFind.Text))
+                    if (!Utilities.IsValidRegex(this.textBoxFind.Text))
                     {
                         MessageBox.Show(Configuration.Settings.Language.General.RegularExpressionIsNotValid);
-                        textBoxFind.Select();
+                        this.textBoxFind.Select();
                         return;
                     }
                 }
 
-                AddToReplaceListView(true, textBoxFind.Text, textBoxReplace.Text, EnglishSearchTypeToLocal(searchType));
-                textBoxFind.Text = string.Empty;
-                textBoxReplace.Text = string.Empty;
-                GeneratePreview();
-                textBoxFind.Select();
-                SaveReplaceList(false);
+                this.AddToReplaceListView(true, this.textBoxFind.Text, this.textBoxReplace.Text, EnglishSearchTypeToLocal(searchType));
+                this.textBoxFind.Text = string.Empty;
+                this.textBoxReplace.Text = string.Empty;
+                this.GeneratePreview();
+                this.textBoxFind.Select();
+                this.SaveReplaceList(false);
             }
         }
 
+        /// <summary>
+        /// The run from batch.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         internal void RunFromBatch(Subtitle subtitle)
         {
-            Initialize(subtitle);
-            GeneratePreview();
+            this.Initialize(subtitle);
+            this.GeneratePreview();
         }
 
+        /// <summary>
+        /// The generate preview.
+        /// </summary>
         private void GeneratePreview()
         {
-            Cursor = Cursors.WaitCursor;
-            FixedSubtitle = new Subtitle(_subtitle);
-            DeleteIndices = new List<int>();
-            FixCount = 0;
-            listViewFixes.BeginUpdate();
-            listViewFixes.Items.Clear();
+            this.Cursor = Cursors.WaitCursor;
+            this.FixedSubtitle = new Subtitle(this._subtitle);
+            this.DeleteIndices = new List<int>();
+            this.FixCount = 0;
+            this.listViewFixes.BeginUpdate();
+            this.listViewFixes.Items.Clear();
             var replaceExpressions = new HashSet<ReplaceExpression>();
-            foreach (ListViewItem item in listViewReplaceList.Items)
+            foreach (ListViewItem item in this.listViewReplaceList.Items)
             {
                 if (item.Checked)
                 {
@@ -176,15 +264,15 @@ namespace Nikse.SubtitleEdit.Forms
                         string searchType = item.SubItems[3].Text;
                         var mpi = new ReplaceExpression(findWhat, replaceWith, searchType);
                         replaceExpressions.Add(mpi);
-                        if (mpi.SearchType == ReplaceExpression.SearchRegEx && !_compiledRegExList.ContainsKey(findWhat))
+                        if (mpi.SearchType == ReplaceExpression.SearchRegEx && !this._compiledRegExList.ContainsKey(findWhat))
                         {
-                            _compiledRegExList.Add(findWhat, new Regex(findWhat, RegexOptions.Compiled | RegexOptions.Multiline));
+                            this._compiledRegExList.Add(findWhat, new Regex(findWhat, RegexOptions.Compiled | RegexOptions.Multiline));
                         }
                     }
                 }
             }
 
-            foreach (Paragraph p in _subtitle.Paragraphs)
+            foreach (Paragraph p in this._subtitle.Paragraphs)
             {
                 bool hit = false;
                 string newText = p.Text;
@@ -200,7 +288,7 @@ namespace Nikse.SubtitleEdit.Forms
                     }
                     else if (item.SearchType == ReplaceExpression.SearchRegEx)
                     {
-                        Regex r = _compiledRegExList[item.FindWhat];
+                        Regex r = this._compiledRegExList[item.FindWhat];
                         if (r.IsMatch(newText))
                         {
                             hit = true;
@@ -222,27 +310,44 @@ namespace Nikse.SubtitleEdit.Forms
                         }
                     }
                 }
+
                 if (hit && newText != p.Text)
                 {
-                    FixCount++;
-                    AddToPreviewListView(p, newText);
-                    int index = _subtitle.GetIndex(p);
-                    FixedSubtitle.Paragraphs[index].Text = newText;
+                    this.FixCount++;
+                    this.AddToPreviewListView(p, newText);
+                    int index = this._subtitle.GetIndex(p);
+                    this.FixedSubtitle.Paragraphs[index].Text = newText;
                     if (!string.IsNullOrWhiteSpace(p.Text) && (string.IsNullOrWhiteSpace(newText) || string.IsNullOrWhiteSpace(HtmlUtil.RemoveHtmlTags(newText, true))))
                     {
-                        DeleteIndices.Add(index);
+                        this.DeleteIndices.Add(index);
                     }
                 }
             }
-            listViewFixes.EndUpdate();
-            groupBoxLinesFound.Text = string.Format(Configuration.Settings.Language.MultipleReplace.LinesFoundX, FixCount);
-            Cursor = Cursors.Default;
-            DeleteIndices.Reverse();
+
+            this.listViewFixes.EndUpdate();
+            this.groupBoxLinesFound.Text = string.Format(Configuration.Settings.Language.MultipleReplace.LinesFoundX, this.FixCount);
+            this.Cursor = Cursors.Default;
+            this.DeleteIndices.Reverse();
         }
 
+        /// <summary>
+        /// The add to replace list view.
+        /// </summary>
+        /// <param name="enabled">
+        /// The enabled.
+        /// </param>
+        /// <param name="findWhat">
+        /// The find what.
+        /// </param>
+        /// <param name="replaceWith">
+        /// The replace with.
+        /// </param>
+        /// <param name="searchType">
+        /// The search type.
+        /// </param>
         private void AddToReplaceListView(bool enabled, string findWhat, string replaceWith, string searchType)
         {
-            var item = new ListViewItem("") { Checked = enabled };
+            var item = new ListViewItem(string.Empty) { Checked = enabled };
 
             var subItem = new ListViewItem.ListViewSubItem(item, findWhat);
             item.SubItems.Add(subItem);
@@ -251,283 +356,515 @@ namespace Nikse.SubtitleEdit.Forms
             subItem = new ListViewItem.ListViewSubItem(item, searchType);
             item.SubItems.Add(subItem);
 
-            listViewReplaceList.Items.Add(item);
+            this.listViewReplaceList.Items.Add(item);
         }
 
+        /// <summary>
+        /// The add to preview list view.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <param name="newText">
+        /// The new text.
+        /// </param>
         private void AddToPreviewListView(Paragraph p, string newText)
         {
             var item = new ListViewItem(string.Empty) { Tag = p, Checked = true };
             item.SubItems.Add(p.Number.ToString(CultureInfo.InvariantCulture));
             item.SubItems.Add(p.Text.Replace(Environment.NewLine, Configuration.Settings.General.ListViewLineSeparatorString));
             item.SubItems.Add(newText.Replace(Environment.NewLine, Configuration.Settings.General.ListViewLineSeparatorString));
-            listViewFixes.Items.Add(item);
+            this.listViewFixes.Items.Add(item);
         }
 
+        /// <summary>
+        /// The local search type to english.
+        /// </summary>
+        /// <param name="searchType">
+        /// The search type.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string LocalSearchTypeToEnglish(string searchType)
         {
             if (searchType == Configuration.Settings.Language.MultipleReplace.RegularExpression)
+            {
                 return SearchTypeRegularExpression;
+            }
+
             if (searchType == Configuration.Settings.Language.MultipleReplace.CaseSensitive)
+            {
                 return SearchTypeCaseSensitive;
+            }
+
             return SearchTypeNormal;
         }
 
+        /// <summary>
+        /// The english search type to local.
+        /// </summary>
+        /// <param name="searchType">
+        /// The search type.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string EnglishSearchTypeToLocal(string searchType)
         {
             if (searchType == SearchTypeRegularExpression)
+            {
                 return Configuration.Settings.Language.MultipleReplace.RegularExpression;
+            }
+
             if (searchType == SearchTypeCaseSensitive)
+            {
                 return Configuration.Settings.Language.MultipleReplace.CaseSensitive;
+            }
+
             return Configuration.Settings.Language.MultipleReplace.Normal;
         }
 
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            ResetUncheckLines();
-            SaveReplaceList(true);
-            DialogResult = DialogResult.OK;
+            this.ResetUncheckLines();
+            this.SaveReplaceList(true);
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The save replace list.
+        /// </summary>
+        /// <param name="saveToDisk">
+        /// The save to disk.
+        /// </param>
         private void SaveReplaceList(bool saveToDisk)
         {
             Configuration.Settings.MultipleSearchAndReplaceList = new List<MultipleSearchAndReplaceSetting>();
-            foreach (ListViewItem item in listViewReplaceList.Items)
+            foreach (ListViewItem item in this.listViewReplaceList.Items)
             {
-                Configuration.Settings.MultipleSearchAndReplaceList.Add(new MultipleSearchAndReplaceSetting
-                {
-                    Enabled = item.Checked,
-                    FindWhat = item.SubItems[1].Text,
-                    ReplaceWith = item.SubItems[2].Text,
-                    SearchType = LocalSearchTypeToEnglish(item.SubItems[3].Text)
-                });
+                Configuration.Settings.MultipleSearchAndReplaceList.Add(new MultipleSearchAndReplaceSetting { Enabled = item.Checked, FindWhat = item.SubItems[1].Text, ReplaceWith = item.SubItems[2].Text, SearchType = LocalSearchTypeToEnglish(item.SubItems[3].Text) });
             }
+
             if (saveToDisk)
+            {
                 Configuration.Settings.Save();
+            }
         }
 
+        /// <summary>
+        /// The reset uncheck lines.
+        /// </summary>
         private void ResetUncheckLines()
         {
-            foreach (ListViewItem item in listViewFixes.Items)
+            foreach (ListViewItem item in this.listViewFixes.Items)
             {
                 if (!item.Checked)
                 {
-                    int index = _subtitle.GetIndex(item.Tag as Paragraph);
-                    FixedSubtitle.Paragraphs[index].Text = _subtitle.Paragraphs[index].Text;
+                    int index = this._subtitle.GetIndex(item.Tag as Paragraph);
+                    this.FixedSubtitle.Paragraphs[index].Text = this._subtitle.Paragraphs[index].Text;
                 }
             }
         }
 
+        /// <summary>
+        /// The list view replace list item checked.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ListViewReplaceListItemChecked(object sender, ItemCheckedEventArgs e)
         {
-            GeneratePreview();
-            SaveReplaceList(false);
+            this.GeneratePreview();
+            this.SaveReplaceList(false);
         }
 
+        /// <summary>
+        /// The delete tool strip menu item click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void DeleteToolStripMenuItemClick(object sender, EventArgs e)
         {
-            if (listViewReplaceList.Items.Count < 1 || listViewReplaceList.SelectedItems.Count < 1)
-                return;
-            for (int i = listViewReplaceList.Items.Count - 1; i >= 0; i--)
+            if (this.listViewReplaceList.Items.Count < 1 || this.listViewReplaceList.SelectedItems.Count < 1)
             {
-                ListViewItem item = listViewReplaceList.Items[i];
-                if (item.Selected)
-                    item.Remove();
+                return;
             }
-            GeneratePreview();
-            SaveReplaceList(false);
+
+            for (int i = this.listViewReplaceList.Items.Count - 1; i >= 0; i--)
+            {
+                ListViewItem item = this.listViewReplaceList.Items[i];
+                if (item.Selected)
+                {
+                    item.Remove();
+                }
+            }
+
+            this.GeneratePreview();
+            this.SaveReplaceList(false);
         }
 
+        /// <summary>
+        /// The list view replace list key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ListViewReplaceListKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
-                DeleteToolStripMenuItemClick(null, null);
-            if (listViewReplaceList.SelectedItems.Count == 1)
+            {
+                this.DeleteToolStripMenuItemClick(null, null);
+            }
+
+            if (this.listViewReplaceList.SelectedItems.Count == 1)
             {
                 if (e.KeyCode == Keys.Up && e.Control && !e.Alt && !e.Shift)
-                    moveUpToolStripMenuItem_Click(sender, e);
+                {
+                    this.moveUpToolStripMenuItem_Click(sender, e);
+                }
+
                 if (e.KeyCode == Keys.Down && e.Control && !e.Alt && !e.Shift)
-                    moveDownToolStripMenuItem_Click(sender, e);
+                {
+                    this.moveDownToolStripMenuItem_Click(sender, e);
+                }
 
                 if (e.KeyData == (Keys.Control | Keys.Home))
-                    moveTopToolStripMenuItem_Click(sender, e);
+                {
+                    this.moveTopToolStripMenuItem_Click(sender, e);
+                }
                 else if (e.KeyData == (Keys.Control | Keys.End))
-                    moveBottomToolStripMenuItem_Click(sender, e);
+                {
+                    this.moveBottomToolStripMenuItem_Click(sender, e);
+                }
             }
         }
 
+        /// <summary>
+        /// The button update click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonUpdateClick(object sender, EventArgs e)
         {
-            if (listViewReplaceList.SelectedItems.Count != 1)
+            if (this.listViewReplaceList.SelectedItems.Count != 1)
+            {
                 return;
+            }
 
-            if (textBoxFind.Text.Length > 0)
+            if (this.textBoxFind.Text.Length > 0)
             {
                 string searchType = SearchTypeNormal;
-                if (radioButtonCaseSensitive.Checked)
+                if (this.radioButtonCaseSensitive.Checked)
                 {
                     searchType = SearchTypeCaseSensitive;
                 }
-                else if (radioButtonRegEx.Checked)
+                else if (this.radioButtonRegEx.Checked)
                 {
                     searchType = SearchTypeRegularExpression;
-                    if (!Utilities.IsValidRegex(textBoxFind.Text))
+                    if (!Utilities.IsValidRegex(this.textBoxFind.Text))
                     {
                         MessageBox.Show(Configuration.Settings.Language.General.RegularExpressionIsNotValid);
-                        textBoxFind.Select();
+                        this.textBoxFind.Select();
                         return;
                     }
                 }
 
-                var item = listViewReplaceList.SelectedItems[0];
-                item.SubItems[1].Text = textBoxFind.Text;
-                item.SubItems[2].Text = textBoxReplace.Text;
+                var item = this.listViewReplaceList.SelectedItems[0];
+                item.SubItems[1].Text = this.textBoxFind.Text;
+                item.SubItems[2].Text = this.textBoxReplace.Text;
                 item.SubItems[3].Text = EnglishSearchTypeToLocal(searchType);
 
-                GeneratePreview();
-                textBoxFind.Select();
-                SaveReplaceList(false);
+                this.GeneratePreview();
+                this.textBoxFind.Select();
+                this.SaveReplaceList(false);
             }
         }
 
+        /// <summary>
+        /// The list view replace list selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ListViewReplaceListSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listViewReplaceList.SelectedItems.Count == 1)
+            if (this.listViewReplaceList.SelectedItems.Count == 1)
             {
-                buttonUpdate.Enabled = true;
-                textBoxFind.Text = listViewReplaceList.SelectedItems[0].SubItems[1].Text;
-                textBoxReplace.Text = listViewReplaceList.SelectedItems[0].SubItems[2].Text;
-                string searchType = LocalSearchTypeToEnglish(listViewReplaceList.SelectedItems[0].SubItems[3].Text);
+                this.buttonUpdate.Enabled = true;
+                this.textBoxFind.Text = this.listViewReplaceList.SelectedItems[0].SubItems[1].Text;
+                this.textBoxReplace.Text = this.listViewReplaceList.SelectedItems[0].SubItems[2].Text;
+                string searchType = LocalSearchTypeToEnglish(this.listViewReplaceList.SelectedItems[0].SubItems[3].Text);
                 if (searchType == SearchTypeRegularExpression)
-                    radioButtonRegEx.Checked = true;
+                {
+                    this.radioButtonRegEx.Checked = true;
+                }
                 else if (searchType == SearchTypeCaseSensitive)
-                    radioButtonCaseSensitive.Checked = true;
+                {
+                    this.radioButtonCaseSensitive.Checked = true;
+                }
                 else
-                    radioButtonNormal.Checked = true;
+                {
+                    this.radioButtonNormal.Checked = true;
+                }
             }
             else
             {
-                buttonUpdate.Enabled = false;
+                this.buttonUpdate.Enabled = false;
             }
         }
 
+        /// <summary>
+        /// The text box replace key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void TextBoxReplaceKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                ButtonAddClick(null, null);
+            {
+                this.ButtonAddClick(null, null);
+            }
         }
 
+        /// <summary>
+        /// The button replaces select all_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonReplacesSelectAll_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listViewFixes.Items)
+            foreach (ListViewItem item in this.listViewFixes.Items)
+            {
                 item.Checked = true;
+            }
         }
 
+        /// <summary>
+        /// The button replaces inverse selection_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonReplacesInverseSelection_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listViewFixes.Items)
+            foreach (ListViewItem item in this.listViewFixes.Items)
+            {
                 item.Checked = !item.Checked;
+            }
         }
 
-        private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        /// <summary>
+        /// The context menu strip 1_ opening.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
-            moveUpToolStripMenuItem.Visible = listViewReplaceList.Items.Count > 1 && listViewReplaceList.SelectedItems.Count == 1;
-            moveDownToolStripMenuItem.Visible = listViewReplaceList.Items.Count > 1 && listViewReplaceList.SelectedItems.Count == 1;
-            moveTopToolStripMenuItem.Visible = listViewReplaceList.Items.Count > 1 && listViewReplaceList.SelectedItems.Count == 1;
-            moveBottomToolStripMenuItem.Visible = listViewReplaceList.Items.Count > 1 && listViewReplaceList.SelectedItems.Count == 1;
+            this.moveUpToolStripMenuItem.Visible = this.listViewReplaceList.Items.Count > 1 && this.listViewReplaceList.SelectedItems.Count == 1;
+            this.moveDownToolStripMenuItem.Visible = this.listViewReplaceList.Items.Count > 1 && this.listViewReplaceList.SelectedItems.Count == 1;
+            this.moveTopToolStripMenuItem.Visible = this.listViewReplaceList.Items.Count > 1 && this.listViewReplaceList.SelectedItems.Count == 1;
+            this.moveBottomToolStripMenuItem.Visible = this.listViewReplaceList.Items.Count > 1 && this.listViewReplaceList.SelectedItems.Count == 1;
         }
 
+        /// <summary>
+        /// The move up tool strip menu item_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void moveUpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int index = listViewReplaceList.SelectedIndices[0];
+            int index = this.listViewReplaceList.SelectedIndices[0];
             if (index == 0)
+            {
                 return;
+            }
 
-            SwapReplaceList(index, index - 1);
+            this.SwapReplaceList(index, index - 1);
         }
 
+        /// <summary>
+        /// The swap replace list.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="index2">
+        /// The index 2.
+        /// </param>
         private void SwapReplaceList(int index, int index2)
         {
-            bool enabled = listViewReplaceList.Items[index].Checked;
-            string findWhat = listViewReplaceList.Items[index].SubItems[1].Text;
-            string replaceWith = listViewReplaceList.Items[index].SubItems[2].Text;
-            string searchType = listViewReplaceList.Items[index].SubItems[3].Text;
+            bool enabled = this.listViewReplaceList.Items[index].Checked;
+            string findWhat = this.listViewReplaceList.Items[index].SubItems[1].Text;
+            string replaceWith = this.listViewReplaceList.Items[index].SubItems[2].Text;
+            string searchType = this.listViewReplaceList.Items[index].SubItems[3].Text;
 
-            listViewReplaceList.Items[index].Checked = listViewReplaceList.Items[index2].Checked;
-            listViewReplaceList.Items[index].SubItems[1].Text = listViewReplaceList.Items[index2].SubItems[1].Text;
-            listViewReplaceList.Items[index].SubItems[2].Text = listViewReplaceList.Items[index2].SubItems[2].Text;
-            listViewReplaceList.Items[index].SubItems[3].Text = listViewReplaceList.Items[index2].SubItems[3].Text;
+            this.listViewReplaceList.Items[index].Checked = this.listViewReplaceList.Items[index2].Checked;
+            this.listViewReplaceList.Items[index].SubItems[1].Text = this.listViewReplaceList.Items[index2].SubItems[1].Text;
+            this.listViewReplaceList.Items[index].SubItems[2].Text = this.listViewReplaceList.Items[index2].SubItems[2].Text;
+            this.listViewReplaceList.Items[index].SubItems[3].Text = this.listViewReplaceList.Items[index2].SubItems[3].Text;
 
-            listViewReplaceList.Items[index2].Checked = enabled;
-            listViewReplaceList.Items[index2].SubItems[1].Text = findWhat;
-            listViewReplaceList.Items[index2].SubItems[2].Text = replaceWith;
-            listViewReplaceList.Items[index2].SubItems[3].Text = searchType;
+            this.listViewReplaceList.Items[index2].Checked = enabled;
+            this.listViewReplaceList.Items[index2].SubItems[1].Text = findWhat;
+            this.listViewReplaceList.Items[index2].SubItems[2].Text = replaceWith;
+            this.listViewReplaceList.Items[index2].SubItems[3].Text = searchType;
 
-            listViewReplaceList.Items[index].Selected = false;
-            listViewReplaceList.Items[index2].Selected = true;
-            SaveReplaceList(false);
-            GeneratePreview();
+            this.listViewReplaceList.Items[index].Selected = false;
+            this.listViewReplaceList.Items[index2].Selected = true;
+            this.SaveReplaceList(false);
+            this.GeneratePreview();
         }
 
+        /// <summary>
+        /// The move down tool strip menu item_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void moveDownToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int index = listViewReplaceList.SelectedIndices[0];
-            if (index == listViewReplaceList.Items.Count - 1)
+            int index = this.listViewReplaceList.SelectedIndices[0];
+            if (index == this.listViewReplaceList.Items.Count - 1)
+            {
                 return;
+            }
 
-            SwapReplaceList(index, index + 1);
+            this.SwapReplaceList(index, index + 1);
         }
 
+        /// <summary>
+        /// The move top tool strip menu item_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void moveTopToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int index = listViewReplaceList.SelectedIndices[0];
+            int index = this.listViewReplaceList.SelectedIndices[0];
             if (index == 0)
+            {
                 return;
+            }
 
-            var item = listViewReplaceList.Items[index];
-            listViewReplaceList.Items.RemoveAt(index);
-            listViewReplaceList.Items.Insert(0, item);
-            GeneratePreview();
-            SaveReplaceList(false);
+            var item = this.listViewReplaceList.Items[index];
+            this.listViewReplaceList.Items.RemoveAt(index);
+            this.listViewReplaceList.Items.Insert(0, item);
+            this.GeneratePreview();
+            this.SaveReplaceList(false);
         }
 
+        /// <summary>
+        /// The move bottom tool strip menu item_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void moveBottomToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int index = listViewReplaceList.SelectedIndices[0];
-            int bottomIndex = listViewReplaceList.Items.Count - 1;
+            int index = this.listViewReplaceList.SelectedIndices[0];
+            int bottomIndex = this.listViewReplaceList.Items.Count - 1;
             if (index == bottomIndex)
+            {
                 return;
+            }
 
-            var item = listViewReplaceList.Items[index];
-            listViewReplaceList.Items.RemoveAt(index);
-            listViewReplaceList.Items.Add(item);
-            GeneratePreview();
-            SaveReplaceList(false);
+            var item = this.listViewReplaceList.Items[index];
+            this.listViewReplaceList.Items.RemoveAt(index);
+            this.listViewReplaceList.Items.Add(item);
+            this.GeneratePreview();
+            this.SaveReplaceList(false);
         }
 
+        /// <summary>
+        /// The export click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ExportClick(object sender, EventArgs e)
         {
-            if (listViewReplaceList.Items.Count == 0)
-                return;
-
-            saveFileDialog1.Title = Configuration.Settings.Language.MultipleReplace.ExportRulesTitle;
-            saveFileDialog1.Filter = Configuration.Settings.Language.MultipleReplace.Rules + "|*.template";
-            if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
+            if (this.listViewReplaceList.Items.Count == 0)
             {
-                SaveReplaceList(false);
+                return;
+            }
 
-                var textWriter = new XmlTextWriter(saveFileDialog1.FileName, null) { Formatting = Formatting.Indented };
+            this.saveFileDialog1.Title = Configuration.Settings.Language.MultipleReplace.ExportRulesTitle;
+            this.saveFileDialog1.Filter = Configuration.Settings.Language.MultipleReplace.Rules + "|*.template";
+            if (this.saveFileDialog1.ShowDialog(this) == DialogResult.OK)
+            {
+                this.SaveReplaceList(false);
+
+                var textWriter = new XmlTextWriter(this.saveFileDialog1.FileName, null) { Formatting = Formatting.Indented };
                 textWriter.WriteStartDocument();
-                textWriter.WriteStartElement("Settings", "");
-                textWriter.WriteStartElement("MultipleSearchAndReplaceList", "");
+                textWriter.WriteStartElement("Settings", string.Empty);
+                textWriter.WriteStartElement("MultipleSearchAndReplaceList", string.Empty);
                 foreach (var item in Configuration.Settings.MultipleSearchAndReplaceList)
                 {
-                    textWriter.WriteStartElement("MultipleSearchAndReplaceItem", "");
+                    textWriter.WriteStartElement("MultipleSearchAndReplaceItem", string.Empty);
                     textWriter.WriteElementString("Enabled", item.Enabled.ToString());
                     textWriter.WriteElementString("FindWhat", item.FindWhat);
                     textWriter.WriteElementString("ReplaceWith", item.ReplaceWith);
                     textWriter.WriteElementString("SearchType", item.SearchType);
                     textWriter.WriteEndElement();
                 }
+
                 textWriter.WriteEndElement();
                 textWriter.WriteEndElement();
                 textWriter.WriteEndDocument();
@@ -535,16 +872,25 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The button open_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOpen_Click(object sender, EventArgs e)
         {
-            openFileDialog1.Title = Configuration.Settings.Language.MultipleReplace.ImportRulesTitle;
-            openFileDialog1.Filter = Configuration.Settings.Language.MultipleReplace.Rules + "|*.template";
-            if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
+            this.openFileDialog1.Title = Configuration.Settings.Language.MultipleReplace.ImportRulesTitle;
+            this.openFileDialog1.Filter = Configuration.Settings.Language.MultipleReplace.Rules + "|*.template";
+            if (this.openFileDialog1.ShowDialog(this) == DialogResult.OK)
             {
                 var doc = new XmlDocument();
                 try
                 {
-                    doc.Load(openFileDialog1.FileName);
+                    doc.Load(this.openFileDialog1.FileName);
                 }
                 catch (Exception exception)
                 {
@@ -557,51 +903,155 @@ namespace Nikse.SubtitleEdit.Forms
                     var item = new MultipleSearchAndReplaceSetting();
                     var subNode = listNode.SelectSingleNode("Enabled");
                     if (subNode != null)
+                    {
                         item.Enabled = Convert.ToBoolean(subNode.InnerText);
+                    }
+
                     subNode = listNode.SelectSingleNode("FindWhat");
                     if (subNode != null)
+                    {
                         item.FindWhat = subNode.InnerText;
+                    }
+
                     subNode = listNode.SelectSingleNode("ReplaceWith");
                     if (subNode != null)
+                    {
                         item.ReplaceWith = subNode.InnerText;
+                    }
+
                     subNode = listNode.SelectSingleNode("SearchType");
                     if (subNode != null)
+                    {
                         item.SearchType = subNode.InnerText;
+                    }
+
                     Configuration.Settings.MultipleSearchAndReplaceList.Add(item);
                 }
 
-                listViewReplaceList.ItemChecked -= ListViewReplaceListItemChecked;
-                listViewReplaceList.BeginUpdate();
-                listViewReplaceList.Items.Clear();
+                this.listViewReplaceList.ItemChecked -= this.ListViewReplaceListItemChecked;
+                this.listViewReplaceList.BeginUpdate();
+                this.listViewReplaceList.Items.Clear();
                 foreach (var item in Configuration.Settings.MultipleSearchAndReplaceList)
-                    AddToReplaceListView(item.Enabled, item.FindWhat, item.ReplaceWith, EnglishSearchTypeToLocal(item.SearchType));
-                GeneratePreview();
-                listViewReplaceList.ItemChecked += ListViewReplaceListItemChecked;
-                listViewReplaceList.EndUpdate();
+                {
+                    this.AddToReplaceListView(item.Enabled, item.FindWhat, item.ReplaceWith, EnglishSearchTypeToLocal(item.SearchType));
+                }
+
+                this.GeneratePreview();
+                this.listViewReplaceList.ItemChecked += this.ListViewReplaceListItemChecked;
+                this.listViewReplaceList.EndUpdate();
             }
         }
 
+        /// <summary>
+        /// The button remove all_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonRemoveAll_Click(object sender, EventArgs e)
         {
-            listViewReplaceList.Items.Clear();
+            this.listViewReplaceList.Items.Clear();
             Configuration.Settings.MultipleSearchAndReplaceList.Clear();
         }
 
+        /// <summary>
+        /// The multiple replace_ shown.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void MultipleReplace_Shown(object sender, EventArgs e)
         {
-            listViewReplaceList.ItemChecked += ListViewReplaceListItemChecked;
-            GeneratePreview();
+            this.listViewReplaceList.ItemChecked += this.ListViewReplaceListItemChecked;
+            this.GeneratePreview();
         }
 
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             Configuration.Settings.MultipleSearchAndReplaceList.Clear();
-            foreach (var item in _oldMultipleSearchAndReplaceList)
+            foreach (var item in this._oldMultipleSearchAndReplaceList)
             {
                 Configuration.Settings.MultipleSearchAndReplaceList.Add(item);
             }
-            DialogResult = DialogResult.Cancel;
+
+            this.DialogResult = DialogResult.Cancel;
         }
 
+        /// <summary>
+        /// The replace expression.
+        /// </summary>
+        internal class ReplaceExpression
+        {
+            /// <summary>
+            /// The search normal.
+            /// </summary>
+            internal const int SearchNormal = 0;
+
+            /// <summary>
+            /// The search reg ex.
+            /// </summary>
+            internal const int SearchRegEx = 1;
+
+            /// <summary>
+            /// The search case sensitive.
+            /// </summary>
+            internal const int SearchCaseSensitive = 2;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ReplaceExpression"/> class.
+            /// </summary>
+            /// <param name="findWhat">
+            /// The find what.
+            /// </param>
+            /// <param name="replaceWith">
+            /// The replace with.
+            /// </param>
+            /// <param name="searchType">
+            /// The search type.
+            /// </param>
+            internal ReplaceExpression(string findWhat, string replaceWith, string searchType)
+            {
+                this.FindWhat = findWhat;
+                this.ReplaceWith = replaceWith;
+                if (string.CompareOrdinal(searchType, Configuration.Settings.Language.MultipleReplace.RegularExpression) == 0)
+                {
+                    this.SearchType = SearchRegEx;
+                }
+                else if (string.CompareOrdinal(searchType, Configuration.Settings.Language.MultipleReplace.CaseSensitive) == 0)
+                {
+                    this.SearchType = SearchCaseSensitive;
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets the find what.
+            /// </summary>
+            internal string FindWhat { get; set; }
+
+            /// <summary>
+            /// Gets or sets the replace with.
+            /// </summary>
+            internal string ReplaceWith { get; set; }
+
+            /// <summary>
+            /// Gets or sets the search type.
+            /// </summary>
+            internal int SearchType { get; set; }
+        }
     }
 }

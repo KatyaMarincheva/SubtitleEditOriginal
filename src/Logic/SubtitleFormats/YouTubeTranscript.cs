@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="YouTubeTranscript.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The you tube transcript.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -7,10 +16,19 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The you tube transcript.
+    /// </summary>
     public class YouTubeTranscript : SubtitleFormat
     {
+        /// <summary>
+        /// The regex time codes.
+        /// </summary>
         private static readonly Regex regexTimeCodes = new Regex(@"^\d{1,3}:\d\d$", RegexOptions.Compiled);
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -19,6 +37,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -27,6 +48,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -35,6 +59,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -49,6 +85,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             StringBuilder sb = new StringBuilder();
@@ -62,6 +110,18 @@
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -106,11 +166,29 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The encode time code.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string EncodeTimeCode(TimeCode time)
         {
             return string.Format("{0}:{1:00}", time.Hours * 60 + time.Minutes, time.Seconds);
         }
 
+        /// <summary>
+        /// The decode time code.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode DecodeTimeCode(string s)
         {
             string[] parts = s.Split(':');

@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NciCaption.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The nci caption.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -7,10 +16,19 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The nci caption.
+    /// </summary>
     public class NciCaption : SubtitleFormat
     {
+        /// <summary>
+        /// The name of format.
+        /// </summary>
         public const string NameOfFormat = "NCI Caption";
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -19,6 +37,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -27,6 +48,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -35,6 +59,12 @@
             }
         }
 
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public static void Save(string fileName)
         {
             using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
@@ -43,6 +73,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
@@ -56,8 +98,8 @@
                         byte[] buffer = FileUtil.ReadAllBytesShared(fileName);
 
                         return (buffer[0] == 0x43 && // CAPT.2.0
-                                buffer[1] == 0x41 && buffer[2] == 0x50 && buffer[3] == 0x54 && buffer[4] == 0x00 &&   buffer[5] == 0x32 && buffer[6] == 0x2e && buffer[7] == 0x30) || (buffer[0] == 0x43    && // CAPT.1.2
-                                buffer[1] == 0x41 && buffer[2] == 0x50 && buffer[3] == 0x54 && buffer[4] == 0x00 &&   buffer[5] == 0x31 && buffer[6] == 0x2e && buffer[7] == 0x32);
+                                buffer[1] == 0x41 && buffer[2] == 0x50 && buffer[3] == 0x54 && buffer[4] == 0x00 && buffer[5] == 0x32 && buffer[6] == 0x2e && buffer[7] == 0x30) || (buffer[0] == 0x43 && // CAPT.1.2
+                                                                                                                                                                                     buffer[1] == 0x41 && buffer[2] == 0x50 && buffer[3] == 0x54 && buffer[4] == 0x00 && buffer[5] == 0x31 && buffer[6] == 0x2e && buffer[7] == 0x32);
                     }
                 }
             }
@@ -65,11 +107,35 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             return "Not supported!";
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -253,6 +319,18 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The decode time code.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode DecodeTimeCode(byte[] buffer, int index)
         {
             int hour = buffer[index];

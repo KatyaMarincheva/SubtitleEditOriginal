@@ -1,14 +1,32 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="DvdStudioPro.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The dvd studio pro.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Text.RegularExpressions;
 
+    /// <summary>
+    /// The dvd studio pro.
+    /// </summary>
     public class DvdStudioPro : SubtitleFormat
     {
+        /// <summary>
+        /// The regex time codes.
+        /// </summary>
         private static readonly Regex RegexTimeCodes = new Regex(@"^\d+:\d+:\d+:\d+\t,\t\d+:\d+:\d+:\d+\t,\t.*$", RegexOptions.Compiled);
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -17,6 +35,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -25,6 +46,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -33,11 +57,35 @@
             }
         }
 
+        /// <summary>
+        /// The get frame from milliseconds.
+        /// </summary>
+        /// <param name="milliseconds">
+        /// The milliseconds.
+        /// </param>
+        /// <param name="frameRate">
+        /// The frame rate.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte"/>.
+        /// </returns>
         public static byte GetFrameFromMilliseconds(int milliseconds, double frameRate)
         {
             return (byte)Math.Round(milliseconds / (TimeCode.BaseUnit / frameRate));
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -45,6 +93,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             const string paragraphWriteFormat = "{0}\t,\t{1}\t,\t{2}\r\n";
@@ -78,6 +138,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -107,6 +179,15 @@
             }
         }
 
+        /// <summary>
+        /// The decode styles.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         internal static string DecodeStyles(string text)
         {
             StringBuilder sb = new StringBuilder();
@@ -159,6 +240,15 @@
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The encode styles.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         internal static string EncodeStyles(string text)
         {
             text = Utilities.RemoveSsaTags(text);
@@ -183,6 +273,18 @@
             return text.Replace(Environment.NewLine, "|");
         }
 
+        /// <summary>
+        /// The get time code.
+        /// </summary>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
+        /// <param name="timeString">
+        /// The time string.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         internal static bool GetTimeCode(TimeCode timeCode, string timeString)
         {
             try

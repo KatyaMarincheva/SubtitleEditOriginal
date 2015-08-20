@@ -1,20 +1,44 @@
-﻿using System.Collections.Generic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="PageCompositionSegemnt.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The page composition segment.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic.TransportStream
 {
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// The page composition segment.
+    /// </summary>
     public class PageCompositionSegment
     {
-        public int PageTimeOut { get; set; }
-        public int PageVersionNumber { get; set; }
-        public int PageState { get; set; }
+        /// <summary>
+        /// The regions.
+        /// </summary>
         public List<PageCompositionSegmentRegion> Regions = new List<PageCompositionSegmentRegion>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PageCompositionSegment"/> class.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="regionLength">
+        /// The region length.
+        /// </param>
         public PageCompositionSegment(byte[] buffer, int index, int regionLength)
         {
-            PageTimeOut = buffer[index];
-            PageVersionNumber = buffer[index + 1] >> 4;
-            PageState = (buffer[index + 1] & Helper.B00001100) >> 2;
-            Regions = new List<PageCompositionSegmentRegion>();
+            this.PageTimeOut = buffer[index];
+            this.PageVersionNumber = buffer[index + 1] >> 4;
+            this.PageState = (buffer[index + 1] & Helper.B00001100) >> 2;
+            this.Regions = new List<PageCompositionSegmentRegion>();
             int i = 0;
             while (i < regionLength && i + index < buffer.Length)
             {
@@ -25,9 +49,23 @@ namespace Nikse.SubtitleEdit.Logic.TransportStream
                 i += 2;
                 rcsr.RegionVerticalAddress = Helper.GetEndianWord(buffer, i + index + 2);
                 i += 2;
-                Regions.Add(rcsr);
+                this.Regions.Add(rcsr);
             }
         }
-    }
 
+        /// <summary>
+        /// Gets or sets the page time out.
+        /// </summary>
+        public int PageTimeOut { get; set; }
+
+        /// <summary>
+        /// Gets or sets the page version number.
+        /// </summary>
+        public int PageVersionNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets the page state.
+        /// </summary>
+        public int PageState { get; set; }
+    }
 }

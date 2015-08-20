@@ -1,25 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Text.RegularExpressions;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Idx.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The idx.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic.VobSub
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Globalization;
+    using System.IO;
+    using System.Text.RegularExpressions;
+
+    /// <summary>
+    /// The idx.
+    /// </summary>
     internal class Idx
     {
-        public readonly List<IdxParagraph> IdxParagraphs = new List<IdxParagraph>();
-        public readonly List<Color> Palette = new List<Color>();
-        public readonly List<string> Languages = new List<string>();
-
+        /// <summary>
+        /// The time code line pattern.
+        /// </summary>
         private static Regex timeCodeLinePattern = new Regex(@"^timestamp: \d+:\d+:\d+:\d+, filepos: [\dabcdefABCDEF]+$", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The idx paragraphs.
+        /// </summary>
+        public readonly List<IdxParagraph> IdxParagraphs = new List<IdxParagraph>();
+
+        /// <summary>
+        /// The languages.
+        /// </summary>
+        public readonly List<string> Languages = new List<string>();
+
+        /// <summary>
+        /// The palette.
+        /// </summary>
+        public readonly List<Color> Palette = new List<Color>();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Idx"/> class.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public Idx(string fileName)
             : this(File.ReadAllLines(fileName))
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Idx"/> class.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
         public Idx(string[] lines)
         {
             foreach (string line in lines)
@@ -28,7 +66,9 @@ namespace Nikse.SubtitleEdit.Logic.VobSub
                 {
                     IdxParagraph p = GetTimeCodeAndFilePosition(line);
                     if (p != null)
-                        IdxParagraphs.Add(p);
+                    {
+                        this.IdxParagraphs.Add(p);
+                    }
                 }
                 else if (line.StartsWith("palette:", StringComparison.OrdinalIgnoreCase) && line.Length > 10)
                 {
@@ -36,13 +76,13 @@ namespace Nikse.SubtitleEdit.Logic.VobSub
                     string[] colors = s.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     foreach (string hex in colors)
                     {
-                        Palette.Add(HexToColor(hex));
+                        this.Palette.Add(HexToColor(hex));
                     }
                 }
                 else if (line.StartsWith("id:", StringComparison.OrdinalIgnoreCase) && line.Length > 4)
                 {
-                    //id: en, index: 1
-                    //id: es, index: 2
+                    // id: en, index: 1
+                    // id: es, index: 2
                     string s = line.Substring("id:".Length + 1);
                     string[] parts = s.Split(new[] { ':', ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length > 0)
@@ -51,7 +91,7 @@ namespace Nikse.SubtitleEdit.Logic.VobSub
                         {
                             string twoLetterLanguageId = parts[0];
                             CultureInfo info = CultureInfo.GetCultureInfoByIetfLanguageTag(twoLetterLanguageId);
-                            Languages.Add(string.Format("{0} (0x{1:x})", info.NativeName, Languages.Count + 32));
+                            this.Languages.Add(string.Format("{0} (0x{1:x})", info.NativeName, this.Languages.Count + 32));
                         }
                         catch
                         {
@@ -61,6 +101,15 @@ namespace Nikse.SubtitleEdit.Logic.VobSub
             }
         }
 
+        /// <summary>
+        /// The hex to color.
+        /// </summary>
+        /// <param name="hex">
+        /// The hex.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Color"/>.
+        /// </returns>
         private static Color HexToColor(string hex)
         {
             hex = hex.TrimStart('#').Trim();
@@ -79,9 +128,19 @@ namespace Nikse.SubtitleEdit.Logic.VobSub
                 int b = Convert.ToInt32(hex.Substring(6, 2), 16);
                 return Color.FromArgb(a, r, g, b);
             }
+
             return Color.Red;
         }
 
+        /// <summary>
+        /// The get time code and file position.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IdxParagraph"/>.
+        /// </returns>
         private static IdxParagraph GetTimeCodeAndFilePosition(string line)
         {
             // timestamp: 00:00:01:401, filepos: 000000000
@@ -92,16 +151,13 @@ namespace Nikse.SubtitleEdit.Logic.VobSub
                 int minutes;
                 int seconds;
                 int milliseconds;
-                if (int.TryParse(parts[1], out hours) &&
-                    int.TryParse(parts[2], out minutes) &&
-                    int.TryParse(parts[3], out seconds) &&
-                    int.TryParse(parts[4], out milliseconds))
+                if (int.TryParse(parts[1], out hours) && int.TryParse(parts[2], out minutes) && int.TryParse(parts[3], out seconds) && int.TryParse(parts[4], out milliseconds))
                 {
                     return new IdxParagraph(new TimeSpan(0, hours, minutes, seconds, milliseconds), Convert.ToInt64(parts[6].Trim(), 16));
                 }
             }
+
             return null;
         }
-
     }
 }

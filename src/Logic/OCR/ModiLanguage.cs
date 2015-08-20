@@ -1,15 +1,39 @@
-﻿namespace Nikse.SubtitleEdit.Logic.Ocr
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ModiLanguage.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The modi language.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.Ocr
 {
     using System.Collections.Generic;
 
+    /// <summary>
+    /// The modi language.
+    /// </summary>
     public class ModiLanguage
     {
+        /// <summary>
+        /// The default language id.
+        /// </summary>
         public const int DefaultLanguageId = 2048;
 
+        /// <summary>
+        /// Gets or sets the id.
+        /// </summary>
         public int Id { get; set; }
 
+        /// <summary>
+        /// Gets or sets the text.
+        /// </summary>
         public string Text { get; set; }
 
+        /// <summary>
+        /// Gets the all languages.
+        /// </summary>
         public static IEnumerable<ModiLanguage> AllLanguages
         {
             get
@@ -41,6 +65,12 @@
             }
         }
 
+        /// <summary>
+        /// The to string.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToString()
         {
             return this.Text;

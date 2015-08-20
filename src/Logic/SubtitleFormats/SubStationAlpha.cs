@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SubStationAlpha.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The sub station alpha.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -8,12 +17,24 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The sub station alpha.
+    /// </summary>
     public class SubStationAlpha : SubtitleFormat
     {
+        /// <summary>
+        /// The name of format.
+        /// </summary>
         public const string NameOfFormat = "Sub Station Alpha";
 
+        /// <summary>
+        /// Gets the errors.
+        /// </summary>
         public string Errors { get; private set; }
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -22,6 +43,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -30,6 +54,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -38,6 +65,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether has style support.
+        /// </summary>
         public override bool HasStyleSupport
         {
             get
@@ -46,6 +76,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -54,6 +96,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             const string header = @"[Script Info]
@@ -156,6 +210,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -331,6 +397,15 @@
             this.Errors = errors.ToString();
         }
 
+        /// <summary>
+        /// The remove native formatting.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="newFormat">
+        /// The new format.
+        /// </param>
         public override void RemoveNativeFormatting(Subtitle subtitle, SubtitleFormat newFormat)
         {
             if (newFormat != null && newFormat.Name == AdvancedSubStationAlpha.NameOfFormat)
@@ -394,6 +469,24 @@
             }
         }
 
+        /// <summary>
+        /// The load styles from advanced substation alpha.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <param name="header">
+        /// The header.
+        /// </param>
+        /// <param name="headerNoStyles">
+        /// The header no styles.
+        /// </param>
+        /// <param name="sb">
+        /// The sb.
+        /// </param>
         private static void LoadStylesFromAdvancedSubstationAlpha(Subtitle subtitle, string title, string header, string headerNoStyles, StringBuilder sb)
         {
             try
@@ -477,6 +570,24 @@
             }
         }
 
+        /// <summary>
+        /// The load styles from timed text 10.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <param name="header">
+        /// The header.
+        /// </param>
+        /// <param name="headerNoStyles">
+        /// The header no styles.
+        /// </param>
+        /// <param name="sb">
+        /// The sb.
+        /// </param>
         private static void LoadStylesFromTimedText10(Subtitle subtitle, string title, string header, string headerNoStyles, StringBuilder sb)
         {
             try
@@ -589,6 +700,15 @@
             }
         }
 
+        /// <summary>
+        /// The get time code from string.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode GetTimeCodeFromString(string time)
         {
             // h:mm:ss.cc

@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="UnknownSubtitle68.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The unknown subtitle 68.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -7,10 +16,19 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The unknown subtitle 68.
+    /// </summary>
     public class UnknownSubtitle68 : SubtitleFormat
     {
+        /// <summary>
+        /// The regex time code.
+        /// </summary>
         private static readonly Regex RegexTimeCode = new Regex(@"^\d\d:\d\d:\d\dF\d\d", RegexOptions.Compiled); // 10:00:02F00
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -19,6 +37,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -27,6 +48,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -35,6 +59,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -42,6 +78,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             // Mais l'image utilisée pour
@@ -112,6 +160,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -188,6 +248,24 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The make text paragraph.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <param name="start">
+        /// The start.
+        /// </param>
+        /// <param name="end">
+        /// The end.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Paragraph"/>.
+        /// </returns>
         private static Paragraph MakeTextParagraph(StringBuilder text, Paragraph p, TimeCode start, TimeCode end)
         {
             p = new Paragraph(start, end, text.ToString().Trim());
@@ -207,11 +285,29 @@
             return p;
         }
 
+        /// <summary>
+        /// The encode time code.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string EncodeTimeCode(TimeCode time)
         {
             return string.Format("{0:00}:{1:00}:{2:00}F{3:00}", time.Hours, time.Minutes, time.Seconds, MillisecondsToFramesMaxFrameRate(time.Milliseconds));
         }
 
+        /// <summary>
+        /// The decode time code.
+        /// </summary>
+        /// <param name="timePart">
+        /// The time part.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode DecodeTimeCode(string timePart)
         {
             string s = timePart.Substring(0, 11);

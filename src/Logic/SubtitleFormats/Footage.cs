@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Footage.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The footage.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -7,21 +16,19 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The footage.
+    /// </summary>
     public class Footage : SubtitleFormat
     {
+        /// <summary>
+        /// The regex time code.
+        /// </summary>
         private static readonly Regex RegexTimeCode = new Regex(@"^\s*\d+,\d\d$", RegexOptions.Compiled);
 
-        private enum ExpectingLine
-        {
-            Number,
-
-            TimeStart,
-
-            TimeEnd,
-
-            Text
-        }
-
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -30,6 +37,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -38,6 +48,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -46,6 +59,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             TimeLineFootageAscii asc = new TimeLineFootageAscii();
@@ -59,6 +84,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             // 1.
@@ -90,6 +127,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             Paragraph paragraph = null;
@@ -177,6 +226,15 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The encode time code.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string EncodeTimeCode(TimeCode time)
         {
             int frames = MillisecondsToFrames(time.TotalMilliseconds);
@@ -185,11 +243,46 @@
             return string.Format("{0:00},{1:00}", footage, rest).PadLeft(8);
         }
 
+        /// <summary>
+        /// The decode time code.
+        /// </summary>
+        /// <param name="parts">
+        /// The parts.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode DecodeTimeCode(string[] parts)
         {
             int frames16 = int.Parse(parts[0]);
             int frames = int.Parse(parts[1]);
             return new TimeCode(0, 0, 0, FramesToMilliseconds(16 * frames16 + frames));
+        }
+
+        /// <summary>
+        /// The expecting line.
+        /// </summary>
+        private enum ExpectingLine
+        {
+            /// <summary>
+            /// The number.
+            /// </summary>
+            Number, 
+
+            /// <summary>
+            /// The time start.
+            /// </summary>
+            TimeStart, 
+
+            /// <summary>
+            /// The time end.
+            /// </summary>
+            TimeEnd, 
+
+            /// <summary>
+            /// The text.
+            /// </summary>
+            Text
         }
     }
 }

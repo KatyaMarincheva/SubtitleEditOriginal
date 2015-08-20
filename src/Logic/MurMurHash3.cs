@@ -1,16 +1,35 @@
-﻿namespace Nikse.SubtitleEdit.Logic
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MurMurHash3.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The mur mur hash 3.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic
 {
     // The MurmurHash3 algorithm was created by Austin Appleby and put into the public domain.  See http://code.google.com/p/smhasher
     // This code is based on https://gist.github.com/automatonic/3725443
+    /// <summary>
+    /// The mur mur hash 3.
+    /// </summary>
     public class MurMurHash3
     {
+        /// <summary>
+        /// The seed.
+        /// </summary>
         private const uint seed = 144;
 
         /// <summary>
         /// Fast hashing of byte array
         /// </summary>
-        /// <param name="arr">Byte array to hash</param>
-        /// <returns>Hash value</returns>
+        /// <param name="arr">
+        /// Byte array to hash
+        /// </param>
+        /// <returns>
+        /// Hash value
+        /// </returns>
         public static uint Hash(byte[] arr)
         {
             const uint c1 = 0xcc9e2d51;
@@ -51,7 +70,7 @@
                     h1 ^= k1;
                     break;
                 case 1:
-                    k1 = (uint)(arr[arr.Length - 1]);
+                    k1 = (uint)arr[arr.Length - 1];
                     k1 *= c1;
                     k1 = rotl32(k1, 15);
                     k1 *= c2;
@@ -63,17 +82,39 @@
             h1 ^= (uint)arr.Length;
             h1 = fmix(h1);
 
-            unchecked //ignore overflow
+            unchecked
             {
+                // ignore overflow
                 return h1;
             }
         }
 
+        /// <summary>
+        /// The rotl 32.
+        /// </summary>
+        /// <param name="x">
+        /// The x.
+        /// </param>
+        /// <param name="r">
+        /// The r.
+        /// </param>
+        /// <returns>
+        /// The <see cref="uint"/>.
+        /// </returns>
         private static uint rotl32(uint x, byte r)
         {
             return (x << r) | (x >> (32 - r));
         }
 
+        /// <summary>
+        /// The fmix.
+        /// </summary>
+        /// <param name="h">
+        /// The h.
+        /// </param>
+        /// <returns>
+        /// The <see cref="uint"/>.
+        /// </returns>
         private static uint fmix(uint h)
         {
             h ^= h >> 16;
@@ -84,5 +125,4 @@
             return h;
         }
     }
-
 }

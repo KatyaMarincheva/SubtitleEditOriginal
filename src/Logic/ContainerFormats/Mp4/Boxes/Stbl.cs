@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Stbl.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The stbl.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
 {
     using System;
     using System.Collections.Generic;
@@ -9,20 +18,59 @@
     using Nikse.SubtitleEdit.Logic.SubtitleFormats;
     using Nikse.SubtitleEdit.Logic.VobSub;
 
+    /// <summary>
+    /// The stbl.
+    /// </summary>
     public class Stbl : Box
     {
+        /// <summary>
+        /// The _mdia.
+        /// </summary>
         private readonly Mdia _mdia;
 
+        /// <summary>
+        /// The end time codes.
+        /// </summary>
         public List<double> EndTimeCodes = new List<double>();
 
+        /// <summary>
+        /// The start time codes.
+        /// </summary>
         public List<double> StartTimeCodes = new List<double>();
 
+        /// <summary>
+        /// The stsz sample count.
+        /// </summary>
         public ulong StszSampleCount;
 
+        /// <summary>
+        /// The sub pictures.
+        /// </summary>
         public List<SubPicture> SubPictures = new List<SubPicture>();
 
+        /// <summary>
+        /// The texts.
+        /// </summary>
         public List<string> Texts = new List<string>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Stbl"/> class.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
+        /// <param name="maximumLength">
+        /// The maximum length.
+        /// </param>
+        /// <param name="timeScale">
+        /// The time scale.
+        /// </param>
+        /// <param name="handlerType">
+        /// The handler type.
+        /// </param>
+        /// <param name="mdia">
+        /// The mdia.
+        /// </param>
         public Stbl(FileStream fs, ulong maximumLength, uint timeScale, string handlerType, Mdia mdia)
         {
             this._mdia = mdia;
@@ -159,6 +207,18 @@
             }
         }
 
+        /// <summary>
+        /// The read text.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
+        /// <param name="offset">
+        /// The offset.
+        /// </param>
+        /// <param name="handlerType">
+        /// The handler type.
+        /// </param>
         private void ReadText(FileStream fs, ulong offset, string handlerType)
         {
             fs.Seek((long)offset, SeekOrigin.Begin);

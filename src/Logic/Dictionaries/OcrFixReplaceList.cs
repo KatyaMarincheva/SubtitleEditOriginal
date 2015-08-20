@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.Dictionaries
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="OcrFixReplaceList.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The ocr fix replace list.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.Dictionaries
 {
     using System;
     using System.Collections.Generic;
@@ -10,40 +19,97 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The ocr fix replace list.
+    /// </summary>
     public class OcrFixReplaceList
     {
+        /// <summary>
+        /// The reg ex question.
+        /// </summary>
         private static readonly Regex RegExQuestion = new Regex(@"\S\?[A-ZÆØÅÄÖÉÈÀÙÂÊÎÔÛËÏa-zæøåäöéèàùâêîôûëï]", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The reg ex iand zero.
+        /// </summary>
         private static readonly Regex RegExIandZero = new Regex(@"[a-zæøåöääöéèàùâêîôûëï][I1]", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The reg ex time 1.
+        /// </summary>
         private static readonly Regex RegExTime1 = new Regex(@"[a-zæøåöääöéèàùâêîôûëï]0", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The reg ex time 2.
+        /// </summary>
         private static readonly Regex RegExTime2 = new Regex(@"0[a-zæøåöääöéèàùâêîôûëï]", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The hex number.
+        /// </summary>
         private static readonly Regex HexNumber = new Regex(@"^#?[\dABDEFabcdef]+$", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The start end ends with number.
+        /// </summary>
         private static readonly Regex StartEndEndsWithNumber = new Regex(@"^\d+.+\d$", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The _begin line replace list.
+        /// </summary>
         private readonly Dictionary<string, string> _beginLineReplaceList;
 
+        /// <summary>
+        /// The _end line replace list.
+        /// </summary>
         private readonly Dictionary<string, string> _endLineReplaceList;
 
+        /// <summary>
+        /// The _partial line always replace list.
+        /// </summary>
         private readonly Dictionary<string, string> _partialLineAlwaysReplaceList;
 
+        /// <summary>
+        /// The _partial word replace list.
+        /// </summary>
         private readonly Dictionary<string, string> _partialWordReplaceList;
 
+        /// <summary>
+        /// The _partial word replace list always.
+        /// </summary>
         private readonly Dictionary<string, string> _partialWordReplaceListAlways;
 
+        /// <summary>
+        /// The _reg ex list.
+        /// </summary>
         private readonly Dictionary<string, string> _regExList;
 
+        /// <summary>
+        /// The _replace list xml file name.
+        /// </summary>
         private readonly string _replaceListXmlFileName;
 
+        /// <summary>
+        /// The _whole line replace list.
+        /// </summary>
         private readonly Dictionary<string, string> _wholeLineReplaceList;
 
+        /// <summary>
+        /// The partial line word boundary replace list.
+        /// </summary>
         public Dictionary<string, string> PartialLineWordBoundaryReplaceList;
 
+        /// <summary>
+        /// The word replace list.
+        /// </summary>
         public Dictionary<string, string> WordReplaceList;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OcrFixReplaceList"/> class.
+        /// </summary>
+        /// <param name="replaceListXmlFileName">
+        /// The replace list xml file name.
+        /// </param>
         public OcrFixReplaceList(string replaceListXmlFileName)
         {
             this._replaceListXmlFileName = replaceListXmlFileName;
@@ -103,6 +169,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the replace list xml file name user.
+        /// </summary>
         private string ReplaceListXmlFileNameUser
         {
             get
@@ -111,11 +180,29 @@
             }
         }
 
+        /// <summary>
+        /// The from language id.
+        /// </summary>
+        /// <param name="languageId">
+        /// The language id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="OcrFixReplaceList"/>.
+        /// </returns>
         public static OcrFixReplaceList FromLanguageId(string languageId)
         {
             return new OcrFixReplaceList(Configuration.DictionariesFolder + languageId + "_OCRFixReplaceList.xml");
         }
 
+        /// <summary>
+        /// The fix lower case l inside upper case word.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FixLowerCaseLInsideUpperCaseWord(string word)
         {
             if (word.Length > 3 && word.Replace("l", string.Empty).ToUpper() == word.Replace("l", string.Empty))
@@ -129,6 +216,15 @@
             return word;
         }
 
+        /// <summary>
+        /// The fix ior 1 inside lower case word.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FixIor1InsideLowerCaseWord(string word)
         {
             if (StartEndEndsWithNumber.IsMatch(word))
@@ -177,6 +273,15 @@
             return word;
         }
 
+        /// <summary>
+        /// The fix 0 inside lower case word.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string Fix0InsideLowerCaseWord(string word)
         {
             if (StartEndEndsWithNumber.IsMatch(word))
@@ -235,6 +340,21 @@
             return word;
         }
 
+        /// <summary>
+        /// The replace word.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <param name="newWord">
+        /// The new word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string ReplaceWord(string text, string word, string newWord)
         {
             StringBuilder sb = new StringBuilder();
@@ -288,6 +408,15 @@
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The fix ocr error via line replace list.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string FixOcrErrorViaLineReplaceList(string input)
         {
             // Whole fromLine
@@ -419,6 +548,15 @@
             return newText;
         }
 
+        /// <summary>
+        /// The create guesses from letters.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
         public IEnumerable<string> CreateGuessesFromLetters(string word)
         {
             List<string> list = new List<string>();
@@ -448,6 +586,15 @@
             return list;
         }
 
+        /// <summary>
+        /// The fix common word errors.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string FixCommonWordErrors(string word)
         {
             if (Configuration.Settings.Tools.OcrFixUseHardcodedRules)
@@ -677,6 +824,15 @@
             return preWordPost;
         }
 
+        /// <summary>
+        /// The fix common word errors quick.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string FixCommonWordErrorsQuick(string word)
         {
             // always replace list
@@ -810,6 +966,15 @@
             return preWordPost;
         }
 
+        /// <summary>
+        /// The remove word or partial.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool RemoveWordOrPartial(string word)
         {
             if (word.Contains(' '))
@@ -840,6 +1005,18 @@
             return false;
         }
 
+        /// <summary>
+        /// The add word or partial.
+        /// </summary>
+        /// <param name="fromWord">
+        /// The from word.
+        /// </param>
+        /// <param name="toWord">
+        /// The to word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool AddWordOrPartial(string fromWord, string toWord)
         {
             if (fromWord.Contains(' '))
@@ -870,6 +1047,15 @@
             return false;
         }
 
+        /// <summary>
+        /// The add to whole line list.
+        /// </summary>
+        /// <param name="fromLine">
+        /// The from line.
+        /// </param>
+        /// <param name="toLine">
+        /// The to line.
+        /// </param>
         public void AddToWholeLineList(string fromLine, string toLine)
         {
             try
@@ -900,6 +1086,18 @@
             }
         }
 
+        /// <summary>
+        /// The load replace list.
+        /// </summary>
+        /// <param name="doc">
+        /// The doc.
+        /// </param>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Dictionary"/>.
+        /// </returns>
         private static Dictionary<string, string> LoadReplaceList(XmlDocument doc, string name)
         {
             Dictionary<string, string> list = new Dictionary<string, string>();
@@ -926,6 +1124,18 @@
             return list;
         }
 
+        /// <summary>
+        /// The load reg ex list.
+        /// </summary>
+        /// <param name="doc">
+        /// The doc.
+        /// </param>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Dictionary"/>.
+        /// </returns>
         private static Dictionary<string, string> LoadRegExList(XmlDocument doc, string name)
         {
             Dictionary<string, string> list = new Dictionary<string, string>();
@@ -952,6 +1162,27 @@
             return list;
         }
 
+        /// <summary>
+        /// The add to guess list.
+        /// </summary>
+        /// <param name="list">
+        /// The list.
+        /// </param>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="letter">
+        /// The letter.
+        /// </param>
+        /// <param name="replaceLetters">
+        /// The replace letters.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string AddToGuessList(List<string> list, string word, int index, string letter, string replaceLetters)
         {
             if (string.IsNullOrEmpty(word) || index < 0 || index + letter.Length - 1 >= word.Length)
@@ -977,6 +1208,15 @@
             return s;
         }
 
+        /// <summary>
+        /// The delete word from word list.
+        /// </summary>
+        /// <param name="fromWord">
+        /// The from word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool DeleteWordFromWordList(string fromWord)
         {
             const string replaceListName = "WholeWords";
@@ -990,6 +1230,15 @@
             return this.DeleteFromList(fromWord, userDoc, replaceListName, "Word", list, userList);
         }
 
+        /// <summary>
+        /// The delete partial line from word list.
+        /// </summary>
+        /// <param name="fromWord">
+        /// The from word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool DeletePartialLineFromWordList(string fromWord)
         {
             const string replaceListName = "PartialLines";
@@ -1003,6 +1252,32 @@
             return this.DeleteFromList(fromWord, userDoc, replaceListName, "LinePart", list, userList);
         }
 
+        /// <summary>
+        /// The delete from list.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <param name="userDoc">
+        /// The user doc.
+        /// </param>
+        /// <param name="replaceListName">
+        /// The replace list name.
+        /// </param>
+        /// <param name="elementName">
+        /// The element name.
+        /// </param>
+        /// <param name="dictionary">
+        /// The dictionary.
+        /// </param>
+        /// <param name="userDictionary">
+        /// The user dictionary.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
         private bool DeleteFromList(string word, XmlDocument userDoc, string replaceListName, string elementName, Dictionary<string, string> dictionary, Dictionary<string, string> userDictionary)
         {
             if (dictionary == null)
@@ -1061,6 +1336,12 @@
             return removed;
         }
 
+        /// <summary>
+        /// The load xml replace list document.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="XmlDocument"/>.
+        /// </returns>
         private XmlDocument LoadXmlReplaceListDocument()
         {
             const string xmlText = "<ReplaceList><WholeWords/><PartialLines/><BeginLines/><EndLines/><WholeLines/></ReplaceList>";
@@ -1084,6 +1365,12 @@
             return doc;
         }
 
+        /// <summary>
+        /// The load xml replace list user document.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="XmlDocument"/>.
+        /// </returns>
         private XmlDocument LoadXmlReplaceListUserDocument()
         {
             const string xmlText = "<ReplaceList><WholeWords/><PartialLines/><BeginLines/><EndLines/><WholeLines/><RemovedWholeWords/><RemovedPartialLines/><RemovedBeginLines/><RemovedEndLines/><RemovedWholeLines/></ReplaceList>";
@@ -1107,6 +1394,18 @@
             return doc;
         }
 
+        /// <summary>
+        /// The save word to word list.
+        /// </summary>
+        /// <param name="fromWord">
+        /// The from word.
+        /// </param>
+        /// <param name="toWord">
+        /// The to word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool SaveWordToWordList(string fromWord, string toWord)
         {
             const string replaceListName = "WholeWords";
@@ -1120,6 +1419,18 @@
             return this.SaveToList(fromWord, toWord, userDoc, replaceListName, "Word", list, userList);
         }
 
+        /// <summary>
+        /// The save partial line to word list.
+        /// </summary>
+        /// <param name="fromWord">
+        /// The from word.
+        /// </param>
+        /// <param name="toWord">
+        /// The to word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool SavePartialLineToWordList(string fromWord, string toWord)
         {
             const string replaceListName = "PartialLines";
@@ -1133,6 +1444,35 @@
             return this.SaveToList(fromWord, toWord, userDoc, replaceListName, "LinePart", list, userList);
         }
 
+        /// <summary>
+        /// The save to list.
+        /// </summary>
+        /// <param name="fromWord">
+        /// The from word.
+        /// </param>
+        /// <param name="toWord">
+        /// The to word.
+        /// </param>
+        /// <param name="userDoc">
+        /// The user doc.
+        /// </param>
+        /// <param name="replaceListName">
+        /// The replace list name.
+        /// </param>
+        /// <param name="elementName">
+        /// The element name.
+        /// </param>
+        /// <param name="dictionary">
+        /// The dictionary.
+        /// </param>
+        /// <param name="userDictionary">
+        /// The user dictionary.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
         private bool SaveToList(string fromWord, string toWord, XmlDocument userDoc, string replaceListName, string elementName, Dictionary<string, string> dictionary, Dictionary<string, string> userDictionary)
         {
             if (dictionary == null)

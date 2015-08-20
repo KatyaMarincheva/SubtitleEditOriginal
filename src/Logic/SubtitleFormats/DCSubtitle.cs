@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="DCSubtitle.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The dc subtitle.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -23,8 +32,14 @@
     // </Subtitle>
     // </Font>
     // </DCSubtitle>
+    /// <summary>
+    /// The dc subtitle.
+    /// </summary>
     public class DCSubtitle : SubtitleFormat
     {
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -33,6 +48,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -41,6 +59,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -49,11 +70,32 @@
             }
         }
 
+        /// <summary>
+        /// The convert to time string.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string ConvertToTimeString(TimeCode time)
         {
             return string.Format("{0:00}:{1:00}:{2:00}:{3:000}", time.Hours, time.Minutes, time.Seconds, time.Milliseconds / 4);
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             StringBuilder sb = new StringBuilder();
@@ -80,6 +122,18 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             string languageEnglishName;
@@ -493,6 +547,18 @@
             return s;
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -761,6 +827,15 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The remove sub station alpha formatting.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveSubStationAlphaFormatting(string s)
         {
             int indexOfBegin = s.IndexOf('{');
@@ -774,6 +849,15 @@
             return s;
         }
 
+        /// <summary>
+        /// The get color string for d cinema.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetColorStringForDCinema(string p)
         {
             string s = p.ToUpper().Trim();
@@ -785,6 +869,15 @@
             return p;
         }
 
+        /// <summary>
+        /// The get color string from d cinema.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetColorStringFromDCinema(string p)
         {
             string s = p.ToLower().Trim();
@@ -801,6 +894,15 @@
             return p;
         }
 
+        /// <summary>
+        /// The get time code.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode GetTimeCode(string s)
         {
             string[] parts = s.Split(':', '.', ',');

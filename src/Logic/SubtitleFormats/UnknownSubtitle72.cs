@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="UnknownSubtitle72.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The unknown subtitle 72.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -7,6 +16,9 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The unknown subtitle 72.
+    /// </summary>
     public class UnknownSubtitle72 : SubtitleFormat
     {
         // 00:00:02.000
@@ -24,8 +36,14 @@
         // N. Mendigaliev
         // «Steppe»
         // Bogdan Voloshin, Yaroslavl
+        /// <summary>
+        /// The regex time codes.
+        /// </summary>
         private static readonly Regex RegexTimeCodes = new Regex(@"^\d\d:\d\d:\d\d.\d{1,3}$", RegexOptions.Compiled);
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -34,6 +52,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -42,6 +63,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -50,6 +74,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -57,6 +93,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             const string paragraphWriteFormat = "{0}\r\n{1}\r\n";
@@ -70,6 +118,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             Paragraph paragraph = null;
@@ -122,6 +182,18 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The try read time codes line.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool TryReadTimeCodesLine(string line, Paragraph paragraph)
         {
             string[] parts = line.Split(':', '.');

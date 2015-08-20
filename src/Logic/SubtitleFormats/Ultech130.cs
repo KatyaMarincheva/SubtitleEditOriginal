@@ -1,4 +1,15 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Ultech130.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The ULTECH caption file format (ULT/ULD file) is a compact binary file that stores captions with embedded EIA-608
+//   control codes
+//   http://en.wikipedia.org/wiki/EIA-608
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -14,10 +25,19 @@
     /// </summary>
     public class Ultech130 : SubtitleFormat
     {
+        /// <summary>
+        /// The name of format.
+        /// </summary>
         public const string NameOfFormat = "Ultech 1.30 Caption";
 
+        /// <summary>
+        /// The ultech id.
+        /// </summary>
         private const string UltechId = "ULTECH\01.30";
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -26,6 +46,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -34,6 +57,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -42,6 +68,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the alternate extensions.
+        /// </summary>
         public override List<string> AlternateExtensions
         {
             get
@@ -50,6 +79,15 @@
             }
         }
 
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         public static void Save(string fileName, Subtitle subtitle)
         {
             using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
@@ -198,6 +236,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
@@ -219,11 +269,35 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             return "Not supported!";
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             subtitle.Paragraphs.Clear();
@@ -484,6 +558,15 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The write time.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
         private static void WriteTime(FileStream fs, TimeCode timeCode)
         {
             fs.WriteByte((byte)timeCode.Hours);
@@ -492,6 +575,18 @@
             fs.WriteByte((byte)MillisecondsToFramesMaxFrameRate(timeCode.Milliseconds));
         }
 
+        /// <summary>
+        /// The decode timestamp.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode DecodeTimestamp(byte[] buffer, int index)
         {
             return new TimeCode(buffer[index], buffer[index + 1], buffer[index + 2], FramesToMillisecondsMax999(buffer[index + 3]));

@@ -1,19 +1,27 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="UnknownSubtitle65.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The unknown subtitle 65.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Text.RegularExpressions;
 
+    /// <summary>
+    /// The unknown subtitle 65.
+    /// </summary>
     public class UnknownSubtitle65 : SubtitleFormat
     {
-        private enum ExpectingLine
-        {
-            TimeCodes,
-
-            Text
-        }
-
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -22,6 +30,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -30,6 +41,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -38,6 +52,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -45,6 +71,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             const string paragraphWriteFormat = "{0:00}:{1:00}:{2:00},{3:00}:{4:00}:{5:00}{6}{7}";
@@ -69,6 +107,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             Regex regexTimeCodes = new Regex(@"^\d\d:\d\d:\d\d,\d\d:\d\d:\d\d$", RegexOptions.Compiled);
@@ -122,10 +172,35 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The round seconds.
+        /// </summary>
+        /// <param name="tc">
+        /// The tc.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private static int RoundSeconds(TimeCode tc)
         {
             int rounded = (int)Math.Round(tc.Seconds + tc.Milliseconds / TimeCode.BaseUnit);
             return rounded;
+        }
+
+        /// <summary>
+        /// The expecting line.
+        /// </summary>
+        private enum ExpectingLine
+        {
+            /// <summary>
+            /// The time codes.
+            /// </summary>
+            TimeCodes, 
+
+            /// <summary>
+            /// The text.
+            /// </summary>
+            Text
         }
     }
 }

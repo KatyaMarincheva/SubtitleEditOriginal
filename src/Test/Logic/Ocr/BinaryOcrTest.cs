@@ -1,14 +1,31 @@
-﻿using System.Drawing;
-using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.Ocr.Binary;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="BinaryOcrTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The binary ocr test.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic.Ocr
 {
+    using System.Drawing;
+    using System.IO;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.Ocr.Binary;
+
+    /// <summary>
+    /// The binary ocr test.
+    /// </summary>
     [TestClass]
     public class BinaryOcrTest
     {
+        /// <summary>
+        /// The test method bin ocr save load.
+        /// </summary>
         [TestMethod]
         public void TestMethodBinOcrSaveLoad()
         {
@@ -66,6 +83,5 @@ namespace Test.Logic.Ocr
             {
             }
         }
-
     }
 }

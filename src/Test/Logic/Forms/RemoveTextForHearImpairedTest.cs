@@ -1,9 +1,21 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nikse.SubtitleEdit.Logic.Forms;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="RemoveTextForHearImpairedTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   This is a test class for FormRemoveTextForHearImpairedTest and is intended
+//   to contain all FormRemoveTextForHearImpairedTest Unit Tests
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic.Forms
 {
+    using System;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Nikse.SubtitleEdit.Logic.Forms;
+
     /// <summary>
     /// This is a test class for FormRemoveTextForHearImpairedTest and is intended
     /// to contain all FormRemoveTextForHearImpairedTest Unit Tests
@@ -17,6 +29,12 @@ namespace Test.Logic.Forms
         /// </summary>
         public TestContext TestContext { get; set; }
 
+        /// <summary>
+        /// The get remove text for hi lib.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="RemoveTextForHI"/>.
+        /// </returns>
         private static RemoveTextForHI GetRemoveTextForHiLib()
         {
             var hiSettings = new RemoveTextForHISettings();
@@ -43,6 +61,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove colon test 2 a.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveColonTest2A()
@@ -60,6 +81,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove colon test 2 b.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveColonTest2B()
@@ -77,6 +101,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove colon test 3.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveColonTest3()
@@ -94,6 +121,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove colon test 4.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveColonTest4()
@@ -111,6 +141,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove colon test 5.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveColonTest5()
@@ -128,6 +161,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove colon test 6.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveColonTest6()
@@ -234,8 +270,7 @@ namespace Test.Logic.Forms
             target.Settings.OnlyIfInSeparateLine = false;
             target.Settings.RemoveTextBeforeColonOnlyUppercase = false;
             target.Settings.ColonSeparateLine = false;
-            string text = "<i>NARRATOR:" + Environment.NewLine +
-                          "Previously on NCIS</i>";
+            string text = "<i>NARRATOR:" + Environment.NewLine + "Previously on NCIS</i>";
             const string expected = "<i>Previously on NCIS</i>";
             string actual = target.RemoveTextFromHearImpaired(text);
             Assert.AreEqual(expected, actual);
@@ -254,8 +289,7 @@ namespace Test.Logic.Forms
             target.Settings.OnlyIfInSeparateLine = false;
             target.Settings.RemoveTextBeforeColonOnlyUppercase = false;
             target.Settings.ColonSeparateLine = false;
-            string text = "<b>NARRATOR:" + Environment.NewLine +
-                          "Previously on NCIS</b>";
+            string text = "<b>NARRATOR:" + Environment.NewLine + "Previously on NCIS</b>";
             const string expected = "<b>Previously on NCIS</b>";
             string actual = target.RemoveTextFromHearImpaired(text);
             Assert.AreEqual(expected, actual);
@@ -280,6 +314,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove hi quotes.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveHIQuotes()
@@ -295,6 +332,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove hi double.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveHIDouble()
@@ -311,6 +351,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove remove name of first line.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveRemoveNameOfFirstLine()
@@ -328,6 +371,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove remove name of first line bold.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveRemoveNameOfFirstLineBold()
@@ -345,6 +391,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections()
@@ -361,6 +410,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections2()
@@ -377,6 +429,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 3.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections3()
@@ -393,6 +448,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 4.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections4()
@@ -409,6 +467,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 5.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections5()
@@ -425,6 +486,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 6 a.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections6A()
@@ -441,6 +505,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 6 b.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections6B()
@@ -457,6 +524,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 6 b italic.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections6BItalic()
@@ -473,6 +543,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 7.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections7()
@@ -489,6 +562,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 8.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections8()
@@ -505,6 +581,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 9.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections9()
@@ -521,6 +600,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 10.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections10()
@@ -537,6 +619,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 10 italic.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections10Italic()
@@ -553,6 +638,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 11.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections11()
@@ -569,6 +657,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 12.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections12()
@@ -585,6 +676,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections 13.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjections13()
@@ -601,6 +695,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove colon only on separate line.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveColonOnlyOnSeparateLine()
@@ -618,6 +715,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove line if all uppercase 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveLineIfAllUppercase1()
@@ -635,6 +735,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove line if all uppercase 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveLineIfAllUppercase2()
@@ -652,6 +755,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove line if all uppercase 3.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveLineIfAllUppercase3()
@@ -665,11 +771,14 @@ namespace Test.Logic.Forms
             target.Settings.ColonSeparateLine = false;
             target.Settings.RemoveTextBetweenParentheses = true;
             string text = "(<i>GOIN' BACK TO INDIANA</i>" + Environment.NewLine + "CONTINUES PLAYING)";
-            const string expected = "";
+            const string expected = string.Empty;
             string actual = target.RemoveLineIfAllUppercase(text);
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove line if parentheses 3.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveLineIfParentheses3()
@@ -683,11 +792,14 @@ namespace Test.Logic.Forms
             target.Settings.ColonSeparateLine = false;
             target.Settings.RemoveTextBetweenParentheses = true;
             string text = "(<i>GOIN' BACK TO INDIANA</i>" + Environment.NewLine + "CONTINUES PLAYING)";
-            const string expected = "";
+            const string expected = string.Empty;
             string actual = target.RemoveHearImpairedTags(text);
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text before colon second line.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextBeforeColonSecondLine()
@@ -705,6 +817,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text before colon only upper 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextBeforeColonOnlyUpper1()
@@ -722,6 +837,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text before colon only upper 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextBeforeColonOnlyUpper2()
@@ -739,6 +857,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text before colon only upper 3 negative.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextBeforeColonOnlyUpper3Negative()
@@ -756,6 +877,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text ass 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextAss1()
@@ -774,6 +898,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text ass 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextAss2()
@@ -792,6 +919,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text ass 3 colon.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextAss3Colon()
@@ -811,6 +941,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text before colon test 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextBeforeColonTest1()
@@ -830,6 +963,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text remove dash before square brackets.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextRemoveDashBeforeSquareBrackets()
@@ -849,6 +985,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text remove dash in remove interjections.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextRemoveDashInRemoveInterjections()
@@ -868,6 +1007,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text remove single dash.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextRemoveSingleDash()
@@ -887,6 +1029,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text between question marks.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextBetweenQuestionMarks()
@@ -907,6 +1052,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections italic first line.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjectionsItalicFirstLine()
@@ -919,6 +1067,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections italic second line.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjectionsItalicSecondLine()
@@ -931,6 +1082,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections italic both lines.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjectionsItalicBothLines()
@@ -943,6 +1097,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove interjections m dash.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveInterjectionsMDash()
@@ -955,6 +1112,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove first dash italics.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveFirstDashItalics()
@@ -967,6 +1127,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text if uppercase not emdash.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextIfUppercaseNotEmdash()
@@ -979,6 +1142,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text dont crash on empty string.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextDontCrashOnEmptyString()
@@ -990,6 +1156,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(text, actual);
         }
 
+        /// <summary>
+        /// The remove text keep music symbols but remove hi.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextKeepMusicSymbolsButRemoveHI()
@@ -1004,6 +1173,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text remove emdash.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextRemoveEmdash()
@@ -1019,6 +1191,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text if uppercase emdash remove in dialogue.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextIfUppercaseEmdashRemoveInDialogue()
@@ -1032,6 +1207,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text if uppercase emdash remove in dialogue with spaces.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextIfUppercaseEmdashRemoveInDialogueWithSpaces()
@@ -1045,6 +1223,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text emdash comma.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextEmdashComma()
@@ -1058,6 +1239,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text hi and colon.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextHiAndColon()
@@ -1071,6 +1255,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text dont leave double dash.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextDontLeaveDoubleDash()
@@ -1084,6 +1271,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text dont leave dot.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextDontLeaveDot()
@@ -1097,6 +1287,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text dont leave exl.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextDontLeaveExl()
@@ -1110,6 +1303,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text remember dialogue tag.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextRememberDialogueTag()
@@ -1123,6 +1319,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text remove line with colon.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextRemoveLineWithColon()
@@ -1136,6 +1335,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text remove line with colon 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextRemoveLineWithColon2()
@@ -1149,6 +1351,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text speaker with colon plus line with hyphen.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveTextSpeakerWithColonPlusLineWithHyphen()
@@ -1163,6 +1368,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text speaker with colon plus line with hyphen also remove interjections.
+        /// </summary>
         [TestMethod]
         public void RemoveTextSpeakerWithColonPlusLineWithHyphenAlsoRemoveInterjections()
         {
@@ -1176,6 +1384,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text quotes in first line.
+        /// </summary>
         [TestMethod]
         public void RemoveTextQuotesInFirstLine()
         {
@@ -1189,6 +1400,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text quotes in first line 2.
+        /// </summary>
         [TestMethod]
         public void RemoveTextQuotesInFirstLine2()
         {
@@ -1204,6 +1418,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text for hi in dialogue 1.
+        /// </summary>
         [TestMethod]
         public void RemoveTextForHiInDialogue1()
         {
@@ -1215,6 +1432,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text for hi in dialogue 2.
+        /// </summary>
         [TestMethod]
         public void RemoveTextForHiInDialogue2()
         {
@@ -1226,6 +1446,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text for hi remove font tag.
+        /// </summary>
         [TestMethod]
         public void RemoveTextForHiRemoveFontTag()
         {
@@ -1237,6 +1460,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text for hi remove font tag 2.
+        /// </summary>
         [TestMethod]
         public void RemoveTextForHiRemoveFontTag2()
         {
@@ -1248,6 +1474,9 @@ namespace Test.Logic.Forms
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// The remove text for hi remove font tag 3.
+        /// </summary>
         [TestMethod]
         public void RemoveTextForHiRemoveFontTag3()
         {
@@ -1261,34 +1490,27 @@ namespace Test.Logic.Forms
 
         #region Additional test attributes
 
-        //
-        //You can use the following additional attributes as you write your tests:
-        //
-        //Use ClassInitialize to run code before running the first test in the class
-        //[ClassInitialize()]
-        //public static void MyClassInitialize(TestContext testContext)
-        //{
-        //}
-        //
-        //Use ClassCleanup to run code after all tests in a class have run
-        //[ClassCleanup()]
-        //public static void MyClassCleanup()
-        //{
-        //}
-        //
-        //Use TestInitialize to run code before running each test
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
-        //
-        //Use TestCleanup to run code after each test has run
-        //[TestCleanup()]
-        //public void MyTestCleanup()
-        //{
-        //}
-        //
-
+        // You can use the following additional attributes as you write your tests:
+        // Use ClassInitialize to run code before running the first test in the class
+        // [ClassInitialize()]
+        // public static void MyClassInitialize(TestContext testContext)
+        // {
+        // }
+        // Use ClassCleanup to run code after all tests in a class have run
+        // [ClassCleanup()]
+        // public static void MyClassCleanup()
+        // {
+        // }
+        // Use TestInitialize to run code before running each test
+        // [TestInitialize()]
+        // public void MyTestInitialize()
+        // {
+        // }
+        // Use TestCleanup to run code after each test has run
+        // [TestCleanup()]
+        // public void MyTestCleanup()
+        // {
+        // }
         #endregion Additional test attributes
     }
 }

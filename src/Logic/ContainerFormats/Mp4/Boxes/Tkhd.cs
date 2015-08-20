@@ -1,17 +1,47 @@
-﻿namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Tkhd.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The tkhd.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4.Boxes
 {
     using System.IO;
 
+    /// <summary>
+    /// The tkhd.
+    /// </summary>
     public class Tkhd : Box
     {
+        /// <summary>
+        /// The duration.
+        /// </summary>
         public readonly ulong Duration;
 
+        /// <summary>
+        /// The height.
+        /// </summary>
         public readonly uint Height;
 
+        /// <summary>
+        /// The track id.
+        /// </summary>
         public readonly uint TrackId;
 
+        /// <summary>
+        /// The width.
+        /// </summary>
         public readonly uint Width;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Tkhd"/> class.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
         public Tkhd(FileStream fs)
         {
             this.Buffer = new byte[84];

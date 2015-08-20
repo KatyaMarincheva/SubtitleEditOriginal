@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="FilmEditXml.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The film edit xml.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -8,8 +17,14 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The film edit xml.
+    /// </summary>
     public class FilmEditXml : SubtitleFormat
     {
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -18,6 +33,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -26,6 +44,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -34,6 +55,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             StringBuilder sb = new StringBuilder();
@@ -58,6 +91,18 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             string xmlStructure = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + Environment.NewLine + "<filmeditxml>" + Environment.NewLine + "<font>Arial</font>" + Environment.NewLine + "<points>22</points>" + Environment.NewLine + "<width>720</width>" + Environment.NewLine + "<height>576</height>" + Environment.NewLine + "<virtualwidth>586</virtualwidth>" + Environment.NewLine + "<virtualheight>330</virtualheight>" + Environment.NewLine + "<par>1420</par>" + Environment.NewLine + "<fps>25</fps>" + Environment.NewLine + "<dropped>False</dropped>" + Environment.NewLine + "</filmeditxml>";
@@ -113,6 +158,18 @@
             return ToUtf8XmlString(xml);
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -158,16 +215,43 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The encode duration.
+        /// </summary>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string EncodeDuration(TimeCode timeCode)
         {
             return string.Format("{0:00}:{1:00}", timeCode.Seconds, MillisecondsToFramesMaxFrameRate(timeCode.Milliseconds));
         }
 
+        /// <summary>
+        /// The encode time code.
+        /// </summary>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string EncodeTimeCode(TimeCode timeCode)
         {
             return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", timeCode.Hours, timeCode.Minutes, timeCode.Seconds, MillisecondsToFramesMaxFrameRate(timeCode.Milliseconds));
         }
 
+        /// <summary>
+        /// The decode time.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode DecodeTime(string s)
         {
             string[] arr = s.Split(':');

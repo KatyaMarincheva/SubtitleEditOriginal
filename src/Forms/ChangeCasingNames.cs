@@ -1,83 +1,142 @@
-﻿using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.Dictionaries;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using System.Windows.Forms;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ChangeCasingNames.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The change casing names.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Text;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.Dictionaries;
+
+    /// <summary>
+    /// The change casing names.
+    /// </summary>
     public sealed partial class ChangeCasingNames : Form
     {
+        /// <summary>
+        /// The _used names.
+        /// </summary>
         private readonly List<string> _usedNames = new List<string>();
+
+        /// <summary>
+        /// The _no of lines changed.
+        /// </summary>
         private int _noOfLinesChanged;
+
+        /// <summary>
+        /// The _subtitle.
+        /// </summary>
         private Subtitle _subtitle;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChangeCasingNames"/> class.
+        /// </summary>
         public ChangeCasingNames()
         {
-            InitializeComponent();
-            labelXLinesSelected.Text = string.Empty;
-            Text = Configuration.Settings.Language.ChangeCasingNames.Title;
-            groupBoxNames.Text = string.Empty;
-            listViewNames.Columns[0].Text = Configuration.Settings.Language.ChangeCasingNames.Enabled;
-            listViewNames.Columns[1].Text = Configuration.Settings.Language.ChangeCasingNames.Name;
-            groupBoxLinesFound.Text = string.Empty;
-            listViewFixes.Columns[0].Text = Configuration.Settings.Language.General.Apply;
-            listViewFixes.Columns[1].Text = Configuration.Settings.Language.General.LineNumber;
-            listViewFixes.Columns[2].Text = Configuration.Settings.Language.General.Before;
-            listViewFixes.Columns[3].Text = Configuration.Settings.Language.General.After;
+            this.InitializeComponent();
+            this.labelXLinesSelected.Text = string.Empty;
+            this.Text = Configuration.Settings.Language.ChangeCasingNames.Title;
+            this.groupBoxNames.Text = string.Empty;
+            this.listViewNames.Columns[0].Text = Configuration.Settings.Language.ChangeCasingNames.Enabled;
+            this.listViewNames.Columns[1].Text = Configuration.Settings.Language.ChangeCasingNames.Name;
+            this.groupBoxLinesFound.Text = string.Empty;
+            this.listViewFixes.Columns[0].Text = Configuration.Settings.Language.General.Apply;
+            this.listViewFixes.Columns[1].Text = Configuration.Settings.Language.General.LineNumber;
+            this.listViewFixes.Columns[2].Text = Configuration.Settings.Language.General.Before;
+            this.listViewFixes.Columns[3].Text = Configuration.Settings.Language.General.After;
 
-            buttonSelectAll.Text = Configuration.Settings.Language.FixCommonErrors.SelectAll;
-            buttonInverseSelection.Text = Configuration.Settings.Language.FixCommonErrors.InverseSelection;
+            this.buttonSelectAll.Text = Configuration.Settings.Language.FixCommonErrors.SelectAll;
+            this.buttonInverseSelection.Text = Configuration.Settings.Language.FixCommonErrors.InverseSelection;
 
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
-            listViewFixes.Resize += delegate
-            {
-                var width = (listViewFixes.Width - (listViewFixes.Columns[0].Width + listViewFixes.Columns[1].Width)) / 2;
-                listViewFixes.Columns[2].Width = width;
-                listViewFixes.Columns[3].Width = width;
-            };
-            Utilities.FixLargeFonts(this, buttonOK);
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            this.listViewFixes.Resize += delegate
+                {
+                    var width = (listViewFixes.Width - (listViewFixes.Columns[0].Width + listViewFixes.Columns[1].Width)) / 2;
+                    listViewFixes.Columns[2].Width = width;
+                    listViewFixes.Columns[3].Width = width;
+                };
+            Utilities.FixLargeFonts(this, this.buttonOK);
         }
 
+        /// <summary>
+        /// Gets the lines changed.
+        /// </summary>
         public int LinesChanged
         {
-            get { return _noOfLinesChanged; }
+            get
+            {
+                return this._noOfLinesChanged;
+            }
         }
 
+        /// <summary>
+        /// The change casing names_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ChangeCasingNames_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
 
+        /// <summary>
+        /// The add to list view names.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
         private void AddToListViewNames(string name)
         {
             var item = new ListViewItem(string.Empty) { Checked = true };
             item.SubItems.Add(name);
-            listViewNames.Items.Add(item);
+            this.listViewNames.Items.Add(item);
         }
 
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         public void Initialize(Subtitle subtitle)
         {
-            _subtitle = subtitle;
+            this._subtitle = subtitle;
 
-            FindAllNames();
-            GeneratePreview();
+            this.FindAllNames();
+            this.GeneratePreview();
         }
 
+        /// <summary>
+        /// The generate preview.
+        /// </summary>
         private void GeneratePreview()
         {
-            Cursor = Cursors.WaitCursor;
-            listViewFixes.BeginUpdate();
-            listViewFixes.Items.Clear();
-            foreach (Paragraph p in _subtitle.Paragraphs)
+            this.Cursor = Cursors.WaitCursor;
+            this.listViewFixes.BeginUpdate();
+            this.listViewFixes.Items.Clear();
+            foreach (Paragraph p in this._subtitle.Paragraphs)
             {
                 string text = p.Text;
-                foreach (ListViewItem item in listViewNames.Items)
+                foreach (ListViewItem item in this.listViewNames.Items)
                 {
                     string name = item.SubItems[1].Text;
 
@@ -92,28 +151,46 @@ namespace Nikse.SubtitleEdit.Forms
                         }
                     }
                 }
+
                 if (text != p.Text)
-                    AddToPreviewListView(p, text);
+                {
+                    this.AddToPreviewListView(p, text);
+                }
             }
-            listViewFixes.EndUpdate();
-            groupBoxLinesFound.Text = string.Format(Configuration.Settings.Language.ChangeCasingNames.LinesFoundX, listViewFixes.Items.Count);
-            Cursor = Cursors.Default;
+
+            this.listViewFixes.EndUpdate();
+            this.groupBoxLinesFound.Text = string.Format(Configuration.Settings.Language.ChangeCasingNames.LinesFoundX, this.listViewFixes.Items.Count);
+            this.Cursor = Cursors.Default;
         }
 
+        /// <summary>
+        /// The add to preview list view.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <param name="newText">
+        /// The new text.
+        /// </param>
         private void AddToPreviewListView(Paragraph p, string newText)
         {
             var item = new ListViewItem(string.Empty) { Tag = p, Checked = true };
             item.SubItems.Add(p.Number.ToString(CultureInfo.InvariantCulture));
             item.SubItems.Add(p.Text.Replace(Environment.NewLine, Configuration.Settings.General.ListViewLineSeparatorString));
             item.SubItems.Add(newText.Replace(Environment.NewLine, Configuration.Settings.General.ListViewLineSeparatorString));
-            listViewFixes.Items.Add(item);
+            this.listViewFixes.Items.Add(item);
         }
 
+        /// <summary>
+        /// The find all names.
+        /// </summary>
         private void FindAllNames()
         {
-            string language = Utilities.AutoDetectLanguageName("en_US", _subtitle);
+            string language = Utilities.AutoDetectLanguageName("en_US", this._subtitle);
             if (string.IsNullOrEmpty(language))
+            {
                 language = "en_US";
+            }
 
             var namesList = new NamesList(Configuration.DictionariesFolder, language, Configuration.Settings.WordLists.UseOnlineNamesEtc, Configuration.Settings.WordLists.NamesEtcUrl);
 
@@ -129,8 +206,11 @@ namespace Nikse.SubtitleEdit.Forms
             }
 
             var sb = new StringBuilder();
-            foreach (Paragraph p in _subtitle.Paragraphs)
+            foreach (Paragraph p in this._subtitle.Paragraphs)
+            {
                 sb.AppendLine(p.Text);
+            }
+
             string text = HtmlUtil.RemoveHtmlTags(sb.ToString());
             string textToLower = text.ToLower();
             foreach (string name in namesEtcList)
@@ -138,26 +218,26 @@ namespace Nikse.SubtitleEdit.Forms
                 int startIndex = textToLower.IndexOf(name.ToLower(), StringComparison.Ordinal);
                 if (startIndex >= 0)
                 {
-                    while (startIndex >= 0 && startIndex < text.Length &&
-                           textToLower.Substring(startIndex).Contains(name.ToLower()) && name.Length > 1 && name != name.ToLower())
+                    while (startIndex >= 0 && startIndex < text.Length && textToLower.Substring(startIndex).Contains(name.ToLower()) && name.Length > 1 && name != name.ToLower())
                     {
-                        bool startOk = (startIndex == 0) || (text[startIndex - 1] == ' ') || (text[startIndex - 1] == '-') ||
-                                       (text[startIndex - 1] == '"') || (text[startIndex - 1] == '\'') || (text[startIndex - 1] == '>') ||
-                                       (Environment.NewLine.EndsWith(text[startIndex - 1].ToString(CultureInfo.InvariantCulture)));
+                        bool startOk = (startIndex == 0) || (text[startIndex - 1] == ' ') || (text[startIndex - 1] == '-') || (text[startIndex - 1] == '"') || (text[startIndex - 1] == '\'') || (text[startIndex - 1] == '>') || Environment.NewLine.EndsWith(text[startIndex - 1].ToString(CultureInfo.InvariantCulture));
 
                         if (startOk)
                         {
                             int end = startIndex + name.Length;
                             bool endOk = end <= text.Length;
                             if (endOk)
-                                endOk = end == text.Length || (@" ,.!?:;')-<""" + Environment.NewLine).Contains(text[end]);
-
-                            if (endOk && text.Substring(startIndex, name.Length) != name) // do not add names where casing already is correct
                             {
-                                if (!_usedNames.Contains(name))
+                                endOk = end == text.Length || (@" ,.!?:;')-<""" + Environment.NewLine).Contains(text[end]);
+                            }
+
+                            if (endOk && text.Substring(startIndex, name.Length) != name)
+                            {
+                                // do not add names where casing already is correct
+                                if (!this._usedNames.Contains(name))
                                 {
-                                    _usedNames.Add(name);
-                                    AddToListViewNames(name);
+                                    this._usedNames.Add(name);
+                                    this.AddToListViewNames(name);
                                     break; // break while
                                 }
                             }
@@ -167,18 +247,30 @@ namespace Nikse.SubtitleEdit.Forms
                     }
                 }
             }
-            groupBoxNames.Text = string.Format(Configuration.Settings.Language.ChangeCasingNames.NamesFoundInSubtitleX, listViewNames.Items.Count);
+
+            this.groupBoxNames.Text = string.Format(Configuration.Settings.Language.ChangeCasingNames.NamesFoundInSubtitleX, this.listViewNames.Items.Count);
         }
 
+        /// <summary>
+        /// The list view names selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ListViewNamesSelectedIndexChanged(object sender, EventArgs e)
         {
-            labelXLinesSelected.Text = string.Empty;
-            if (listViewNames.SelectedItems.Count != 1)
+            this.labelXLinesSelected.Text = string.Empty;
+            if (this.listViewNames.SelectedItems.Count != 1)
+            {
                 return;
+            }
 
-            string name = listViewNames.SelectedItems[0].SubItems[1].Text;
-            listViewFixes.BeginUpdate();
-            foreach (ListViewItem item in listViewFixes.Items)
+            string name = this.listViewNames.SelectedItems[0].SubItems[1].Text;
+            this.listViewFixes.BeginUpdate();
+            foreach (ListViewItem item in this.listViewFixes.Items)
             {
                 item.Selected = false;
 
@@ -190,15 +282,16 @@ namespace Nikse.SubtitleEdit.Forms
                     int start = lower.IndexOf(name.ToLower(), StringComparison.Ordinal);
                     if (start >= 0)
                     {
-                        bool startOk = (start == 0) || (lower[start - 1] == ' ') || (lower[start - 1] == '-') || (lower[start - 1] == '"') ||
-                                       lower[start - 1] == '\'' || lower[start - 1] == '>' || Environment.NewLine.EndsWith(lower[start - 1]);
+                        bool startOk = (start == 0) || (lower[start - 1] == ' ') || (lower[start - 1] == '-') || (lower[start - 1] == '"') || lower[start - 1] == '\'' || lower[start - 1] == '>' || Environment.NewLine.EndsWith(lower[start - 1]);
 
                         if (startOk)
                         {
                             int end = start + name.Length;
                             bool endOk = end <= lower.Length;
                             if (endOk)
+                            {
                                 endOk = end == lower.Length || (@" ,.!?:;')<-""" + Environment.NewLine).Contains(lower[end]);
+                            }
 
                             item.Selected = endOk;
                         }
@@ -206,73 +299,149 @@ namespace Nikse.SubtitleEdit.Forms
                 }
             }
 
-            listViewFixes.EndUpdate();
+            this.listViewFixes.EndUpdate();
 
-            if (listViewFixes.SelectedItems.Count > 0)
-                listViewFixes.EnsureVisible(listViewFixes.SelectedItems[0].Index);
+            if (this.listViewFixes.SelectedItems.Count > 0)
+            {
+                this.listViewFixes.EnsureVisible(this.listViewFixes.SelectedItems[0].Index);
+            }
         }
 
+        /// <summary>
+        /// The list view names item checked.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ListViewNamesItemChecked(object sender, ItemCheckedEventArgs e)
         {
-            GeneratePreview();
+            this.GeneratePreview();
         }
 
+        /// <summary>
+        /// The change casing names_ shown.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ChangeCasingNames_Shown(object sender, EventArgs e)
         {
-            listViewNames.ItemChecked += ListViewNamesItemChecked;
+            this.listViewNames.ItemChecked += this.ListViewNamesItemChecked;
         }
 
+        /// <summary>
+        /// The fix casing.
+        /// </summary>
         internal void FixCasing()
         {
-            foreach (ListViewItem item in listViewFixes.Items)
+            foreach (ListViewItem item in this.listViewFixes.Items)
             {
                 if (item.Checked)
                 {
-                    _noOfLinesChanged++;
+                    this._noOfLinesChanged++;
                     var p = item.Tag as Paragraph;
                     if (p != null)
+                    {
                         p.Text = item.SubItems[3].Text.Replace(Configuration.Settings.General.ListViewLineSeparatorString, Environment.NewLine);
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// The button ok click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonOkClick(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The list view fixes_ selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void listViewFixes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listViewFixes.SelectedItems.Count > 1)
-                labelXLinesSelected.Text = string.Format(Configuration.Settings.Language.Main.XLinesSelected, listViewFixes.SelectedItems.Count);
+            if (this.listViewFixes.SelectedItems.Count > 1)
+            {
+                this.labelXLinesSelected.Text = string.Format(Configuration.Settings.Language.Main.XLinesSelected, this.listViewFixes.SelectedItems.Count);
+            }
             else
-                labelXLinesSelected.Text = string.Empty;
+            {
+                this.labelXLinesSelected.Text = string.Empty;
+            }
         }
 
+        /// <summary>
+        /// The button select all_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonSelectAll_Click(object sender, EventArgs e)
         {
-            DoSelection(true);
+            this.DoSelection(true);
         }
 
+        /// <summary>
+        /// The button inverse selection_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonInverseSelection_Click(object sender, EventArgs e)
         {
-            DoSelection(false);
+            this.DoSelection(false);
         }
 
+        /// <summary>
+        /// The do selection.
+        /// </summary>
+        /// <param name="selectAll">
+        /// The select all.
+        /// </param>
         private void DoSelection(bool selectAll)
         {
-            listViewNames.ItemChecked -= ListViewNamesItemChecked;
-            listViewNames.BeginUpdate();
-            foreach (ListViewItem item in listViewNames.Items)
+            this.listViewNames.ItemChecked -= this.ListViewNamesItemChecked;
+            this.listViewNames.BeginUpdate();
+            foreach (ListViewItem item in this.listViewNames.Items)
             {
                 if (selectAll)
+                {
                     item.Checked = true;
+                }
                 else
+                {
                     item.Checked = !item.Checked;
+                }
             }
-            listViewNames.EndUpdate();
-            listViewNames.ItemChecked += ListViewNamesItemChecked;
-            GeneratePreview();
+
+            this.listViewNames.EndUpdate();
+            this.listViewNames.ItemChecked += this.ListViewNamesItemChecked;
+            this.GeneratePreview();
         }
     }
 }

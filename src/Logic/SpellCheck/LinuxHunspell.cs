@@ -1,14 +1,38 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SpellCheck
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="LinuxHunspell.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The linux hunspell.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SpellCheck
 {
     using System;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
 
+    /// <summary>
+    /// The linux hunspell.
+    /// </summary>
     public class LinuxHunspell : Hunspell
     {
+        /// <summary>
+        /// The _hunspell handle.
+        /// </summary>
         private IntPtr _hunspellHandle = IntPtr.Zero;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LinuxHunspell"/> class.
+        /// </summary>
+        /// <param name="affDirectory">
+        /// The aff directory.
+        /// </param>
+        /// <param name="dicDictory">
+        /// The dic dictory.
+        /// </param>
         public LinuxHunspell(string affDirectory, string dicDictory)
         {
             // Also search - /usr/share/hunspell
@@ -23,16 +47,37 @@
             }
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="LinuxHunspell"/> class. 
+        /// </summary>
         ~LinuxHunspell()
         {
             this.Dispose(false);
         }
 
+        /// <summary>
+        /// The spell.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool Spell(string word)
         {
             return NativeMethods.Hunspell_spell(this._hunspellHandle, word) != 0;
         }
 
+        /// <summary>
+        /// The suggest.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public override List<string> Suggest(string word)
         {
             IntPtr pointerToAddressStringArray = Marshal.AllocHGlobal(IntPtr.Size);
@@ -55,12 +100,21 @@
             return results;
         }
 
+        /// <summary>
+        /// The dispose.
+        /// </summary>
         public override void Dispose()
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// The dispose.
+        /// </summary>
+        /// <param name="disposing">
+        /// The disposing.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -71,6 +125,9 @@
             this.ReleaseUnmangedResources();
         }
 
+        /// <summary>
+        /// The release unmanged resources.
+        /// </summary>
         private void ReleaseUnmangedResources()
         {
             if (this._hunspellHandle != IntPtr.Zero)

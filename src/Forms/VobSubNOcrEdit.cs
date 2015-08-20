@@ -1,135 +1,250 @@
-﻿using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.Ocr;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="VobSubNOcrEdit.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The vob sub n ocr edit.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.Ocr;
+
+    /// <summary>
+    /// The vob sub n ocr edit.
+    /// </summary>
     public partial class VobSubNOcrEdit : Form
     {
-
-        private List<NOcrChar> _nocrChars;
-        private NOcrChar _nocrChar;
-        private double _zoomFactor = 5.0;
-        private bool _drawLineOn;
-        private bool _startDone;
-        private Point _start;
-        private Point _end;
-        private int _mx;
-        private int _my;
+        /// <summary>
+        /// The _bitmap.
+        /// </summary>
         private Bitmap _bitmap;
+
+        /// <summary>
+        /// The _draw line on.
+        /// </summary>
+        private bool _drawLineOn;
+
+        /// <summary>
+        /// The _end.
+        /// </summary>
+        private Point _end;
+
+        /// <summary>
+        /// The _history.
+        /// </summary>
         private List<NOcrChar> _history = new List<NOcrChar>();
+
+        /// <summary>
+        /// The _history index.
+        /// </summary>
         private int _historyIndex = -1;
 
+        /// <summary>
+        /// The _mx.
+        /// </summary>
+        private int _mx;
+
+        /// <summary>
+        /// The _my.
+        /// </summary>
+        private int _my;
+
+        /// <summary>
+        /// The _nocr char.
+        /// </summary>
+        private NOcrChar _nocrChar;
+
+        /// <summary>
+        /// The _nocr chars.
+        /// </summary>
+        private List<NOcrChar> _nocrChars;
+
+        /// <summary>
+        /// The _start.
+        /// </summary>
+        private Point _start;
+
+        /// <summary>
+        /// The _start done.
+        /// </summary>
+        private bool _startDone;
+
+        /// <summary>
+        /// The _zoom factor.
+        /// </summary>
+        private double _zoomFactor = 5.0;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VobSubNOcrEdit"/> class.
+        /// </summary>
+        /// <param name="nocrChars">
+        /// The nocr chars.
+        /// </param>
+        /// <param name="bitmap">
+        /// The bitmap.
+        /// </param>
         public VobSubNOcrEdit(List<NOcrChar> nocrChars, Bitmap bitmap)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            _nocrChars = nocrChars;
-            _bitmap = bitmap;
+            this._nocrChars = nocrChars;
+            this._bitmap = bitmap;
 
-            FillComboBox();
+            this.FillComboBox();
 
             if (bitmap != null)
             {
-                pictureBoxCharacter.Image = bitmap;
-                SizePictureBox();
+                this.pictureBoxCharacter.Image = bitmap;
+                this.SizePictureBox();
             }
 
-            labelInfo.Text = string.Format("{0} elements in database", nocrChars.Count);
-            labelNOcrCharInfo.Text = string.Empty;
+            this.labelInfo.Text = string.Format("{0} elements in database", nocrChars.Count);
+            this.labelNOcrCharInfo.Text = string.Empty;
         }
 
+        /// <summary>
+        /// The fill combo box.
+        /// </summary>
         private void FillComboBox()
         {
             List<string> list = new List<string>();
-            foreach (NOcrChar c in _nocrChars)
+            foreach (NOcrChar c in this._nocrChars)
             {
                 if (!list.Contains(c.Text))
+                {
                     list.Add(c.Text);
+                }
             }
+
             list.Sort();
-            comboBoxTexts.Items.Clear();
+            this.comboBoxTexts.Items.Clear();
             foreach (string s in list)
             {
-                comboBoxTexts.Items.Add(s);
+                this.comboBoxTexts.Items.Add(s);
             }
         }
 
+        /// <summary>
+        /// The vob sub n ocr edit_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void VobSubNOcrEdit_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
                 e.SuppressKeyPress = true;
-                _drawLineOn = false;
-                _startDone = false;
-                pictureBoxCharacter.Invalidate();
+                this._drawLineOn = false;
+                this._startDone = false;
+                this.pictureBoxCharacter.Invalidate();
             }
             else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Z)
             {
                 e.SuppressKeyPress = true;
-                Undo();
+                this.Undo();
             }
             else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Y)
             {
                 e.SuppressKeyPress = true;
-                Redo();
+                this.Redo();
             }
         }
 
+        /// <summary>
+        /// The size picture box.
+        /// </summary>
         private void SizePictureBox()
         {
-            if (pictureBoxCharacter.Image != null)
+            if (this.pictureBoxCharacter.Image != null)
             {
-                Bitmap bmp = pictureBoxCharacter.Image as Bitmap;
-                pictureBoxCharacter.SizeMode = PictureBoxSizeMode.StretchImage;
-                pictureBoxCharacter.Width = (int)Math.Round(bmp.Width * _zoomFactor);
-                pictureBoxCharacter.Height = (int)Math.Round(bmp.Height * _zoomFactor);
-                pictureBoxCharacter.Invalidate();
+                Bitmap bmp = this.pictureBoxCharacter.Image as Bitmap;
+                this.pictureBoxCharacter.SizeMode = PictureBoxSizeMode.StretchImage;
+                this.pictureBoxCharacter.Width = (int)Math.Round(bmp.Width * this._zoomFactor);
+                this.pictureBoxCharacter.Height = (int)Math.Round(bmp.Height * this._zoomFactor);
+                this.pictureBoxCharacter.Invalidate();
             }
         }
 
+        /// <summary>
+        /// The button zoom in_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonZoomIn_Click(object sender, EventArgs e)
         {
-            if (_zoomFactor < 20)
+            if (this._zoomFactor < 20)
             {
-                _zoomFactor++;
-                SizePictureBox();
+                this._zoomFactor++;
+                this.SizePictureBox();
             }
         }
 
+        /// <summary>
+        /// The button zoom out_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonZoomOut_Click(object sender, EventArgs e)
         {
-            if (_zoomFactor > 1)
+            if (this._zoomFactor > 1)
             {
-                _zoomFactor--;
-                SizePictureBox();
+                this._zoomFactor--;
+                this.SizePictureBox();
             }
         }
 
+        /// <summary>
+        /// The show ocr points.
+        /// </summary>
         private void ShowOcrPoints()
         {
-            listBoxLinesForeground.Items.Clear();
-            foreach (NOcrPoint op in _nocrChar.LinesForeground)
+            this.listBoxLinesForeground.Items.Clear();
+            foreach (NOcrPoint op in this._nocrChar.LinesForeground)
             {
-                listBoxLinesForeground.Items.Add(op);
+                this.listBoxLinesForeground.Items.Add(op);
             }
-            listBoxlinesBackground.Items.Clear();
-            foreach (NOcrPoint op in _nocrChar.LinesBackground)
+
+            this.listBoxlinesBackground.Items.Clear();
+            foreach (NOcrPoint op in this._nocrChar.LinesBackground)
             {
-                listBoxlinesBackground.Items.Add(op);
+                this.listBoxlinesBackground.Items.Add(op);
             }
-            pictureBoxCharacter.Invalidate();
+
+            this.pictureBoxCharacter.Invalidate();
         }
 
+        /// <summary>
+        /// The is match.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool IsMatch()
         {
-            NikseBitmap nbmp = new NikseBitmap(pictureBoxCharacter.Image as Bitmap);
-            foreach (NOcrPoint op in _nocrChar.LinesForeground)
+            NikseBitmap nbmp = new NikseBitmap(this.pictureBoxCharacter.Image as Bitmap);
+            foreach (NOcrPoint op in this._nocrChar.LinesForeground)
             {
-                foreach (Point point in op.ScaledGetPoints(_nocrChar, nbmp.Width, nbmp.Height))
+                foreach (Point point in op.ScaledGetPoints(this._nocrChar, nbmp.Width, nbmp.Height))
                 {
                     if (point.X >= 0 && point.Y >= 0 && point.X < nbmp.Width && point.Y < nbmp.Height)
                     {
@@ -144,9 +259,10 @@ namespace Nikse.SubtitleEdit.Forms
                     }
                 }
             }
-            foreach (NOcrPoint op in _nocrChar.LinesBackground)
+
+            foreach (NOcrPoint op in this._nocrChar.LinesBackground)
             {
-                foreach (Point point in op.ScaledGetPoints(_nocrChar, nbmp.Width, nbmp.Height))
+                foreach (Point point in op.ScaledGetPoints(this._nocrChar, nbmp.Width, nbmp.Height))
                 {
                     if (point.X >= 0 && point.Y >= 0 && point.X < nbmp.Width && point.Y < nbmp.Height)
                     {
@@ -158,346 +274,522 @@ namespace Nikse.SubtitleEdit.Forms
                     }
                 }
             }
+
             return true;
         }
 
+        /// <summary>
+        /// The list box file names_ selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void listBoxFileNames_SelectedIndexChanged(object sender, EventArgs e)
         {
-            labelNOcrCharInfo.Text = string.Empty;
-            if (listBoxFileNames.SelectedIndex < 0)
-                return;
-
-            _nocrChar = listBoxFileNames.Items[listBoxFileNames.SelectedIndex] as NOcrChar;
-            if (_nocrChar == null)
+            this.labelNOcrCharInfo.Text = string.Empty;
+            if (this.listBoxFileNames.SelectedIndex < 0)
             {
-                pictureBoxCharacter.Invalidate();
-                groupBoxCurrentCompareImage.Enabled = false;
-                listBoxLinesForeground.Items.Clear();
-                listBoxlinesBackground.Items.Clear();
+                return;
+            }
+
+            this._nocrChar = this.listBoxFileNames.Items[this.listBoxFileNames.SelectedIndex] as NOcrChar;
+            if (this._nocrChar == null)
+            {
+                this.pictureBoxCharacter.Invalidate();
+                this.groupBoxCurrentCompareImage.Enabled = false;
+                this.listBoxLinesForeground.Items.Clear();
+                this.listBoxlinesBackground.Items.Clear();
             }
             else
             {
-                textBoxText.Text = _nocrChar.Text;
-                checkBoxItalic.Checked = _nocrChar.Italic;
-                pictureBoxCharacter.Invalidate();
-                groupBoxCurrentCompareImage.Enabled = true;
-                labelNOcrCharInfo.Text = string.Format("Size: {0}x{1}, margin top: {2} ", _nocrChar.Width, _nocrChar.Height, _nocrChar.MarginTop);
+                this.textBoxText.Text = this._nocrChar.Text;
+                this.checkBoxItalic.Checked = this._nocrChar.Italic;
+                this.pictureBoxCharacter.Invalidate();
+                this.groupBoxCurrentCompareImage.Enabled = true;
+                this.labelNOcrCharInfo.Text = string.Format("Size: {0}x{1}, margin top: {2} ", this._nocrChar.Width, this._nocrChar.Height, this._nocrChar.MarginTop);
 
-                if (pictureBoxCharacter.Image != null)
+                if (this.pictureBoxCharacter.Image != null)
                 {
-                    if (IsMatch())
+                    if (this.IsMatch())
                     {
-                        groupBoxCurrentCompareImage.BackColor = Color.LightGreen;
+                        this.groupBoxCurrentCompareImage.BackColor = Color.LightGreen;
                     }
                     else
                     {
-                        groupBoxCurrentCompareImage.BackColor = Control.DefaultBackColor;
+                        this.groupBoxCurrentCompareImage.BackColor = DefaultBackColor;
                     }
                 }
-                _drawLineOn = false;
-                _history = new List<NOcrChar>();
-                _historyIndex = -1;
 
-                if (_bitmap == null)
+                this._drawLineOn = false;
+                this._history = new List<NOcrChar>();
+                this._historyIndex = -1;
+
+                if (this._bitmap == null)
                 {
-                    var bitmap = new Bitmap(_nocrChar.Width, _nocrChar.Height);
+                    var bitmap = new Bitmap(this._nocrChar.Width, this._nocrChar.Height);
                     var nbmp = new NikseBitmap(bitmap);
                     nbmp.Fill(Color.White);
-                    pictureBoxCharacter.Image = nbmp.GetBitmap();
-                    SizePictureBox();
-                    ShowOcrPoints();
+                    this.pictureBoxCharacter.Image = nbmp.GetBitmap();
+                    this.SizePictureBox();
+                    this.ShowOcrPoints();
                     bitmap.Dispose();
                 }
             }
         }
 
+        /// <summary>
+        /// The combo box texts_ selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void comboBoxTexts_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxTexts.SelectedIndex < 0)
+            if (this.comboBoxTexts.SelectedIndex < 0)
+            {
                 return;
+            }
 
-            listBoxFileNames.Items.Clear();
-            string text = comboBoxTexts.Items[comboBoxTexts.SelectedIndex].ToString();
-            foreach (NOcrChar c in _nocrChars)
+            this.listBoxFileNames.Items.Clear();
+            string text = this.comboBoxTexts.Items[this.comboBoxTexts.SelectedIndex].ToString();
+            foreach (NOcrChar c in this._nocrChars)
             {
                 if (c.Text == text)
                 {
-                    listBoxFileNames.Items.Add(c);
+                    this.listBoxFileNames.Items.Add(c);
                 }
             }
-            if (listBoxFileNames.Items.Count > 0)
-                listBoxFileNames.SelectedIndex = 0;
+
+            if (this.listBoxFileNames.Items.Count > 0)
+            {
+                this.listBoxFileNames.SelectedIndex = 0;
+            }
         }
 
+        /// <summary>
+        /// The picture box character_ paint.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void pictureBoxCharacter_Paint(object sender, PaintEventArgs e)
         {
-            if (_nocrChar == null)
+            if (this._nocrChar == null)
+            {
                 return;
+            }
 
             NOcrPoint selectedPoint = null;
-            if (listBoxLinesForeground.Focused && listBoxLinesForeground.SelectedIndex >= 0)
+            if (this.listBoxLinesForeground.Focused && this.listBoxLinesForeground.SelectedIndex >= 0)
             {
-                selectedPoint = (NOcrPoint)listBoxLinesForeground.Items[listBoxLinesForeground.SelectedIndex];
+                selectedPoint = (NOcrPoint)this.listBoxLinesForeground.Items[this.listBoxLinesForeground.SelectedIndex];
             }
-            else if (listBoxlinesBackground.Focused && listBoxlinesBackground.SelectedIndex >= 0)
+            else if (this.listBoxlinesBackground.Focused && this.listBoxlinesBackground.SelectedIndex >= 0)
             {
-                selectedPoint = (NOcrPoint)listBoxlinesBackground.Items[listBoxlinesBackground.SelectedIndex];
+                selectedPoint = (NOcrPoint)this.listBoxlinesBackground.Items[this.listBoxlinesBackground.SelectedIndex];
             }
 
             var foreground = new Pen(new SolidBrush(Color.Green));
             var background = new Pen(new SolidBrush(Color.Red));
             var selPenF = new Pen(new SolidBrush(Color.Green), 3);
             var selPenB = new Pen(new SolidBrush(Color.Red), 3);
-            if (pictureBoxCharacter.Image != null)
+            if (this.pictureBoxCharacter.Image != null)
             {
-                foreach (NOcrPoint op in _nocrChar.LinesForeground)
+                foreach (NOcrPoint op in this._nocrChar.LinesForeground)
                 {
-                    Point start = op.GetScaledStart(_nocrChar, pictureBoxCharacter.Width, pictureBoxCharacter.Height);
-                    Point end = op.GetScaledEnd(_nocrChar, pictureBoxCharacter.Width, pictureBoxCharacter.Height);
+                    Point start = op.GetScaledStart(this._nocrChar, this.pictureBoxCharacter.Width, this.pictureBoxCharacter.Height);
+                    Point end = op.GetScaledEnd(this._nocrChar, this.pictureBoxCharacter.Width, this.pictureBoxCharacter.Height);
                     if (start.X == end.X && start.Y == end.Y)
+                    {
                         end.X++;
+                    }
+
                     e.Graphics.DrawLine(foreground, start, end);
                     if (op == selectedPoint)
-                        e.Graphics.DrawLine(selPenF, op.GetScaledStart(_nocrChar, pictureBoxCharacter.Width, pictureBoxCharacter.Height), op.GetScaledEnd(_nocrChar, pictureBoxCharacter.Width, pictureBoxCharacter.Height));
+                    {
+                        e.Graphics.DrawLine(selPenF, op.GetScaledStart(this._nocrChar, this.pictureBoxCharacter.Width, this.pictureBoxCharacter.Height), op.GetScaledEnd(this._nocrChar, this.pictureBoxCharacter.Width, this.pictureBoxCharacter.Height));
+                    }
                 }
-                foreach (NOcrPoint op in _nocrChar.LinesBackground)
+
+                foreach (NOcrPoint op in this._nocrChar.LinesBackground)
                 {
-                    Point start = op.GetScaledStart(_nocrChar, pictureBoxCharacter.Width, pictureBoxCharacter.Height);
-                    Point end = op.GetScaledEnd(_nocrChar, pictureBoxCharacter.Width, pictureBoxCharacter.Height);
+                    Point start = op.GetScaledStart(this._nocrChar, this.pictureBoxCharacter.Width, this.pictureBoxCharacter.Height);
+                    Point end = op.GetScaledEnd(this._nocrChar, this.pictureBoxCharacter.Width, this.pictureBoxCharacter.Height);
                     e.Graphics.DrawLine(background, start, end);
                     if (op == selectedPoint)
-                        e.Graphics.DrawLine(selPenB, op.GetScaledStart(_nocrChar, pictureBoxCharacter.Width, pictureBoxCharacter.Height), op.GetScaledEnd(_nocrChar, pictureBoxCharacter.Width, pictureBoxCharacter.Height));
+                    {
+                        e.Graphics.DrawLine(selPenB, op.GetScaledStart(this._nocrChar, this.pictureBoxCharacter.Width, this.pictureBoxCharacter.Height), op.GetScaledEnd(this._nocrChar, this.pictureBoxCharacter.Width, this.pictureBoxCharacter.Height));
+                    }
                 }
             }
 
-            if (_drawLineOn)
+            if (this._drawLineOn)
             {
-                if (_startDone)
+                if (this._startDone)
                 {
                     var p = foreground;
-                    if (radioButtonCold.Checked)
+                    if (this.radioButtonCold.Checked)
+                    {
                         p = background;
-                    e.Graphics.DrawLine(p, new Point((int)Math.Round(_start.X * _zoomFactor), (int)Math.Round(_start.Y * _zoomFactor)), new Point(_mx, _my));
+                    }
+
+                    e.Graphics.DrawLine(p, new Point((int)Math.Round(this._start.X * this._zoomFactor), (int)Math.Round(this._start.Y * this._zoomFactor)), new Point(this._mx, this._my));
                 }
             }
+
             foreground.Dispose();
             background.Dispose();
             selPenF.Dispose();
             selPenB.Dispose();
         }
 
+        /// <summary>
+        /// The button delete_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            if (listBoxFileNames.Items.Count == 0 || _nocrChar == null)
+            if (this.listBoxFileNames.Items.Count == 0 || this._nocrChar == null)
+            {
                 return;
+            }
 
-            _nocrChars.Remove(_nocrChar);
-            FillComboBox();
-            if (comboBoxTexts.Items.Count > 0)
-                comboBoxTexts.SelectedIndex = 0;
+            this._nocrChars.Remove(this._nocrChar);
+            this.FillComboBox();
+            if (this.comboBoxTexts.Items.Count > 0)
+            {
+                this.comboBoxTexts.SelectedIndex = 0;
+            }
         }
 
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
 
+        /// <summary>
+        /// The add history item.
+        /// </summary>
+        /// <param name="nocrChar">
+        /// The nocr char.
+        /// </param>
         private void AddHistoryItem(NOcrChar nocrChar)
         {
-            if (_historyIndex > 0 && _historyIndex < _history.Count - 1)
+            if (this._historyIndex > 0 && this._historyIndex < this._history.Count - 1)
             {
-                while (_history.Count > _historyIndex + 1)
-                    _history.RemoveAt(_history.Count - 1);
-                _historyIndex = _history.Count - 1;
+                while (this._history.Count > this._historyIndex + 1)
+                {
+                    this._history.RemoveAt(this._history.Count - 1);
+                }
+
+                this._historyIndex = this._history.Count - 1;
             }
-            _history.Add(new NOcrChar(nocrChar));
-            _historyIndex++;
+
+            this._history.Add(new NOcrChar(nocrChar));
+            this._historyIndex++;
         }
 
+        /// <summary>
+        /// The redo.
+        /// </summary>
         private void Redo()
         {
-            if (_history.Count > 0 && _historyIndex < _history.Count - 1)
+            if (this._history.Count > 0 && this._historyIndex < this._history.Count - 1)
             {
-                _historyIndex++;
-                _nocrChar = new NOcrChar(_history[_historyIndex]);
-                ShowOcrPoints();
+                this._historyIndex++;
+                this._nocrChar = new NOcrChar(this._history[this._historyIndex]);
+                this.ShowOcrPoints();
             }
         }
 
+        /// <summary>
+        /// The undo.
+        /// </summary>
         private void Undo()
         {
-            _drawLineOn = false;
-            _startDone = false;
-            if (_history.Count > 0 && _historyIndex > 0)
+            this._drawLineOn = false;
+            this._startDone = false;
+            if (this._history.Count > 0 && this._historyIndex > 0)
             {
-                _historyIndex--;
-                _nocrChar = new NOcrChar(_history[_historyIndex]);
+                this._historyIndex--;
+                this._nocrChar = new NOcrChar(this._history[this._historyIndex]);
             }
-            else if (_historyIndex == 0)
+            else if (this._historyIndex == 0)
             {
-                var c = new NOcrChar(_nocrChar);
+                var c = new NOcrChar(this._nocrChar);
                 c.LinesForeground.Clear();
                 c.LinesBackground.Clear();
-                _nocrChar = c;
-                _historyIndex--;
+                this._nocrChar = c;
+                this._historyIndex--;
             }
-            ShowOcrPoints();
+
+            this.ShowOcrPoints();
         }
 
+        /// <summary>
+        /// The picture box character_ mouse click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void pictureBoxCharacter_MouseClick(object sender, MouseEventArgs e)
         {
-            if (_drawLineOn)
+            if (this._drawLineOn)
             {
-                if (_startDone)
+                if (this._startDone)
                 {
-                    _end = new Point((int)Math.Round(e.Location.X / _zoomFactor), (int)Math.Round(e.Location.Y / _zoomFactor));
-                    _nocrChar.Width = pictureBoxCharacter.Image.Width;
-                    _nocrChar.Height = pictureBoxCharacter.Image.Height;
-                    if (radioButtonHot.Checked)
-                        _nocrChar.LinesForeground.Add(new NOcrPoint(_start, _end));
+                    this._end = new Point((int)Math.Round(e.Location.X / this._zoomFactor), (int)Math.Round(e.Location.Y / this._zoomFactor));
+                    this._nocrChar.Width = this.pictureBoxCharacter.Image.Width;
+                    this._nocrChar.Height = this.pictureBoxCharacter.Image.Height;
+                    if (this.radioButtonHot.Checked)
+                    {
+                        this._nocrChar.LinesForeground.Add(new NOcrPoint(this._start, this._end));
+                    }
                     else
-                        _nocrChar.LinesBackground.Add(new NOcrPoint(_start, _end));
-                    _drawLineOn = false;
-                    pictureBoxCharacter.Invalidate();
-                    ShowOcrPoints();
-                    AddHistoryItem(_nocrChar);
+                    {
+                        this._nocrChar.LinesBackground.Add(new NOcrPoint(this._start, this._end));
+                    }
+
+                    this._drawLineOn = false;
+                    this.pictureBoxCharacter.Invalidate();
+                    this.ShowOcrPoints();
+                    this.AddHistoryItem(this._nocrChar);
 
                     if ((ModifierKeys & Keys.Control) == Keys.Control)
                     {
-                        _start = new Point((int)Math.Round(e.Location.X / _zoomFactor), (int)Math.Round(e.Location.Y / _zoomFactor));
-                        _startDone = true;
-                        _drawLineOn = true;
-                        pictureBoxCharacter.Invalidate();
+                        this._start = new Point((int)Math.Round(e.Location.X / this._zoomFactor), (int)Math.Round(e.Location.Y / this._zoomFactor));
+                        this._startDone = true;
+                        this._drawLineOn = true;
+                        this.pictureBoxCharacter.Invalidate();
                     }
                 }
                 else
                 {
-                    _start = new Point((int)Math.Round(e.Location.X / _zoomFactor), (int)Math.Round(e.Location.Y / _zoomFactor));
-                    _startDone = true;
-                    pictureBoxCharacter.Invalidate();
+                    this._start = new Point((int)Math.Round(e.Location.X / this._zoomFactor), (int)Math.Round(e.Location.Y / this._zoomFactor));
+                    this._startDone = true;
+                    this.pictureBoxCharacter.Invalidate();
                 }
             }
             else
             {
-                _startDone = false;
-                _drawLineOn = true;
-                _start = new Point((int)Math.Round(e.Location.X / _zoomFactor), (int)Math.Round(e.Location.Y / _zoomFactor));
-                _startDone = true;
-                pictureBoxCharacter.Invalidate();
+                this._startDone = false;
+                this._drawLineOn = true;
+                this._start = new Point((int)Math.Round(e.Location.X / this._zoomFactor), (int)Math.Round(e.Location.Y / this._zoomFactor));
+                this._startDone = true;
+                this.pictureBoxCharacter.Invalidate();
             }
         }
 
+        /// <summary>
+        /// The picture box character_ mouse move.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void pictureBoxCharacter_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_drawLineOn)
+            if (this._drawLineOn)
             {
-                _mx = e.X;
-                _my = e.Y;
-                pictureBoxCharacter.Invalidate();
+                this._mx = e.X;
+                this._my = e.Y;
+                this.pictureBoxCharacter.Invalidate();
             }
         }
 
+        /// <summary>
+        /// The list box lines foreground_ selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void listBoxLinesForeground_SelectedIndexChanged(object sender, EventArgs e)
         {
-            pictureBoxCharacter.Invalidate();
+            this.pictureBoxCharacter.Invalidate();
         }
 
+        /// <summary>
+        /// The list boxlines background_ selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void listBoxlinesBackground_SelectedIndexChanged(object sender, EventArgs e)
         {
-            pictureBoxCharacter.Invalidate();
+            this.pictureBoxCharacter.Invalidate();
         }
 
+        /// <summary>
+        /// The check box italic_ checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void checkBoxItalic_CheckedChanged(object sender, EventArgs e)
         {
-            if (_nocrChar != null)
+            if (this._nocrChar != null)
             {
-                _nocrChar.Italic = checkBoxItalic.Checked;
+                this._nocrChar.Italic = this.checkBoxItalic.Checked;
             }
         }
 
+        /// <summary>
+        /// The text box text_ text changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void textBoxText_TextChanged(object sender, EventArgs e)
         {
-            if (_nocrChar != null)
+            if (this._nocrChar != null)
             {
-                _nocrChar.Text = textBoxText.Text;
+                this._nocrChar.Text = this.textBoxText.Text;
             }
         }
 
+        /// <summary>
+        /// The remove foreground tool strip menu item_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void removeForegroundToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (listBoxLinesForeground.SelectedItems.Count == 1)
+            if (this.listBoxLinesForeground.SelectedItems.Count == 1)
             {
-                var op = listBoxLinesForeground.Items[listBoxLinesForeground.SelectedIndex] as NOcrPoint;
-                _nocrChar.LinesForeground.Remove(op);
+                var op = this.listBoxLinesForeground.Items[this.listBoxLinesForeground.SelectedIndex] as NOcrPoint;
+                this._nocrChar.LinesForeground.Remove(op);
             }
-            ShowOcrPoints();
+
+            this.ShowOcrPoints();
         }
 
+        /// <summary>
+        /// The remove back tool strip menu item_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void removeBackToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (listBoxlinesBackground.SelectedItems.Count == 1)
+            if (this.listBoxlinesBackground.SelectedItems.Count == 1)
             {
-                var op = listBoxlinesBackground.Items[listBoxlinesBackground.SelectedIndex] as NOcrPoint;
-                _nocrChar.LinesBackground.Remove(op);
+                var op = this.listBoxlinesBackground.Items[this.listBoxlinesBackground.SelectedIndex] as NOcrPoint;
+                this._nocrChar.LinesBackground.Remove(op);
             }
-            ShowOcrPoints();
+
+            this.ShowOcrPoints();
         }
 
+        /// <summary>
+        /// The button import_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonImport_Click(object sender, EventArgs e)
         {
             int importedCount = 0;
             int notImportedCount = 0;
-            openFileDialog1.Filter = "nOCR files|*.nocr";
-            openFileDialog1.InitialDirectory = Configuration.DataDirectory;
-            openFileDialog1.FileName = string.Empty;
-            openFileDialog1.Title = "Import existing nOCR database into current";
-            if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
+            this.openFileDialog1.Filter = "nOCR files|*.nocr";
+            this.openFileDialog1.InitialDirectory = Configuration.DataDirectory;
+            this.openFileDialog1.FileName = string.Empty;
+            this.openFileDialog1.Title = "Import existing nOCR database into current";
+            if (this.openFileDialog1.ShowDialog(this) == DialogResult.OK)
             {
-                NOcrDb newDb = new NOcrDb(openFileDialog1.FileName);
+                NOcrDb newDb = new NOcrDb(this.openFileDialog1.FileName);
                 foreach (NOcrChar newChar in newDb.OcrCharacters)
                 {
                     bool found = false;
-                    foreach (NOcrChar oldChar in _nocrChars)
+                    foreach (NOcrChar oldChar in this._nocrChars)
                     {
-                        if (oldChar.Text == newChar.Text &&
-                            oldChar.Width == newChar.Width &&
-                            oldChar.Height == newChar.Height &&
-                            oldChar.MarginTop == newChar.MarginTop &&
-                            oldChar.ExpandCount == newChar.ExpandCount &&
-                            oldChar.LinesForeground.Count == newChar.LinesForeground.Count &&
-                            oldChar.LinesBackground.Count == newChar.LinesBackground.Count)
+                        if (oldChar.Text == newChar.Text && oldChar.Width == newChar.Width && oldChar.Height == newChar.Height && oldChar.MarginTop == newChar.MarginTop && oldChar.ExpandCount == newChar.ExpandCount && oldChar.LinesForeground.Count == newChar.LinesForeground.Count && oldChar.LinesBackground.Count == newChar.LinesBackground.Count)
                         {
                             found = true;
                             for (int i = 0; i < oldChar.LinesForeground.Count; i++)
                             {
-                                if (oldChar.LinesForeground[i].Start.X != newChar.LinesForeground[i].Start.X ||
-                                    oldChar.LinesForeground[i].Start.Y != newChar.LinesForeground[i].Start.Y ||
-                                    oldChar.LinesForeground[i].End.X != newChar.LinesForeground[i].End.X ||
-                                    oldChar.LinesForeground[i].End.Y != newChar.LinesForeground[i].End.Y)
+                                if (oldChar.LinesForeground[i].Start.X != newChar.LinesForeground[i].Start.X || oldChar.LinesForeground[i].Start.Y != newChar.LinesForeground[i].Start.Y || oldChar.LinesForeground[i].End.X != newChar.LinesForeground[i].End.X || oldChar.LinesForeground[i].End.Y != newChar.LinesForeground[i].End.Y)
                                 {
                                     found = false;
                                 }
                             }
+
                             for (int i = 0; i < oldChar.LinesBackground.Count; i++)
                             {
-                                if (oldChar.LinesBackground[i].Start.X != newChar.LinesBackground[i].Start.X ||
-                                    oldChar.LinesBackground[i].Start.Y != newChar.LinesBackground[i].Start.Y ||
-                                    oldChar.LinesBackground[i].End.X != newChar.LinesBackground[i].End.X ||
-                                    oldChar.LinesBackground[i].End.Y != newChar.LinesBackground[i].End.Y)
+                                if (oldChar.LinesBackground[i].Start.X != newChar.LinesBackground[i].Start.X || oldChar.LinesBackground[i].Start.Y != newChar.LinesBackground[i].Start.Y || oldChar.LinesBackground[i].End.X != newChar.LinesBackground[i].End.X || oldChar.LinesBackground[i].End.Y != newChar.LinesBackground[i].End.Y)
                                 {
                                     found = false;
                                 }
                             }
                         }
                     }
+
                     if (!found)
                     {
-                        _nocrChars.Add(newChar);
+                        this._nocrChars.Add(newChar);
                         importedCount++;
                     }
                     else
@@ -505,9 +797,9 @@ namespace Nikse.SubtitleEdit.Forms
                         notImportedCount++;
                     }
                 }
+
                 MessageBox.Show(string.Format("Number of characters imported: {0}\r\nNumber of characters not imported (already present): {1}", importedCount, notImportedCount));
             }
         }
-
     }
 }

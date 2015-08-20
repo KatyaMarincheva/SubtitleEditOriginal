@@ -1,44 +1,96 @@
-﻿using System;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="FcpProperties.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The fcp properties.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The fcp properties.
+    /// </summary>
     public partial class FcpProperties : PositionAndSizeForm
     {
-        public int FcpFontSize { get; set; }
-        public string FcpFontName { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FcpProperties"/> class.
+        /// </summary>
         public FcpProperties()
         {
-            InitializeComponent();
-            textBoxFontName.Text = Configuration.Settings.SubtitleSettings.FcpFontName;
+            this.InitializeComponent();
+            this.textBoxFontName.Text = Configuration.Settings.SubtitleSettings.FcpFontName;
             try
             {
-                numericUpDownFontSize.Value = Configuration.Settings.SubtitleSettings.FcpFontSize;
+                this.numericUpDownFontSize.Value = Configuration.Settings.SubtitleSettings.FcpFontSize;
             }
             catch
             {
-                numericUpDownFontSize.Value = 18;
+                this.numericUpDownFontSize.Value = 18;
             }
         }
 
+        /// <summary>
+        /// Gets or sets the fcp font size.
+        /// </summary>
+        public int FcpFontSize { get; set; }
+
+        /// <summary>
+        /// Gets or sets the fcp font name.
+        /// </summary>
+        public string FcpFontName { get; set; }
+
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            FcpFontName = textBoxFontName.Text;
-            FcpFontSize = (int)numericUpDownFontSize.Value;
-            DialogResult = DialogResult.OK;
+            this.FcpFontName = this.textBoxFontName.Text;
+            this.FcpFontSize = (int)this.numericUpDownFontSize.Value;
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
 
+        /// <summary>
+        /// The fcp properties_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void FcpProperties_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
     }
 }

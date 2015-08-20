@@ -1,103 +1,308 @@
-﻿using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.Dictionaries;
-using Nikse.SubtitleEdit.Logic.Enums;
-using Nikse.SubtitleEdit.Logic.SpellCheck;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Text;
-using System.Windows.Forms;
-using System.Xml;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SpellCheck.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The spell check.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Drawing;
+    using System.IO;
+    using System.Text;
+    using System.Windows.Forms;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.Dictionaries;
+    using Nikse.SubtitleEdit.Logic.Enums;
+    using Nikse.SubtitleEdit.Logic.SpellCheck;
+
+    /// <summary>
+    /// The spell check.
+    /// </summary>
     public sealed partial class SpellCheck : Form
     {
-        private class UndoObject
-        {
-            public int CurrentIndex { get; set; }
-            public string UndoText { get; set; }
-            public string UndoWord { get; set; }
-            public string CurrentWord { get; set; }
-            public SpellCheckAction Action { get; set; }
-            public Subtitle Subtitle { get; set; }
-            public int NoOfSkippedWords { get; set; }
-            public int NoOfChangedWords { get; set; }
-            public int NoOfCorrectWords { get; set; }
-            public int NoOfNamesEtc { get; set; }
-            public int NoOfAddedWords { get; set; }
-        }
-        private List<UndoObject> _undoList = new List<UndoObject>();
-
+        /// <summary>
+        /// The _action.
+        /// </summary>
         private SpellCheckAction _action = SpellCheckAction.Skip;
-        private List<string> _suggestions;
-        private string _currentAction;
-        public SpellCheckAction Action { get { return _action; } set { _action = value; } }
-        public string ChangeWord { get { return textBoxWord.Text; } set { textBoxWord.Text = value; } }
-        public string ChangeWholeText { get { return textBoxWholeText.Text; } }
-        public bool AutoFixNames { get { return checkBoxAutoChangeNames.Checked; } }
-        public int CurrentLineIndex
-        {
-            get { return _currentIndex; }
-        }
 
-        private NamesList _namesList;
-        private HashSet<string> _namesEtcList = new HashSet<string>();
-        private HashSet<string> _namesEtcMultiWordList = new HashSet<string>();
-        private List<string> _namesEtcListUppercase = new List<string>();
-        private List<string> _namesEtcListWithApostrophe = new List<string>();
-        private List<string> _skipAllList = new List<string>();
-        private List<string> _wordsWithDashesOrPeriods = new List<string>();
-
+        /// <summary>
+        /// The _change all dictionary.
+        /// </summary>
         private Dictionary<string, string> _changeAllDictionary = new Dictionary<string, string>();
-        private List<string> _userWordList = new List<string>();
-        private List<string> _userPhraseList = new List<string>();
-        private string _prefix = string.Empty;
-        private string _postfix = string.Empty;
-        private Hunspell _hunspell;
-        private Paragraph _currentParagraph;
-        private int _currentIndex;
-        private string _currentWord;
-        private SpellCheckWord _currentSpellCheckWord;
-        private List<SpellCheckWord> _words;
-        private int _wordsIndex;
-        private Subtitle _subtitle;
-        private string _originalWord;
 
-        private int _noOfSkippedWords;
-        private int _noOfChangedWords;
-        private int _noOfCorrectWords;
-        private int _noOfNamesEtc;
-        private int _noOfAddedWords;
-        private bool _firstChange = true;
-        private string _languageName;
-        private Main _mainWindow;
+        /// <summary>
+        /// The _current action.
+        /// </summary>
+        private string _currentAction;
 
+        /// <summary>
+        /// The _current dictionary.
+        /// </summary>
         private string _currentDictionary;
 
-        public class SuggestionParameter
-        {
-            public string InputWord { get; set; }
-            public List<string> Suggestions { get; set; }
-            public Hunspell Hunspell { get; set; }
-            public bool Success { get; set; }
+        /// <summary>
+        /// The _current index.
+        /// </summary>
+        private int _currentIndex;
 
-            public SuggestionParameter(string word, Hunspell hunspell)
+        /// <summary>
+        /// The _current paragraph.
+        /// </summary>
+        private Paragraph _currentParagraph;
+
+        /// <summary>
+        /// The _current spell check word.
+        /// </summary>
+        private SpellCheckWord _currentSpellCheckWord;
+
+        /// <summary>
+        /// The _current word.
+        /// </summary>
+        private string _currentWord;
+
+        /// <summary>
+        /// The _first change.
+        /// </summary>
+        private bool _firstChange = true;
+
+        /// <summary>
+        /// The _hunspell.
+        /// </summary>
+        private Hunspell _hunspell;
+
+        /// <summary>
+        /// The _language name.
+        /// </summary>
+        private string _languageName;
+
+        /// <summary>
+        /// The _main window.
+        /// </summary>
+        private Main _mainWindow;
+
+        /// <summary>
+        /// The _names etc list.
+        /// </summary>
+        private HashSet<string> _namesEtcList = new HashSet<string>();
+
+        /// <summary>
+        /// The _names etc list uppercase.
+        /// </summary>
+        private List<string> _namesEtcListUppercase = new List<string>();
+
+        /// <summary>
+        /// The _names etc list with apostrophe.
+        /// </summary>
+        private List<string> _namesEtcListWithApostrophe = new List<string>();
+
+        /// <summary>
+        /// The _names etc multi word list.
+        /// </summary>
+        private HashSet<string> _namesEtcMultiWordList = new HashSet<string>();
+
+        /// <summary>
+        /// The _names list.
+        /// </summary>
+        private NamesList _namesList;
+
+        /// <summary>
+        /// The _no of added words.
+        /// </summary>
+        private int _noOfAddedWords;
+
+        /// <summary>
+        /// The _no of changed words.
+        /// </summary>
+        private int _noOfChangedWords;
+
+        /// <summary>
+        /// The _no of correct words.
+        /// </summary>
+        private int _noOfCorrectWords;
+
+        /// <summary>
+        /// The _no of names etc.
+        /// </summary>
+        private int _noOfNamesEtc;
+
+        /// <summary>
+        /// The _no of skipped words.
+        /// </summary>
+        private int _noOfSkippedWords;
+
+        /// <summary>
+        /// The _original word.
+        /// </summary>
+        private string _originalWord;
+
+        /// <summary>
+        /// The _postfix.
+        /// </summary>
+        private string _postfix = string.Empty;
+
+        /// <summary>
+        /// The _prefix.
+        /// </summary>
+        private string _prefix = string.Empty;
+
+        /// <summary>
+        /// The _skip all list.
+        /// </summary>
+        private List<string> _skipAllList = new List<string>();
+
+        /// <summary>
+        /// The _subtitle.
+        /// </summary>
+        private Subtitle _subtitle;
+
+        /// <summary>
+        /// The _suggestions.
+        /// </summary>
+        private List<string> _suggestions;
+
+        /// <summary>
+        /// The _undo list.
+        /// </summary>
+        private List<UndoObject> _undoList = new List<UndoObject>();
+
+        /// <summary>
+        /// The _user phrase list.
+        /// </summary>
+        private List<string> _userPhraseList = new List<string>();
+
+        /// <summary>
+        /// The _user word list.
+        /// </summary>
+        private List<string> _userWordList = new List<string>();
+
+        /// <summary>
+        /// The _words.
+        /// </summary>
+        private List<SpellCheckWord> _words;
+
+        /// <summary>
+        /// The _words index.
+        /// </summary>
+        private int _wordsIndex;
+
+        /// <summary>
+        /// The _words with dashes or periods.
+        /// </summary>
+        private List<string> _wordsWithDashesOrPeriods = new List<string>();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpellCheck"/> class.
+        /// </summary>
+        public SpellCheck()
+        {
+            this.InitializeComponent();
+            this.labelActionInfo.Text = string.Empty;
+            this.Text = Configuration.Settings.Language.SpellCheck.Title;
+            this.labelFullText.Text = Configuration.Settings.Language.SpellCheck.FullText;
+            this.labelLanguage.Text = Configuration.Settings.Language.SpellCheck.Language;
+            this.groupBoxWordNotFound.Text = Configuration.Settings.Language.SpellCheck.WordNotFound;
+            this.buttonAddToDictionary.Text = Configuration.Settings.Language.SpellCheck.AddToUserDictionary;
+            this.buttonChange.Text = Configuration.Settings.Language.SpellCheck.Change;
+            this.buttonChangeAll.Text = Configuration.Settings.Language.SpellCheck.ChangeAll;
+            this.buttonSkipAll.Text = Configuration.Settings.Language.SpellCheck.SkipAll;
+            this.buttonSkipOnce.Text = Configuration.Settings.Language.SpellCheck.SkipOnce;
+            this.buttonUseSuggestion.Text = Configuration.Settings.Language.SpellCheck.Use;
+            this.buttonUseSuggestionAlways.Text = Configuration.Settings.Language.SpellCheck.UseAlways;
+            this.buttonAbort.Text = Configuration.Settings.Language.SpellCheck.Abort;
+            this.buttonEditWholeText.Text = Configuration.Settings.Language.SpellCheck.EditWholeText;
+            this.checkBoxAutoChangeNames.Text = Configuration.Settings.Language.SpellCheck.AutoFixNames;
+            this.checkBoxAutoChangeNames.Checked = Configuration.Settings.Tools.SpellCheckAutoChangeNames;
+            this.groupBoxEditWholeText.Text = Configuration.Settings.Language.SpellCheck.EditWholeText;
+            this.buttonChangeWholeText.Text = Configuration.Settings.Language.SpellCheck.Change;
+            this.buttonSkipText.Text = Configuration.Settings.Language.SpellCheck.SkipOnce;
+            this.groupBoxSuggestions.Text = Configuration.Settings.Language.SpellCheck.Suggestions;
+            this.buttonAddToNames.Text = Configuration.Settings.Language.SpellCheck.AddToNamesAndIgnoreList;
+            this.buttonGoogleIt.Text = Configuration.Settings.Language.Main.VideoControls.GoogleIt;
+            Utilities.FixLargeFonts(this, this.buttonAbort);
+        }
+
+        /// <summary>
+        /// Gets or sets the action.
+        /// </summary>
+        public SpellCheckAction Action
+        {
+            get
             {
-                InputWord = word;
-                Suggestions = new List<string>();
-                Hunspell = hunspell;
-                Success = false;
+                return this._action;
+            }
+
+            set
+            {
+                this._action = value;
             }
         }
 
+        /// <summary>
+        /// Gets or sets the change word.
+        /// </summary>
+        public string ChangeWord
+        {
+            get
+            {
+                return this.textBoxWord.Text;
+            }
+
+            set
+            {
+                this.textBoxWord.Text = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the change whole text.
+        /// </summary>
+        public string ChangeWholeText
+        {
+            get
+            {
+                return this.textBoxWholeText.Text;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether auto fix names.
+        /// </summary>
+        public bool AutoFixNames
+        {
+            get
+            {
+                return this.checkBoxAutoChangeNames.Checked;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current line index.
+        /// </summary>
+        public int CurrentLineIndex
+        {
+            get
+            {
+                return this._currentIndex;
+            }
+        }
+
+        /// <summary>
+        /// Gets the language string.
+        /// </summary>
         public string LanguageString
         {
             get
             {
-                string name = comboBoxDictionaries.SelectedItem.ToString();
+                string name = this.comboBoxDictionaries.SelectedItem.ToString();
                 int start = name.LastIndexOf('[');
                 int end = name.LastIndexOf(']');
                 if (start >= 0 && end > start)
@@ -106,110 +311,129 @@ namespace Nikse.SubtitleEdit.Forms
                     name = name.Substring(start, end - start);
                     return name;
                 }
+
                 return null;
             }
         }
 
-        public SpellCheck()
-        {
-            InitializeComponent();
-            labelActionInfo.Text = string.Empty;
-            Text = Configuration.Settings.Language.SpellCheck.Title;
-            labelFullText.Text = Configuration.Settings.Language.SpellCheck.FullText;
-            labelLanguage.Text = Configuration.Settings.Language.SpellCheck.Language;
-            groupBoxWordNotFound.Text = Configuration.Settings.Language.SpellCheck.WordNotFound;
-            buttonAddToDictionary.Text = Configuration.Settings.Language.SpellCheck.AddToUserDictionary;
-            buttonChange.Text = Configuration.Settings.Language.SpellCheck.Change;
-            buttonChangeAll.Text = Configuration.Settings.Language.SpellCheck.ChangeAll;
-            buttonSkipAll.Text = Configuration.Settings.Language.SpellCheck.SkipAll;
-            buttonSkipOnce.Text = Configuration.Settings.Language.SpellCheck.SkipOnce;
-            buttonUseSuggestion.Text = Configuration.Settings.Language.SpellCheck.Use;
-            buttonUseSuggestionAlways.Text = Configuration.Settings.Language.SpellCheck.UseAlways;
-            buttonAbort.Text = Configuration.Settings.Language.SpellCheck.Abort;
-            buttonEditWholeText.Text = Configuration.Settings.Language.SpellCheck.EditWholeText;
-            checkBoxAutoChangeNames.Text = Configuration.Settings.Language.SpellCheck.AutoFixNames;
-            checkBoxAutoChangeNames.Checked = Configuration.Settings.Tools.SpellCheckAutoChangeNames;
-            groupBoxEditWholeText.Text = Configuration.Settings.Language.SpellCheck.EditWholeText;
-            buttonChangeWholeText.Text = Configuration.Settings.Language.SpellCheck.Change;
-            buttonSkipText.Text = Configuration.Settings.Language.SpellCheck.SkipOnce;
-            groupBoxSuggestions.Text = Configuration.Settings.Language.SpellCheck.Suggestions;
-            buttonAddToNames.Text = Configuration.Settings.Language.SpellCheck.AddToNamesAndIgnoreList;
-            buttonGoogleIt.Text = Configuration.Settings.Language.Main.VideoControls.GoogleIt;
-            Utilities.FixLargeFonts(this, buttonAbort);
-        }
-
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="languageName">
+        /// The language name.
+        /// </param>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <param name="suggestions">
+        /// The suggestions.
+        /// </param>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
+        /// <param name="progress">
+        /// The progress.
+        /// </param>
         public void Initialize(string languageName, SpellCheckWord word, List<string> suggestions, string paragraph, string progress)
         {
-            _originalWord = word.Text;
-            _suggestions = suggestions;
-            groupBoxWordNotFound.Visible = true;
-            groupBoxEditWholeText.Visible = false;
-            buttonEditWholeText.Text = Configuration.Settings.Language.SpellCheck.EditWholeText;
-            Text = Configuration.Settings.Language.SpellCheck.Title + " [" + languageName + "] - " + progress;
-            textBoxWord.Text = word.Text;
-            textBoxWholeText.Text = paragraph;
-            listBoxSuggestions.Items.Clear();
+            this._originalWord = word.Text;
+            this._suggestions = suggestions;
+            this.groupBoxWordNotFound.Visible = true;
+            this.groupBoxEditWholeText.Visible = false;
+            this.buttonEditWholeText.Text = Configuration.Settings.Language.SpellCheck.EditWholeText;
+            this.Text = Configuration.Settings.Language.SpellCheck.Title + " [" + languageName + "] - " + progress;
+            this.textBoxWord.Text = word.Text;
+            this.textBoxWholeText.Text = paragraph;
+            this.listBoxSuggestions.Items.Clear();
             foreach (string suggestion in suggestions)
             {
-                listBoxSuggestions.Items.Add(suggestion);
+                this.listBoxSuggestions.Items.Add(suggestion);
             }
-            if (listBoxSuggestions.Items.Count > 0)
-                listBoxSuggestions.SelectedIndex = 0;
 
-            richTextBoxParagraph.Text = paragraph;
+            if (this.listBoxSuggestions.Items.Count > 0)
+            {
+                this.listBoxSuggestions.SelectedIndex = 0;
+            }
 
-            FillSpellCheckDictionaries(languageName);
-            ShowActiveWordWithColor(word);
-            _action = SpellCheckAction.Skip;
-            DialogResult = DialogResult.None;
+            this.richTextBoxParagraph.Text = paragraph;
+
+            this.FillSpellCheckDictionaries(languageName);
+            this.ShowActiveWordWithColor(word);
+            this._action = SpellCheckAction.Skip;
+            this.DialogResult = DialogResult.None;
         }
 
+        /// <summary>
+        /// The fill spell check dictionaries.
+        /// </summary>
+        /// <param name="languageName">
+        /// The language name.
+        /// </param>
         private void FillSpellCheckDictionaries(string languageName)
         {
-            comboBoxDictionaries.SelectedIndexChanged -= ComboBoxDictionariesSelectedIndexChanged;
-            comboBoxDictionaries.Items.Clear();
+            this.comboBoxDictionaries.SelectedIndexChanged -= this.ComboBoxDictionariesSelectedIndexChanged;
+            this.comboBoxDictionaries.Items.Clear();
             foreach (string name in Utilities.GetDictionaryLanguages())
             {
-                comboBoxDictionaries.Items.Add(name);
+                this.comboBoxDictionaries.Items.Add(name);
                 if (name.Contains("[" + languageName + "]"))
-                    comboBoxDictionaries.SelectedIndex = comboBoxDictionaries.Items.Count - 1;
+                {
+                    this.comboBoxDictionaries.SelectedIndex = this.comboBoxDictionaries.Items.Count - 1;
+                }
             }
-            comboBoxDictionaries.SelectedIndexChanged += ComboBoxDictionariesSelectedIndexChanged;
+
+            this.comboBoxDictionaries.SelectedIndexChanged += this.ComboBoxDictionariesSelectedIndexChanged;
         }
 
+        /// <summary>
+        /// The show active word with color.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
         private void ShowActiveWordWithColor(SpellCheckWord word)
         {
-            richTextBoxParagraph.SelectAll();
-            richTextBoxParagraph.SelectionColor = Color.Black;
-            richTextBoxParagraph.SelectionLength = 0;
+            this.richTextBoxParagraph.SelectAll();
+            this.richTextBoxParagraph.SelectionColor = Color.Black;
+            this.richTextBoxParagraph.SelectionLength = 0;
 
             for (int i = 0; i < 10; i++)
             {
                 int idx = word.Index - i;
-                if (idx >= 0 && idx < richTextBoxParagraph.Text.Length && richTextBoxParagraph.Text.Substring(idx).StartsWith(word.Text))
+                if (idx >= 0 && idx < this.richTextBoxParagraph.Text.Length && this.richTextBoxParagraph.Text.Substring(idx).StartsWith(word.Text))
                 {
-                    richTextBoxParagraph.SelectionStart = idx;
-                    richTextBoxParagraph.SelectionLength = word.Text.Length;
-                    richTextBoxParagraph.SelectionColor = Color.Red;
+                    this.richTextBoxParagraph.SelectionStart = idx;
+                    this.richTextBoxParagraph.SelectionLength = word.Text.Length;
+                    this.richTextBoxParagraph.SelectionColor = Color.Red;
                     break;
                 }
+
                 idx = word.Index + i;
-                if (idx >= 0 && idx < richTextBoxParagraph.Text.Length && richTextBoxParagraph.Text.Substring(idx).StartsWith(word.Text))
+                if (idx >= 0 && idx < this.richTextBoxParagraph.Text.Length && this.richTextBoxParagraph.Text.Substring(idx).StartsWith(word.Text))
                 {
-                    richTextBoxParagraph.SelectionStart = idx;
-                    richTextBoxParagraph.SelectionLength = word.Text.Length;
-                    richTextBoxParagraph.SelectionColor = Color.Red;
+                    this.richTextBoxParagraph.SelectionStart = idx;
+                    this.richTextBoxParagraph.SelectionLength = word.Text.Length;
+                    this.richTextBoxParagraph.SelectionColor = Color.Red;
                     break;
                 }
             }
         }
 
+        /// <summary>
+        /// The form spell check_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void FormSpellCheck_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                _action = SpellCheckAction.Abort;
-                DialogResult = DialogResult.Cancel;
+                this._action = SpellCheckAction.Abort;
+                this.DialogResult = DialogResult.Cancel;
             }
             else if (e.KeyCode == Keys.F1)
             {
@@ -219,94 +443,193 @@ namespace Nikse.SubtitleEdit.Forms
             else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.G)
             {
                 e.SuppressKeyPress = true;
-                System.Diagnostics.Process.Start("https://www.google.com/search?q=" + Utilities.UrlEncode(textBoxWord.Text));
+                System.Diagnostics.Process.Start("https://www.google.com/search?q=" + Utilities.UrlEncode(this.textBoxWord.Text));
             }
             else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Z)
             {
-                if (buttonUndo.Visible)
+                if (this.buttonUndo.Visible)
                 {
-                    buttonUndo_Click(null, null);
+                    this.buttonUndo_Click(null, null);
                     e.SuppressKeyPress = true;
                 }
             }
         }
 
+        /// <summary>
+        /// The button abort click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonAbortClick(object sender, EventArgs e)
         {
-            ShowEndStatusMessage(Configuration.Settings.Language.SpellCheck.SpellCheckAborted);
-            DialogResult = DialogResult.Abort;
+            this.ShowEndStatusMessage(Configuration.Settings.Language.SpellCheck.SpellCheckAborted);
+            this.DialogResult = DialogResult.Abort;
         }
 
+        /// <summary>
+        /// The button change click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonChangeClick(object sender, EventArgs e)
         {
-            PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.Change, _currentWord + " > " + textBoxWord.Text), SpellCheckAction.Change);
-            DoAction(SpellCheckAction.Change);
+            this.PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.Change, this._currentWord + " > " + this.textBoxWord.Text), SpellCheckAction.Change);
+            this.DoAction(SpellCheckAction.Change);
         }
 
+        /// <summary>
+        /// The button use suggestion click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonUseSuggestionClick(object sender, EventArgs e)
         {
-            if (listBoxSuggestions.SelectedIndex >= 0)
+            if (this.listBoxSuggestions.SelectedIndex >= 0)
             {
-                textBoxWord.Text = listBoxSuggestions.SelectedItem.ToString();
-                PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.Change, _currentWord + " > " + textBoxWord.Text), SpellCheckAction.Change);
-                DoAction(SpellCheckAction.Change);
+                this.textBoxWord.Text = this.listBoxSuggestions.SelectedItem.ToString();
+                this.PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.Change, this._currentWord + " > " + this.textBoxWord.Text), SpellCheckAction.Change);
+                this.DoAction(SpellCheckAction.Change);
             }
         }
 
+        /// <summary>
+        /// The button skip all click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonSkipAllClick(object sender, EventArgs e)
         {
-            PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.SkipAll, textBoxWord.Text), SpellCheckAction.SkipAll);
-            DoAction(SpellCheckAction.SkipAll);
+            this.PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.SkipAll, this.textBoxWord.Text), SpellCheckAction.SkipAll);
+            this.DoAction(SpellCheckAction.SkipAll);
         }
 
+        /// <summary>
+        /// The button skip once click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonSkipOnceClick(object sender, EventArgs e)
         {
-            PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.SkipOnce, textBoxWord.Text), SpellCheckAction.Skip);
-            DoAction(SpellCheckAction.Skip);
+            this.PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.SkipOnce, this.textBoxWord.Text), SpellCheckAction.Skip);
+            this.DoAction(SpellCheckAction.Skip);
         }
 
+        /// <summary>
+        /// The button add to dictionary click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonAddToDictionaryClick(object sender, EventArgs e)
         {
-            PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.AddToUserDictionary, textBoxWord.Text), SpellCheckAction.AddToDictionary);
-            DoAction(SpellCheckAction.AddToDictionary);
+            this.PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.AddToUserDictionary, this.textBoxWord.Text), SpellCheckAction.AddToDictionary);
+            this.DoAction(SpellCheckAction.AddToDictionary);
         }
 
+        /// <summary>
+        /// The combo box dictionaries selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ComboBoxDictionariesSelectedIndexChanged(object sender, EventArgs e)
         {
-            Configuration.Settings.General.SpellCheckLanguage = LanguageString;
+            Configuration.Settings.General.SpellCheckLanguage = this.LanguageString;
             Configuration.Settings.Save();
-            _languageName = LanguageString;
-            string dictionary = Utilities.DictionaryFolder + _languageName;
-            LoadDictionaries(Utilities.DictionaryFolder, dictionary);
-            _wordsIndex--;
-            PrepareNextWord();
+            this._languageName = this.LanguageString;
+            string dictionary = Utilities.DictionaryFolder + this._languageName;
+            this.LoadDictionaries(Utilities.DictionaryFolder, dictionary);
+            this._wordsIndex--;
+            this.PrepareNextWord();
         }
 
+        /// <summary>
+        /// The load hunspell.
+        /// </summary>
+        /// <param name="dictionary">
+        /// The dictionary.
+        /// </param>
         private void LoadHunspell(string dictionary)
         {
-            _currentDictionary = dictionary;
-            if (_hunspell != null)
-                _hunspell.Dispose();
-            _hunspell = Hunspell.GetHunspell(dictionary);
+            this._currentDictionary = dictionary;
+            if (this._hunspell != null)
+            {
+                this._hunspell.Dispose();
+            }
+
+            this._hunspell = Hunspell.GetHunspell(dictionary);
         }
 
+        /// <summary>
+        /// The do spell.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool DoSpell(string word)
         {
-            return _hunspell.Spell(word);
+            return this._hunspell.Spell(word);
         }
 
+        /// <summary>
+        /// The do suggest.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public List<string> DoSuggest(string word)
         {
-            var parameter = new SuggestionParameter(word, _hunspell);
+            var parameter = new SuggestionParameter(word, this._hunspell);
             var suggestThread = new System.Threading.Thread(DoWork);
             suggestThread.Start(parameter);
             suggestThread.Join(3000); // wait max 3 seconds
             suggestThread.Abort();
             if (!parameter.Success)
-                LoadHunspell(_currentDictionary);
+            {
+                this.LoadHunspell(this._currentDictionary);
+            }
+
             return parameter.Suggestions;
         }
 
+        /// <summary>
+        /// The do work.
+        /// </summary>
+        /// <param name="data">
+        /// The data.
+        /// </param>
         public static void DoWork(object data)
         {
             var parameter = (SuggestionParameter)data;
@@ -314,73 +637,145 @@ namespace Nikse.SubtitleEdit.Forms
             parameter.Success = true;
         }
 
+        /// <summary>
+        /// The button change all click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonChangeAllClick(object sender, EventArgs e)
         {
-            PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.ChangeAll, _currentWord + " > " + textBoxWord.Text), SpellCheckAction.ChangeAll);
-            DoAction(SpellCheckAction.ChangeAll);
+            this.PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.ChangeAll, this._currentWord + " > " + this.textBoxWord.Text), SpellCheckAction.ChangeAll);
+            this.DoAction(SpellCheckAction.ChangeAll);
         }
 
+        /// <summary>
+        /// The button use suggestion always click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonUseSuggestionAlwaysClick(object sender, EventArgs e)
         {
-            if (listBoxSuggestions.SelectedIndex >= 0)
+            if (this.listBoxSuggestions.SelectedIndex >= 0)
             {
-                textBoxWord.Text = listBoxSuggestions.SelectedItem.ToString();
-                PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.ChangeAll, _currentWord + " > " + textBoxWord.Text), SpellCheckAction.ChangeAll);
-                DoAction(SpellCheckAction.ChangeAll);
+                this.textBoxWord.Text = this.listBoxSuggestions.SelectedItem.ToString();
+                this.PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.ChangeAll, this._currentWord + " > " + this.textBoxWord.Text), SpellCheckAction.ChangeAll);
+                this.DoAction(SpellCheckAction.ChangeAll);
             }
         }
 
+        /// <summary>
+        /// The spell check_ form closing.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void SpellCheck_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Configuration.Settings.Tools.SpellCheckAutoChangeNames = checkBoxAutoChangeNames.Checked;
+            Configuration.Settings.Tools.SpellCheckAutoChangeNames = this.checkBoxAutoChangeNames.Checked;
             if (e.CloseReason == CloseReason.UserClosing)
             {
-                DialogResult = DialogResult.Abort;
+                this.DialogResult = DialogResult.Abort;
             }
         }
 
+        /// <summary>
+        /// The button add to names click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonAddToNamesClick(object sender, EventArgs e)
         {
-            PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.AddToNamesAndIgnoreList, textBoxWord.Text), SpellCheckAction.AddToNamesEtc);
-            DoAction(SpellCheckAction.AddToNamesEtc);
+            this.PushUndo(string.Format("{0}: {1}", Configuration.Settings.Language.SpellCheck.AddToNamesAndIgnoreList, this.textBoxWord.Text), SpellCheckAction.AddToNamesEtc);
+            this.DoAction(SpellCheckAction.AddToNamesEtc);
         }
 
+        /// <summary>
+        /// The button edit whole text click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonEditWholeTextClick(object sender, EventArgs e)
         {
-            if (groupBoxWordNotFound.Visible)
+            if (this.groupBoxWordNotFound.Visible)
             {
-                groupBoxWordNotFound.Visible = false;
-                groupBoxEditWholeText.Visible = true;
-                buttonEditWholeText.Text = Configuration.Settings.Language.SpellCheck.EditWordOnly;
-                textBoxWholeText.Focus();
+                this.groupBoxWordNotFound.Visible = false;
+                this.groupBoxEditWholeText.Visible = true;
+                this.buttonEditWholeText.Text = Configuration.Settings.Language.SpellCheck.EditWordOnly;
+                this.textBoxWholeText.Focus();
             }
             else
             {
-                groupBoxWordNotFound.Visible = true;
-                groupBoxEditWholeText.Visible = false;
-                buttonEditWholeText.Text = Configuration.Settings.Language.SpellCheck.EditWholeText;
-                textBoxWord.Focus();
+                this.groupBoxWordNotFound.Visible = true;
+                this.groupBoxEditWholeText.Visible = false;
+                this.buttonEditWholeText.Text = Configuration.Settings.Language.SpellCheck.EditWholeText;
+                this.textBoxWord.Focus();
             }
         }
 
+        /// <summary>
+        /// The button skip text click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonSkipTextClick(object sender, EventArgs e)
         {
-            PushUndo(string.Format("{0}", Configuration.Settings.Language.SpellCheck.SkipOnce), SpellCheckAction.Skip);
-            DoAction(SpellCheckAction.Skip);
+            this.PushUndo(string.Format("{0}", Configuration.Settings.Language.SpellCheck.SkipOnce), SpellCheckAction.Skip);
+            this.DoAction(SpellCheckAction.Skip);
         }
 
+        /// <summary>
+        /// The button change whole text click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonChangeWholeTextClick(object sender, EventArgs e)
         {
-            PushUndo(string.Format("{0}", Configuration.Settings.Language.SpellCheck.EditWholeText), SpellCheckAction.ChangeWholeText);
-            DoAction(SpellCheckAction.ChangeWholeText);
+            this.PushUndo(string.Format("{0}", Configuration.Settings.Language.SpellCheck.EditWholeText), SpellCheckAction.ChangeWholeText);
+            this.DoAction(SpellCheckAction.ChangeWholeText);
         }
 
-        private void ContextMenuStrip1Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        /// <summary>
+        /// The context menu strip 1 opening.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void ContextMenuStrip1Opening(object sender, CancelEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(richTextBoxParagraph.SelectedText))
+            if (!string.IsNullOrWhiteSpace(this.richTextBoxParagraph.SelectedText))
             {
-                string word = richTextBoxParagraph.SelectedText.Trim();
-                addXToNamesnoiseListToolStripMenuItem.Text = string.Format(Configuration.Settings.Language.SpellCheck.AddXToNamesEtc, word);
+                string word = this.richTextBoxParagraph.SelectedText.Trim();
+                this.addXToNamesnoiseListToolStripMenuItem.Text = string.Format(Configuration.Settings.Language.SpellCheck.AddXToNamesEtc, word);
             }
             else
             {
@@ -388,353 +783,471 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The add x to namesnoise list tool strip menu item click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void AddXToNamesnoiseListToolStripMenuItemClick(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(richTextBoxParagraph.SelectedText))
+            if (!string.IsNullOrWhiteSpace(this.richTextBoxParagraph.SelectedText))
             {
-                ChangeWord = richTextBoxParagraph.SelectedText.Trim();
-                DoAction(SpellCheckAction.AddToNamesEtc);
+                this.ChangeWord = this.richTextBoxParagraph.SelectedText.Trim();
+                this.DoAction(SpellCheckAction.AddToNamesEtc);
             }
         }
 
+        /// <summary>
+        /// The check box auto change names checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void CheckBoxAutoChangeNamesCheckedChanged(object sender, EventArgs e)
         {
-            if (textBoxWord.Text.Length < 2)
-                return;
-
-            string s = char.ToUpper(textBoxWord.Text[0]) + textBoxWord.Text.Substring(1);
-            if (checkBoxAutoChangeNames.Checked && _suggestions != null && _suggestions.Contains(s))
+            if (this.textBoxWord.Text.Length < 2)
             {
-                ChangeWord = s;
-                DoAction(SpellCheckAction.ChangeAll);
+                return;
+            }
+
+            string s = char.ToUpper(this.textBoxWord.Text[0]) + this.textBoxWord.Text.Substring(1);
+            if (this.checkBoxAutoChangeNames.Checked && this._suggestions != null && this._suggestions.Contains(s))
+            {
+                this.ChangeWord = s;
+                this.DoAction(SpellCheckAction.ChangeAll);
             }
         }
 
+        /// <summary>
+        /// The list box suggestions mouse double click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ListBoxSuggestionsMouseDoubleClick(object sender, MouseEventArgs e)
         {
-            ButtonUseSuggestionAlwaysClick(null, null);
+            this.ButtonUseSuggestionAlwaysClick(null, null);
         }
 
+        /// <summary>
+        /// The do action.
+        /// </summary>
+        /// <param name="action">
+        /// The action.
+        /// </param>
         public void DoAction(SpellCheckAction action)
         {
             switch (action)
             {
                 case SpellCheckAction.Change:
-                    _noOfChangedWords++;
-                    _mainWindow.CorrectWord(_prefix + ChangeWord + _postfix, _currentParagraph, _prefix + _currentWord + _postfix, ref _firstChange);
+                    this._noOfChangedWords++;
+                    this._mainWindow.CorrectWord(this._prefix + this.ChangeWord + this._postfix, this._currentParagraph, this._prefix + this._currentWord + this._postfix, ref this._firstChange);
                     break;
                 case SpellCheckAction.ChangeAll:
-                    _noOfChangedWords++;
-                    if (!_changeAllDictionary.ContainsKey(_currentWord))
-                        _changeAllDictionary.Add(_currentWord, ChangeWord);
-                    _mainWindow.CorrectWord(_prefix + ChangeWord + _postfix, _currentParagraph, _prefix + _currentWord + _postfix, ref _firstChange);
+                    this._noOfChangedWords++;
+                    if (!this._changeAllDictionary.ContainsKey(this._currentWord))
+                    {
+                        this._changeAllDictionary.Add(this._currentWord, this.ChangeWord);
+                    }
+
+                    this._mainWindow.CorrectWord(this._prefix + this.ChangeWord + this._postfix, this._currentParagraph, this._prefix + this._currentWord + this._postfix, ref this._firstChange);
                     break;
                 case SpellCheckAction.Skip:
-                    _noOfSkippedWords++;
+                    this._noOfSkippedWords++;
                     break;
                 case SpellCheckAction.SkipAll:
-                    _noOfSkippedWords++;
-                    _skipAllList.Add(ChangeWord.ToUpper());
-                    if (ChangeWord.EndsWith('\'') || ChangeWord.StartsWith('\''))
-                        _skipAllList.Add(ChangeWord.ToUpper().Trim('\''));
+                    this._noOfSkippedWords++;
+                    this._skipAllList.Add(this.ChangeWord.ToUpper());
+                    if (this.ChangeWord.EndsWith('\'') || this.ChangeWord.StartsWith('\''))
+                    {
+                        this._skipAllList.Add(this.ChangeWord.ToUpper().Trim('\''));
+                    }
+
                     break;
                 case SpellCheckAction.AddToDictionary:
-                    if (_userWordList.IndexOf(ChangeWord) < 0)
+                    if (this._userWordList.IndexOf(this.ChangeWord) < 0)
                     {
-                        _noOfAddedWords++;
-                        string s = ChangeWord.Trim().ToLower();
+                        this._noOfAddedWords++;
+                        string s = this.ChangeWord.Trim().ToLower();
                         if (s.Contains(' '))
-                            _userPhraseList.Add(s);
+                        {
+                            this._userPhraseList.Add(s);
+                        }
                         else
-                            _userWordList.Add(s);
-                        Utilities.AddToUserDictionary(s, _languageName);
+                        {
+                            this._userWordList.Add(s);
+                        }
+
+                        Utilities.AddToUserDictionary(s, this._languageName);
                     }
+
                     break;
                 case SpellCheckAction.AddToNamesEtc:
-                    if (ChangeWord.Length > 1 && !_namesEtcList.Contains(ChangeWord))
+                    if (this.ChangeWord.Length > 1 && !this._namesEtcList.Contains(this.ChangeWord))
                     {
-                        _namesEtcList.Add(ChangeWord);
-                        _namesEtcListUppercase.Add(ChangeWord.ToUpper());
-                        if (_languageName.StartsWith("en_") && !ChangeWord.EndsWith('s'))
+                        this._namesEtcList.Add(this.ChangeWord);
+                        this._namesEtcListUppercase.Add(this.ChangeWord.ToUpper());
+                        if (this._languageName.StartsWith("en_") && !this.ChangeWord.EndsWith('s'))
                         {
-                            _namesEtcList.Add(ChangeWord + "s");
-                            _namesEtcListUppercase.Add(ChangeWord.ToUpper() + "S");
+                            this._namesEtcList.Add(this.ChangeWord + "s");
+                            this._namesEtcListUppercase.Add(this.ChangeWord.ToUpper() + "S");
                         }
-                        if (!ChangeWord.EndsWith('s'))
-                        {
-                            _namesEtcListWithApostrophe.Add(ChangeWord + "'s");
-                            _namesEtcListUppercase.Add(ChangeWord.ToUpper() + "'S");
-                        }
-                        if (!ChangeWord.EndsWith('\''))
-                            _namesEtcListWithApostrophe.Add(ChangeWord + "'");
 
-                        var namesList = new NamesList(Configuration.DictionariesFolder, _languageName, Configuration.Settings.WordLists.UseOnlineNamesEtc, Configuration.Settings.WordLists.NamesEtcUrl);
-                        namesList.Add(ChangeWord);
+                        if (!this.ChangeWord.EndsWith('s'))
+                        {
+                            this._namesEtcListWithApostrophe.Add(this.ChangeWord + "'s");
+                            this._namesEtcListUppercase.Add(this.ChangeWord.ToUpper() + "'S");
+                        }
+
+                        if (!this.ChangeWord.EndsWith('\''))
+                        {
+                            this._namesEtcListWithApostrophe.Add(this.ChangeWord + "'");
+                        }
+
+                        var namesList = new NamesList(Configuration.DictionariesFolder, this._languageName, Configuration.Settings.WordLists.UseOnlineNamesEtc, Configuration.Settings.WordLists.NamesEtcUrl);
+                        namesList.Add(this.ChangeWord);
                     }
+
                     break;
                 case SpellCheckAction.ChangeWholeText:
-                    _mainWindow.ShowStatus(string.Format(Configuration.Settings.Language.Main.SpellCheckChangedXToY, _currentParagraph.Text.Replace(Environment.NewLine, " "), ChangeWholeText.Replace(Environment.NewLine, " ")));
-                    _currentParagraph.Text = ChangeWholeText;
-                    _mainWindow.ChangeWholeTextMainPart(ref _noOfChangedWords, ref _firstChange, _currentIndex, _currentParagraph);
+                    this._mainWindow.ShowStatus(string.Format(Configuration.Settings.Language.Main.SpellCheckChangedXToY, this._currentParagraph.Text.Replace(Environment.NewLine, " "), this.ChangeWholeText.Replace(Environment.NewLine, " ")));
+                    this._currentParagraph.Text = this.ChangeWholeText;
+                    this._mainWindow.ChangeWholeTextMainPart(ref this._noOfChangedWords, ref this._firstChange, this._currentIndex, this._currentParagraph);
 
                     break;
             }
-            labelActionInfo.Text = string.Empty;
-            PrepareNextWord();
-            CheckActions();
+
+            this.labelActionInfo.Text = string.Empty;
+            this.PrepareNextWord();
+            this.CheckActions();
         }
 
+        /// <summary>
+        /// The check actions.
+        /// </summary>
         private void CheckActions()
         {
-            if (string.IsNullOrEmpty(_currentAction))
+            if (string.IsNullOrEmpty(this._currentAction))
+            {
                 return;
+            }
 
-            if (_currentAction == Configuration.Settings.Language.SpellCheck.Change)
-                ShowActionInfo(_currentAction, _currentWord + " > " + textBoxWord.Text);
-            else if (_currentAction == Configuration.Settings.Language.SpellCheck.ChangeAll)
-                ShowActionInfo(_currentAction, _currentWord + " > " + textBoxWord.Text);
+            if (this._currentAction == Configuration.Settings.Language.SpellCheck.Change)
+            {
+                this.ShowActionInfo(this._currentAction, this._currentWord + " > " + this.textBoxWord.Text);
+            }
+            else if (this._currentAction == Configuration.Settings.Language.SpellCheck.ChangeAll)
+            {
+                this.ShowActionInfo(this._currentAction, this._currentWord + " > " + this.textBoxWord.Text);
+            }
             else
-                ShowActionInfo(_currentAction, textBoxWord.Text);
+            {
+                this.ShowActionInfo(this._currentAction, this.textBoxWord.Text);
+            }
         }
 
+        /// <summary>
+        /// The is word in user phrases.
+        /// </summary>
+        /// <param name="userPhraseList">
+        /// The user phrase list.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="words">
+        /// The words.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public static bool IsWordInUserPhrases(List<string> userPhraseList, int index, List<SpellCheckWord> words)
         {
             string current = words[index].Text;
             string prev = "-";
             if (index > 0)
+            {
                 prev = words[index - 1].Text;
+            }
+
             string next = "-";
             if (index < words.Count - 1)
+            {
                 next = words[index + 1].Text;
+            }
+
             foreach (string userPhrase in userPhraseList)
             {
                 if (userPhrase == current + " " + next)
+                {
                     return true;
+                }
+
                 if (userPhrase == prev + " " + current)
+                {
                     return true;
+                }
             }
+
             return false;
         }
 
+        /// <summary>
+        /// The prepare next word.
+        /// </summary>
         private void PrepareNextWord()
         {
             while (true)
             {
-                if (_wordsIndex + 1 < _words.Count)
+                if (this._wordsIndex + 1 < this._words.Count)
                 {
-                    _wordsIndex++;
-                    _currentWord = _words[_wordsIndex].Text;
-                    _currentSpellCheckWord = _words[_wordsIndex];
+                    this._wordsIndex++;
+                    this._currentWord = this._words[this._wordsIndex].Text;
+                    this._currentSpellCheckWord = this._words[this._wordsIndex];
                 }
                 else
                 {
-                    if (_currentIndex + 1 < _subtitle.Paragraphs.Count)
+                    if (this._currentIndex + 1 < this._subtitle.Paragraphs.Count)
                     {
-                        _currentIndex++;
-                        _currentParagraph = _subtitle.Paragraphs[_currentIndex];
-                        SetWords(_currentParagraph.Text);
-                        _wordsIndex = 0;
-                        if (_words.Count == 0)
+                        this._currentIndex++;
+                        this._currentParagraph = this._subtitle.Paragraphs[this._currentIndex];
+                        this.SetWords(this._currentParagraph.Text);
+                        this._wordsIndex = 0;
+                        if (this._words.Count == 0)
                         {
-                            _currentWord = string.Empty;
+                            this._currentWord = string.Empty;
                         }
                         else
                         {
-                            _currentWord = _words[_wordsIndex].Text;
-                            _currentSpellCheckWord = _words[_wordsIndex];
+                            this._currentWord = this._words[this._wordsIndex].Text;
+                            this._currentSpellCheckWord = this._words[this._wordsIndex];
                         }
                     }
                     else
                     {
-                        ShowEndStatusMessage(Configuration.Settings.Language.SpellCheck.SpellCheckCompleted);
-                        DialogResult = DialogResult.OK;
+                        this.ShowEndStatusMessage(Configuration.Settings.Language.SpellCheck.SpellCheckCompleted);
+                        this.DialogResult = DialogResult.OK;
                         return;
                     }
                 }
 
                 int minLength = 2;
                 if (Configuration.Settings.Tools.SpellCheckOneLetterWords)
-                    minLength = 1;
-
-                if (_currentWord.Trim().Length >= minLength &&
-                    !_currentWord.Contains(new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '%', '&', '@', '$', '*', '=', '£', '#', '_', '½', '^' }))
                 {
-                    _prefix = string.Empty;
-                    _postfix = string.Empty;
-                    if (_currentWord.Length > 1)
+                    minLength = 1;
+                }
+
+                if (this._currentWord.Trim().Length >= minLength && !this._currentWord.Contains(new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '%', '&', '@', '$', '*', '=', '£', '#', '_', '½', '^' }))
+                {
+                    this._prefix = string.Empty;
+                    this._postfix = string.Empty;
+                    if (this._currentWord.Length > 1)
                     {
-                        if (_currentWord.StartsWith('\''))
+                        if (this._currentWord.StartsWith('\''))
                         {
-                            _prefix = "'";
-                            _currentWord = _currentWord.Substring(1);
+                            this._prefix = "'";
+                            this._currentWord = this._currentWord.Substring(1);
                         }
-                        if (_currentWord.StartsWith('`'))
+
+                        if (this._currentWord.StartsWith('`'))
                         {
-                            _prefix = "`";
-                            _currentWord = _currentWord.Substring(1);
+                            this._prefix = "`";
+                            this._currentWord = this._currentWord.Substring(1);
                         }
                     }
-                    if (_namesEtcList.Contains(_currentWord)
-                        || (_currentWord.StartsWith('\'') || _currentWord.EndsWith('\'')) && _namesEtcList.Contains(_currentWord.Trim('\'')))
+
+                    if (this._namesEtcList.Contains(this._currentWord) || (this._currentWord.StartsWith('\'') || this._currentWord.EndsWith('\'')) && this._namesEtcList.Contains(this._currentWord.Trim('\'')))
                     {
-                        _noOfNamesEtc++;
+                        this._noOfNamesEtc++;
                     }
-                    else if (_skipAllList.Contains(_currentWord.ToUpper())
-                        || (_currentWord.StartsWith('\'') || _currentWord.EndsWith('\'')) && _skipAllList.Contains(_currentWord.Trim('\'').ToUpper()))
+                    else if (this._skipAllList.Contains(this._currentWord.ToUpper()) || (this._currentWord.StartsWith('\'') || this._currentWord.EndsWith('\'')) && this._skipAllList.Contains(this._currentWord.Trim('\'').ToUpper()))
                     {
-                        _noOfSkippedWords++;
+                        this._noOfSkippedWords++;
                     }
-                    else if (_userWordList.Contains(_currentWord.ToLower())
-                        || (_currentWord.StartsWith('\'') || _currentWord.EndsWith('\'')) && _userWordList.Contains(_currentWord.Trim('\'').ToLower()))
+                    else if (this._userWordList.Contains(this._currentWord.ToLower()) || (this._currentWord.StartsWith('\'') || this._currentWord.EndsWith('\'')) && this._userWordList.Contains(this._currentWord.Trim('\'').ToLower()))
                     {
-                        _noOfCorrectWords++;
+                        this._noOfCorrectWords++;
                     }
-                    else if (_changeAllDictionary.ContainsKey(_currentWord))
+                    else if (this._changeAllDictionary.ContainsKey(this._currentWord))
                     {
-                        _noOfChangedWords++;
-                        _mainWindow.CorrectWord(_changeAllDictionary[_currentWord], _currentParagraph, _currentWord, ref _firstChange);
+                        this._noOfChangedWords++;
+                        this._mainWindow.CorrectWord(this._changeAllDictionary[this._currentWord], this._currentParagraph, this._currentWord, ref this._firstChange);
                     }
-                    else if (_changeAllDictionary.ContainsKey(_currentWord.Trim('\'')))
+                    else if (this._changeAllDictionary.ContainsKey(this._currentWord.Trim('\'')))
                     {
-                        _noOfChangedWords++;
-                        _mainWindow.CorrectWord(_changeAllDictionary[_currentWord], _currentParagraph, _currentWord.Trim('\''), ref _firstChange);
+                        this._noOfChangedWords++;
+                        this._mainWindow.CorrectWord(this._changeAllDictionary[this._currentWord], this._currentParagraph, this._currentWord.Trim('\''), ref this._firstChange);
                     }
-                    else if (_namesEtcListUppercase.Contains(_currentWord)
-                        || _namesEtcListWithApostrophe.Contains(_currentWord)
-                        || _namesList.IsInNamesEtcMultiWordList(_currentParagraph.Text, _currentWord)) // TODO: Verify this!
+                    else if (this._namesEtcListUppercase.Contains(this._currentWord) || this._namesEtcListWithApostrophe.Contains(this._currentWord) || this._namesList.IsInNamesEtcMultiWordList(this._currentParagraph.Text, this._currentWord))
                     {
-                        _noOfNamesEtc++;
+                        // TODO: Verify this!
+                        this._noOfNamesEtc++;
                     }
-                    else if (IsWordInUserPhrases(_userPhraseList, _wordsIndex, _words))
+                    else if (IsWordInUserPhrases(this._userPhraseList, this._wordsIndex, this._words))
                     {
-                        _noOfCorrectWords++;
+                        this._noOfCorrectWords++;
                     }
                     else
                     {
                         bool correct;
 
-                        if (_prefix == "'" && _currentWord.Length >= 1 && (DoSpell(_prefix + _currentWord) || _userWordList.Contains(_prefix + _currentWord)))
+                        if (this._prefix == "'" && this._currentWord.Length >= 1 && (this.DoSpell(this._prefix + this._currentWord) || this._userWordList.Contains(this._prefix + this._currentWord)))
                         {
                             correct = true;
                         }
-                        else if (_currentWord.Length > 1)
+                        else if (this._currentWord.Length > 1)
                         {
-                            correct = DoSpell(_currentWord);
-                            if (!correct && "`'".Contains(_currentWord[_currentWord.Length - 1]))
-                                correct = DoSpell(_currentWord.TrimEnd('\'').TrimEnd('`'));
-                            if (!correct && _currentWord.EndsWith("'s", StringComparison.Ordinal) && _currentWord.Length > 4)
-                                correct = DoSpell(_currentWord.TrimEnd('s').TrimEnd('\''));
-                            if (!correct && _currentWord.EndsWith('\'') && DoSpell(_currentWord.TrimEnd('\'')))
+                            correct = this.DoSpell(this._currentWord);
+                            if (!correct && "`'".Contains(this._currentWord[this._currentWord.Length - 1]))
                             {
-                                _currentWord = _currentWord.TrimEnd('\'');
+                                correct = this.DoSpell(this._currentWord.TrimEnd('\'').TrimEnd('`'));
+                            }
+
+                            if (!correct && this._currentWord.EndsWith("'s", StringComparison.Ordinal) && this._currentWord.Length > 4)
+                            {
+                                correct = this.DoSpell(this._currentWord.TrimEnd('s').TrimEnd('\''));
+                            }
+
+                            if (!correct && this._currentWord.EndsWith('\'') && this.DoSpell(this._currentWord.TrimEnd('\'')))
+                            {
+                                this._currentWord = this._currentWord.TrimEnd('\'');
                                 correct = true;
                             }
                         }
                         else
                         {
                             correct = false;
-                            if (_currentWord == "'")
+                            if (this._currentWord == "'")
+                            {
                                 correct = true;
-                            else if (_languageName.StartsWith("en_", StringComparison.Ordinal) && (_currentWord.Equals("a", StringComparison.OrdinalIgnoreCase) || _currentWord == "I"))
+                            }
+                            else if (this._languageName.StartsWith("en_", StringComparison.Ordinal) && (this._currentWord.Equals("a", StringComparison.OrdinalIgnoreCase) || this._currentWord == "I"))
+                            {
                                 correct = true;
-                            else if (_languageName.StartsWith("da_", StringComparison.Ordinal) && _currentWord.Equals("i", StringComparison.OrdinalIgnoreCase))
+                            }
+                            else if (this._languageName.StartsWith("da_", StringComparison.Ordinal) && this._currentWord.Equals("i", StringComparison.OrdinalIgnoreCase))
+                            {
                                 correct = true;
+                            }
                         }
 
-                        if (!correct && Configuration.Settings.Tools.SpellCheckEnglishAllowInQuoteAsIng &&
-                            _languageName.StartsWith("en_", StringComparison.Ordinal) && _currentWord.EndsWith("in'", StringComparison.OrdinalIgnoreCase))
+                        if (!correct && Configuration.Settings.Tools.SpellCheckEnglishAllowInQuoteAsIng && this._languageName.StartsWith("en_", StringComparison.Ordinal) && this._currentWord.EndsWith("in'", StringComparison.OrdinalIgnoreCase))
                         {
-                            correct = DoSpell(_currentWord.TrimEnd('\'') + "g");
+                            correct = this.DoSpell(this._currentWord.TrimEnd('\'') + "g");
                         }
 
                         if (correct)
                         {
-                            _noOfCorrectWords++;
+                            this._noOfCorrectWords++;
                         }
                         else
                         {
-                            _mainWindow.FocusParagraph(_currentIndex);
+                            this._mainWindow.FocusParagraph(this._currentIndex);
 
                             List<string> suggestions = new List<string>();
 
-                            if ((_currentWord == "Lt's" || _currentWord == "Lt'S") && _languageName.StartsWith("en_"))
+                            if ((this._currentWord == "Lt's" || this._currentWord == "Lt'S") && this._languageName.StartsWith("en_"))
                             {
                                 suggestions.Add("It's");
                             }
                             else
                             {
-                                if (_currentWord.ToUpper() != "LT'S" && _currentWord.ToUpper() != "SOX'S" && !_currentWord.ToUpper().StartsWith("HTTP", StringComparison.Ordinal)) // TODO: Get fixed nhunspell
-                                    suggestions = DoSuggest(_currentWord); // TODO: 0.9.6 fails on "Lt'S"
-                                if (_languageName.StartsWith("fr_", StringComparison.Ordinal) && (_currentWord.StartsWith("I'", StringComparison.Ordinal) || _currentWord.StartsWith("I’", StringComparison.Ordinal)))
+                                if (this._currentWord.ToUpper() != "LT'S" && this._currentWord.ToUpper() != "SOX'S" && !this._currentWord.ToUpper().StartsWith("HTTP", StringComparison.Ordinal))
                                 {
-                                    if (_currentWord.Length > 3 && Utilities.LowercaseLetters.Contains(_currentWord[2]) && _currentSpellCheckWord.Index > 3)
+                                    // TODO: Get fixed nhunspell
+                                    suggestions = this.DoSuggest(this._currentWord); // TODO: 0.9.6 fails on "Lt'S"
+                                }
+
+                                if (this._languageName.StartsWith("fr_", StringComparison.Ordinal) && (this._currentWord.StartsWith("I'", StringComparison.Ordinal) || this._currentWord.StartsWith("I’", StringComparison.Ordinal)))
+                                {
+                                    if (this._currentWord.Length > 3 && Utilities.LowercaseLetters.Contains(this._currentWord[2]) && this._currentSpellCheckWord.Index > 3)
                                     {
-                                        string ending = _currentParagraph.Text.Substring(0, _currentSpellCheckWord.Index - 1).Trim();
+                                        string ending = this._currentParagraph.Text.Substring(0, this._currentSpellCheckWord.Index - 1).Trim();
                                         if (ending.Length > 1 && !".!?".Contains(ending[ending.Length - 1]))
                                         {
                                             for (int i = 0; i < suggestions.Count; i++)
                                             {
                                                 if (suggestions[i].StartsWith("L'") || suggestions[i].StartsWith("L’"))
+                                                {
                                                     suggestions[i] = @"l" + suggestions[i].Substring(1);
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
 
-                            suggestions.Remove(_currentWord);
-                            if (_currentWord.Length == 1)
+                            suggestions.Remove(this._currentWord);
+                            if (this._currentWord.Length == 1)
                             {
-                                if ((_currentWord == "L") && _languageName.StartsWith("en_", StringComparison.Ordinal))
+                                if ((this._currentWord == "L") && this._languageName.StartsWith("en_", StringComparison.Ordinal))
                                 {
                                     suggestions.Remove("I");
                                     suggestions.Insert(0, "I");
                                 }
                             }
 
-                            if (AutoFixNames && _currentWord.Length > 1 && suggestions.Contains(char.ToUpper(_currentWord[0]) + _currentWord.Substring(1)))
+                            if (this.AutoFixNames && this._currentWord.Length > 1 && suggestions.Contains(char.ToUpper(this._currentWord[0]) + this._currentWord.Substring(1)))
                             {
-                                ChangeWord = char.ToUpper(_currentWord[0]) + _currentWord.Substring(1);
-                                DoAction(SpellCheckAction.ChangeAll);
+                                this.ChangeWord = char.ToUpper(this._currentWord[0]) + this._currentWord.Substring(1);
+                                this.DoAction(SpellCheckAction.ChangeAll);
                                 return;
-                            }
-                            if (AutoFixNames && _currentWord.Length > 3 && suggestions.Contains(_currentWord.ToUpper()))
-                            { // does not work well with two letter words like "da" and "de" which get auto-corrected to "DA" and "DE"
-                                ChangeWord = _currentWord.ToUpper();
-                                DoAction(SpellCheckAction.ChangeAll);
-                                return;
-                            }
-                            if (AutoFixNames && _currentWord.Length > 1 && _namesEtcList.Contains(char.ToUpper(_currentWord[0]) + _currentWord.Substring(1)))
-                            {
-                                ChangeWord = char.ToUpper(_currentWord[0]) + _currentWord.Substring(1);
-                                DoAction(SpellCheckAction.ChangeAll);
-                                return;
-                            }
-                            if (_prefix != null && _prefix == "''" && _currentWord.EndsWith("''"))
-                            {
-                                _prefix = string.Empty;
-                                _currentSpellCheckWord.Index += 2;
-                                _currentWord = _currentWord.Trim('\'');
-                            }
-                            if (_prefix != null && _prefix == "'" && _currentWord.EndsWith('\''))
-                            {
-                                _prefix = string.Empty;
-                                _currentSpellCheckWord.Index++;
-                                _currentWord = _currentWord.Trim('\'');
                             }
 
-                            if (_postfix != null && _postfix == "'")
+                            if (this.AutoFixNames && this._currentWord.Length > 3 && suggestions.Contains(this._currentWord.ToUpper()))
+                            { // does not work well with two letter words like "da" and "de" which get auto-corrected to "DA" and "DE"
+                                this.ChangeWord = this._currentWord.ToUpper();
+                                this.DoAction(SpellCheckAction.ChangeAll);
+                                return;
+                            }
+
+                            if (this.AutoFixNames && this._currentWord.Length > 1 && this._namesEtcList.Contains(char.ToUpper(this._currentWord[0]) + this._currentWord.Substring(1)))
                             {
-                                _currentSpellCheckWord.Text = _currentWord + _postfix;
-                                Initialize(_languageName, _currentSpellCheckWord, suggestions, _currentParagraph.Text, string.Format(Configuration.Settings.Language.Main.LineXOfY, (_currentIndex + 1), _subtitle.Paragraphs.Count));
+                                this.ChangeWord = char.ToUpper(this._currentWord[0]) + this._currentWord.Substring(1);
+                                this.DoAction(SpellCheckAction.ChangeAll);
+                                return;
+                            }
+
+                            if (this._prefix != null && this._prefix == "''" && this._currentWord.EndsWith("''"))
+                            {
+                                this._prefix = string.Empty;
+                                this._currentSpellCheckWord.Index += 2;
+                                this._currentWord = this._currentWord.Trim('\'');
+                            }
+
+                            if (this._prefix != null && this._prefix == "'" && this._currentWord.EndsWith('\''))
+                            {
+                                this._prefix = string.Empty;
+                                this._currentSpellCheckWord.Index++;
+                                this._currentWord = this._currentWord.Trim('\'');
+                            }
+
+                            if (this._postfix != null && this._postfix == "'")
+                            {
+                                this._currentSpellCheckWord.Text = this._currentWord + this._postfix;
+                                this.Initialize(this._languageName, this._currentSpellCheckWord, suggestions, this._currentParagraph.Text, string.Format(Configuration.Settings.Language.Main.LineXOfY, this._currentIndex + 1, this._subtitle.Paragraphs.Count));
                             }
                             else
                             {
-                                _currentSpellCheckWord.Text = _currentWord;
-                                Initialize(_languageName, _currentSpellCheckWord, suggestions, _currentParagraph.Text, string.Format(Configuration.Settings.Language.Main.LineXOfY, (_currentIndex + 1), _subtitle.Paragraphs.Count));
+                                this._currentSpellCheckWord.Text = this._currentWord;
+                                this.Initialize(this._languageName, this._currentSpellCheckWord, suggestions, this._currentParagraph.Text, string.Format(Configuration.Settings.Language.Main.LineXOfY, this._currentIndex + 1, this._subtitle.Paragraphs.Count));
                             }
-                            if (!Visible)
-                                ShowDialog(_mainWindow);
+
+                            if (!this.Visible)
+                            {
+                                this.ShowDialog(this._mainWindow);
+                            }
+
                             return; // wait for user input
                         }
                     }
@@ -742,6 +1255,15 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The split.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         private static List<SpellCheckWord> Split(string s)
         {
             const string splitChars = " -.,?!:;\"“”()[]{}|<>/+\r\n¿¡…—–♪♫„“";
@@ -752,7 +1274,10 @@ namespace Nikse.SubtitleEdit.Forms
                 if (splitChars.Contains(s[i]))
                 {
                     if (sb.Length > 0)
+                    {
                         list.Add(new SpellCheckWord { Text = sb.ToString(), Index = i - sb.Length });
+                    }
+
                     sb = new StringBuilder();
                 }
                 else
@@ -760,24 +1285,46 @@ namespace Nikse.SubtitleEdit.Forms
                     sb.Append(s[i]);
                 }
             }
+
             if (sb.Length > 0)
+            {
                 list.Add(new SpellCheckWord { Text = sb.ToString(), Index = s.Length - 1 - sb.Length });
+            }
+
             return list;
         }
 
+        /// <summary>
+        /// The set words.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string SetWords(string s)
         {
             s = ReplaceHtmlTagsWithBlanks(s);
-            s = ReplaceKnownWordsOrNamesWithBlanks(s);
-            _words = Split(s);
+            s = this.ReplaceKnownWordsOrNamesWithBlanks(s);
+            this._words = Split(s);
             return s;
         }
 
+        /// <summary>
+        /// The replace known words or names with blanks.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string ReplaceKnownWordsOrNamesWithBlanks(string s)
         {
             List<string> replaceIds = new List<string>();
             List<string> replaceNames = new List<string>();
-            GetTextWithoutUserWordsAndNames(replaceIds, replaceNames, s);
+            this.GetTextWithoutUserWordsAndNames(replaceIds, replaceNames, s);
             foreach (string name in replaceNames)
             {
                 int start = s.IndexOf(name, StringComparison.Ordinal);
@@ -789,18 +1336,34 @@ namespace Nikse.SubtitleEdit.Forms
                         int end = start + name.Length;
                         bool endOk = end >= s.Length || " -.,?!:;\"“”()[]{}|<>/+\r\n¿¡…—–♪♫„“".Contains(s[end]);
                         if (endOk)
+                        {
                             s = s.Remove(start, name.Length).Insert(start, string.Empty.PadLeft(name.Length));
+                        }
                     }
 
                     if (start + 1 < s.Length)
+                    {
                         start = s.IndexOf(name, start + 1, StringComparison.Ordinal);
+                    }
                     else
+                    {
                         start = -1;
+                    }
                 }
             }
+
             return s;
         }
 
+        /// <summary>
+        /// The replace html tags with blanks.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string ReplaceHtmlTagsWithBlanks(string s)
         {
             int start = s.IndexOf('<');
@@ -808,33 +1371,54 @@ namespace Nikse.SubtitleEdit.Forms
             {
                 int end = s.IndexOf('>', start + 1);
                 if (end < start)
+                {
                     break;
+                }
+
                 int l = end - start + 1;
                 s = s.Remove(start, l).Insert(start, string.Empty.PadLeft(l));
                 end++;
                 if (end >= s.Length)
+                {
                     break;
+                }
+
                 start = s.IndexOf('<', end);
             }
+
             return s;
         }
 
         /// <summary>
         /// Removes words with dash'es that are correct, so spell check can ignore the combination (do not split correct words with dash'es)
         /// </summary>
+        /// <param name="replaceIds">
+        /// The replace Ids.
+        /// </param>
+        /// <param name="replaceNames">
+        /// The replace Names.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string GetTextWithoutUserWordsAndNames(List<string> replaceIds, List<string> replaceNames, string text)
         {
             string[] wordsWithDash = text.Split(new[] { ' ', '.', ',', '?', '!', ':', ';', '"', '“', '”', '(', ')', '[', ']', '{', '}', '|', '<', '>', '/', '+', '\r', '\n', '¿', '¡', '…', '—', '–', '♪', '♫', '„', '“' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string w in wordsWithDash)
             {
-                if (w.Contains('-') && DoSpell(w) && !_wordsWithDashesOrPeriods.Contains(w))
-                    _wordsWithDashesOrPeriods.Add(w);
+                if (w.Contains('-') && this.DoSpell(w) && !this._wordsWithDashesOrPeriods.Contains(w))
+                {
+                    this._wordsWithDashesOrPeriods.Add(w);
+                }
             }
 
             if (text.Contains(new[] { '.', '-' }))
             {
                 int i = 0;
-                foreach (string wordWithDashesOrPeriods in _wordsWithDashesOrPeriods)
+                foreach (string wordWithDashesOrPeriods in this._wordsWithDashesOrPeriods)
                 {
                     bool found = true;
                     int startSearchIndex = 0;
@@ -848,7 +1432,10 @@ namespace Nikse.SubtitleEdit.Forms
                             bool startOk = indexStart == 0 || (@" (['""" + Environment.NewLine).Contains(text[indexStart - 1]);
                             bool endOk = endIndexPlus == text.Length;
                             if (!endOk && endIndexPlus < text.Length && @",!?:;. ])<'""".Contains(text[endIndexPlus]))
+                            {
                                 endOk = true;
+                            }
+
                             if (startOk && endOk)
                             {
                                 i++;
@@ -869,80 +1456,112 @@ namespace Nikse.SubtitleEdit.Forms
                     }
                 }
             }
+
             return text;
         }
 
+        /// <summary>
+        /// The show end status message.
+        /// </summary>
+        /// <param name="completedMessage">
+        /// The completed message.
+        /// </param>
         private void ShowEndStatusMessage(string completedMessage)
         {
             LanguageStructure.Main mainLanguage = Configuration.Settings.Language.Main;
-            if (_noOfChangedWords > 0 || _noOfAddedWords > 0 || _noOfSkippedWords > 0 || completedMessage == Configuration.Settings.Language.SpellCheck.SpellCheckCompleted)
+            if (this._noOfChangedWords > 0 || this._noOfAddedWords > 0 || this._noOfSkippedWords > 0 || completedMessage == Configuration.Settings.Language.SpellCheck.SpellCheckCompleted)
             {
-                Hide();
+                this.Hide();
                 if (Configuration.Settings.Tools.SpellCheckShowCompletedMessage)
                 {
-                    var form = new DialogDoNotShowAgain(_mainWindow.Title + " - " + mainLanguage.SpellCheck,
-                                    completedMessage + Environment.NewLine +
-                                    Environment.NewLine +
-                                    string.Format(mainLanguage.NumberOfCorrectedWords, _noOfChangedWords) + Environment.NewLine +
-                                    string.Format(mainLanguage.NumberOfSkippedWords, _noOfSkippedWords) + Environment.NewLine +
-                                    string.Format(mainLanguage.NumberOfCorrectWords, _noOfCorrectWords) + Environment.NewLine +
-                                    string.Format(mainLanguage.NumberOfWordsAddedToDictionary, _noOfAddedWords) + Environment.NewLine +
-                                    string.Format(mainLanguage.NumberOfNameHits, _noOfNamesEtc));
-                    form.ShowDialog(_mainWindow);
+                    var form = new DialogDoNotShowAgain(this._mainWindow.Title + " - " + mainLanguage.SpellCheck, completedMessage + Environment.NewLine + Environment.NewLine + string.Format(mainLanguage.NumberOfCorrectedWords, this._noOfChangedWords) + Environment.NewLine + string.Format(mainLanguage.NumberOfSkippedWords, this._noOfSkippedWords) + Environment.NewLine + string.Format(mainLanguage.NumberOfCorrectWords, this._noOfCorrectWords) + Environment.NewLine + string.Format(mainLanguage.NumberOfWordsAddedToDictionary, this._noOfAddedWords) + Environment.NewLine + string.Format(mainLanguage.NumberOfNameHits, this._noOfNamesEtc));
+                    form.ShowDialog(this._mainWindow);
                     Configuration.Settings.Tools.SpellCheckShowCompletedMessage = !form.DoNoDisplayAgain;
                     form.Dispose();
                 }
                 else
                 {
-                    if (_noOfChangedWords > 0)
-                        _mainWindow.ShowStatus(completedMessage + "  " + string.Format(mainLanguage.NumberOfCorrectedWords, _noOfChangedWords));
+                    if (this._noOfChangedWords > 0)
+                    {
+                        this._mainWindow.ShowStatus(completedMessage + "  " + string.Format(mainLanguage.NumberOfCorrectedWords, this._noOfChangedWords));
+                    }
                     else
-                        _mainWindow.ShowStatus(completedMessage);
+                    {
+                        this._mainWindow.ShowStatus(completedMessage);
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// The continue spell check.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         public void ContinueSpellCheck(Subtitle subtitle)
         {
-            _subtitle = subtitle;
+            this._subtitle = subtitle;
 
-            buttonUndo.Visible = false;
-            _undoList = new List<UndoObject>();
+            this.buttonUndo.Visible = false;
+            this._undoList = new List<UndoObject>();
 
-            if (_currentIndex >= subtitle.Paragraphs.Count)
-                _currentIndex = 0;
+            if (this._currentIndex >= subtitle.Paragraphs.Count)
+            {
+                this._currentIndex = 0;
+            }
 
-            _currentParagraph = _subtitle.GetParagraphOrDefault(_currentIndex);
-            if (_currentParagraph == null)
+            this._currentParagraph = this._subtitle.GetParagraphOrDefault(this._currentIndex);
+            if (this._currentParagraph == null)
+            {
                 return;
+            }
 
-            SetWords(_currentParagraph.Text);
-            _wordsIndex = -1;
+            this.SetWords(this._currentParagraph.Text);
+            this._wordsIndex = -1;
 
-            PrepareNextWord();
+            this.PrepareNextWord();
         }
 
+        /// <summary>
+        /// The do spell check.
+        /// </summary>
+        /// <param name="autoDetect">
+        /// The auto detect.
+        /// </param>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="dictionaryFolder">
+        /// The dictionary folder.
+        /// </param>
+        /// <param name="mainWindow">
+        /// The main window.
+        /// </param>
+        /// <param name="startLine">
+        /// The start line.
+        /// </param>
         public void DoSpellCheck(bool autoDetect, Subtitle subtitle, string dictionaryFolder, Main mainWindow, int startLine)
         {
-            _subtitle = subtitle;
+            this._subtitle = subtitle;
             LanguageStructure.Main mainLanguage = Configuration.Settings.Language.Main;
-            _mainWindow = mainWindow;
+            this._mainWindow = mainWindow;
 
-            _namesEtcListUppercase = new List<string>();
-            _namesEtcListWithApostrophe = new List<string>();
+            this._namesEtcListUppercase = new List<string>();
+            this._namesEtcListWithApostrophe = new List<string>();
 
-            _skipAllList = new List<string>();
+            this._skipAllList = new List<string>();
 
-            _noOfSkippedWords = 0;
-            _noOfChangedWords = 0;
-            _noOfCorrectWords = 0;
-            _noOfNamesEtc = 0;
-            _noOfAddedWords = 0;
-            _firstChange = true;
+            this._noOfSkippedWords = 0;
+            this._noOfChangedWords = 0;
+            this._noOfCorrectWords = 0;
+            this._noOfNamesEtc = 0;
+            this._noOfAddedWords = 0;
+            this._firstChange = true;
 
             if (!string.IsNullOrEmpty(Configuration.Settings.General.SpellCheckLanguage) && File.Exists(Path.Combine(dictionaryFolder, Configuration.Settings.General.SpellCheckLanguage + ".dic")))
             {
-                _languageName = Configuration.Settings.General.SpellCheckLanguage;
+                this._languageName = Configuration.Settings.General.SpellCheckLanguage;
             }
             else
             {
@@ -953,7 +1572,7 @@ namespace Nikse.SubtitleEdit.Forms
                 {
                     start++;
                     name = name.Substring(start, end - start);
-                    _languageName = name;
+                    this._languageName = name;
                 }
                 else
                 {
@@ -961,174 +1580,350 @@ namespace Nikse.SubtitleEdit.Forms
                     return;
                 }
             }
-            if (autoDetect || string.IsNullOrEmpty(_languageName))
-                _languageName = Utilities.AutoDetectLanguageName(_languageName, subtitle);
-            string dictionary = Utilities.DictionaryFolder + _languageName;
 
-            LoadDictionaries(dictionaryFolder, dictionary);
+            if (autoDetect || string.IsNullOrEmpty(this._languageName))
+            {
+                this._languageName = Utilities.AutoDetectLanguageName(this._languageName, subtitle);
+            }
 
-            _currentIndex = 0;
-            if (startLine >= 0 && startLine < _subtitle.Paragraphs.Count)
-                _currentIndex = startLine;
-            _currentParagraph = _subtitle.Paragraphs[_currentIndex];
-            SetWords(_currentParagraph.Text);
-            _wordsIndex = -1;
+            string dictionary = Utilities.DictionaryFolder + this._languageName;
 
-            PrepareNextWord();
+            this.LoadDictionaries(dictionaryFolder, dictionary);
+
+            this._currentIndex = 0;
+            if (startLine >= 0 && startLine < this._subtitle.Paragraphs.Count)
+            {
+                this._currentIndex = startLine;
+            }
+
+            this._currentParagraph = this._subtitle.Paragraphs[this._currentIndex];
+            this.SetWords(this._currentParagraph.Text);
+            this._wordsIndex = -1;
+
+            this.PrepareNextWord();
         }
 
+        /// <summary>
+        /// The load dictionaries.
+        /// </summary>
+        /// <param name="dictionaryFolder">
+        /// The dictionary folder.
+        /// </param>
+        /// <param name="dictionary">
+        /// The dictionary.
+        /// </param>
         private void LoadDictionaries(string dictionaryFolder, string dictionary)
         {
-            _changeAllDictionary = new Dictionary<string, string>();
-            _skipAllList = new List<string>();
-            _namesList = new NamesList(Configuration.DictionariesFolder, _languageName, Configuration.Settings.WordLists.UseOnlineNamesEtc, Configuration.Settings.WordLists.NamesEtcUrl);
-            _namesEtcList = _namesList.GetNames();
-            _namesEtcMultiWordList = _namesList.GetMultiNames();
+            this._changeAllDictionary = new Dictionary<string, string>();
+            this._skipAllList = new List<string>();
+            this._namesList = new NamesList(Configuration.DictionariesFolder, this._languageName, Configuration.Settings.WordLists.UseOnlineNamesEtc, Configuration.Settings.WordLists.NamesEtcUrl);
+            this._namesEtcList = this._namesList.GetNames();
+            this._namesEtcMultiWordList = this._namesList.GetMultiNames();
 
-            foreach (string namesItem in _namesEtcList)
-                _namesEtcListUppercase.Add(namesItem.ToUpper());
-
-            if (_languageName.StartsWith("en_", StringComparison.OrdinalIgnoreCase))
+            foreach (string namesItem in this._namesEtcList)
             {
-                foreach (string namesItem in _namesEtcList)
+                this._namesEtcListUppercase.Add(namesItem.ToUpper());
+            }
+
+            if (this._languageName.StartsWith("en_", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (string namesItem in this._namesEtcList)
                 {
                     if (!namesItem.EndsWith('s'))
                     {
-                        _namesEtcListWithApostrophe.Add(namesItem + "'s");
-                        _namesEtcListWithApostrophe.Add(namesItem + "’s");
+                        this._namesEtcListWithApostrophe.Add(namesItem + "'s");
+                        this._namesEtcListWithApostrophe.Add(namesItem + "’s");
                     }
                     else if (!namesItem.EndsWith('\''))
                     {
-                        _namesEtcListWithApostrophe.Add(namesItem + "'");
+                        this._namesEtcListWithApostrophe.Add(namesItem + "'");
                     }
                 }
             }
 
-            _userWordList = new List<string>();
-            _userPhraseList = new List<string>();
-            if (File.Exists(dictionaryFolder + _languageName + "_user.xml"))
+            this._userWordList = new List<string>();
+            this._userPhraseList = new List<string>();
+            if (File.Exists(dictionaryFolder + this._languageName + "_user.xml"))
             {
                 var userWordDictionary = new XmlDocument();
-                userWordDictionary.Load(dictionaryFolder + _languageName + "_user.xml");
+                userWordDictionary.Load(dictionaryFolder + this._languageName + "_user.xml");
                 foreach (XmlNode node in userWordDictionary.DocumentElement.SelectNodes("word"))
                 {
                     string word = node.InnerText.Trim().ToLower();
                     if (word.Contains(' '))
-                        _userPhraseList.Add(word);
+                    {
+                        this._userPhraseList.Add(word);
+                    }
                     else
-                        _userWordList.Add(word);
+                    {
+                        this._userWordList.Add(word);
+                    }
                 }
             }
 
             // Add names/userdic with "." or " " or "-"
-            _wordsWithDashesOrPeriods = new List<string>();
-            _wordsWithDashesOrPeriods.AddRange(_namesEtcMultiWordList);
-            foreach (string name in _namesEtcList)
+            this._wordsWithDashesOrPeriods = new List<string>();
+            this._wordsWithDashesOrPeriods.AddRange(this._namesEtcMultiWordList);
+            foreach (string name in this._namesEtcList)
             {
                 if (name.Contains(new[] { '.', '-' }))
-                    _wordsWithDashesOrPeriods.Add(name);
+                {
+                    this._wordsWithDashesOrPeriods.Add(name);
+                }
             }
-            foreach (string word in _userWordList)
+
+            foreach (string word in this._userWordList)
             {
                 if (word.Contains(new[] { '.', '-' }))
-                    _wordsWithDashesOrPeriods.Add(word);
+                {
+                    this._wordsWithDashesOrPeriods.Add(word);
+                }
             }
-            _wordsWithDashesOrPeriods.AddRange(_userPhraseList);
 
-            _changeAllDictionary = new Dictionary<string, string>();
-            LoadHunspell(dictionary);
+            this._wordsWithDashesOrPeriods.AddRange(this._userPhraseList);
+
+            this._changeAllDictionary = new Dictionary<string, string>();
+            this.LoadHunspell(dictionary);
         }
 
+        /// <summary>
+        /// The text box word_ text changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void textBoxWord_TextChanged(object sender, EventArgs e)
         {
-            buttonChange.Enabled = textBoxWord.Text != _originalWord;
-            buttonChangeAll.Enabled = buttonChange.Enabled;
+            this.buttonChange.Enabled = this.textBoxWord.Text != this._originalWord;
+            this.buttonChangeAll.Enabled = this.buttonChange.Enabled;
         }
 
+        /// <summary>
+        /// The button add to dictionary_ mouse enter.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonAddToDictionary_MouseEnter(object sender, EventArgs e)
         {
-            ShowActionInfo(Configuration.Settings.Language.SpellCheck.AddToUserDictionary, textBoxWord.Text);
+            this.ShowActionInfo(Configuration.Settings.Language.SpellCheck.AddToUserDictionary, this.textBoxWord.Text);
         }
 
+        /// <summary>
+        /// The show action info.
+        /// </summary>
+        /// <param name="label">
+        /// The label.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
         private void ShowActionInfo(string label, string text)
         {
-            labelActionInfo.Text = string.Format("{0}: {1}", label, text.Trim());
-            _currentAction = label;
+            this.labelActionInfo.Text = string.Format("{0}: {1}", label, text.Trim());
+            this._currentAction = label;
         }
 
+        /// <summary>
+        /// The button add to dictionary_ mouse leave.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonAddToDictionary_MouseLeave(object sender, EventArgs e)
         {
-            labelActionInfo.Text = string.Empty;
-            _currentAction = null;
+            this.labelActionInfo.Text = string.Empty;
+            this._currentAction = null;
         }
 
+        /// <summary>
+        /// The button add to names_ mouse enter.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonAddToNames_MouseEnter(object sender, EventArgs e)
         {
-            ShowActionInfo(Configuration.Settings.Language.SpellCheck.AddToNamesAndIgnoreList, textBoxWord.Text);
+            this.ShowActionInfo(Configuration.Settings.Language.SpellCheck.AddToNamesAndIgnoreList, this.textBoxWord.Text);
         }
 
+        /// <summary>
+        /// The button add to names_ mouse leave.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonAddToNames_MouseLeave(object sender, EventArgs e)
         {
-            labelActionInfo.Text = string.Empty;
-            _currentAction = null;
+            this.labelActionInfo.Text = string.Empty;
+            this._currentAction = null;
         }
 
+        /// <summary>
+        /// The button skip once_ mouse enter.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonSkipOnce_MouseEnter(object sender, EventArgs e)
         {
-            ShowActionInfo(Configuration.Settings.Language.SpellCheck.SkipOnce, textBoxWord.Text);
+            this.ShowActionInfo(Configuration.Settings.Language.SpellCheck.SkipOnce, this.textBoxWord.Text);
         }
 
+        /// <summary>
+        /// The button skip once_ mouse leave.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonSkipOnce_MouseLeave(object sender, EventArgs e)
         {
-            labelActionInfo.Text = string.Empty;
-            _currentAction = null;
+            this.labelActionInfo.Text = string.Empty;
+            this._currentAction = null;
         }
 
+        /// <summary>
+        /// The button skip all_ mouse enter.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonSkipAll_MouseEnter(object sender, EventArgs e)
         {
-            ShowActionInfo(Configuration.Settings.Language.SpellCheck.SkipAll, textBoxWord.Text);
+            this.ShowActionInfo(Configuration.Settings.Language.SpellCheck.SkipAll, this.textBoxWord.Text);
         }
 
+        /// <summary>
+        /// The button skip all_ mouse leave.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonSkipAll_MouseLeave(object sender, EventArgs e)
         {
-            labelActionInfo.Text = string.Empty;
-            _currentAction = null;
+            this.labelActionInfo.Text = string.Empty;
+            this._currentAction = null;
         }
 
+        /// <summary>
+        /// The button change_ mouse enter.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonChange_MouseEnter(object sender, EventArgs e)
         {
-            ShowActionInfo(Configuration.Settings.Language.SpellCheck.Change, _currentWord + " > " + textBoxWord.Text);
+            this.ShowActionInfo(Configuration.Settings.Language.SpellCheck.Change, this._currentWord + " > " + this.textBoxWord.Text);
         }
 
+        /// <summary>
+        /// The button change_ mouse leave.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonChange_MouseLeave(object sender, EventArgs e)
         {
-            labelActionInfo.Text = string.Empty;
-            _currentAction = null;
+            this.labelActionInfo.Text = string.Empty;
+            this._currentAction = null;
         }
 
+        /// <summary>
+        /// The button change all_ mouse enter.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonChangeAll_MouseEnter(object sender, EventArgs e)
         {
-            ShowActionInfo(Configuration.Settings.Language.SpellCheck.ChangeAll, _currentWord + " > " + textBoxWord.Text);
+            this.ShowActionInfo(Configuration.Settings.Language.SpellCheck.ChangeAll, this._currentWord + " > " + this.textBoxWord.Text);
         }
 
+        /// <summary>
+        /// The button change all_ mouse leave.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonChangeAll_MouseLeave(object sender, EventArgs e)
         {
-            labelActionInfo.Text = string.Empty;
-            _currentAction = null;
+            this.labelActionInfo.Text = string.Empty;
+            this._currentAction = null;
         }
 
+        /// <summary>
+        /// The button spell check download_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonSpellCheckDownload_Click(object sender, EventArgs e)
         {
             using (var gd = new GetDictionaries())
             {
                 gd.ShowDialog(this);
             }
-            FillSpellCheckDictionaries(Utilities.AutoDetectLanguageName(null, _subtitle));
-            if (comboBoxDictionaries.Items.Count > 0 && comboBoxDictionaries.SelectedIndex == -1)
-                comboBoxDictionaries.SelectedIndex = 0;
-            ComboBoxDictionariesSelectedIndexChanged(null, null);
+
+            this.FillSpellCheckDictionaries(Utilities.AutoDetectLanguageName(null, this._subtitle));
+            if (this.comboBoxDictionaries.Items.Count > 0 && this.comboBoxDictionaries.SelectedIndex == -1)
+            {
+                this.comboBoxDictionaries.SelectedIndex = 0;
+            }
+
+            this.ComboBoxDictionariesSelectedIndexChanged(null, null);
         }
 
+        /// <summary>
+        /// The push undo.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
         private void PushUndo(string text, SpellCheckAction action)
         {
             if (string.IsNullOrWhiteSpace(text))
@@ -1136,129 +1931,257 @@ namespace Nikse.SubtitleEdit.Forms
                 return;
             }
 
-            if (action == SpellCheckAction.ChangeAll && _changeAllDictionary.ContainsKey(_currentWord))
+            if (action == SpellCheckAction.ChangeAll && this._changeAllDictionary.ContainsKey(this._currentWord))
+            {
                 return;
+            }
 
             string format = Configuration.Settings.Language.SpellCheck.UndoX;
             if (string.IsNullOrEmpty(format))
+            {
                 format = "Undo: {0}";
+            }
+
             string undoText = string.Format(format, text);
 
-            _undoList.Add(new UndoObject
-            {
-                CurrentIndex = _currentIndex,
-                UndoText = undoText,
-                UndoWord = textBoxWord.Text.Trim(),
-                Action = action,
-                CurrentWord = _currentWord,
-                Subtitle = new Subtitle(_subtitle),
-                NoOfSkippedWords = _noOfSkippedWords,
-                NoOfChangedWords = _noOfChangedWords,
-                NoOfCorrectWords = _noOfCorrectWords,
-                NoOfNamesEtc = _noOfNamesEtc,
-                NoOfAddedWords = _noOfAddedWords,
-            });
-            buttonUndo.Text = undoText;
-            buttonUndo.Visible = true;
+            this._undoList.Add(new UndoObject { CurrentIndex = this._currentIndex, UndoText = undoText, UndoWord = this.textBoxWord.Text.Trim(), Action = action, CurrentWord = this._currentWord, Subtitle = new Subtitle(this._subtitle), NoOfSkippedWords = this._noOfSkippedWords, NoOfChangedWords = this._noOfChangedWords, NoOfCorrectWords = this._noOfCorrectWords, NoOfNamesEtc = this._noOfNamesEtc, NoOfAddedWords = this._noOfAddedWords, });
+            this.buttonUndo.Text = undoText;
+            this.buttonUndo.Visible = true;
         }
 
+        /// <summary>
+        /// The button undo_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonUndo_Click(object sender, EventArgs e)
         {
-            if (_undoList.Count > 0)
+            if (this._undoList.Count > 0)
             {
-                var undo = _undoList[_undoList.Count - 1];
-                _currentIndex = undo.CurrentIndex - 1;
-                _wordsIndex = int.MaxValue - 1;
-                _noOfSkippedWords = undo.NoOfSkippedWords;
-                _noOfChangedWords = undo.NoOfChangedWords;
-                _noOfCorrectWords = undo.NoOfCorrectWords;
-                _noOfNamesEtc = undo.NoOfNamesEtc;
-                _noOfAddedWords = undo.NoOfAddedWords;
+                var undo = this._undoList[this._undoList.Count - 1];
+                this._currentIndex = undo.CurrentIndex - 1;
+                this._wordsIndex = int.MaxValue - 1;
+                this._noOfSkippedWords = undo.NoOfSkippedWords;
+                this._noOfChangedWords = undo.NoOfChangedWords;
+                this._noOfCorrectWords = undo.NoOfCorrectWords;
+                this._noOfNamesEtc = undo.NoOfNamesEtc;
+                this._noOfAddedWords = undo.NoOfAddedWords;
 
                 switch (undo.Action)
                 {
                     case SpellCheckAction.Change:
-                        _subtitle = _mainWindow.UndoFromSpellCheck(undo.Subtitle);
+                        this._subtitle = this._mainWindow.UndoFromSpellCheck(undo.Subtitle);
                         break;
                     case SpellCheckAction.ChangeAll:
-                        _subtitle = _mainWindow.UndoFromSpellCheck(undo.Subtitle);
-                        _changeAllDictionary.Remove(undo.CurrentWord);
+                        this._subtitle = this._mainWindow.UndoFromSpellCheck(undo.Subtitle);
+                        this._changeAllDictionary.Remove(undo.CurrentWord);
                         break;
                     case SpellCheckAction.Skip:
                         break;
                     case SpellCheckAction.SkipAll:
-                        _skipAllList.Remove(undo.UndoWord.ToUpper());
+                        this._skipAllList.Remove(undo.UndoWord.ToUpper());
                         if (undo.UndoWord.EndsWith('\'') || undo.UndoWord.StartsWith('\''))
-                            _skipAllList.Remove(undo.UndoWord.ToUpper().Trim('\''));
+                        {
+                            this._skipAllList.Remove(undo.UndoWord.ToUpper().Trim('\''));
+                        }
+
                         break;
                     case SpellCheckAction.AddToDictionary:
-                        _userWordList.Remove(undo.UndoWord);
-                        _userPhraseList.Remove(undo.UndoWord);
-                        Utilities.RemoveFromUserDictionary(undo.UndoWord, _languageName);
+                        this._userWordList.Remove(undo.UndoWord);
+                        this._userPhraseList.Remove(undo.UndoWord);
+                        Utilities.RemoveFromUserDictionary(undo.UndoWord, this._languageName);
                         break;
                     case SpellCheckAction.AddToNamesEtc:
-                        if (undo.UndoWord.Length > 1 && _namesEtcList.Contains(undo.UndoWord))
+                        if (undo.UndoWord.Length > 1 && this._namesEtcList.Contains(undo.UndoWord))
                         {
-                            _namesEtcList.Remove(undo.UndoWord);
-                            _namesEtcListUppercase.Remove(undo.UndoWord.ToUpper());
-                            if (_languageName.StartsWith("en_", StringComparison.Ordinal) && !undo.UndoWord.EndsWith('s'))
+                            this._namesEtcList.Remove(undo.UndoWord);
+                            this._namesEtcListUppercase.Remove(undo.UndoWord.ToUpper());
+                            if (this._languageName.StartsWith("en_", StringComparison.Ordinal) && !undo.UndoWord.EndsWith('s'))
                             {
-                                _namesEtcList.Remove(undo.UndoWord + "s");
-                                _namesEtcListUppercase.Remove(undo.UndoWord.ToUpper() + "S");
+                                this._namesEtcList.Remove(undo.UndoWord + "s");
+                                this._namesEtcListUppercase.Remove(undo.UndoWord.ToUpper() + "S");
                             }
+
                             if (!undo.UndoWord.EndsWith('s'))
                             {
-                                _namesEtcListWithApostrophe.Remove(undo.UndoWord + "'s");
-                                _namesEtcListUppercase.Remove(undo.UndoWord.ToUpper() + "'S");
+                                this._namesEtcListWithApostrophe.Remove(undo.UndoWord + "'s");
+                                this._namesEtcListUppercase.Remove(undo.UndoWord.ToUpper() + "'S");
                             }
-                            if (!undo.UndoWord.EndsWith('\''))
-                                _namesEtcListWithApostrophe.Remove(undo.UndoWord + "'");
 
-                            _namesList.Remove(undo.UndoWord);
+                            if (!undo.UndoWord.EndsWith('\''))
+                            {
+                                this._namesEtcListWithApostrophe.Remove(undo.UndoWord + "'");
+                            }
+
+                            this._namesList.Remove(undo.UndoWord);
                         }
+
                         break;
                     case SpellCheckAction.ChangeWholeText:
-                        _subtitle = _mainWindow.UndoFromSpellCheck(undo.Subtitle);
+                        this._subtitle = this._mainWindow.UndoFromSpellCheck(undo.Subtitle);
                         break;
                 }
 
-                _undoList.RemoveAt(_undoList.Count - 1);
-                if (_undoList.Count > 0)
+                this._undoList.RemoveAt(this._undoList.Count - 1);
+                if (this._undoList.Count > 0)
                 {
-                    buttonUndo.Text = _undoList[_undoList.Count - 1].UndoText;
+                    this.buttonUndo.Text = this._undoList[this._undoList.Count - 1].UndoText;
                 }
                 else
                 {
-                    buttonUndo.Visible = false;
+                    this.buttonUndo.Visible = false;
                 }
             }
-            PrepareNextWord();
+
+            this.PrepareNextWord();
         }
 
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// <param name="disposing">
+        /// true if managed resources should be disposed; otherwise, false.
+        /// </param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && (this.components != null))
             {
-                if (_hunspell != null)
+                if (this._hunspell != null)
                 {
-                    _hunspell.Dispose();
-                    _hunspell = null;
+                    this._hunspell.Dispose();
+                    this._hunspell = null;
                 }
-                components.Dispose();
+
+                this.components.Dispose();
             }
+
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// The button google it_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonGoogleIt_Click(object sender, EventArgs e)
         {
-            string text = textBoxWord.Text.Trim();
+            string text = this.textBoxWord.Text.Trim();
             if (!string.IsNullOrWhiteSpace(text))
+            {
                 System.Diagnostics.Process.Start("https://www.google.com/search?q=" + Utilities.UrlEncode(text));
+            }
         }
 
+        /// <summary>
+        /// The undo object.
+        /// </summary>
+        private class UndoObject
+        {
+            /// <summary>
+            /// Gets or sets the current index.
+            /// </summary>
+            public int CurrentIndex { get; set; }
+
+            /// <summary>
+            /// Gets or sets the undo text.
+            /// </summary>
+            public string UndoText { get; set; }
+
+            /// <summary>
+            /// Gets or sets the undo word.
+            /// </summary>
+            public string UndoWord { get; set; }
+
+            /// <summary>
+            /// Gets or sets the current word.
+            /// </summary>
+            public string CurrentWord { get; set; }
+
+            /// <summary>
+            /// Gets or sets the action.
+            /// </summary>
+            public SpellCheckAction Action { get; set; }
+
+            /// <summary>
+            /// Gets or sets the subtitle.
+            /// </summary>
+            public Subtitle Subtitle { get; set; }
+
+            /// <summary>
+            /// Gets or sets the no of skipped words.
+            /// </summary>
+            public int NoOfSkippedWords { get; set; }
+
+            /// <summary>
+            /// Gets or sets the no of changed words.
+            /// </summary>
+            public int NoOfChangedWords { get; set; }
+
+            /// <summary>
+            /// Gets or sets the no of correct words.
+            /// </summary>
+            public int NoOfCorrectWords { get; set; }
+
+            /// <summary>
+            /// Gets or sets the no of names etc.
+            /// </summary>
+            public int NoOfNamesEtc { get; set; }
+
+            /// <summary>
+            /// Gets or sets the no of added words.
+            /// </summary>
+            public int NoOfAddedWords { get; set; }
+        }
+
+        /// <summary>
+        /// The suggestion parameter.
+        /// </summary>
+        public class SuggestionParameter
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="SuggestionParameter"/> class.
+            /// </summary>
+            /// <param name="word">
+            /// The word.
+            /// </param>
+            /// <param name="hunspell">
+            /// The hunspell.
+            /// </param>
+            public SuggestionParameter(string word, Hunspell hunspell)
+            {
+                this.InputWord = word;
+                this.Suggestions = new List<string>();
+                this.Hunspell = hunspell;
+                this.Success = false;
+            }
+
+            /// <summary>
+            /// Gets or sets the input word.
+            /// </summary>
+            public string InputWord { get; set; }
+
+            /// <summary>
+            /// Gets or sets the suggestions.
+            /// </summary>
+            public List<string> Suggestions { get; set; }
+
+            /// <summary>
+            /// Gets or sets the hunspell.
+            /// </summary>
+            public Hunspell Hunspell { get; set; }
+
+            /// <summary>
+            /// Gets or sets a value indicating whether success.
+            /// </summary>
+            public bool Success { get; set; }
+        }
     }
 }

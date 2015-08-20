@@ -1,12 +1,29 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nikse.SubtitleEdit.Logic.Dictionaries;
-using System.IO;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NamesListTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The names list test.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic.Dictionaries
 {
+    using System.IO;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Nikse.SubtitleEdit.Logic.Dictionaries;
+
+    /// <summary>
+    /// The names list test.
+    /// </summary>
     [TestClass]
     public class NamesListTest
     {
+        /// <summary>
+        /// The names list add word.
+        /// </summary>
         [TestMethod]
         public void NamesListAddWord()
         {
@@ -21,6 +38,9 @@ namespace Test.Logic.Dictionaries
             Assert.IsTrue(exists);
         }
 
+        /// <summary>
+        /// The names list add multi word.
+        /// </summary>
         [TestMethod]
         public void NamesListAddMultiWord()
         {
@@ -35,6 +55,9 @@ namespace Test.Logic.Dictionaries
             Assert.IsTrue(exists);
         }
 
+        /// <summary>
+        /// The names list is in names etc multi word list.
+        /// </summary>
         [TestMethod]
         public void NamesListIsInNamesEtcMultiWordList()
         {
@@ -49,6 +72,9 @@ namespace Test.Logic.Dictionaries
             Assert.IsTrue(exists);
         }
 
+        /// <summary>
+        /// The names list not in list.
+        /// </summary>
         [TestMethod]
         public void NamesListNotInList()
         {
@@ -62,6 +88,9 @@ namespace Test.Logic.Dictionaries
             Assert.IsFalse(exists);
         }
 
+        /// <summary>
+        /// The names list add word reload.
+        /// </summary>
         public void NamesListAddWordReload()
         {
             // Arrange
@@ -75,6 +104,9 @@ namespace Test.Logic.Dictionaries
             Assert.IsTrue(namesList.GetNames().Contains("Jones"));
         }
 
+        /// <summary>
+        /// The names list remove.
+        /// </summary>
         [TestMethod]
         public void NamesListRemove()
         {
@@ -89,6 +121,9 @@ namespace Test.Logic.Dictionaries
             Assert.IsFalse(namesList.GetNames().Contains("Jones"));
         }
 
+        /// <summary>
+        /// The names list remove reload.
+        /// </summary>
         [TestMethod]
         public void NamesListRemoveReload()
         {
@@ -103,6 +138,5 @@ namespace Test.Logic.Dictionaries
             // Assert
             Assert.IsFalse(namesList.GetNames().Contains("Jones"));
         }
-
     }
 }

@@ -1,101 +1,223 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AlignmentPicker.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The alignment picker.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Drawing;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The alignment picker.
+    /// </summary>
     public partial class AlignmentPicker : Form
     {
-        public ContentAlignment Alignment { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AlignmentPicker"/> class.
+        /// </summary>
         public AlignmentPicker()
         {
-            InitializeComponent();
-            Text = Configuration.Settings.Language.SubStationAlphaStyles.Alignment;
+            this.InitializeComponent();
+            this.Text = Configuration.Settings.Language.SubStationAlphaStyles.Alignment;
 
-            button1.Text = Configuration.Settings.Language.SubStationAlphaStyles.TopLeft;
-            button2.Text = Configuration.Settings.Language.SubStationAlphaStyles.TopCenter;
-            button3.Text = Configuration.Settings.Language.SubStationAlphaStyles.TopRight;
+            this.button1.Text = Configuration.Settings.Language.SubStationAlphaStyles.TopLeft;
+            this.button2.Text = Configuration.Settings.Language.SubStationAlphaStyles.TopCenter;
+            this.button3.Text = Configuration.Settings.Language.SubStationAlphaStyles.TopRight;
 
-            button4.Text = Configuration.Settings.Language.SubStationAlphaStyles.MiddleLeft;
-            button5.Text = Configuration.Settings.Language.SubStationAlphaStyles.MiddleCenter;
-            button6.Text = Configuration.Settings.Language.SubStationAlphaStyles.MiddleRight;
+            this.button4.Text = Configuration.Settings.Language.SubStationAlphaStyles.MiddleLeft;
+            this.button5.Text = Configuration.Settings.Language.SubStationAlphaStyles.MiddleCenter;
+            this.button6.Text = Configuration.Settings.Language.SubStationAlphaStyles.MiddleRight;
 
-            button7.Text = Configuration.Settings.Language.SubStationAlphaStyles.BottomLeft;
-            button8.Text = Configuration.Settings.Language.SubStationAlphaStyles.BottomCenter;
-            button9.Text = Configuration.Settings.Language.SubStationAlphaStyles.BottomRight;
+            this.button7.Text = Configuration.Settings.Language.SubStationAlphaStyles.BottomLeft;
+            this.button8.Text = Configuration.Settings.Language.SubStationAlphaStyles.BottomCenter;
+            this.button9.Text = Configuration.Settings.Language.SubStationAlphaStyles.BottomRight;
         }
 
+        /// <summary>
+        /// Gets or sets the alignment.
+        /// </summary>
+        public ContentAlignment Alignment { get; set; }
+
+        /// <summary>
+        /// The done.
+        /// </summary>
         public void Done()
         {
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The button 1_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void button1_Click(object sender, EventArgs e)
         {
-            Alignment = ContentAlignment.TopLeft;
-            Done();
+            this.Alignment = ContentAlignment.TopLeft;
+            this.Done();
         }
 
+        /// <summary>
+        /// The button 2_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void button2_Click(object sender, EventArgs e)
         {
-            Alignment = ContentAlignment.TopCenter;
-            Done();
+            this.Alignment = ContentAlignment.TopCenter;
+            this.Done();
         }
 
+        /// <summary>
+        /// The button 3_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void button3_Click(object sender, EventArgs e)
         {
-            Alignment = ContentAlignment.TopRight;
-            Done();
+            this.Alignment = ContentAlignment.TopRight;
+            this.Done();
         }
 
+        /// <summary>
+        /// The button 4_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void button4_Click(object sender, EventArgs e)
         {
-            Alignment = ContentAlignment.MiddleLeft;
-            Done();
+            this.Alignment = ContentAlignment.MiddleLeft;
+            this.Done();
         }
 
+        /// <summary>
+        /// The button 5_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void button5_Click(object sender, EventArgs e)
         {
-            Alignment = ContentAlignment.MiddleCenter;
-            Done();
+            this.Alignment = ContentAlignment.MiddleCenter;
+            this.Done();
         }
 
+        /// <summary>
+        /// The button 6_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void button6_Click(object sender, EventArgs e)
         {
-            Alignment = ContentAlignment.MiddleRight;
-            Done();
+            this.Alignment = ContentAlignment.MiddleRight;
+            this.Done();
         }
 
+        /// <summary>
+        /// The button 7_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void button7_Click(object sender, EventArgs e)
         {
-            Alignment = ContentAlignment.BottomLeft;
-            Done();
+            this.Alignment = ContentAlignment.BottomLeft;
+            this.Done();
         }
 
+        /// <summary>
+        /// The button 8_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void button8_Click(object sender, EventArgs e)
         {
-            Alignment = ContentAlignment.BottomCenter;
-            Done();
+            this.Alignment = ContentAlignment.BottomCenter;
+            this.Done();
         }
 
+        /// <summary>
+        /// The button 9_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void button9_Click(object sender, EventArgs e)
         {
-            Alignment = ContentAlignment.BottomRight;
-            Done();
+            this.Alignment = ContentAlignment.BottomRight;
+            this.Done();
         }
 
+        /// <summary>
+        /// The alignment picker_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void AlignmentPicker_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
 
+        /// <summary>
+        /// The alignment picker_ shown.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void AlignmentPicker_Shown(object sender, EventArgs e)
         {
-            button8.Focus();
+            this.button8.Focus();
         }
-
     }
 }

@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.Dictionaries
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NamesList.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The names list.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.Dictionaries
 {
     using System;
     using System.Collections.Generic;
@@ -8,16 +17,46 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The names list.
+    /// </summary>
     public class NamesList
     {
+        /// <summary>
+        /// The _dictionary folder.
+        /// </summary>
         private readonly string _dictionaryFolder;
 
+        /// <summary>
+        /// The _language name.
+        /// </summary>
         private readonly string _languageName;
 
+        /// <summary>
+        /// The _names list.
+        /// </summary>
         private readonly HashSet<string> _namesList;
 
+        /// <summary>
+        /// The _names multi list.
+        /// </summary>
         private readonly HashSet<string> _namesMultiList;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NamesList"/> class.
+        /// </summary>
+        /// <param name="dictionaryFolder">
+        /// The dictionary folder.
+        /// </param>
+        /// <param name="languageName">
+        /// The language name.
+        /// </param>
+        /// <param name="useOnlineNamesEtc">
+        /// The use online names etc.
+        /// </param>
+        /// <param name="namesEtcUrl">
+        /// The names etc url.
+        /// </param>
         public NamesList(string dictionaryFolder, string languageName, bool useOnlineNamesEtc, string namesEtcUrl)
         {
             this._dictionaryFolder = dictionaryFolder;
@@ -53,6 +92,12 @@
             this.UnloadRemovedNames(userFile);
         }
 
+        /// <summary>
+        /// The get all names.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public List<string> GetAllNames()
         {
             List<string> list = new List<string>();
@@ -69,16 +114,37 @@
             return list;
         }
 
+        /// <summary>
+        /// The get names.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="HashSet"/>.
+        /// </returns>
         public HashSet<string> GetNames()
         {
             return this._namesList;
         }
 
+        /// <summary>
+        /// The get multi names.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="HashSet"/>.
+        /// </returns>
         public HashSet<string> GetMultiNames()
         {
             return this._namesMultiList;
         }
 
+        /// <summary>
+        /// The remove.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool Remove(string name)
         {
             name = name.Trim();
@@ -140,6 +206,15 @@
             return false;
         }
 
+        /// <summary>
+        /// The add.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool Add(string name)
         {
             name = name.Trim();
@@ -183,6 +258,18 @@
             return false;
         }
 
+        /// <summary>
+        /// The is in names etc multi word list.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool IsInNamesEtcMultiWordList(string text, string word)
         {
             if (string.IsNullOrEmpty(text))
@@ -212,6 +299,18 @@
             return false;
         }
 
+        /// <summary>
+        /// The load names list.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="namesList">
+        /// The names list.
+        /// </param>
+        /// <param name="namesMultiList">
+        /// The names multi list.
+        /// </param>
         private static void LoadNamesList(string fileName, HashSet<string> namesList, HashSet<string> namesMultiList)
         {
             if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName))
@@ -229,6 +328,18 @@
             LoadNames(namesList, namesMultiList, namesDoc);
         }
 
+        /// <summary>
+        /// The load names.
+        /// </summary>
+        /// <param name="namesList">
+        /// The names list.
+        /// </param>
+        /// <param name="namesMultiList">
+        /// The names multi list.
+        /// </param>
+        /// <param name="namesDoc">
+        /// The names doc.
+        /// </param>
         private static void LoadNames(HashSet<string> namesList, HashSet<string> namesMultiList, XmlDocument namesDoc)
         {
             foreach (XmlNode node in namesDoc.DocumentElement.SelectNodes("name"))
@@ -245,6 +356,12 @@
             }
         }
 
+        /// <summary>
+        /// The unload removed names.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         private void UnloadRemovedNames(string fileName)
         {
             if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName))
@@ -276,6 +393,12 @@
             }
         }
 
+        /// <summary>
+        /// The get local names file name.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string GetLocalNamesFileName()
         {
             if (this._languageName.Length == 2)
@@ -290,6 +413,12 @@
             return Path.Combine(this._dictionaryFolder, this._languageName + "_names_etc.xml");
         }
 
+        /// <summary>
+        /// The get local names user file name.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string GetLocalNamesUserFileName()
         {
             if (this._languageName.Length == 2)

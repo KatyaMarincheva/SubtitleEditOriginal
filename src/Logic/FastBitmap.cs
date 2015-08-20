@@ -1,89 +1,174 @@
-﻿//Downloaded from Visual C# Kicks - http://www.vcskicks.com/
-using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright company="" file="FastBitmap.cs">
+//   
+// </copyright>
+// <summary>
+//   The fast bitmap.
+// </summary>
+// 
+// --------------------------------------------------------------------------------------------------------------------
 namespace Nikse.SubtitleEdit.Logic
 {
-    unsafe public class FastBitmap
+    using System;
+    using System.Drawing;
+    using System.Drawing.Imaging;
+
+    /// <summary>
+    /// The fast bitmap.
+    /// </summary>
+    public unsafe class FastBitmap
     {
-        private struct PixelData
-        {
-            public byte Blue;
-            public byte Green;
-            public byte Red;
-            public byte Alpha;
-
-            public override string ToString()
-            {
-                return "(" + Alpha + ", " + Red + ", " + Green + ", " + Blue + ")";
-            }
-        }
-
-        public int Width { get; set; }
-        public int Height { get; set; }
-
+        /// <summary>
+        /// The _working bitmap.
+        /// </summary>
         private readonly Bitmap _workingBitmap;
-        private int _width;
+
+        /// <summary>
+        /// The _bitmap data.
+        /// </summary>
         private BitmapData _bitmapData;
-        private Byte* _pBase = null;
 
-        public FastBitmap(Bitmap inputBitmap)
-        {
-            _workingBitmap = inputBitmap;
+        /// <summary>
+        /// The _p base.
+        /// </summary>
+        private byte* _pBase = null;
 
-            if (_workingBitmap.PixelFormat != PixelFormat.Format32bppArgb &&
-                Environment.OSVersion.Version.Major < 6 && Configuration.Settings.General.SubtitleFontName == Utilities.WinXP2KUnicodeFontName) // 6 == Vista/Win2008Server/Win7
-            { // WinXp Fix
-                var newBitmap = new Bitmap(_workingBitmap.Width, _workingBitmap.Height, PixelFormat.Format32bppArgb);
-                for (int y = 0; y < _workingBitmap.Height; y++)
-                    for (int x = 0; x < _workingBitmap.Width; x++)
-                        newBitmap.SetPixel(x, y, _workingBitmap.GetPixel(x, y));
-                _workingBitmap = newBitmap;
-            }
-
-            Width = inputBitmap.Width;
-            Height = inputBitmap.Height;
-        }
-
-        public void LockImage()
-        {
-            var bounds = new Rectangle(Point.Empty, _workingBitmap.Size);
-
-            _width = bounds.Width * sizeof(PixelData);
-            if (_width % 4 != 0) _width = 4 * (_width / 4 + 1);
-
-            //Lock Image
-            _bitmapData = _workingBitmap.LockBits(bounds, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-            _pBase = (Byte*)_bitmapData.Scan0.ToPointer();
-        }
-
+        /// <summary>
+        /// The _pixel data.
+        /// </summary>
         private PixelData* _pixelData = null;
 
+        /// <summary>
+        /// The _width.
+        /// </summary>
+        private int _width;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FastBitmap"/> class.
+        /// </summary>
+        /// <param name="inputBitmap">
+        /// The input bitmap.
+        /// </param>
+        public FastBitmap(Bitmap inputBitmap)
+        {
+            this._workingBitmap = inputBitmap;
+
+            if (this._workingBitmap.PixelFormat != PixelFormat.Format32bppArgb && Environment.OSVersion.Version.Major < 6 && Configuration.Settings.General.SubtitleFontName == Utilities.WinXP2KUnicodeFontName)
+            { // WinXp Fix
+                // 6 == Vista/Win2008Server/Win7
+                var newBitmap = new Bitmap(this._workingBitmap.Width, this._workingBitmap.Height, PixelFormat.Format32bppArgb);
+                for (int y = 0; y < this._workingBitmap.Height; y++)
+                {
+                    for (int x = 0; x < this._workingBitmap.Width; x++)
+                    {
+                        newBitmap.SetPixel(x, y, this._workingBitmap.GetPixel(x, y));
+                    }
+                }
+
+                this._workingBitmap = newBitmap;
+            }
+
+            this.Width = inputBitmap.Width;
+            this.Height = inputBitmap.Height;
+        }
+
+        /// <summary>
+        /// Gets or sets the width.
+        /// </summary>
+        public int Width { get; set; }
+
+        /// <summary>
+        /// Gets or sets the height.
+        /// </summary>
+        public int Height { get; set; }
+
+        /// <summary>
+        /// The lock image.
+        /// </summary>
+        public void LockImage()
+        {
+            var bounds = new Rectangle(Point.Empty, this._workingBitmap.Size);
+
+            this._width = bounds.Width * sizeof(PixelData);
+            if (this._width % 4 != 0)
+            {
+                this._width = 4 * (this._width / 4 + 1);
+            }
+
+            // Lock Image
+            this._bitmapData = this._workingBitmap.LockBits(bounds, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+            this._pBase = (Byte*)this._bitmapData.Scan0.ToPointer();
+        }
+
+        /// <summary>
+        /// The get pixel.
+        /// </summary>
+        /// <param name="x">
+        /// The x.
+        /// </param>
+        /// <param name="y">
+        /// The y.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Color"/>.
+        /// </returns>
         public Color GetPixel(int x, int y)
         {
-            _pixelData = (PixelData*)(_pBase + y * _width + x * sizeof(PixelData));
-            return Color.FromArgb(_pixelData->Alpha, _pixelData->Red, _pixelData->Green, _pixelData->Blue);
+            this._pixelData = (PixelData*)(this._pBase + y * this._width + x * sizeof(PixelData));
+            return Color.FromArgb(this._pixelData->Alpha, this._pixelData->Red, this._pixelData->Green, this._pixelData->Blue);
         }
 
+        /// <summary>
+        /// The get pixel next.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Color"/>.
+        /// </returns>
         public Color GetPixelNext()
         {
-            _pixelData++;
-            return Color.FromArgb(_pixelData->Alpha, _pixelData->Red, _pixelData->Green, _pixelData->Blue);
+            this._pixelData++;
+            return Color.FromArgb(this._pixelData->Alpha, this._pixelData->Red, this._pixelData->Green, this._pixelData->Blue);
         }
 
+        /// <summary>
+        /// The set pixel.
+        /// </summary>
+        /// <param name="x">
+        /// The x.
+        /// </param>
+        /// <param name="y">
+        /// The y.
+        /// </param>
+        /// <param name="color">
+        /// The color.
+        /// </param>
         public void SetPixel(int x, int y, Color color)
         {
-            var data = (PixelData*)(_pBase + y * _width + x * sizeof(PixelData));
+            var data = (PixelData*)(this._pBase + y * this._width + x * sizeof(PixelData));
             data->Alpha = color.A;
             data->Red = color.R;
             data->Green = color.G;
             data->Blue = color.B;
         }
 
+        /// <summary>
+        /// The set pixel.
+        /// </summary>
+        /// <param name="x">
+        /// The x.
+        /// </param>
+        /// <param name="y">
+        /// The y.
+        /// </param>
+        /// <param name="color">
+        /// The color.
+        /// </param>
+        /// <param name="length">
+        /// The length.
+        /// </param>
         public void SetPixel(int x, int y, Color color, int length)
         {
-            var data = (PixelData*)(_pBase + y * _width + x * sizeof(PixelData));
+            var data = (PixelData*)(this._pBase + y * this._width + x * sizeof(PixelData));
             for (int i = 0; i < length; i++)
             {
                 data->Alpha = color.A;
@@ -94,16 +179,62 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// The get bitmap.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Bitmap"/>.
+        /// </returns>
         public Bitmap GetBitmap()
         {
-            return _workingBitmap;
+            return this._workingBitmap;
         }
 
+        /// <summary>
+        /// The unlock image.
+        /// </summary>
         public void UnlockImage()
         {
-            _workingBitmap.UnlockBits(_bitmapData);
-            _bitmapData = null;
-            _pBase = null;
+            this._workingBitmap.UnlockBits(this._bitmapData);
+            this._bitmapData = null;
+            this._pBase = null;
+        }
+
+        /// <summary>
+        /// The pixel data.
+        /// </summary>
+        private struct PixelData
+        {
+            /// <summary>
+            /// The alpha.
+            /// </summary>
+            public byte Alpha;
+
+            /// <summary>
+            /// The blue.
+            /// </summary>
+            public byte Blue;
+
+            /// <summary>
+            /// The green.
+            /// </summary>
+            public byte Green;
+
+            /// <summary>
+            /// The red.
+            /// </summary>
+            public byte Red;
+
+            /// <summary>
+            /// The to string.
+            /// </summary>
+            /// <returns>
+            /// The <see cref="string"/>.
+            /// </returns>
+            public override string ToString()
+            {
+                return "(" + this.Alpha + ", " + this.Red + ", " + this.Green + ", " + this.Blue + ")";
+            }
         }
     }
 }

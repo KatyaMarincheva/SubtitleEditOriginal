@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Pac.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The pac.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -12,26 +21,59 @@
 
     // The PAC format was developed by Screen Electronics
     // The PAC format save the contents, time code, position, justification, and italicization of each subtitle. The choice of font is not saved.
+    /// <summary>
+    /// The pac.
+    /// </summary>
     public class Pac : SubtitleFormat
     {
+        /// <summary>
+        /// The code page latin.
+        /// </summary>
         public const int CodePageLatin = 0;
 
+        /// <summary>
+        /// The code page greek.
+        /// </summary>
         public const int CodePageGreek = 1;
 
+        /// <summary>
+        /// The code page latin czech.
+        /// </summary>
         public const int CodePageLatinCzech = 2;
 
+        /// <summary>
+        /// The code page arabic.
+        /// </summary>
         public const int CodePageArabic = 3;
 
+        /// <summary>
+        /// The code page hebrew.
+        /// </summary>
         public const int CodePageHebrew = 4;
 
+        /// <summary>
+        /// The code page thai.
+        /// </summary>
         public const int CodePageThai = 5;
 
+        /// <summary>
+        /// The code page cyrillic.
+        /// </summary>
         public const int CodePageCyrillic = 6;
 
+        /// <summary>
+        /// The code page chinese.
+        /// </summary>
         public const int CodePageChinese = 7;
 
+        /// <summary>
+        /// The name of format.
+        /// </summary>
         public const string NameOfFormat = "PAC (Screen Electronics)";
 
+        /// <summary>
+        /// The pac null time.
+        /// </summary>
         public static readonly TimeCode PacNullTime = new TimeCode(655, 35, 00, 0);
 
         /// <summary>
@@ -185,6 +227,9 @@
                                                                        0x14 // "—"
                                                                      };
 
+        /// <summary>
+        /// The latin letters.
+        /// </summary>
         private static readonly List<string> LatinLetters = new List<string> { "Ã", "Ñ", "Õ", "ã", "ñ", "õ", "å", "Å", "ā", "Ā", "Ē", "ē", "Ī", "ī", "Ō", "ō", "Ū", "ū", "£", "æ", "ø", "§", "Æ", "Ø", "÷", "-", "–", "Ö", "ö", "Ä", "ä", "Ü", "ü", "ß", "²", "Á", "Í", "Ú", "Ý", "á", "é", "í", "É", "ú", "ý", "à", "è", "ò", "È", "Ì", "Ò", "ì", "Ĉ", "Ĝ", "Ĥ", "Ĵ", "Ŝ", "Ŭ", "ĉ", "ĝ", "ĥ", "ĵ", "ŝ", "ŭ", "À", "à", "Â", "â", "Ç", "ç", "Ê", "ê", "Ë", "ë", "ö", "Î", "î", "Ï", "ï", "Ô", "ô", "Ù", "ù", "Û", "û", "Ÿ", "ÿ", "Ą", "ą", "Ć", "ć", "Ę", "ę", "Ł", "ł", "Ń", "ń", "Ó", "ó", "Ś", "ś", "Ź", "ź", "Ż", "ż", "þ", "ð", "Þ", "Ð", "Ş", // 0xe653
                                                                                "ş", // 0xe673
                                                                                "ç", // 0xe663
@@ -215,6 +260,9 @@
                                                                                "—" // 0x14
                                                                              };
 
+        /// <summary>
+        /// The hebrew codes.
+        /// </summary>
         private static readonly List<int> HebrewCodes = new List<int> { 0xa0, // א
                                                                         0xa1, // ב
                                                                         0xa2, // ג
@@ -245,6 +293,9 @@
                                                                         44 // ،
                                                                       };
 
+        /// <summary>
+        /// The hebrew letters.
+        /// </summary>
         private static readonly List<string> HebrewLetters = new List<string> { "א", // 0xa0
                                                                                 "ב", // 0xa1
                                                                                 "ג", // 0xa2
@@ -275,6 +326,9 @@
                                                                                 "،" // 44
                                                                               };
 
+        /// <summary>
+        /// The arabic codes.
+        /// </summary>
         private static readonly List<int> ArabicCodes = new List<int> { 0xe081, // =أ
                                                                         0xe09b, // =ؤ
                                                                         0xe09c, // =ئ
@@ -315,9 +369,15 @@
                                                                         0xa0 // =ء
                                                                       };
 
+        /// <summary>
+        /// The arabic letters.
+        /// </summary>
         private static readonly List<string> ArabicLetters = new List<string> { "أ", "ؤ", "ئ", "ي", // 0xe09f
                                                                                 "إ", "آ", "اً", "ـ", "ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ظ", "ط", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "ه", "و", "ى", "ة", "ي", "ء" };
 
+        /// <summary>
+        /// The cyrillic codes.
+        /// </summary>
         private static readonly List<int> CyrillicCodes = new List<int> { 0x20, // space
                                                                           0x21, // !
                                                                           0x22, // Э
@@ -468,6 +528,9 @@
                                                                           0x6938 // ш
                                                                         };
 
+        /// <summary>
+        /// The cyrillic letters.
+        /// </summary>
         private static readonly List<string> CyrillicLetters = new List<string> { " ", // 0x20
                                                                                   "!", // 0x21
                                                                                   "Э", // 0x22
@@ -618,10 +681,19 @@
                                                                                   "ш" // 0x6938
                                                                                 };
 
+        /// <summary>
+        /// The _code page.
+        /// </summary>
         private int _codePage = -1;
 
+        /// <summary>
+        /// The _file name.
+        /// </summary>
         private string _fileName = string.Empty;
 
+        /// <summary>
+        /// Gets or sets the code page.
+        /// </summary>
         public int CodePage
         {
             get
@@ -635,6 +707,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -643,6 +718,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -651,6 +729,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -659,6 +740,15 @@
             }
         }
 
+        /// <summary>
+        /// The get encoding.
+        /// </summary>
+        /// <param name="codePage">
+        /// The code page.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Encoding"/>.
+        /// </returns>
         public static Encoding GetEncoding(int codePage)
         {
             switch (codePage)
@@ -682,6 +772,18 @@
             }
         }
 
+        /// <summary>
+        /// The get arabic string.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GetArabicString(byte[] buffer, ref int index)
         {
             byte b = buffer[index];
@@ -709,6 +811,18 @@
             return string.Format("({0})", b);
         }
 
+        /// <summary>
+        /// The get hebrew string.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GetHebrewString(byte[] buffer, ref int index)
         {
             byte b = buffer[index];
@@ -726,6 +840,21 @@
             return string.Format("({0})", b);
         }
 
+        /// <summary>
+        /// The get latin string.
+        /// </summary>
+        /// <param name="encoding">
+        /// The encoding.
+        /// </param>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GetLatinString(Encoding encoding, byte[] buffer, ref int index)
         {
             byte b = buffer[index];
@@ -754,6 +883,18 @@
             return string.Empty;
         }
 
+        /// <summary>
+        /// The get cyrillic string.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GetCyrillicString(byte[] buffer, ref int index)
         {
             byte b = buffer[index];
@@ -783,6 +924,15 @@
             return string.Format("({0})", b);
         }
 
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         public void Save(string fileName, Subtitle subtitle)
         {
             using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
@@ -820,6 +970,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
@@ -852,11 +1014,35 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             return "Not supported!";
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._fileName = fileName;
@@ -877,6 +1063,18 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The get time code.
+        /// </summary>
+        /// <param name="timeCodeIndex">
+        /// The time code index.
+        /// </param>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         internal static TimeCode GetTimeCode(int timeCodeIndex, byte[] buffer)
         {
             if (timeCodeIndex > 0)
@@ -901,6 +1099,15 @@
             return new TimeCode(0, 0, 0, 0);
         }
 
+        /// <summary>
+        /// The make pac italics and remove other tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string MakePacItalicsAndRemoveOtherTags(string text)
         {
             text = HtmlUtil.RemoveOpenCloseTags(text, HtmlUtil.TagFont, HtmlUtil.TagUnderline).Trim();
@@ -940,6 +1147,15 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The write time code.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
         private static void WriteTimeCode(FileStream fs, TimeCode timeCode)
         {
             // write four bytes time code
@@ -973,8 +1189,14 @@
         }
 
         /// <summary>
-        ///     Fix italic tags, lines starting with ">" - whole line is italic, words between &lt;&gt; is italic
+        /// Fix italic tags, lines starting with "&gt;" - whole line is italic, words between &lt;&gt; is italic
         /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string FixItalics(string text)
         {
             int index = text.IndexOf('<');
@@ -1014,6 +1236,21 @@
             return text.Replace(" " + Environment.NewLine, Environment.NewLine).Trim();
         }
 
+        /// <summary>
+        /// The get latin bytes.
+        /// </summary>
+        /// <param name="encoding">
+        /// The encoding.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="alignment">
+        /// The alignment.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         private static byte[] GetLatinBytes(Encoding encoding, string text, byte alignment)
         {
             int i = 0;
@@ -1078,21 +1315,75 @@
             return result;
         }
 
+        /// <summary>
+        /// The get arabic bytes.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="alignment">
+        /// The alignment.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         private static byte[] GetArabicBytes(string text, byte alignment)
         {
             return GetBytesViaLists(text, ArabicLetters, ArabicCodes, alignment);
         }
 
+        /// <summary>
+        /// The get hebrew bytes.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="alignment">
+        /// The alignment.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         private static byte[] GetHebrewBytes(string text, byte alignment)
         {
             return GetBytesViaLists(text, HebrewLetters, HebrewCodes, alignment);
         }
 
+        /// <summary>
+        /// The get cyrillic bytes.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="alignment">
+        /// The alignment.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         private static byte[] GetCyrillicBytes(string text, byte alignment)
         {
             return GetBytesViaLists(text, CyrillicLetters, CyrillicCodes, alignment);
         }
 
+        /// <summary>
+        /// The get bytes via lists.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="letters">
+        /// The letters.
+        /// </param>
+        /// <param name="codes">
+        /// The codes.
+        /// </param>
+        /// <param name="alignment">
+        /// The alignment.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         private static byte[] GetBytesViaLists(string text, List<string> letters, List<int> codes, byte alignment)
         {
             int i = 0;
@@ -1187,6 +1478,18 @@
             return result;
         }
 
+        /// <summary>
+        /// The get chinese big 5 bytes.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="alignment">
+        /// The alignment.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         private static byte[] GetChineseBig5Bytes(string text, byte alignment)
         {
             List<byte> result = new List<byte>();
@@ -1227,6 +1530,15 @@
             return result.ToArray();
         }
 
+        /// <summary>
+        /// The only ansi.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool OnlyAnsi(string line)
         {
             string latin = Utilities.AllLettersAndNumbers + " .!?/%:;=()#$'&\"";
@@ -1241,6 +1553,21 @@
             return true;
         }
 
+        /// <summary>
+        /// The write paragraph.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <param name="number">
+        /// The number.
+        /// </param>
+        /// <param name="isLast">
+        /// The is last.
+        /// </param>
         private void WriteParagraph(FileStream fs, Paragraph p, int number, bool isLast)
         {
             WriteTimeCode(fs, p.StartTime);
@@ -1334,6 +1661,18 @@
             }
         }
 
+        /// <summary>
+        /// The get pac paragraph.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Paragraph"/>.
+        /// </returns>
         private Paragraph GetPacParagraph(ref int index, byte[] buffer)
         {
             while (index < 15)
@@ -1549,6 +1888,12 @@
             return p;
         }
 
+        /// <summary>
+        /// The auto detect encoding.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private int AutoDetectEncoding()
         {
             try
@@ -1697,6 +2042,18 @@
             }
         }
 
+        /// <summary>
+        /// The get code page.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="endDelimiter">
+        /// The end delimiter.
+        /// </param>
         private void GetCodePage(byte[] buffer, int index, int endDelimiter)
         {
             if (this.BatchMode)

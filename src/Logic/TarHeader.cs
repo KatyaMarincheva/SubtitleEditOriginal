@@ -1,40 +1,82 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TarHeader.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The tar header.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic
 {
+    using System;
+    using System.IO;
+    using System.Text;
+
+    /// <summary>
+    /// The tar header.
+    /// </summary>
     public class TarHeader
     {
+        /// <summary>
+        /// The header size.
+        /// </summary>
         public const int HeaderSize = 512;
 
-        public string FileName { get; set; }
-        public long FileSizeInBytes { get; set; }
-        public long FilePosition { get; set; }
-
+        /// <summary>
+        /// The _stream.
+        /// </summary>
         private readonly Stream _stream;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TarHeader"/> class.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
         public TarHeader(Stream stream)
         {
-            _stream = stream;
+            this._stream = stream;
             var buffer = new byte[HeaderSize];
             stream.Read(buffer, 0, HeaderSize);
-            FilePosition = stream.Position;
+            this.FilePosition = stream.Position;
 
-            FileName = Encoding.ASCII.GetString(buffer, 0, 100).Replace("\0", string.Empty);
+            this.FileName = Encoding.ASCII.GetString(buffer, 0, 100).Replace("\0", string.Empty);
 
             string sizeInBytes = Encoding.ASCII.GetString(buffer, 124, 11);
-            if (!string.IsNullOrEmpty(FileName) && Utilities.IsInteger(sizeInBytes))
-                FileSizeInBytes = Convert.ToInt64(sizeInBytes.Trim(), 8);
+            if (!string.IsNullOrEmpty(this.FileName) && Utilities.IsInteger(sizeInBytes))
+            {
+                this.FileSizeInBytes = Convert.ToInt64(sizeInBytes.Trim(), 8);
+            }
         }
 
+        /// <summary>
+        /// Gets or sets the file name.
+        /// </summary>
+        public string FileName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the file size in bytes.
+        /// </summary>
+        public long FileSizeInBytes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the file position.
+        /// </summary>
+        public long FilePosition { get; set; }
+
+        /// <summary>
+        /// The write data.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public void WriteData(string fileName)
         {
-            var buffer = new byte[FileSizeInBytes];
-            _stream.Position = FilePosition;
-            _stream.Read(buffer, 0, buffer.Length);
+            var buffer = new byte[this.FileSizeInBytes];
+            this._stream.Position = this.FilePosition;
+            this._stream.Read(buffer, 0, buffer.Length);
             File.WriteAllBytes(fileName, buffer);
         }
-
     }
 }

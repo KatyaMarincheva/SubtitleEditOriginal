@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MicroDvd.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The micro dvd.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -7,16 +16,34 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The micro dvd.
+    /// </summary>
     public class MicroDvd : SubtitleFormat
     {
+        /// <summary>
+        /// The _regex micro dvd line.
+        /// </summary>
         private static readonly Regex _regexMicroDvdLine = new Regex(@"^\{-?\d+}\{-?\d+}.*$", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The _errors.
+        /// </summary>
         private StringBuilder _errors;
 
+        /// <summary>
+        /// The _line number.
+        /// </summary>
         private int _lineNumber;
 
+        /// <summary>
+        /// Gets the errors.
+        /// </summary>
         public string Errors { get; private set; }
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -25,6 +52,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -33,6 +63,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -41,6 +74,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             List<string> trimmedLines = new List<string>();
@@ -72,6 +117,18 @@
             return trimmedLines.Count > errors;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             StringBuilder sb = new StringBuilder();
@@ -330,6 +387,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -615,6 +684,15 @@
             this.Errors = this._errors.ToString();
         }
 
+        /// <summary>
+        /// The remove illegal spaces and fix empty codes.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveIllegalSpacesAndFixEmptyCodes(string line)
         {
             int index = line.IndexOf('}');
@@ -641,6 +719,15 @@
             return line;
         }
 
+        /// <summary>
+        /// The get text start index.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private static int GetTextStartIndex(string line)
         {
             int i = 0;

@@ -1,15 +1,31 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using Nikse.SubtitleEdit.Logic.ContainerFormats.Matroska;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MatroskaTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The matroska test.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic.VideoFormats
 {
+    using System;
+    using System.IO;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Nikse.SubtitleEdit.Logic.ContainerFormats.Matroska;
+
+    /// <summary>
+    /// The matroska test.
+    /// </summary>
     [TestClass]
     [DeploymentItem("Files")]
     public class MatroskaTest
     {
-
+        /// <summary>
+        /// The matroska test valid.
+        /// </summary>
         [TestMethod]
         public void MatroskaTestValid()
         {
@@ -20,6 +36,9 @@ namespace Test.Logic.VideoFormats
             }
         }
 
+        /// <summary>
+        /// The matroska test invalid.
+        /// </summary>
         [TestMethod]
         public void MatroskaTestInvalid()
         {
@@ -30,6 +49,9 @@ namespace Test.Logic.VideoFormats
             }
         }
 
+        /// <summary>
+        /// The matroska test is srt.
+        /// </summary>
         [TestMethod]
         public void MatroskaTestIsSrt()
         {
@@ -41,6 +63,9 @@ namespace Test.Logic.VideoFormats
             }
         }
 
+        /// <summary>
+        /// The matroska test srt content.
+        /// </summary>
         [TestMethod]
         public void MatroskaTestSrtContent()
         {
@@ -55,6 +80,9 @@ namespace Test.Logic.VideoFormats
             }
         }
 
+        /// <summary>
+        /// The matroska test vob sub pgs.
+        /// </summary>
         [TestMethod]
         public void MatroskaTestVobSubPgs()
         {
@@ -67,6 +95,9 @@ namespace Test.Logic.VideoFormats
             }
         }
 
+        /// <summary>
+        /// The matroska test vob sub pgs content.
+        /// </summary>
         [TestMethod]
         public void MatroskaTestVobSubPgsContent()
         {
@@ -76,14 +107,18 @@ namespace Test.Logic.VideoFormats
                 var tracks = parser.GetTracks(true);
                 var subtitles = parser.GetSubtitle(Convert.ToInt32(tracks[0].TrackNumber), null);
                 Assert.IsTrue(subtitles.Count == 2);
+
                 // TODO: Check bitmaps
 
-                //subtitles = parser.GetSubtitle(Convert.ToInt32(tracks[1].TrackNumber), null);
-                //Assert.IsTrue(subtitles.Count == 2);
-                //check bitmaps
+                // subtitles = parser.GetSubtitle(Convert.ToInt32(tracks[1].TrackNumber), null);
+                // Assert.IsTrue(subtitles.Count == 2);
+                // check bitmaps
             }
         }
 
+        /// <summary>
+        /// The matroska test delayed 500 ms.
+        /// </summary>
         [TestMethod]
         public void MatroskaTestDelayed500Ms()
         {
@@ -94,6 +129,5 @@ namespace Test.Logic.VideoFormats
                 Assert.IsTrue(delay == 500);
             }
         }
-
     }
 }

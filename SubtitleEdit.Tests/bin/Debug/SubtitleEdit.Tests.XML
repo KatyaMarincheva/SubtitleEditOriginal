@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SubtitleEdit.Tests</name>
+    </assembly>
+    <members>
+        <member name="T:Nikse.SubtitleEdit.Logic.ParagraphFactory">
+            <summary>A factory for Nikse.SubtitleEdit.Logic.Paragraph instances</summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Logic.ParagraphFactory.Create(Nikse.SubtitleEdit.Logic.Paragraph)">
+            <summary>A factory for Nikse.SubtitleEdit.Logic.Paragraph instances</summary>
+        </member>
+        <member name="T:Nikse.SubtitleEdit.Controls.VideoPlayerContainerFactory">
+            <summary>A factory for Nikse.SubtitleEdit.Controls.VideoPlayerContainer instances</summary>
+        </member>
+        <member name="M:Nikse.SubtitleEdit.Controls.VideoPlayerContainerFactory.Create">
+            <summary>A factory for Nikse.SubtitleEdit.Controls.VideoPlayerContainer instances</summary>
+        </member>
+    </members>
+</doc>

@@ -1,37 +1,84 @@
-﻿using System;
-using System.IO;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="VobSubOcrNewFolder.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The vob sub ocr new folder.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.IO;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The vob sub ocr new folder.
+    /// </summary>
     public sealed partial class VobSubOcrNewFolder : Form
     {
-        public string FolderName { get; set; }
+        /// <summary>
+        /// The _vob sub.
+        /// </summary>
         private bool _vobSub = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VobSubOcrNewFolder"/> class.
+        /// </summary>
+        /// <param name="vobsub">
+        /// The vobsub.
+        /// </param>
         public VobSubOcrNewFolder(bool vobsub)
         {
-            InitializeComponent();
-            FolderName = null;
-            _vobSub = vobsub;
+            this.InitializeComponent();
+            this.FolderName = null;
+            this._vobSub = vobsub;
 
-            Text = Configuration.Settings.Language.VobSubOcrNewFolder.Title;
-            label1.Text = Configuration.Settings.Language.VobSubOcrNewFolder.Message;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
-            Utilities.FixLargeFonts(this, buttonCancel);
+            this.Text = Configuration.Settings.Language.VobSubOcrNewFolder.Title;
+            this.label1.Text = Configuration.Settings.Language.VobSubOcrNewFolder.Message;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            Utilities.FixLargeFonts(this, this.buttonCancel);
         }
 
+        /// <summary>
+        /// Gets or sets the folder name.
+        /// </summary>
+        public string FolderName { get; set; }
+
+        /// <summary>
+        /// The form vob sub ocr new folder_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void FormVobSubOcrNewFolder_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
 
+        /// <summary>
+        /// The button ok click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonOkClick(object sender, EventArgs e)
         {
-            string folderName = textBoxFolder.Text.Trim();
+            string folderName = this.textBoxFolder.Text.Trim();
             if (folderName.Length == 0)
             {
                 return;
@@ -40,26 +87,26 @@ namespace Nikse.SubtitleEdit.Forms
             if (folderName.Contains('?') || folderName.Contains('/') || folderName.Contains("\\"))
             {
                 MessageBox.Show("Please correct invalid characters");
-                textBoxFolder.Focus();
-                textBoxFolder.SelectAll();
+                this.textBoxFolder.Focus();
+                this.textBoxFolder.SelectAll();
                 return;
             }
 
-            if (!_vobSub)
+            if (!this._vobSub)
             {
-                FolderName = folderName;
-                DialogResult = DialogResult.OK;
+                this.FolderName = folderName;
+                this.DialogResult = DialogResult.OK;
                 return;
             }
 
-            if (folderName.Length >= 0 && _vobSub)
+            if (folderName.Length >= 0 && this._vobSub)
             {
                 try
                 {
                     string fullName = Configuration.VobSubCompareFolder + folderName;
                     Directory.CreateDirectory(fullName);
-                    FolderName = folderName;
-                    DialogResult = DialogResult.OK;
+                    this.FolderName = folderName;
+                    this.DialogResult = DialogResult.OK;
                 }
                 catch (Exception ex)
                 {
@@ -68,10 +115,21 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The text box folder key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void TextBoxFolderKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                ButtonOkClick(null, null);
+            {
+                this.ButtonOkClick(null, null);
+            }
         }
     }
 }

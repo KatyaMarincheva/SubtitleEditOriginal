@@ -1,14 +1,31 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.VobSub;
-using System;
-using System.Drawing;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="VobSubTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The vob sub test.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic.VobSub
 {
+    using System;
+    using System.Drawing;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.VobSub;
+
+    /// <summary>
+    /// The vob sub test.
+    /// </summary>
     [TestClass]
     public class VobSubTest
     {
+        /// <summary>
+        /// The vob sub write and read two bitmaps.
+        /// </summary>
         [TestMethod]
         public void VobSubWriteAndReadTwoBitmaps()
         {
@@ -27,6 +44,5 @@ namespace Test.Logic.VobSub
 
             Assert.IsTrue(list.Count == 2);
         }
-
     }
 }

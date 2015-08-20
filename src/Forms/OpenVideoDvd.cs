@@ -1,69 +1,136 @@
-﻿using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Logic;
-using System;
-using System.IO;
-using System.Windows.Forms;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="OpenVideoDvd.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The open video dvd.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.IO;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The open video dvd.
+    /// </summary>
     public partial class OpenVideoDvd : PositionAndSizeForm
     {
-
-        public string DvdPath { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OpenVideoDvd"/> class.
+        /// </summary>
         public OpenVideoDvd()
         {
-            InitializeComponent();
-            Text = Configuration.Settings.Language.OpenVideoDvd.Title;
-            groupBoxOpenDvdFrom.Text = Configuration.Settings.Language.OpenVideoDvd.OpenDvdFrom;
-            radioButtonDisc.Text = Configuration.Settings.Language.OpenVideoDvd.Disc;
-            radioButtonFolder.Text = Configuration.Settings.Language.OpenVideoDvd.Folder;
-            labelChooseDrive.Text = Configuration.Settings.Language.OpenVideoDvd.ChooseDrive;
-            labelChooseFolder.Text = Configuration.Settings.Language.OpenVideoDvd.ChooseFolder;
-            PanelDrive.Enabled = false;
-            Utilities.FixLargeFonts(this, buttonOK);
-            radioButtonDisc_CheckedChanged(null, null);
+            this.InitializeComponent();
+            this.Text = Configuration.Settings.Language.OpenVideoDvd.Title;
+            this.groupBoxOpenDvdFrom.Text = Configuration.Settings.Language.OpenVideoDvd.OpenDvdFrom;
+            this.radioButtonDisc.Text = Configuration.Settings.Language.OpenVideoDvd.Disc;
+            this.radioButtonFolder.Text = Configuration.Settings.Language.OpenVideoDvd.Folder;
+            this.labelChooseDrive.Text = Configuration.Settings.Language.OpenVideoDvd.ChooseDrive;
+            this.labelChooseFolder.Text = Configuration.Settings.Language.OpenVideoDvd.ChooseFolder;
+            this.PanelDrive.Enabled = false;
+            Utilities.FixLargeFonts(this, this.buttonOK);
+            this.radioButtonDisc_CheckedChanged(null, null);
 
-            PanelFolder.Left = PanelDrive.Left;
-            PanelFolder.Top = PanelDrive.Top;
+            this.PanelFolder.Left = this.PanelDrive.Left;
+            this.PanelFolder.Top = this.PanelDrive.Top;
         }
 
+        /// <summary>
+        /// Gets or sets the dvd path.
+        /// </summary>
+        public string DvdPath { get; set; }
+
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
 
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            if (radioButtonDisc.Checked)
+            if (this.radioButtonDisc.Checked)
             {
-                string s = comboBoxDrive.Items[comboBoxDrive.SelectedIndex].ToString();
+                string s = this.comboBoxDrive.Items[this.comboBoxDrive.SelectedIndex].ToString();
                 if (s.Contains(' '))
+                {
                     s = s.Substring(0, s.IndexOf(' '));
-                DvdPath = s;
+                }
+
+                this.DvdPath = s;
             }
             else
             {
-                DvdPath = textBoxFolder.Text;
+                this.DvdPath = this.textBoxFolder.Text;
             }
-            DialogResult = DialogResult.OK;
+
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The radio button disc_ checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void radioButtonDisc_CheckedChanged(object sender, EventArgs e)
         {
-            PanelDrive.Visible = radioButtonDisc.Checked;
-            PanelFolder.Visible = radioButtonFolder.Checked;
+            this.PanelDrive.Visible = this.radioButtonDisc.Checked;
+            this.PanelFolder.Visible = this.radioButtonFolder.Checked;
         }
 
+        /// <summary>
+        /// The button choose folder_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonChooseFolder_Click(object sender, EventArgs e)
         {
-            folderBrowserDialog1.ShowNewFolderButton = true;
-            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            this.folderBrowserDialog1.ShowNewFolderButton = true;
+            if (this.folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
-                textBoxFolder.Text = folderBrowserDialog1.SelectedPath;
+                this.textBoxFolder.Text = this.folderBrowserDialog1.SelectedPath;
             }
         }
 
+        /// <summary>
+        /// The open video dvd_ shown.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void OpenVideoDvd_Shown(object sender, EventArgs e)
         {
             foreach (DriveInfo drive in DriveInfo.GetDrives())
@@ -74,31 +141,47 @@ namespace Nikse.SubtitleEdit.Forms
                     {
                         try
                         {
-                            comboBoxDrive.Items.Add(drive + "  " + drive.VolumeLabel);
+                            this.comboBoxDrive.Items.Add(drive + "  " + drive.VolumeLabel);
                         }
                         catch
                         {
-                            comboBoxDrive.Items.Add(drive.ToString());
+                            this.comboBoxDrive.Items.Add(drive.ToString());
                         }
                     }
                     else
                     {
-                        comboBoxDrive.Items.Add(drive.ToString());
+                        this.comboBoxDrive.Items.Add(drive.ToString());
                     }
                 }
             }
-            if (comboBoxDrive.Items.Count > 0)
-                comboBoxDrive.SelectedIndex = 0;
+
+            if (this.comboBoxDrive.Items.Count > 0)
+            {
+                this.comboBoxDrive.SelectedIndex = 0;
+            }
             else
-                radioButtonFolder.Checked = true;
-            PanelDrive.Enabled = true;
+            {
+                this.radioButtonFolder.Checked = true;
+            }
+
+            this.PanelDrive.Enabled = true;
         }
 
+        /// <summary>
+        /// The open video dvd_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void OpenVideoDvd_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
-
     }
 }

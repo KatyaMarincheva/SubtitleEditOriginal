@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Spt.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The spt.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -7,10 +16,19 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The spt.
+    /// </summary>
     public class Spt : SubtitleFormat
     {
+        /// <summary>
+        /// The name of format.
+        /// </summary>
         public const string NameOfFormat = "spt";
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -19,6 +37,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -27,6 +48,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -35,6 +59,15 @@
             }
         }
 
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         public static void Save(string fileName, Subtitle subtitle)
         {
             FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write);
@@ -70,6 +103,18 @@
             fs.Close();
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
@@ -97,11 +142,35 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             return "Not supported!";
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             subtitle.Paragraphs.Clear();
@@ -120,6 +189,12 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The write paragraph.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
         private static void WriteParagraph(Paragraph p)
         {
             WriteTimeCode();
@@ -144,11 +219,23 @@
             }
         }
 
+        /// <summary>
+        /// The write time code.
+        /// </summary>
         private static void WriteTimeCode()
         {
             // write 8 bytes time code
         }
 
+        /// <summary>
+        /// The get time code.
+        /// </summary>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode GetTimeCode(string timeCode)
         {
             int hour = int.Parse(timeCode.Substring(0, 2));
@@ -165,6 +252,18 @@
             return new TimeCode(hour, minute, second, milliseconds);
         }
 
+        /// <summary>
+        /// The get spt paragraph.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Paragraph"/>.
+        /// </returns>
         private Paragraph GetSptParagraph(ref int index, byte[] buffer)
         {
             if (index + 16 + 20 + 4 >= buffer.Length)

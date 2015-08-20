@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.Ocr
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NOcrChar.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The n ocr char.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.Ocr
 {
     using System;
     using System.Collections.Generic;
@@ -6,8 +15,14 @@
     using System.IO;
     using System.Text;
 
+    /// <summary>
+    /// The n ocr char.
+    /// </summary>
     public class NOcrChar
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NOcrChar"/> class.
+        /// </summary>
         public NOcrChar()
         {
             this.LinesForeground = new List<NOcrPoint>();
@@ -15,6 +30,12 @@
             this.Text = string.Empty;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NOcrChar"/> class.
+        /// </summary>
+        /// <param name="old">
+        /// The old.
+        /// </param>
         public NOcrChar(NOcrChar old)
         {
             this.LinesForeground = new List<NOcrPoint>();
@@ -35,12 +56,24 @@
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NOcrChar"/> class.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
         public NOcrChar(string text)
             : this()
         {
             this.Text = text;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NOcrChar"/> class.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
         public NOcrChar(Stream stream)
         {
             try
@@ -81,24 +114,54 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the text.
+        /// </summary>
         public string Text { get; set; }
 
+        /// <summary>
+        /// Gets or sets the width.
+        /// </summary>
         public int Width { get; set; }
 
+        /// <summary>
+        /// Gets or sets the height.
+        /// </summary>
         public int Height { get; set; }
 
+        /// <summary>
+        /// Gets or sets the margin top.
+        /// </summary>
         public int MarginTop { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether italic.
+        /// </summary>
         public bool Italic { get; set; }
 
+        /// <summary>
+        /// Gets the lines foreground.
+        /// </summary>
         public List<NOcrPoint> LinesForeground { get; private set; }
 
+        /// <summary>
+        /// Gets the lines background.
+        /// </summary>
         public List<NOcrPoint> LinesBackground { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the expand count.
+        /// </summary>
         public int ExpandCount { get; set; }
 
+        /// <summary>
+        /// Gets a value indicating whether loaded ok.
+        /// </summary>
         public bool LoadedOk { get; private set; }
 
+        /// <summary>
+        /// Gets the width percent.
+        /// </summary>
         public double WidthPercent
         {
             get
@@ -107,6 +170,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is sensitive.
+        /// </summary>
         public bool IsSensitive
         {
             get
@@ -115,11 +181,23 @@
             }
         }
 
+        /// <summary>
+        /// The to string.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToString()
         {
             return this.Text;
         }
 
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
         internal void Save(Stream stream)
         {
             WriteInt16(stream, (ushort)this.Width);
@@ -145,6 +223,15 @@
             WritePoints(stream, this.LinesBackground);
         }
 
+        /// <summary>
+        /// The read points.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         private static List<NOcrPoint> ReadPoints(Stream stream)
         {
             List<NOcrPoint> list = new List<NOcrPoint>();
@@ -160,6 +247,15 @@
             return list;
         }
 
+        /// <summary>
+        /// The write points.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
+        /// <param name="points">
+        /// The points.
+        /// </param>
         private static void WritePoints(Stream stream, List<NOcrPoint> points)
         {
             WriteInt16(stream, (ushort)points.Count);
@@ -172,6 +268,15 @@
             }
         }
 
+        /// <summary>
+        /// The write int 16.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
+        /// <param name="val">
+        /// The val.
+        /// </param>
         private static void WriteInt16(Stream stream, ushort val)
         {
             byte[] buffer = new byte[2];

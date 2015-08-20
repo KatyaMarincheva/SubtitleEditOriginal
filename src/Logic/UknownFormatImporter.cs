@@ -1,44 +1,82 @@
-﻿using Nikse.SubtitleEdit.Logic.SubtitleFormats;
-using System;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="UknownFormatImporter.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The uknown format importer.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic
 {
+    using System;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Nikse.SubtitleEdit.Logic.SubtitleFormats;
+
+    /// <summary>
+    /// The uknown format importer.
+    /// </summary>
     public class UknownFormatImporter
     {
-
+        /// <summary>
+        /// Gets or sets a value indicating whether use frames.
+        /// </summary>
         public bool UseFrames { get; set; }
 
+        /// <summary>
+        /// The auto guess import.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Subtitle"/>.
+        /// </returns>
         public Subtitle AutoGuessImport(string[] lines)
         {
             var subtitle = ImportTimeCodesOnSameSeperateLine(lines);
             if (subtitle.Paragraphs.Count < 2)
+            {
                 subtitle = ImportTimeCodesAndTextOnSameLineOnlySpaceAsSeparator(lines);
+            }
 
             var subTcAndTextOnSameLine = ImportTimeCodesAndTextOnSameLine(lines);
             if (subTcAndTextOnSameLine.Paragraphs.Count > subtitle.Paragraphs.Count)
+            {
                 subtitle = subTcAndTextOnSameLine;
+            }
 
             var subTcOnAloneLines = ImportTimeCodesOnAloneLines(lines);
             if (subTcOnAloneLines.Paragraphs.Count > subtitle.Paragraphs.Count)
+            {
                 subtitle = subTcOnAloneLines;
+            }
 
             if (subtitle.Paragraphs.Count < 2)
             {
-                subtitle = ImportTimeCodesInFramesOnSameSeperateLine(lines);
+                subtitle = this.ImportTimeCodesInFramesOnSameSeperateLine(lines);
                 if (subtitle.Paragraphs.Count < 2)
                 {
-                    subtitle = ImportTimeCodesInFramesAndTextOnSameLine(lines);
+                    subtitle = this.ImportTimeCodesInFramesAndTextOnSameLine(lines);
                 }
             }
 
             if (subtitle.Paragraphs.Count > 1)
+            {
                 CleanUp(subtitle);
+            }
 
             return subtitle;
         }
 
+        /// <summary>
+        /// The clean up.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         private static void CleanUp(Subtitle subtitle)
         {
             foreach (Paragraph p in subtitle.Paragraphs)
@@ -55,9 +93,19 @@ namespace Nikse.SubtitleEdit.Logic
                 p.Text = p.Text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine).Trim();
                 p.Text = p.Text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine).Trim();
             }
+
             subtitle.RemoveEmptyLines();
         }
 
+        /// <summary>
+        /// The import time codes in frames and text on same line.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Subtitle"/>.
+        /// </returns>
         private Subtitle ImportTimeCodesInFramesAndTextOnSameLine(string[] lines)
         {
             var regexTimeCodes1 = new Regex(@"\d+", RegexOptions.Compiled);
@@ -79,11 +127,12 @@ namespace Nikse.SubtitleEdit.Logic
                         p.Text = sb.ToString().Trim();
                         subtitle.Paragraphs.Add(p);
                     }
+
                     p = new Paragraph();
                     sb = new StringBuilder();
                     try
                     {
-                        if (UseFrames)
+                        if (this.UseFrames)
                         {
                             p.StartFrame = int.Parse(start);
                             p.EndFrame = int.Parse(end);
@@ -101,30 +150,50 @@ namespace Nikse.SubtitleEdit.Logic
                     }
 
                     if (matches[0].Index < 9)
+                    {
                         line = line.Remove(0, matches[0].Index);
+                    }
+
                     line = line.Replace(matches[0].ToString(), string.Empty);
                     line = line.Replace(matches[1].ToString(), string.Empty);
                     line = line.Trim();
                     if (line.StartsWith("}{}") || line.StartsWith("][]"))
+                    {
                         line = line.Remove(0, 3);
+                    }
+
                     line = line.Trim();
                 }
+
                 if (p != null && line.Length > 1)
                 {
                     sb.AppendLine(line.Trim());
                     if (sb.Length > 200)
+                    {
                         return new Subtitle();
+                    }
                 }
             }
+
             if (p != null)
             {
                 p.Text = sb.ToString().Trim();
                 subtitle.Paragraphs.Add(p);
             }
+
             subtitle.Renumber();
             return subtitle;
         }
 
+        /// <summary>
+        /// The import time codes in frames on same seperate line.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Subtitle"/>.
+        /// </returns>
         private Subtitle ImportTimeCodesInFramesOnSameSeperateLine(string[] lines)
         {
             Paragraph p = null;
@@ -138,8 +207,11 @@ namespace Nikse.SubtitleEdit.Logic
                 foreach (char c in lineWithPerhapsOnlyNumbers)
                 {
                     if (!char.IsDigit(c))
+                    {
                         allNumbers = false;
+                    }
                 }
+
                 if (allNumbers && lineWithPerhapsOnlyNumbers.Length > 2)
                 {
                     string[] arr = line.Replace("-", " ").Replace(">", " ").Replace("{", " ").Replace("}", " ").Replace("[", " ").Replace("]", " ").Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -154,11 +226,12 @@ namespace Nikse.SubtitleEdit.Logic
                                 p.Text = sb.ToString().Trim();
                                 subtitle.Paragraphs.Add(p);
                             }
+
                             p = new Paragraph();
                             sb = new StringBuilder();
                             try
                             {
-                                if (UseFrames)
+                                if (this.UseFrames)
                                 {
                                     p.StartFrame = int.Parse(start[0]);
                                     p.EndFrame = int.Parse(end[0]);
@@ -195,11 +268,12 @@ namespace Nikse.SubtitleEdit.Logic
                                 p.Text = sb.ToString().Trim();
                                 subtitle.Paragraphs.Add(p);
                             }
+
                             p = new Paragraph();
                             sb = new StringBuilder();
                             try
                             {
-                                if (UseFrames)
+                                if (this.UseFrames)
                                 {
                                     p.StartFrame = int.Parse(start[0]);
                                     p.EndFrame = int.Parse(end[0]);
@@ -218,24 +292,39 @@ namespace Nikse.SubtitleEdit.Logic
                         }
                     }
                 }
+
                 if (p != null && !allNumbers && line.Length > 1)
                 {
                     line = line.Trim();
                     if (line.StartsWith("}{}") || line.StartsWith("][]"))
+                    {
                         line = line.Remove(0, 3);
+                    }
+
                     sb.AppendLine(line.Trim());
                 }
             }
+
             if (p != null)
             {
                 p.Text = sb.ToString().Trim();
                 subtitle.Paragraphs.Add(p);
             }
+
             subtitle.CalculateTimeCodesFromFrameNumbers(Configuration.Settings.General.CurrentFrameRate);
             subtitle.Renumber();
             return subtitle;
         }
 
+        /// <summary>
+        /// The import time codes on alone lines.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Subtitle"/>.
+        /// </returns>
         private static Subtitle ImportTimeCodesOnAloneLines(string[] lines)
         {
             Paragraph p = null;
@@ -249,8 +338,11 @@ namespace Nikse.SubtitleEdit.Logic
                 foreach (char c in lineWithPerhapsOnlyNumbers)
                 {
                     if (!char.IsDigit(c))
+                    {
                         allNumbers = false;
+                    }
                 }
+
                 if (allNumbers && lineWithPerhapsOnlyNumbers.Length > 5)
                 {
                     string[] arr = line.Replace("-", " ").Replace(">", " ").Replace("{", " ").Replace("}", " ").Replace("[", " ").Replace("]", " ").Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -265,6 +357,7 @@ namespace Nikse.SubtitleEdit.Logic
                                 subtitle.Paragraphs.Add(p);
                                 sb = new StringBuilder();
                             }
+
                             p = new Paragraph { StartTime = DecodeTime(tc) };
                         }
                         else
@@ -273,23 +366,38 @@ namespace Nikse.SubtitleEdit.Logic
                         }
                     }
                 }
+
                 if (p != null && !allNumbers && line.Length > 1)
                 {
                     line = line.Trim();
                     if (line.StartsWith("}{}") || line.StartsWith("][]"))
+                    {
                         line = line.Remove(0, 3);
+                    }
+
                     sb.AppendLine(line.Trim());
                 }
             }
+
             if (p != null)
             {
                 p.Text = sb.ToString().Trim();
                 subtitle.Paragraphs.Add(p);
             }
+
             subtitle.Renumber();
             return subtitle;
         }
 
+        /// <summary>
+        /// The import time codes and text on same line.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Subtitle"/>.
+        /// </returns>
         private static Subtitle ImportTimeCodesAndTextOnSameLine(string[] lines)
         {
             var regexTimeCodes1 = new Regex(@"\d+[:.,;]{1}\d\d[:.,;]{1}\d\d[:.,;]{1}\d+", RegexOptions.Compiled);
@@ -306,7 +414,10 @@ namespace Nikse.SubtitleEdit.Logic
                 string line = lines[idx];
                 var matches = regexTimeCodes1.Matches(line);
                 if (matches.Count == 0)
+                {
                     matches = regexTimeCodes2.Matches(line);
+                }
+
                 if (matches.Count == 2)
                 {
                     var start = matches[0].Value.Split(new[] { '.', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
@@ -314,17 +425,24 @@ namespace Nikse.SubtitleEdit.Logic
                     if (int.TryParse(start[0], out i))
                     {
                         if (count == -1 && i < 2)
+                        {
                             count = i;
+                        }
+
                         if (count != i)
                         {
                             isFirstLineNumber = false;
                             break;
                         }
+
                         count++;
                     }
                 }
+
                 if (count > 2)
+                {
                     isFirstLineNumber = true;
+                }
             }
 
             for (int idx = 0; idx < lines.Length; idx++)
@@ -341,7 +459,10 @@ namespace Nikse.SubtitleEdit.Logic
 
                 var matches = regexTimeCodes1.Matches(line);
                 if (matches.Count == 0)
+                {
                     matches = regexTimeCodes2.Matches(line);
+                }
+
                 if (matches.Count == 2)
                 {
                     string[] start = matches[0].ToString().Split(new[] { '.', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
@@ -353,24 +474,35 @@ namespace Nikse.SubtitleEdit.Logic
                             p.Text = sb.ToString().Trim();
                             subtitle.Paragraphs.Add(p);
                         }
+
                         p = new Paragraph();
                         sb = new StringBuilder();
                         p.StartTime = DecodeTime(start);
                         p.EndTime = DecodeTime(end);
                     }
+
                     if (matches[0].Index < 9)
+                    {
                         line = line.Remove(0, matches[0].Index);
+                    }
 
                     line = line.Replace(matches[0].ToString(), string.Empty);
                     line = line.Replace(matches[1].ToString(), string.Empty);
                     line = line.Trim();
                     if (line.StartsWith("}{}") || line.StartsWith("][]"))
+                    {
                         line = line.Remove(0, 3);
+                    }
+
                     line = line.Trim();
                 }
+
                 if (p != null && line.Length > 1)
+                {
                     sb.AppendLine(line.Trim());
+                }
             }
+
             if (p != null)
             {
                 p.Text = sb.ToString().Trim();
@@ -391,10 +523,14 @@ namespace Nikse.SubtitleEdit.Logic
                         newPrefix.Append(text[i]);
                         i++;
                     }
+
                     prefix = newPrefix.ToString();
                 }
+
                 if (prefix.Length > 3 && prefix[1] == ':' && prefix[2] == '\\')
+                {
                     prefix = string.Empty;
+                }
 
                 if (prefix.Length > 0)
                 {
@@ -402,7 +538,9 @@ namespace Nikse.SubtitleEdit.Logic
                     {
                         string text = paragraph.Text.Trim();
                         if (text.StartsWith(prefix))
+                        {
                             paragraph.Text = text.Remove(0, prefix.Length);
+                        }
                     }
                 }
             }
@@ -411,6 +549,15 @@ namespace Nikse.SubtitleEdit.Logic
             return subtitle;
         }
 
+        /// <summary>
+        /// The import time codes and text on same line only space as separator.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Subtitle"/>.
+        /// </returns>
         private static Subtitle ImportTimeCodesAndTextOnSameLineOnlySpaceAsSeparator(string[] lines)
         {
             var regexTimeCodes1 = new Regex(@"\d+ {1}\d\d {1}\d\d {1}\d+", RegexOptions.Compiled);
@@ -424,7 +571,10 @@ namespace Nikse.SubtitleEdit.Logic
 
                 var matches = regexTimeCodes1.Matches(line);
                 if (matches.Count == 0)
+                {
                     matches = regexTimeCodes2.Matches(line);
+                }
+
                 if (matches.Count == 2)
                 {
                     string[] start = matches[0].ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -436,32 +586,54 @@ namespace Nikse.SubtitleEdit.Logic
                             p.Text = sb.ToString().Trim();
                             subtitle.Paragraphs.Add(p);
                         }
+
                         p = new Paragraph();
                         sb = new StringBuilder();
                         p.StartTime = DecodeTime(start);
                         p.EndTime = DecodeTime(end);
                     }
+
                     if (matches[0].Index < 9)
+                    {
                         line = line.Remove(0, matches[0].Index);
+                    }
+
                     line = line.Replace(matches[0].ToString(), string.Empty);
                     line = line.Replace(matches[1].ToString(), string.Empty);
                     line = line.Trim();
                     if (line.StartsWith("}{}") || line.StartsWith("][]"))
+                    {
                         line = line.Remove(0, 3);
+                    }
+
                     line = line.Trim();
                 }
+
                 if (p != null && line.Length > 1)
+                {
                     sb.AppendLine(line.Trim());
+                }
             }
+
             if (p != null)
             {
                 p.Text = sb.ToString().Trim();
                 subtitle.Paragraphs.Add(p);
             }
+
             subtitle.Renumber();
             return subtitle;
         }
 
+        /// <summary>
+        /// The import time codes on same seperate line.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Subtitle"/>.
+        /// </returns>
         private static Subtitle ImportTimeCodesOnSameSeperateLine(string[] lines)
         {
             Paragraph p = null;
@@ -475,8 +647,11 @@ namespace Nikse.SubtitleEdit.Logic
                 foreach (char c in lineWithPerhapsOnlyNumbers)
                 {
                     if (!char.IsDigit(c))
+                    {
                         allNumbers = false;
+                    }
                 }
+
                 if (allNumbers && lineWithPerhapsOnlyNumbers.Length > 5)
                 {
                     string[] arr = line.Replace("-", " ").Replace(">", " ").Replace("{", " ").Replace("}", " ").Replace("[", " ").Replace("]", " ").Trim().Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
@@ -491,6 +666,7 @@ namespace Nikse.SubtitleEdit.Logic
                                 p.Text = sb.ToString().Trim();
                                 subtitle.Paragraphs.Add(p);
                             }
+
                             p = new Paragraph();
                             sb = new StringBuilder();
                             p.StartTime = DecodeTime(start);
@@ -516,6 +692,7 @@ namespace Nikse.SubtitleEdit.Logic
                                 p.Text = sb.ToString().Trim();
                                 subtitle.Paragraphs.Add(p);
                             }
+
                             p = new Paragraph();
                             sb = new StringBuilder();
                             p.StartTime = DecodeTime(start);
@@ -523,14 +700,19 @@ namespace Nikse.SubtitleEdit.Logic
                         }
                     }
                 }
+
                 if (p != null && !allNumbers && line.Length > 1)
                 {
                     line = line.Trim();
                     if (line.StartsWith("}{}") || line.StartsWith("][]"))
+                    {
                         line = line.Remove(0, 3);
+                    }
+
                     sb.AppendLine(line.Trim());
                 }
             }
+
             if (p != null)
             {
                 p.Text = sb.ToString().Trim();
@@ -542,9 +724,13 @@ namespace Nikse.SubtitleEdit.Logic
             {
                 double d = a.Duration.TotalSeconds;
                 if (d > 10)
+                {
                     d = 8;
+                }
+
                 averateDuration += d;
             }
+
             averateDuration = averateDuration / subtitle.Paragraphs.Count;
             if (averateDuration < 0.2 || (averateDuration < 0.5 && subtitle.Paragraphs.Count > 100 && subtitle.Paragraphs[subtitle.Paragraphs.Count - 1].StartTime.TotalSeconds < 140 && subtitle.Paragraphs[subtitle.Paragraphs.Count - 2].StartTime.TotalSeconds < 140))
             {
@@ -559,6 +745,7 @@ namespace Nikse.SubtitleEdit.Logic
                         a.EndTime.TotalMilliseconds = next.StartTime.TotalMilliseconds - Configuration.Settings.General.MinimumMillisecondsBetweenLines;
                     }
                 }
+
                 return subtitle;
             }
 
@@ -566,6 +753,15 @@ namespace Nikse.SubtitleEdit.Logic
             return subtitle;
         }
 
+        /// <summary>
+        /// The import time codes on same seperate line no milliseconds.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Subtitle"/>.
+        /// </returns>
         private static Subtitle ImportTimeCodesOnSameSeperateLineNoMilliseconds(string[] lines)
         {
             Paragraph p = null;
@@ -579,8 +775,11 @@ namespace Nikse.SubtitleEdit.Logic
                 foreach (char c in lineWithPerhapsOnlyNumbers)
                 {
                     if (!char.IsDigit(c))
+                    {
                         allNumbers = false;
+                    }
                 }
+
                 if (allNumbers && lineWithPerhapsOnlyNumbers.Length > 5)
                 {
                     string[] arr = line.Replace("-", " ").Replace(">", " ").Replace("{", " ").Replace("}", " ").Replace("[", " ").Replace("]", " ").Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -591,15 +790,21 @@ namespace Nikse.SubtitleEdit.Logic
                         if ((start.Length == 3 || start.Length == 4) && (end.Length == 3 || end.Length == 4))
                         {
                             if (start.Length == 3)
+                            {
                                 start = (arr[0].Trim() + ".000").Split(new[] { '.', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                            }
+
                             if (end.Length == 3)
+                            {
                                 end = (arr[1].Trim() + ".000").Split(new[] { '.', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                            }
 
                             if (p != null)
                             {
                                 p.Text = sb.ToString().Trim();
                                 subtitle.Paragraphs.Add(p);
                             }
+
                             p = new Paragraph();
                             sb = new StringBuilder();
                             p.StartTime = DecodeTime(start);
@@ -613,11 +818,19 @@ namespace Nikse.SubtitleEdit.Logic
                         string[] duration = arr[2].Trim().Split(new[] { '.', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
 
                         if (start.Length == 3)
+                        {
                             start = (arr[0].Trim() + ".000").Split(new[] { '.', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                        }
+
                         if (end.Length == 3)
+                        {
                             end = (arr[1].Trim() + ".000").Split(new[] { '.', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                        }
+
                         if (duration.Length == 3)
+                        {
                             duration = (arr[2].Trim() + ".000").Split(new[] { '.', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                        }
 
                         if (start.Length < 3)
                         {
@@ -632,6 +845,7 @@ namespace Nikse.SubtitleEdit.Logic
                                 p.Text = sb.ToString().Trim();
                                 subtitle.Paragraphs.Add(p);
                             }
+
                             p = new Paragraph();
                             sb = new StringBuilder();
                             p.StartTime = DecodeTime(start);
@@ -639,14 +853,19 @@ namespace Nikse.SubtitleEdit.Logic
                         }
                     }
                 }
+
                 if (p != null && !allNumbers && line.Length > 1)
                 {
                     line = line.Trim();
                     if (line.StartsWith("}{}") || line.StartsWith("][]"))
+                    {
                         line = line.Remove(0, 3);
+                    }
+
                     sb.AppendLine(line.Trim());
                 }
             }
+
             if (p != null)
             {
                 p.Text = sb.ToString().Trim();
@@ -657,6 +876,15 @@ namespace Nikse.SubtitleEdit.Logic
             return subtitle;
         }
 
+        /// <summary>
+        /// The decode time.
+        /// </summary>
+        /// <param name="parts">
+        /// The parts.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode DecodeTime(string[] parts)
         {
             try
@@ -678,7 +906,10 @@ namespace Nikse.SubtitleEdit.Logic
                 }
 
                 if (frames.Length < 3)
+                {
                     return new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), SubtitleFormat.FramesToMillisecondsMax999(int.Parse(frames)));
+                }
+
                 return new TimeCode(int.Parse(hour), int.Parse(minutes), int.Parse(seconds), int.Parse(frames));
             }
             catch
@@ -686,6 +917,5 @@ namespace Nikse.SubtitleEdit.Logic
                 return new TimeCode(0, 0, 0, 0);
             }
         }
-
     }
 }

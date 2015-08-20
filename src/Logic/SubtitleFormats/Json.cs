@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Json.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The json.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -7,8 +16,14 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The json.
+    /// </summary>
     public class Json : SubtitleFormat
     {
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -17,6 +32,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -25,6 +43,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -33,6 +54,15 @@
             }
         }
 
+        /// <summary>
+        /// The encode json text.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string EncodeJsonText(string text)
         {
             StringBuilder sb = new StringBuilder();
@@ -55,6 +85,15 @@
             return sb.ToString().Replace(Environment.NewLine, "<br />");
         }
 
+        /// <summary>
+        /// The decode json text.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string DecodeJsonText(string text)
         {
             StringBuilder sb = new StringBuilder();
@@ -79,6 +118,15 @@
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The convert json special characters.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string ConvertJsonSpecialCharacters(string s)
         {
             if (s.Contains("\\u00"))
@@ -96,6 +144,18 @@
             return s;
         }
 
+        /// <summary>
+        /// The read tag.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="tag">
+        /// The tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string ReadTag(string s, string tag)
         {
             int startIndex = s.IndexOfAny(new[] { "\"" + tag + "\"", "'" + tag + "'" }, StringComparison.Ordinal);
@@ -144,6 +204,18 @@
             }
         }
 
+        /// <summary>
+        /// The read array.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="tag">
+        /// The tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public static List<string> ReadArray(string s, string tag)
         {
             List<string> list = new List<string>();
@@ -226,6 +298,18 @@
             return list;
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -233,6 +317,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             StringBuilder sb = new StringBuilder(@"[");
@@ -258,6 +354,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -301,6 +409,15 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The read array.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         internal static List<string> ReadArray(string text)
         {
             List<string> list = new List<string>();

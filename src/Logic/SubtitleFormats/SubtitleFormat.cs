@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SubtitleFormat.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The subtitle format.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -9,10 +18,19 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The subtitle format.
+    /// </summary>
     public abstract class SubtitleFormat
     {
+        /// <summary>
+        /// The _all subtitle formats.
+        /// </summary>
         private static IList<SubtitleFormat> _allSubtitleFormats;
 
+        /// <summary>
+        /// The _error count.
+        /// </summary>
         protected int _errorCount;
 
         /// <summary>
@@ -71,12 +89,24 @@
             }
         }
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public abstract string Extension { get; }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public abstract string Name { get; }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public abstract bool IsTimeBased { get; }
 
+        /// <summary>
+        /// Gets a value indicating whether is frame based.
+        /// </summary>
         public bool IsFrameBased
         {
             get
@@ -85,6 +115,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the friendly name.
+        /// </summary>
         public string FriendlyName
         {
             get
@@ -93,6 +126,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the error count.
+        /// </summary>
         public int ErrorCount
         {
             get
@@ -101,6 +137,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is vob sub index file.
+        /// </summary>
         public bool IsVobSubIndexFile
         {
             get
@@ -109,6 +148,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the alternate extensions.
+        /// </summary>
         public virtual List<string> AlternateExtensions
         {
             get
@@ -117,6 +159,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether has style support.
+        /// </summary>
         public virtual bool HasStyleSupport
         {
             get
@@ -125,8 +170,14 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether batch mode.
+        /// </summary>
         public bool BatchMode { get; set; }
 
+        /// <summary>
+        /// Gets a value indicating whether is text based.
+        /// </summary>
         public virtual bool IsTextBased
         {
             get
@@ -135,11 +186,29 @@
             }
         }
 
+        /// <summary>
+        /// The milliseconds to frames.
+        /// </summary>
+        /// <param name="milliseconds">
+        /// The milliseconds.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int MillisecondsToFrames(double milliseconds)
         {
             return (int)Math.Round(milliseconds / (TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate));
         }
 
+        /// <summary>
+        /// The milliseconds to frames max frame rate.
+        /// </summary>
+        /// <param name="milliseconds">
+        /// The milliseconds.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int MillisecondsToFramesMaxFrameRate(double milliseconds)
         {
             int frames = (int)Math.Round(milliseconds / (TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate));
@@ -151,11 +220,29 @@
             return frames;
         }
 
+        /// <summary>
+        /// The frames to milliseconds.
+        /// </summary>
+        /// <param name="frames">
+        /// The frames.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int FramesToMilliseconds(double frames)
         {
             return (int)Math.Round(frames * (TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate));
         }
 
+        /// <summary>
+        /// The frames to milliseconds max 999.
+        /// </summary>
+        /// <param name="frames">
+        /// The frames.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int FramesToMillisecondsMax999(double frames)
         {
             int ms = (int)Math.Round(frames * (TimeCode.BaseUnit / Configuration.Settings.General.CurrentFrameRate));
@@ -167,6 +254,18 @@
             return ms;
         }
 
+        /// <summary>
+        /// The to utf 8 xml string.
+        /// </summary>
+        /// <param name="xml">
+        /// The xml.
+        /// </param>
+        /// <param name="omitXmlDeclaration">
+        /// The omit xml declaration.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string ToUtf8XmlString(XmlDocument xml, bool omitXmlDeclaration = false)
         {
             XmlWriterSettings settings = new XmlWriterSettings { Indent = true, OmitXmlDeclaration = omitXmlDeclaration };
@@ -180,12 +279,57 @@
             return result.ToString().Replace(" encoding=\"utf-16\"", " encoding=\"utf-8\"").Trim();
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public abstract bool IsMine(List<string> lines, string fileName);
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public abstract string ToText(Subtitle subtitle, string title);
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public abstract void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName);
 
+        /// <summary>
+        /// The remove native formatting.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="newFormat">
+        /// The new format.
+        /// </param>
         public virtual void RemoveNativeFormatting(Subtitle subtitle, SubtitleFormat newFormat)
         {
         }

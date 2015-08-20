@@ -1,70 +1,130 @@
-﻿using System;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="WaveformGenerateTimeCodes.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The waveform generate time codes.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The waveform generate time codes.
+    /// </summary>
     public partial class WaveformGenerateTimeCodes : Form
     {
-        public bool StartFromVideoPosition { get; set; }
-        public bool DeleteAll { get; set; }
-        public bool DeleteForward { get; set; }
-        public int BlockSize { get; set; }
-        public int VolumeMinimum { get; set; }
-        public int VolumeMaximum { get; set; }
-        public int DefaultMilliseconds { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WaveformGenerateTimeCodes"/> class.
+        /// </summary>
         public WaveformGenerateTimeCodes()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             var l = Configuration.Settings.Language.WaveformGenerateTimeCodes;
-            Text = l.Title;
-            groupBoxStartFrom.Text = l.StartFrom;
-            radioButtonStartFromPos.Text = l.CurrentVideoPosition;
-            radioButtonStartFromStart.Text = l.Beginning;
-            groupBoxDeleteLines.Text = l.DeleteLines;
-            groupBoxDetectOptions.Text = l.DetectOptions;
-            labelScanBlocksMs.Text = l.ScanBlocksOfMs;
-            labelAbove1.Text = l.BlockAverageVolMin1;
-            labelAbove2.Text = l.BlockAverageVolMin2;
-            labelBelow1.Text = l.BlockAverageVolMax1;
-            labelBelow2.Text = l.BlockAverageVolMax2;
-            groupBoxOther.Text = l.Other;
-            labelSplit1.Text = l.SplitLongLinesAt1;
-            labelSplit2.Text = l.SplitLongLinesAt2;
-            radioButtonDeleteAll.Text = Configuration.Settings.Language.General.All;
-            radioButtonDeleteNone.Text = Configuration.Settings.Language.General.None;
-            radioButtonForward.Text = l.FromCurrentVideoPosition;
+            this.Text = l.Title;
+            this.groupBoxStartFrom.Text = l.StartFrom;
+            this.radioButtonStartFromPos.Text = l.CurrentVideoPosition;
+            this.radioButtonStartFromStart.Text = l.Beginning;
+            this.groupBoxDeleteLines.Text = l.DeleteLines;
+            this.groupBoxDetectOptions.Text = l.DetectOptions;
+            this.labelScanBlocksMs.Text = l.ScanBlocksOfMs;
+            this.labelAbove1.Text = l.BlockAverageVolMin1;
+            this.labelAbove2.Text = l.BlockAverageVolMin2;
+            this.labelBelow1.Text = l.BlockAverageVolMax1;
+            this.labelBelow2.Text = l.BlockAverageVolMax2;
+            this.groupBoxOther.Text = l.Other;
+            this.labelSplit1.Text = l.SplitLongLinesAt1;
+            this.labelSplit2.Text = l.SplitLongLinesAt2;
+            this.radioButtonDeleteAll.Text = Configuration.Settings.Language.General.All;
+            this.radioButtonDeleteNone.Text = Configuration.Settings.Language.General.None;
+            this.radioButtonForward.Text = l.FromCurrentVideoPosition;
 
-            numericUpDownBlockSize.Left = labelScanBlocksMs.Left + labelScanBlocksMs.Width + 3;
-            numericUpDownMinVol.Left = labelAbove1.Left + labelAbove1.Width + 3;
-            labelAbove2.Left = numericUpDownMinVol.Left + numericUpDownMinVol.Width + 3;
-            numericUpDownMaxVol.Left = labelBelow1.Left + labelBelow1.Width + 3;
-            labelBelow2.Left = numericUpDownMaxVol.Left + numericUpDownMaxVol.Width + 3;
-            numericUpDownDefaultMilliseconds.Left = labelSplit1.Left + labelSplit1.Width + 3;
-            labelSplit2.Left = numericUpDownDefaultMilliseconds.Left + numericUpDownDefaultMilliseconds.Width + 3;
+            this.numericUpDownBlockSize.Left = this.labelScanBlocksMs.Left + this.labelScanBlocksMs.Width + 3;
+            this.numericUpDownMinVol.Left = this.labelAbove1.Left + this.labelAbove1.Width + 3;
+            this.labelAbove2.Left = this.numericUpDownMinVol.Left + this.numericUpDownMinVol.Width + 3;
+            this.numericUpDownMaxVol.Left = this.labelBelow1.Left + this.labelBelow1.Width + 3;
+            this.labelBelow2.Left = this.numericUpDownMaxVol.Left + this.numericUpDownMaxVol.Width + 3;
+            this.numericUpDownDefaultMilliseconds.Left = this.labelSplit1.Left + this.labelSplit1.Width + 3;
+            this.labelSplit2.Left = this.numericUpDownDefaultMilliseconds.Left + this.numericUpDownDefaultMilliseconds.Width + 3;
 
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether start from video position.
+        /// </summary>
+        public bool StartFromVideoPosition { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether delete all.
+        /// </summary>
+        public bool DeleteAll { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether delete forward.
+        /// </summary>
+        public bool DeleteForward { get; set; }
+
+        /// <summary>
+        /// Gets or sets the block size.
+        /// </summary>
+        public int BlockSize { get; set; }
+
+        /// <summary>
+        /// Gets or sets the volume minimum.
+        /// </summary>
+        public int VolumeMinimum { get; set; }
+
+        /// <summary>
+        /// Gets or sets the volume maximum.
+        /// </summary>
+        public int VolumeMaximum { get; set; }
+
+        /// <summary>
+        /// Gets or sets the default milliseconds.
+        /// </summary>
+        public int DefaultMilliseconds { get; set; }
+
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            StartFromVideoPosition = radioButtonStartFromPos.Checked;
-            DeleteAll = radioButtonDeleteAll.Checked;
-            DeleteForward = radioButtonForward.Checked;
-            BlockSize = (int)numericUpDownBlockSize.Value;
-            VolumeMinimum = (int)numericUpDownMinVol.Value;
-            VolumeMaximum = (int)numericUpDownMaxVol.Value;
-            DefaultMilliseconds = (int)numericUpDownDefaultMilliseconds.Value;
-            DialogResult = DialogResult.OK;
+            this.StartFromVideoPosition = this.radioButtonStartFromPos.Checked;
+            this.DeleteAll = this.radioButtonDeleteAll.Checked;
+            this.DeleteForward = this.radioButtonForward.Checked;
+            this.BlockSize = (int)this.numericUpDownBlockSize.Value;
+            this.VolumeMinimum = (int)this.numericUpDownMinVol.Value;
+            this.VolumeMaximum = (int)this.numericUpDownMaxVol.Value;
+            this.DefaultMilliseconds = (int)this.numericUpDownDefaultMilliseconds.Value;
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
-
     }
 }

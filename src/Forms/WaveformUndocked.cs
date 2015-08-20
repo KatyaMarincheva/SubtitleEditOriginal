@@ -1,53 +1,107 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="WaveformUndocked.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The waveform undocked.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System.Drawing;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The waveform undocked.
+    /// </summary>
     public partial class WaveformUndocked : PositionAndSizeForm
     {
+        /// <summary>
+        /// The _main form.
+        /// </summary>
         private Main _mainForm = null;
+
+        /// <summary>
+        /// The _redock keys.
+        /// </summary>
         private Keys _redockKeys;
 
-        public Panel PanelContainer
-        {
-            get
-            {
-                return panelContainer;
-            }
-        }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WaveformUndocked"/> class.
+        /// </summary>
+        /// <param name="mainForm">
+        /// The main form.
+        /// </param>
         public WaveformUndocked(Main mainForm)
         {
-            InitializeComponent();
-            _mainForm = mainForm;
+            this.InitializeComponent();
+            this._mainForm = mainForm;
             this.Icon = (Icon)mainForm.Icon.Clone();
-            _redockKeys = Utilities.GetKeys(Configuration.Settings.Shortcuts.MainVideoToggleVideoControls);
+            this._redockKeys = Utilities.GetKeys(Configuration.Settings.Shortcuts.MainVideoToggleVideoControls);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WaveformUndocked"/> class.
+        /// </summary>
         public WaveformUndocked()
         {
         }
 
-        private void WaveformUndocked_FormClosing(object sender, FormClosingEventArgs e)
+        /// <summary>
+        /// Gets the panel container.
+        /// </summary>
+        public Panel PanelContainer
         {
-            if (e.CloseReason == CloseReason.UserClosing && panelContainer.Controls.Count > 0)
+            get
             {
-                var controlWaveform = panelContainer.Controls[0];
-                var controlButtons = panelContainer.Controls[1];
-                var controlTrackBar = panelContainer.Controls[2];
-                panelContainer.Controls.Clear();
-                _mainForm.ReDockWaveform(controlWaveform, controlButtons, controlTrackBar);
-                _mainForm.SetWaveformToggleOff();
+                return this.panelContainer;
             }
         }
 
+        /// <summary>
+        /// The waveform undocked_ form closing.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void WaveformUndocked_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing && this.panelContainer.Controls.Count > 0)
+            {
+                var controlWaveform = this.panelContainer.Controls[0];
+                var controlButtons = this.panelContainer.Controls[1];
+                var controlTrackBar = this.panelContainer.Controls[2];
+                this.panelContainer.Controls.Clear();
+                this._mainForm.ReDockWaveform(controlWaveform, controlButtons, controlTrackBar);
+                this._mainForm.SetWaveformToggleOff();
+            }
+        }
+
+        /// <summary>
+        /// The waveform undocked_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void WaveformUndocked_KeyDown(object sender, KeyEventArgs e)
         {
-            if (_redockKeys == e.KeyData)
-                _mainForm.RedockVideoControlsToolStripMenuItemClick(null, null);
+            if (this._redockKeys == e.KeyData)
+            {
+                this._mainForm.RedockVideoControlsToolStripMenuItemClick(null, null);
+            }
             else
-                _mainForm.MainKeyDown(sender, e);
+            {
+                this._mainForm.MainKeyDown(sender, e);
+            }
         }
     }
 }

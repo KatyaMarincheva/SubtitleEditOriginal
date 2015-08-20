@@ -1,28 +1,231 @@
-﻿using System;
-using Nikse.SubtitleEdit.Logic.SubtitleFormats;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TimeCode.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The time code.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic
 {
+    using System;
+
+    using Nikse.SubtitleEdit.Logic.SubtitleFormats;
+
+    /// <summary>
+    /// The time code.
+    /// </summary>
     public class TimeCode
     {
+        /// <summary>
+        /// The base unit.
+        /// </summary>
+        public const double BaseUnit = 1000.0; // Base unit of time
+
+        /// <summary>
+        /// The max time.
+        /// </summary>
         public static readonly TimeCode MaxTime = new TimeCode(99, 59, 59, 999);
 
-        public const double BaseUnit = 1000.0; // Base unit of time
+        /// <summary>
+        /// The _total milliseconds.
+        /// </summary>
         private double _totalMilliseconds;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimeCode"/> class.
+        /// </summary>
+        /// <param name="timeSpan">
+        /// The time span.
+        /// </param>
+        public TimeCode(TimeSpan timeSpan)
+        {
+            this._totalMilliseconds = timeSpan.TotalMilliseconds;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimeCode"/> class.
+        /// </summary>
+        /// <param name="totalMilliseconds">
+        /// The total milliseconds.
+        /// </param>
+        public TimeCode(double totalMilliseconds)
+        {
+            this._totalMilliseconds = totalMilliseconds;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimeCode"/> class.
+        /// </summary>
+        /// <param name="hour">
+        /// The hour.
+        /// </param>
+        /// <param name="minute">
+        /// The minute.
+        /// </param>
+        /// <param name="seconds">
+        /// The seconds.
+        /// </param>
+        /// <param name="milliseconds">
+        /// The milliseconds.
+        /// </param>
+        public TimeCode(int hour, int minute, int seconds, int milliseconds)
+        {
+            this._totalMilliseconds = hour * 60 * 60 * BaseUnit + minute * 60 * BaseUnit + seconds * BaseUnit + milliseconds;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether is max time.
+        /// </summary>
         public bool IsMaxTime
         {
             get
             {
-                return Math.Abs(_totalMilliseconds - MaxTime.TotalMilliseconds) < 0.01;
+                return Math.Abs(this._totalMilliseconds - MaxTime.TotalMilliseconds) < 0.01;
             }
         }
 
+        /// <summary>
+        /// Gets or sets the hours.
+        /// </summary>
+        public int Hours
+        {
+            get
+            {
+                var ts = this.TimeSpan;
+                return ts.Hours + ts.Days * 24;
+            }
+
+            set
+            {
+                var ts = this.TimeSpan;
+                this._totalMilliseconds = new TimeSpan(0, value, ts.Minutes, ts.Seconds, ts.Milliseconds).TotalMilliseconds;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the minutes.
+        /// </summary>
+        public int Minutes
+        {
+            get
+            {
+                return this.TimeSpan.Minutes;
+            }
+
+            set
+            {
+                var ts = this.TimeSpan;
+                this._totalMilliseconds = new TimeSpan(0, ts.Hours, value, ts.Seconds, ts.Milliseconds).TotalMilliseconds;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the seconds.
+        /// </summary>
+        public int Seconds
+        {
+            get
+            {
+                return this.TimeSpan.Seconds;
+            }
+
+            set
+            {
+                var ts = this.TimeSpan;
+                this._totalMilliseconds = new TimeSpan(0, ts.Hours, ts.Minutes, value, ts.Milliseconds).TotalMilliseconds;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the milliseconds.
+        /// </summary>
+        public int Milliseconds
+        {
+            get
+            {
+                return this.TimeSpan.Milliseconds;
+            }
+
+            set
+            {
+                var ts = this.TimeSpan;
+                this._totalMilliseconds = new TimeSpan(0, ts.Hours, ts.Minutes, ts.Seconds, value).TotalMilliseconds;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the total milliseconds.
+        /// </summary>
+        public double TotalMilliseconds
+        {
+            get
+            {
+                return this._totalMilliseconds;
+            }
+
+            set
+            {
+                this._totalMilliseconds = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the total seconds.
+        /// </summary>
+        public double TotalSeconds
+        {
+            get
+            {
+                return this._totalMilliseconds / BaseUnit;
+            }
+
+            set
+            {
+                this._totalMilliseconds = value * BaseUnit;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the time span.
+        /// </summary>
+        public TimeSpan TimeSpan
+        {
+            get
+            {
+                return TimeSpan.FromMilliseconds(this._totalMilliseconds);
+            }
+
+            set
+            {
+                this._totalMilliseconds = value.TotalMilliseconds;
+            }
+        }
+
+        /// <summary>
+        /// The from seconds.
+        /// </summary>
+        /// <param name="seconds">
+        /// The seconds.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         public static TimeCode FromSeconds(double seconds)
         {
             return new TimeCode(seconds * BaseUnit);
         }
 
+        /// <summary>
+        /// The parse to milliseconds.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="double"/>.
+        /// </returns>
         public static double ParseToMilliseconds(string text)
         {
             string[] parts = text.Split(new[] { ':', ',', '.' }, StringSplitOptions.RemoveEmptyEntries);
@@ -37,9 +240,19 @@ namespace Nikse.SubtitleEdit.Logic
                     return new TimeSpan(0, hours, minutes, seconds, milliseconds).TotalMilliseconds;
                 }
             }
+
             return 0;
         }
 
+        /// <summary>
+        /// The parse hhmmssff to milliseconds.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="double"/>.
+        /// </returns>
         public static double ParseHHMMSSFFToMilliseconds(string text)
         {
             string[] parts = text.Split(new[] { ':', ',', '.' }, StringSplitOptions.RemoveEmptyEntries);
@@ -54,171 +267,160 @@ namespace Nikse.SubtitleEdit.Logic
                     return new TimeCode(hours, minutes, seconds, SubtitleFormat.FramesToMillisecondsMax999(frames)).TotalMilliseconds;
                 }
             }
+
             return 0;
         }
 
-        public TimeCode(TimeSpan timeSpan)
-        {
-            _totalMilliseconds = timeSpan.TotalMilliseconds;
-        }
-
-        public TimeCode(double totalMilliseconds)
-        {
-            _totalMilliseconds = totalMilliseconds;
-        }
-
-        public TimeCode(int hour, int minute, int seconds, int milliseconds)
-        {
-            _totalMilliseconds = hour * 60 * 60 * BaseUnit + minute * 60 * BaseUnit + seconds * BaseUnit + milliseconds;
-        }
-
-        public int Hours
-        {
-            get
-            {
-                var ts = TimeSpan;
-                return ts.Hours + ts.Days * 24;
-            }
-            set
-            {
-                var ts = TimeSpan;
-                _totalMilliseconds = new TimeSpan(0, value, ts.Minutes, ts.Seconds, ts.Milliseconds).TotalMilliseconds;
-            }
-        }
-
-        public int Minutes
-        {
-            get
-            {
-                return TimeSpan.Minutes;
-            }
-            set
-            {
-                var ts = TimeSpan;
-                _totalMilliseconds = new TimeSpan(0, ts.Hours, value, ts.Seconds, ts.Milliseconds).TotalMilliseconds;
-            }
-        }
-
-        public int Seconds
-        {
-            get
-            {
-                return TimeSpan.Seconds;
-            }
-            set
-            {
-                var ts = TimeSpan;
-                _totalMilliseconds = new TimeSpan(0, ts.Hours, ts.Minutes, value, ts.Milliseconds).TotalMilliseconds;
-            }
-        }
-
-        public int Milliseconds
-        {
-            get
-            {
-                return TimeSpan.Milliseconds;
-            }
-            set
-            {
-                var ts = TimeSpan;
-                _totalMilliseconds = new TimeSpan(0, ts.Hours, ts.Minutes, ts.Seconds, value).TotalMilliseconds;
-            }
-        }
-
-        public double TotalMilliseconds
-        {
-            get { return _totalMilliseconds; }
-            set { _totalMilliseconds = value; }
-        }
-
-        public double TotalSeconds
-        {
-            get { return _totalMilliseconds / BaseUnit; }
-            set { _totalMilliseconds = value * BaseUnit; }
-        }
-
-        public TimeSpan TimeSpan
-        {
-            get
-            {
-                return TimeSpan.FromMilliseconds(_totalMilliseconds);
-            }
-            set
-            {
-                _totalMilliseconds = value.TotalMilliseconds;
-            }
-        }
-
+        /// <summary>
+        /// The add time.
+        /// </summary>
+        /// <param name="hour">
+        /// The hour.
+        /// </param>
+        /// <param name="minutes">
+        /// The minutes.
+        /// </param>
+        /// <param name="seconds">
+        /// The seconds.
+        /// </param>
+        /// <param name="milliseconds">
+        /// The milliseconds.
+        /// </param>
         public void AddTime(int hour, int minutes, int seconds, int milliseconds)
         {
-            Hours += hour;
-            Minutes += minutes;
-            Seconds += seconds;
-            Milliseconds += milliseconds;
+            this.Hours += hour;
+            this.Minutes += minutes;
+            this.Seconds += seconds;
+            this.Milliseconds += milliseconds;
         }
 
+        /// <summary>
+        /// The add time.
+        /// </summary>
+        /// <param name="milliseconds">
+        /// The milliseconds.
+        /// </param>
         public void AddTime(long milliseconds)
         {
-            _totalMilliseconds += milliseconds;
+            this._totalMilliseconds += milliseconds;
         }
 
+        /// <summary>
+        /// The add time.
+        /// </summary>
+        /// <param name="timeSpan">
+        /// The time span.
+        /// </param>
         public void AddTime(TimeSpan timeSpan)
         {
-            _totalMilliseconds += timeSpan.TotalMilliseconds;
+            this._totalMilliseconds += timeSpan.TotalMilliseconds;
         }
 
+        /// <summary>
+        /// The add time.
+        /// </summary>
+        /// <param name="milliseconds">
+        /// The milliseconds.
+        /// </param>
         public void AddTime(double milliseconds)
         {
-            _totalMilliseconds += milliseconds;
+            this._totalMilliseconds += milliseconds;
         }
 
+        /// <summary>
+        /// The to string.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToString()
         {
-            var ts = TimeSpan;
+            var ts = this.TimeSpan;
             string s = string.Format("{0:00}:{1:00}:{2:00},{3:000}", ts.Hours + ts.Days * 24, ts.Minutes, ts.Seconds, ts.Milliseconds);
 
-            if (TotalMilliseconds >= 0)
+            if (this.TotalMilliseconds >= 0)
+            {
                 return s;
+            }
+
             return "-" + s.Replace("-", string.Empty);
         }
 
+        /// <summary>
+        /// The to short string.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string ToShortString()
         {
-            var ts = TimeSpan;
+            var ts = this.TimeSpan;
             string s;
             if (ts.Minutes == 0 && ts.Hours == 0 && ts.Days == 0)
+            {
                 s = string.Format("{0:0},{1:000}", ts.Seconds, ts.Milliseconds);
+            }
             else if (ts.Hours == 0 && ts.Days == 0)
+            {
                 s = string.Format("{0:0}:{1:00},{2:000}", ts.Minutes, ts.Seconds, ts.Milliseconds);
+            }
             else
+            {
                 s = string.Format("{0:0}:{1:00}:{2:00},{3:000}", ts.Hours + ts.Days * 24, ts.Minutes, ts.Seconds, ts.Milliseconds);
+            }
 
-            if (TotalMilliseconds >= 0)
+            if (this.TotalMilliseconds >= 0)
+            {
                 return s;
+            }
+
             return "-" + s.Replace("-", string.Empty);
         }
 
+        /// <summary>
+        /// The to short string hhmmssff.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string ToShortStringHHMMSSFF()
         {
-            var ts = TimeSpan;
+            var ts = this.TimeSpan;
             if (ts.Minutes == 0 && ts.Hours == 0)
+            {
                 return string.Format("{0:00}:{1:00}", ts.Seconds, SubtitleFormat.MillisecondsToFramesMaxFrameRate(ts.Milliseconds));
+            }
+
             if (ts.Hours == 0)
+            {
                 return string.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, SubtitleFormat.MillisecondsToFramesMaxFrameRate(ts.Milliseconds));
+            }
+
             return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", ts.Hours, ts.Minutes, ts.Seconds, SubtitleFormat.MillisecondsToFramesMaxFrameRate(ts.Milliseconds));
         }
 
+        /// <summary>
+        /// The to hhmmssff.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string ToHHMMSSFF()
         {
-            var ts = TimeSpan;
+            var ts = this.TimeSpan;
             return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", ts.Hours, ts.Minutes, ts.Seconds, SubtitleFormat.MillisecondsToFramesMaxFrameRate(ts.Milliseconds));
         }
 
+        /// <summary>
+        /// The to hhmmss period ff.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string ToHHMMSSPeriodFF()
         {
-            var ts = TimeSpan;
+            var ts = this.TimeSpan;
             return string.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, SubtitleFormat.MillisecondsToFramesMaxFrameRate(ts.Milliseconds));
         }
-
     }
 }

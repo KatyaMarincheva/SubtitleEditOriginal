@@ -1,125 +1,196 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
-using System.Xml;
-using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.Ocr.Binary;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="VobSubEditCharacters.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The vob sub edit characters.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.IO;
+    using System.Windows.Forms;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.Ocr.Binary;
+
+    /// <summary>
+    /// The vob sub edit characters.
+    /// </summary>
     public sealed partial class VobSubEditCharacters : Form
     {
-        private XmlDocument _compareDoc = new XmlDocument();
-        private string _directoryPath;
-        private List<bool> _italics = new List<bool>();
-        internal List<VobSubOcr.ImageCompareAddition> Additions { get; private set; }
+        /// <summary>
+        /// The _bin ocr db.
+        /// </summary>
         private BinaryOcrDb _binOcrDb = null;
 
+        /// <summary>
+        /// The _compare doc.
+        /// </summary>
+        private XmlDocument _compareDoc = new XmlDocument();
+
+        /// <summary>
+        /// The _directory path.
+        /// </summary>
+        private string _directoryPath;
+
+        /// <summary>
+        /// The _italics.
+        /// </summary>
+        private List<bool> _italics = new List<bool>();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VobSubEditCharacters"/> class.
+        /// </summary>
+        /// <param name="databaseFolderName">
+        /// The database folder name.
+        /// </param>
+        /// <param name="additions">
+        /// The additions.
+        /// </param>
+        /// <param name="binOcrDb">
+        /// The bin ocr db.
+        /// </param>
+        internal VobSubEditCharacters(string databaseFolderName, List<VobSubOcr.ImageCompareAddition> additions, BinaryOcrDb binOcrDb)
+        {
+            this.InitializeComponent();
+            this.labelExpandCount.Text = string.Empty;
+            this._binOcrDb = binOcrDb;
+            this.labelCount.Text = string.Empty;
+            if (additions != null)
+            {
+                this.Additions = new List<VobSubOcr.ImageCompareAddition>();
+                foreach (var a in additions)
+                {
+                    this.Additions.Add(a);
+                }
+
+                const int makeHigher = 40;
+                this.labelImageCompareFiles.Top = this.labelImageCompareFiles.Top - makeHigher;
+                this.listBoxFileNames.Top = this.listBoxFileNames.Top - makeHigher;
+                this.listBoxFileNames.Height = this.listBoxFileNames.Height + makeHigher;
+                this.groupBoxCurrentCompareImage.Top = this.groupBoxCurrentCompareImage.Top - makeHigher;
+                this.groupBoxCurrentCompareImage.Height = this.groupBoxCurrentCompareImage.Height + makeHigher;
+            }
+
+            this.labelImageInfo.Text = string.Empty;
+            this.pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
+
+            this._directoryPath = Configuration.VobSubCompareFolder + databaseFolderName + Path.DirectorySeparatorChar;
+            if (!File.Exists(this._directoryPath + "Images.xml"))
+            {
+                this._compareDoc.LoadXml("<OcrBitmaps></OcrBitmaps>");
+            }
+            else
+            {
+                this._compareDoc.Load(this._directoryPath + "Images.xml");
+            }
+
+            this.Refill(this.Additions);
+
+            this.Text = Configuration.Settings.Language.VobSubEditCharacters.Title;
+            this.labelChooseCharacters.Text = Configuration.Settings.Language.VobSubEditCharacters.ChooseCharacter;
+            this.labelImageCompareFiles.Text = Configuration.Settings.Language.VobSubEditCharacters.ImageCompareFiles;
+            this.groupBoxCurrentCompareImage.Text = Configuration.Settings.Language.VobSubEditCharacters.CurrentCompareImage;
+            this.labelTextAssociatedWithImage.Text = Configuration.Settings.Language.VobSubEditCharacters.TextAssociatedWithImage;
+            this.checkBoxItalic.Text = Configuration.Settings.Language.VobSubEditCharacters.IsItalic;
+            this.buttonUpdate.Text = Configuration.Settings.Language.VobSubEditCharacters.Update;
+            this.buttonDelete.Text = Configuration.Settings.Language.VobSubEditCharacters.Delete;
+            this.labelDoubleSize.Text = Configuration.Settings.Language.VobSubEditCharacters.ImageDoubleSize;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            Utilities.FixLargeFonts(this, this.buttonOK);
+        }
+
+        /// <summary>
+        /// Gets the additions.
+        /// </summary>
+        internal List<VobSubOcr.ImageCompareAddition> Additions { get; private set; }
+
+        /// <summary>
+        /// Gets the image compare document.
+        /// </summary>
         public XmlDocument ImageCompareDocument
         {
             get
             {
-                return _compareDoc;
+                return this._compareDoc;
             }
         }
 
-        internal VobSubEditCharacters(string databaseFolderName, List<VobSubOcr.ImageCompareAddition> additions, BinaryOcrDb binOcrDb)
-        {
-            InitializeComponent();
-            labelExpandCount.Text = string.Empty;
-            _binOcrDb = binOcrDb;
-            labelCount.Text = string.Empty;
-            if (additions != null)
-            {
-                Additions = new List<VobSubOcr.ImageCompareAddition>();
-                foreach (var a in additions)
-                    Additions.Add(a);
+        /// <summary>
+        /// Gets or sets a value indicating whether changes made.
+        /// </summary>
+        public bool ChangesMade { get; set; }
 
-                const int makeHigher = 40;
-                labelImageCompareFiles.Top = labelImageCompareFiles.Top - makeHigher;
-                listBoxFileNames.Top = listBoxFileNames.Top - makeHigher;
-                listBoxFileNames.Height = listBoxFileNames.Height + makeHigher;
-                groupBoxCurrentCompareImage.Top = groupBoxCurrentCompareImage.Top - makeHigher;
-                groupBoxCurrentCompareImage.Height = groupBoxCurrentCompareImage.Height + makeHigher;
-            }
-
-            labelImageInfo.Text = string.Empty;
-            pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
-
-            _directoryPath = Configuration.VobSubCompareFolder + databaseFolderName + Path.DirectorySeparatorChar;
-            if (!File.Exists(_directoryPath + "Images.xml"))
-                _compareDoc.LoadXml("<OcrBitmaps></OcrBitmaps>");
-            else
-                _compareDoc.Load(_directoryPath + "Images.xml");
-
-            Refill(Additions);
-
-            Text = Configuration.Settings.Language.VobSubEditCharacters.Title;
-            labelChooseCharacters.Text = Configuration.Settings.Language.VobSubEditCharacters.ChooseCharacter;
-            labelImageCompareFiles.Text = Configuration.Settings.Language.VobSubEditCharacters.ImageCompareFiles;
-            groupBoxCurrentCompareImage.Text = Configuration.Settings.Language.VobSubEditCharacters.CurrentCompareImage;
-            labelTextAssociatedWithImage.Text = Configuration.Settings.Language.VobSubEditCharacters.TextAssociatedWithImage;
-            checkBoxItalic.Text = Configuration.Settings.Language.VobSubEditCharacters.IsItalic;
-            buttonUpdate.Text = Configuration.Settings.Language.VobSubEditCharacters.Update;
-            buttonDelete.Text = Configuration.Settings.Language.VobSubEditCharacters.Delete;
-            labelDoubleSize.Text = Configuration.Settings.Language.VobSubEditCharacters.ImageDoubleSize;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
-            Utilities.FixLargeFonts(this, buttonOK);
-        }
-
+        /// <summary>
+        /// The refill.
+        /// </summary>
+        /// <param name="additions">
+        /// The additions.
+        /// </param>
         private void Refill(List<VobSubOcr.ImageCompareAddition> additions)
         {
             if (additions != null && additions.Count > 0)
             {
-                labelChooseCharacters.Visible = false;
-                comboBoxTexts.Visible = false;
-                FillLastAdditions(additions);
+                this.labelChooseCharacters.Visible = false;
+                this.comboBoxTexts.Visible = false;
+                this.FillLastAdditions(additions);
             }
             else
             {
-                FillComboWithUniqueAndSortedTexts();
+                this.FillComboWithUniqueAndSortedTexts();
             }
         }
 
+        /// <summary>
+        /// The fill last additions.
+        /// </summary>
+        /// <param name="additions">
+        /// The additions.
+        /// </param>
         private void FillLastAdditions(List<VobSubOcr.ImageCompareAddition> additions)
         {
-            _italics = new List<bool>();
-            listBoxFileNames.Items.Clear();
+            this._italics = new List<bool>();
+            this.listBoxFileNames.Items.Clear();
 
-            if (_binOcrDb != null)
+            if (this._binOcrDb != null)
             {
-                foreach (BinaryOcrBitmap bob in _binOcrDb.CompareImages)
+                foreach (BinaryOcrBitmap bob in this._binOcrDb.CompareImages)
                 {
                     string name = bob.Key;
                     foreach (VobSubOcr.ImageCompareAddition a in additions)
                     {
                         if (name == a.Name && bob.Text != null)
                         {
-                            listBoxFileNames.Items.Add(bob);
-                            _italics.Add(bob.Italic);
+                            this.listBoxFileNames.Items.Add(bob);
+                            this._italics.Add(bob.Italic);
                         }
                     }
                 }
-                foreach (BinaryOcrBitmap bob in _binOcrDb.CompareImagesExpanded)
+
+                foreach (BinaryOcrBitmap bob in this._binOcrDb.CompareImagesExpanded)
                 {
                     string name = bob.Key;
                     foreach (VobSubOcr.ImageCompareAddition a in additions)
                     {
                         if (name == a.Name && bob.Text != null)
                         {
-                            listBoxFileNames.Items.Add(bob);
-                            _italics.Add(bob.Italic);
+                            this.listBoxFileNames.Items.Add(bob);
+                            this._italics.Add(bob.Italic);
                         }
                     }
                 }
             }
             else
             {
-                foreach (XmlNode node in _compareDoc.DocumentElement.ChildNodes)
+                foreach (XmlNode node in this._compareDoc.DocumentElement.ChildNodes)
                 {
                     if (node.Attributes["Text"] != null)
                     {
@@ -129,156 +200,224 @@ namespace Nikse.SubtitleEdit.Forms
                         {
                             if (name == a.Name)
                             {
-                                listBoxFileNames.Items.Add("[" + text + "] " + node.InnerText);
-                                _italics.Add(node.Attributes["Italic"] != null);
+                                this.listBoxFileNames.Items.Add("[" + text + "] " + node.InnerText);
+                                this._italics.Add(node.Attributes["Italic"] != null);
                             }
                         }
                     }
                 }
             }
 
-            if (listBoxFileNames.Items.Count > 0)
-                listBoxFileNames.SelectedIndex = 0;
+            if (this.listBoxFileNames.Items.Count > 0)
+            {
+                this.listBoxFileNames.SelectedIndex = 0;
+            }
         }
 
+        /// <summary>
+        /// The fill combo with unique and sorted texts.
+        /// </summary>
         private void FillComboWithUniqueAndSortedTexts()
         {
             int count = 0;
             List<string> texts = new List<string>();
 
-            if (_binOcrDb != null)
+            if (this._binOcrDb != null)
             {
-                foreach (BinaryOcrBitmap bob in _binOcrDb.CompareImages)
+                foreach (BinaryOcrBitmap bob in this._binOcrDb.CompareImages)
                 {
                     string text = bob.Text;
                     if (!texts.Contains(text) && text != null)
+                    {
                         texts.Add(text);
+                    }
+
                     count++;
                 }
-                foreach (BinaryOcrBitmap bob in _binOcrDb.CompareImagesExpanded)
+
+                foreach (BinaryOcrBitmap bob in this._binOcrDb.CompareImagesExpanded)
                 {
                     string text = bob.Text;
                     if (!texts.Contains(text) && text != null)
+                    {
                         texts.Add(text);
+                    }
+
                     count++;
                 }
             }
             else
             {
-                foreach (XmlNode node in _compareDoc.DocumentElement.SelectNodes("Item"))
+                foreach (XmlNode node in this._compareDoc.DocumentElement.SelectNodes("Item"))
                 {
                     if (node.Attributes.Count >= 1)
                     {
                         string text = node.Attributes["Text"].InnerText;
                         if (!texts.Contains(text))
+                        {
                             texts.Add(text);
+                        }
+
                         count++;
                     }
                 }
             }
-            texts.Sort();
-            labelCount.Text = string.Format("{0:#,##0}", count);
 
-            comboBoxTexts.Items.Clear();
+            texts.Sort();
+            this.labelCount.Text = string.Format("{0:#,##0}", count);
+
+            this.comboBoxTexts.Items.Clear();
             foreach (string text in texts)
             {
-                comboBoxTexts.Items.Add(text);
+                this.comboBoxTexts.Items.Add(text);
             }
 
-            if (comboBoxTexts.Items.Count > 0)
-                comboBoxTexts.SelectedIndex = 0;
+            if (this.comboBoxTexts.Items.Count > 0)
+            {
+                this.comboBoxTexts.SelectedIndex = 0;
+            }
         }
 
+        /// <summary>
+        /// The combo box texts selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ComboBoxTextsSelectedIndexChanged(object sender, EventArgs e)
         {
-            _italics = new List<bool>();
-            string target = comboBoxTexts.SelectedItem.ToString();
-            textBoxText.Text = target;
-            listBoxFileNames.Items.Clear();
+            this._italics = new List<bool>();
+            string target = this.comboBoxTexts.SelectedItem.ToString();
+            this.textBoxText.Text = target;
+            this.listBoxFileNames.Items.Clear();
 
-            if (_binOcrDb != null)
+            if (this._binOcrDb != null)
             {
-                foreach (BinaryOcrBitmap bob in _binOcrDb.CompareImages)
+                foreach (BinaryOcrBitmap bob in this._binOcrDb.CompareImages)
                 {
                     string text = bob.Text;
                     if (text == target)
                     {
-                        listBoxFileNames.Items.Add(bob);
-                        _italics.Add(bob.Italic);
+                        this.listBoxFileNames.Items.Add(bob);
+                        this._italics.Add(bob.Italic);
                     }
                 }
-                foreach (BinaryOcrBitmap bob in _binOcrDb.CompareImagesExpanded)
+
+                foreach (BinaryOcrBitmap bob in this._binOcrDb.CompareImagesExpanded)
                 {
                     string text = bob.Text;
                     if (text == target)
                     {
-                        listBoxFileNames.Items.Add(bob);
-                        _italics.Add(bob.Italic);
+                        this.listBoxFileNames.Items.Add(bob);
+                        this._italics.Add(bob.Italic);
                     }
                 }
             }
             else
             {
-                foreach (XmlNode node in _compareDoc.DocumentElement.ChildNodes)
+                foreach (XmlNode node in this._compareDoc.DocumentElement.ChildNodes)
                 {
                     if (node.Attributes["Text"] != null)
                     {
                         string text = node.Attributes["Text"].InnerText;
                         if (text == target)
                         {
-                            listBoxFileNames.Items.Add(node.InnerText);
-                            _italics.Add(node.Attributes["Italic"] != null);
+                            this.listBoxFileNames.Items.Add(node.InnerText);
+                            this._italics.Add(node.Attributes["Italic"] != null);
                         }
                     }
                 }
             }
 
-            if (listBoxFileNames.Items.Count > 0)
-                listBoxFileNames.SelectedIndex = 0;
+            if (this.listBoxFileNames.Items.Count > 0)
+            {
+                this.listBoxFileNames.SelectedIndex = 0;
+            }
         }
 
+        /// <summary>
+        /// The get selected file name.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string GetSelectedFileName()
         {
-            string fileName = listBoxFileNames.SelectedItem.ToString();
+            string fileName = this.listBoxFileNames.SelectedItem.ToString();
             if (fileName.StartsWith('['))
+            {
                 fileName = fileName.Substring(fileName.IndexOf(']') + 1);
+            }
+
             return fileName.Trim();
         }
 
+        /// <summary>
+        /// The get selected bin ocr bitmap.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="BinaryOcrBitmap"/>.
+        /// </returns>
         private BinaryOcrBitmap GetSelectedBinOcrBitmap()
         {
-            int idx = listBoxFileNames.SelectedIndex;
-            if (idx < 0 || _binOcrDb == null)
+            int idx = this.listBoxFileNames.SelectedIndex;
+            if (idx < 0 || this._binOcrDb == null)
+            {
                 return null;
+            }
 
-            return listBoxFileNames.Items[idx] as BinaryOcrBitmap;
+            return this.listBoxFileNames.Items[idx] as BinaryOcrBitmap;
         }
 
+        /// <summary>
+        /// The get file name.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string GetFileName(int index)
         {
-            string fileName = listBoxFileNames.Items[index].ToString();
+            string fileName = this.listBoxFileNames.Items[index].ToString();
             if (fileName.StartsWith('['))
+            {
                 fileName = fileName.Substring(fileName.IndexOf(']') + 1);
+            }
+
             return fileName.Trim();
         }
 
+        /// <summary>
+        /// The list box file names selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ListBoxFileNamesSelectedIndexChanged(object sender, EventArgs e)
         {
-            checkBoxItalic.Checked = _italics[listBoxFileNames.SelectedIndex];
-            string name = listBoxFileNames.Items[listBoxFileNames.SelectedIndex].ToString();
-            string databaseName = _directoryPath + "Images.db";
-            string posAsString = GetSelectedFileName();
+            this.checkBoxItalic.Checked = this._italics[this.listBoxFileNames.SelectedIndex];
+            string name = this.listBoxFileNames.Items[this.listBoxFileNames.SelectedIndex].ToString();
+            string databaseName = this._directoryPath + "Images.db";
+            string posAsString = this.GetSelectedFileName();
             Bitmap bmp = null;
-            labelExpandCount.Text = string.Empty;
-            if (_binOcrDb != null)
+            this.labelExpandCount.Text = string.Empty;
+            if (this._binOcrDb != null)
             {
-                var bob = GetSelectedBinOcrBitmap();
+                var bob = this.GetSelectedBinOcrBitmap();
                 if (bob != null)
                 {
                     bmp = bob.ToOldBitmap();
                     if (bob.ExpandCount > 0)
                     {
-                        labelExpandCount.Text = string.Format("Expand count: {0}", bob.ExpandCount);
+                        this.labelExpandCount.Text = string.Format("Expand count: {0}", bob.ExpandCount);
                     }
                 }
             }
@@ -287,7 +426,10 @@ namespace Nikse.SubtitleEdit.Forms
                 using (var f = new FileStream(databaseName, FileMode.Open))
                 {
                     if (name.Contains(']'))
+                    {
                         name = name.Substring(name.IndexOf(']') + 1).Trim();
+                    }
+
                     f.Position = Convert.ToInt64(name);
                     bmp = new ManagedBitmap(f).ToOldBitmap();
                 }
@@ -296,36 +438,37 @@ namespace Nikse.SubtitleEdit.Forms
             if (bmp == null)
             {
                 bmp = new Bitmap(1, 1);
-                labelImageInfo.Text = Configuration.Settings.Language.VobSubEditCharacters.ImageFileNotFound;
+                this.labelImageInfo.Text = Configuration.Settings.Language.VobSubEditCharacters.ImageFileNotFound;
             }
-            pictureBox1.Image = bmp;
-            pictureBox2.Width = bmp.Width * 2;
-            pictureBox2.Height = bmp.Height * 2;
-            pictureBox2.Image = bmp;
 
-            if (Additions != null && Additions.Count > 0)
+            this.pictureBox1.Image = bmp;
+            this.pictureBox2.Width = bmp.Width * 2;
+            this.pictureBox2.Height = bmp.Height * 2;
+            this.pictureBox2.Image = bmp;
+
+            if (this.Additions != null && this.Additions.Count > 0)
             {
-                if (_binOcrDb != null)
+                if (this._binOcrDb != null)
                 {
-                    var bob = GetSelectedBinOcrBitmap();
-                    foreach (var a in Additions)
+                    var bob = this.GetSelectedBinOcrBitmap();
+                    foreach (var a in this.Additions)
                     {
                         if (bob != null && bob.Text != null && bob.Key == a.Name)
                         {
-                            textBoxText.Text = a.Text;
-                            checkBoxItalic.Checked = a.Italic;
+                            this.textBoxText.Text = a.Text;
+                            this.checkBoxItalic.Checked = a.Italic;
                             break;
                         }
                     }
                 }
                 else
                 {
-                    string target = GetSelectedFileName();
-                    foreach (var a in Additions)
+                    string target = this.GetSelectedFileName();
+                    foreach (var a in this.Additions)
                     {
                         if (target.StartsWith(a.Name))
                         {
-                            textBoxText.Text = a.Text;
+                            this.textBoxText.Text = a.Text;
                             break;
                         }
                     }
@@ -333,101 +476,135 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The vob sub edit characters_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void VobSubEditCharacters_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
 
+        /// <summary>
+        /// The button update click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonUpdateClick(object sender, EventArgs e)
         {
-            if (listBoxFileNames.Items.Count == 0)
-                return;
-
-            string target = GetSelectedFileName();
-            string newText = textBoxText.Text;
-            int oldTextItem = comboBoxTexts.SelectedIndex;
-            int oldListBoxFileNamesIndex = listBoxFileNames.SelectedIndex;
-
-            if (_binOcrDb != null)
+            if (this.listBoxFileNames.Items.Count == 0)
             {
-                var bob = GetSelectedBinOcrBitmap();
+                return;
+            }
+
+            string target = this.GetSelectedFileName();
+            string newText = this.textBoxText.Text;
+            int oldTextItem = this.comboBoxTexts.SelectedIndex;
+            int oldListBoxFileNamesIndex = this.listBoxFileNames.SelectedIndex;
+
+            if (this._binOcrDb != null)
+            {
+                var bob = this.GetSelectedBinOcrBitmap();
                 if (bob == null)
+                {
                     return;
+                }
 
                 string oldText = bob.Text;
                 bob.Text = newText;
-                bob.Italic = checkBoxItalic.Checked;
+                bob.Italic = this.checkBoxItalic.Checked;
 
-                if (Additions != null && Additions.Count > 0)
+                if (this.Additions != null && this.Additions.Count > 0)
                 {
-                    for (int i = Additions.Count - 1; i >= 0; i--)
+                    for (int i = this.Additions.Count - 1; i >= 0; i--)
                     {
-                        if (Additions[i].Name == bob.Key)
+                        if (this.Additions[i].Name == bob.Key)
                         {
-                            Additions[i].Italic = bob.Italic;
-                            Additions[i].Text = bob.Text;
+                            this.Additions[i].Italic = bob.Italic;
+                            this.Additions[i].Text = bob.Text;
                             break;
                         }
                     }
                 }
-                Refill(Additions);
+
+                this.Refill(this.Additions);
 
                 if (oldText == newText)
                 {
-                    if (oldTextItem >= 0 && oldTextItem < comboBoxTexts.Items.Count)
-                        comboBoxTexts.SelectedIndex = oldTextItem;
-                    if (oldListBoxFileNamesIndex >= 0 && oldListBoxFileNamesIndex < listBoxFileNames.Items.Count)
-                        listBoxFileNames.SelectedIndex = oldListBoxFileNamesIndex;
+                    if (oldTextItem >= 0 && oldTextItem < this.comboBoxTexts.Items.Count)
+                    {
+                        this.comboBoxTexts.SelectedIndex = oldTextItem;
+                    }
+
+                    if (oldListBoxFileNamesIndex >= 0 && oldListBoxFileNamesIndex < this.listBoxFileNames.Items.Count)
+                    {
+                        this.listBoxFileNames.SelectedIndex = oldListBoxFileNamesIndex;
+                    }
                 }
                 else
                 {
                     int i = 0;
-                    foreach (var item in comboBoxTexts.Items)
+                    foreach (var item in this.comboBoxTexts.Items)
                     {
                         if (item.ToString() == newText)
                         {
-                            comboBoxTexts.SelectedIndexChanged -= ComboBoxTextsSelectedIndexChanged;
-                            comboBoxTexts.SelectedIndex = i;
-                            ComboBoxTextsSelectedIndexChanged(sender, e);
-                            comboBoxTexts.SelectedIndexChanged += ComboBoxTextsSelectedIndexChanged;
+                            this.comboBoxTexts.SelectedIndexChanged -= this.ComboBoxTextsSelectedIndexChanged;
+                            this.comboBoxTexts.SelectedIndex = i;
+                            this.ComboBoxTextsSelectedIndexChanged(sender, e);
+                            this.comboBoxTexts.SelectedIndexChanged += this.ComboBoxTextsSelectedIndexChanged;
                             int k = 0;
-                            foreach (var inner in listBoxFileNames.Items)
+                            foreach (var inner in this.listBoxFileNames.Items)
                             {
                                 if ((inner as BinaryOcrBitmap) == bob)
                                 {
-                                    listBoxFileNames.SelectedIndex = k;
+                                    this.listBoxFileNames.SelectedIndex = k;
                                     break;
                                 }
+
                                 k++;
                             }
+
                             break;
                         }
+
                         i++;
                     }
                 }
+
                 return;
             }
 
-            XmlNode node = _compareDoc.DocumentElement.SelectSingleNode("Item[.='" + target + "']");
+            XmlNode node = this._compareDoc.DocumentElement.SelectSingleNode("Item[.='" + target + "']");
             if (node != null)
             {
                 node.Attributes["Text"].InnerText = newText;
 
-                if (Additions != null && Additions.Count > 0)
+                if (this.Additions != null && this.Additions.Count > 0)
                 {
-                    foreach (var a in Additions)
+                    foreach (var a in this.Additions)
                     {
                         if (target.StartsWith(a.Name))
                         {
                             a.Text = newText;
-                            a.Italic = checkBoxItalic.Checked;
+                            a.Italic = this.checkBoxItalic.Checked;
                             break;
                         }
                     }
                 }
 
-                if (checkBoxItalic.Checked)
+                if (this.checkBoxItalic.Checked)
                 {
                     if (node.Attributes["Italic"] == null)
                     {
@@ -444,30 +621,33 @@ namespace Nikse.SubtitleEdit.Forms
                     }
                 }
 
-                Refill(Additions);
-                if (Additions == null || Additions.Count == 0)
+                this.Refill(this.Additions);
+                if (this.Additions == null || this.Additions.Count == 0)
                 {
-                    for (int i = 0; i < comboBoxTexts.Items.Count; i++)
+                    for (int i = 0; i < this.comboBoxTexts.Items.Count; i++)
                     {
-                        if (comboBoxTexts.Items[i].ToString() == newText)
+                        if (this.comboBoxTexts.Items[i].ToString() == newText)
                         {
-                            comboBoxTexts.SelectedIndex = i;
-                            for (int j = 0; j < listBoxFileNames.Items.Count; j++)
+                            this.comboBoxTexts.SelectedIndex = i;
+                            for (int j = 0; j < this.listBoxFileNames.Items.Count; j++)
                             {
-                                if (GetFileName(j).StartsWith(target))
-                                    listBoxFileNames.SelectedIndex = j;
+                                if (this.GetFileName(j).StartsWith(target))
+                                {
+                                    this.listBoxFileNames.SelectedIndex = j;
+                                }
                             }
+
                             return;
                         }
                     }
                 }
                 else
                 {
-                    for (int i = 0; i < listBoxFileNames.Items.Count; i++)
+                    for (int i = 0; i < this.listBoxFileNames.Items.Count; i++)
                     {
-                        if (listBoxFileNames.Items[i].ToString().Contains(target))
+                        if (this.listBoxFileNames.Items[i].ToString().Contains(target))
                         {
-                            listBoxFileNames.SelectedIndex = i;
+                            this.listBoxFileNames.SelectedIndex = i;
                             return;
                         }
                     }
@@ -475,128 +655,189 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The button delete click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonDeleteClick(object sender, EventArgs e)
         {
-            if (listBoxFileNames.Items.Count == 0)
-                return;
-
-            int oldComboBoxIndex = comboBoxTexts.SelectedIndex;
-            string target = GetSelectedFileName();
-
-            if (_binOcrDb != null)
+            if (this.listBoxFileNames.Items.Count == 0)
             {
-                BinaryOcrBitmap bob = GetSelectedBinOcrBitmap();
+                return;
+            }
+
+            int oldComboBoxIndex = this.comboBoxTexts.SelectedIndex;
+            string target = this.GetSelectedFileName();
+
+            if (this._binOcrDb != null)
+            {
+                BinaryOcrBitmap bob = this.GetSelectedBinOcrBitmap();
                 if (bob != null)
                 {
                     if (bob.ExpandCount > 0)
-                        _binOcrDb.CompareImagesExpanded.Remove(bob);
-                    else
-                        _binOcrDb.CompareImages.Remove(bob);
-
-                    if (Additions != null && Additions.Count > 0)
                     {
-                        for (int i = Additions.Count - 1; i >= 0; i--)
+                        this._binOcrDb.CompareImagesExpanded.Remove(bob);
+                    }
+                    else
+                    {
+                        this._binOcrDb.CompareImages.Remove(bob);
+                    }
+
+                    if (this.Additions != null && this.Additions.Count > 0)
+                    {
+                        for (int i = this.Additions.Count - 1; i >= 0; i--)
                         {
-                            if (Additions[i].Name == bob.Key)
+                            if (this.Additions[i].Name == bob.Key)
                             {
-                                Additions.RemoveAt(i);
-                                Refill(Additions);
+                                this.Additions.RemoveAt(i);
+                                this.Refill(this.Additions);
                                 break;
                             }
                         }
                     }
-                    Refill(Additions);
+
+                    this.Refill(this.Additions);
                 }
-                if (oldComboBoxIndex >= 0 && oldComboBoxIndex < comboBoxTexts.Items.Count)
-                    comboBoxTexts.SelectedIndex = oldComboBoxIndex;
+
+                if (oldComboBoxIndex >= 0 && oldComboBoxIndex < this.comboBoxTexts.Items.Count)
+                {
+                    this.comboBoxTexts.SelectedIndex = oldComboBoxIndex;
+                }
+
                 return;
             }
 
-            XmlNode node = _compareDoc.DocumentElement.SelectSingleNode("Item[.='" + target + "']");
+            XmlNode node = this._compareDoc.DocumentElement.SelectSingleNode("Item[.='" + target + "']");
             if (node != null)
             {
-                _compareDoc.DocumentElement.RemoveChild(node);
-                if (Additions != null && Additions.Count > 0)
+                this._compareDoc.DocumentElement.RemoveChild(node);
+                if (this.Additions != null && this.Additions.Count > 0)
                 {
-                    for (int i = Additions.Count - 1; i >= 0; i--)
+                    for (int i = this.Additions.Count - 1; i >= 0; i--)
                     {
-                        if (Additions[i].Name == target)
+                        if (this.Additions[i].Name == target)
                         {
-                            Additions.RemoveAt(i);
-                            Refill(Additions);
+                            this.Additions.RemoveAt(i);
+                            this.Refill(this.Additions);
                             break;
                         }
                     }
                 }
 
-                Refill(Additions);
-                if (Additions == null || Additions.Count == 0)
+                this.Refill(this.Additions);
+                if (this.Additions == null || this.Additions.Count == 0)
                 {
-                    if (oldComboBoxIndex < comboBoxTexts.Items.Count)
-                        comboBoxTexts.SelectedIndex = oldComboBoxIndex;
+                    if (oldComboBoxIndex < this.comboBoxTexts.Items.Count)
+                    {
+                        this.comboBoxTexts.SelectedIndex = oldComboBoxIndex;
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
         internal void Initialize(string name, string text)
         {
             if (name != null && text != null)
             {
-                for (int i = 0; i < comboBoxTexts.Items.Count; i++)
+                for (int i = 0; i < this.comboBoxTexts.Items.Count; i++)
                 {
-                    if (comboBoxTexts.Items[i].ToString() == text)
+                    if (this.comboBoxTexts.Items[i].ToString() == text)
                     {
-                        comboBoxTexts.SelectedIndex = i;
-                        if (_binOcrDb != null)
+                        this.comboBoxTexts.SelectedIndex = i;
+                        if (this._binOcrDb != null)
                         {
-                            for (int j = 0; j < listBoxFileNames.Items.Count; j++)
+                            for (int j = 0; j < this.listBoxFileNames.Items.Count; j++)
                             {
-                                if ((listBoxFileNames.Items[j] as BinaryOcrBitmap).Key == name)
-                                    listBoxFileNames.SelectedIndex = j;
+                                if ((this.listBoxFileNames.Items[j] as BinaryOcrBitmap).Key == name)
+                                {
+                                    this.listBoxFileNames.SelectedIndex = j;
+                                }
                             }
                         }
                         else
                         {
-                            for (int j = 0; j < listBoxFileNames.Items.Count; j++)
+                            for (int j = 0; j < this.listBoxFileNames.Items.Count; j++)
                             {
-                                if (GetFileName(j).StartsWith(name))
-                                    listBoxFileNames.SelectedIndex = j;
+                                if (this.GetFileName(j).StartsWith(name))
+                                {
+                                    this.listBoxFileNames.SelectedIndex = j;
+                                }
                             }
                         }
+
                         return;
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// The vob sub edit characters_ shown.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void VobSubEditCharacters_Shown(object sender, EventArgs e)
         {
-            textBoxText.Focus();
+            this.textBoxText.Focus();
         }
 
+        /// <summary>
+        /// The text box text_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void textBoxText_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                ButtonUpdateClick(null, null);
-                DialogResult = DialogResult.OK;
+                this.ButtonUpdateClick(null, null);
+                this.DialogResult = DialogResult.OK;
             }
         }
 
-        public bool ChangesMade { get; set; }
-
+        /// <summary>
+        /// The save image as tool strip menu item_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void saveImageAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveFileDialog1.Title = Configuration.Settings.Language.VobSubOcr.SaveSubtitleImageAs;
-            saveFileDialog1.AddExtension = true;
-            saveFileDialog1.FileName = "Image";
-            saveFileDialog1.Filter = "PNG image|*.png|BMP image|*.bmp|GIF image|*.gif|TIFF image|*.tiff";
-            saveFileDialog1.FilterIndex = 0;
+            this.saveFileDialog1.Title = Configuration.Settings.Language.VobSubOcr.SaveSubtitleImageAs;
+            this.saveFileDialog1.AddExtension = true;
+            this.saveFileDialog1.FileName = "Image";
+            this.saveFileDialog1.Filter = "PNG image|*.png|BMP image|*.bmp|GIF image|*.gif|TIFF image|*.tiff";
+            this.saveFileDialog1.FilterIndex = 0;
 
-            DialogResult result = saveFileDialog1.ShowDialog(this);
+            DialogResult result = this.saveFileDialog1.ShowDialog(this);
             if (result == DialogResult.OK)
             {
-                Bitmap bmp = pictureBox1.Image as Bitmap;
+                Bitmap bmp = this.pictureBox1.Image as Bitmap;
                 if (bmp == null)
                 {
                     MessageBox.Show("No image!");
@@ -605,14 +846,22 @@ namespace Nikse.SubtitleEdit.Forms
 
                 try
                 {
-                    if (saveFileDialog1.FilterIndex == 0)
-                        bmp.Save(saveFileDialog1.FileName, System.Drawing.Imaging.ImageFormat.Png);
-                    else if (saveFileDialog1.FilterIndex == 1)
-                        bmp.Save(saveFileDialog1.FileName);
-                    else if (saveFileDialog1.FilterIndex == 2)
-                        bmp.Save(saveFileDialog1.FileName, System.Drawing.Imaging.ImageFormat.Gif);
+                    if (this.saveFileDialog1.FilterIndex == 0)
+                    {
+                        bmp.Save(this.saveFileDialog1.FileName, System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                    else if (this.saveFileDialog1.FilterIndex == 1)
+                    {
+                        bmp.Save(this.saveFileDialog1.FileName);
+                    }
+                    else if (this.saveFileDialog1.FilterIndex == 2)
+                    {
+                        bmp.Save(this.saveFileDialog1.FileName, System.Drawing.Imaging.ImageFormat.Gif);
+                    }
                     else
-                        bmp.Save(saveFileDialog1.FileName, System.Drawing.Imaging.ImageFormat.Tiff);
+                    {
+                        bmp.Save(this.saveFileDialog1.FileName, System.Drawing.Imaging.ImageFormat.Tiff);
+                    }
                 }
                 catch (Exception exception)
                 {

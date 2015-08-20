@@ -1,14 +1,30 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nikse.SubtitleEdit.Logic;
-using System.IO;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TarFileTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The tar file test.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic
 {
+    using System.IO;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The tar file test.
+    /// </summary>
     [TestClass]
     [DeploymentItem("Files")]
     public class TarFileTest
     {
-
+        /// <summary>
+        /// The tar file read test.
+        /// </summary>
         [TestMethod]
         public void TarFileReadTest()
         {
@@ -22,6 +38,5 @@ namespace Test.Logic
                 Assert.IsTrue(tr.Files[12].FileName == "XSub.cs");
             }
         }
-
     }
 }

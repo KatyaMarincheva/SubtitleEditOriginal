@@ -1,103 +1,203 @@
-﻿using System.Drawing;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TransportStreamSubtitle.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The transport stream subtitle.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic.TransportStream
 {
+    using System.Drawing;
+
+    using Nikse.SubtitleEdit.Logic.BluRaySup;
+
+    /// <summary>
+    /// The transport stream subtitle.
+    /// </summary>
     public class TransportStreamSubtitle
     {
-        private ulong _startMilliseconds;
-        public ulong StartMilliseconds
-        {
-            get
-            {
-                if (_startMilliseconds < OffsetMilliseconds)
-                    return 0;
-                return _startMilliseconds - OffsetMilliseconds;
-            }
-            set
-            {
-                _startMilliseconds = value + OffsetMilliseconds;
-            }
-        }
+        /// <summary>
+        /// The _bd sup.
+        /// </summary>
+        private BluRaySupParser.PcsData _bdSup;
 
+        /// <summary>
+        /// The _end milliseconds.
+        /// </summary>
         private ulong _endMilliseconds;
-        public ulong EndMilliseconds
+
+        /// <summary>
+        /// The _start milliseconds.
+        /// </summary>
+        private ulong _startMilliseconds;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TransportStreamSubtitle"/> class.
+        /// </summary>
+        /// <param name="bdSup">
+        /// The bd sup.
+        /// </param>
+        /// <param name="startMilliseconds">
+        /// The start milliseconds.
+        /// </param>
+        /// <param name="endMilliseconds">
+        /// The end milliseconds.
+        /// </param>
+        public TransportStreamSubtitle(BluRaySupParser.PcsData bdSup, ulong startMilliseconds, ulong endMilliseconds)
         {
-            get
-            {
-                if (_endMilliseconds < OffsetMilliseconds)
-                    return 0;
-                return _endMilliseconds - OffsetMilliseconds;
-            }
-            set
-            {
-                _endMilliseconds = value + OffsetMilliseconds;
-            }
+            this._bdSup = bdSup;
+            this.StartMilliseconds = startMilliseconds;
+            this.EndMilliseconds = endMilliseconds;
         }
 
-        public ulong OffsetMilliseconds { get; set; }
-        public DvbSubPes Pes { get; set; }
-        private BluRaySup.BluRaySupParser.PcsData _bdSup;
-        public int? ActiveImageIndex { get; set; }
-
-        public bool IsBluRaySup
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TransportStreamSubtitle"/> class.
+        /// </summary>
+        /// <param name="bdSup">
+        /// The bd sup.
+        /// </param>
+        /// <param name="startMilliseconds">
+        /// The start milliseconds.
+        /// </param>
+        /// <param name="endMilliseconds">
+        /// The end milliseconds.
+        /// </param>
+        /// <param name="offset">
+        /// The offset.
+        /// </param>
+        public TransportStreamSubtitle(BluRaySupParser.PcsData bdSup, ulong startMilliseconds, ulong endMilliseconds, ulong offset)
         {
-            get
-            {
-                return _bdSup != null;
-            }
+            this._bdSup = bdSup;
+            this.StartMilliseconds = startMilliseconds;
+            this.EndMilliseconds = endMilliseconds;
+            this.OffsetMilliseconds = offset;
         }
 
-        public bool IsDvbSub
-        {
-            get
-            {
-                return Pes != null;
-            }
-        }
-
-        public TransportStreamSubtitle(BluRaySup.BluRaySupParser.PcsData bdSup, ulong startMilliseconds, ulong endMilliseconds)
-        {
-            _bdSup = bdSup;
-            StartMilliseconds = startMilliseconds;
-            EndMilliseconds = endMilliseconds;
-        }
-
-        public TransportStreamSubtitle(BluRaySup.BluRaySupParser.PcsData bdSup, ulong startMilliseconds, ulong endMilliseconds, ulong offset)
-        {
-            _bdSup = bdSup;
-            StartMilliseconds = startMilliseconds;
-            EndMilliseconds = endMilliseconds;
-            OffsetMilliseconds = offset;
-        }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TransportStreamSubtitle"/> class.
+        /// </summary>
         public TransportStreamSubtitle()
         {
         }
 
         /// <summary>
-        /// Gets full image if 'ActiveImageIndex' not set, otherwise only gets image by index
+        /// Gets or sets the start milliseconds.
         /// </summary>
-        /// <returns></returns>
-        public Bitmap GetActiveImage()
+        public ulong StartMilliseconds
         {
-            if (_bdSup != null)
-                return _bdSup.GetBitmap();
+            get
+            {
+                if (this._startMilliseconds < this.OffsetMilliseconds)
+                {
+                    return 0;
+                }
 
-            if (ActiveImageIndex.HasValue && ActiveImageIndex >= 0 && ActiveImageIndex < Pes.ObjectDataList.Count)
-                return (Bitmap)Pes.GetImage(Pes.ObjectDataList[ActiveImageIndex.Value]).Clone();
-            return Pes.GetImageFull();
+                return this._startMilliseconds - this.OffsetMilliseconds;
+            }
+
+            set
+            {
+                this._startMilliseconds = value + this.OffsetMilliseconds;
+            }
         }
 
+        /// <summary>
+        /// Gets or sets the end milliseconds.
+        /// </summary>
+        public ulong EndMilliseconds
+        {
+            get
+            {
+                if (this._endMilliseconds < this.OffsetMilliseconds)
+                {
+                    return 0;
+                }
+
+                return this._endMilliseconds - this.OffsetMilliseconds;
+            }
+
+            set
+            {
+                this._endMilliseconds = value + this.OffsetMilliseconds;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the offset milliseconds.
+        /// </summary>
+        public ulong OffsetMilliseconds { get; set; }
+
+        /// <summary>
+        /// Gets or sets the pes.
+        /// </summary>
+        public DvbSubPes Pes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the active image index.
+        /// </summary>
+        public int? ActiveImageIndex { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether is blu ray sup.
+        /// </summary>
+        public bool IsBluRaySup
+        {
+            get
+            {
+                return this._bdSup != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether is dvb sub.
+        /// </summary>
+        public bool IsDvbSub
+        {
+            get
+            {
+                return this.Pes != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of images.
+        /// </summary>
         public int NumberOfImages
         {
             get
             {
-                if (Pes != null)
-                    return Pes.ObjectDataList.Count;
+                if (this.Pes != null)
+                {
+                    return this.Pes.ObjectDataList.Count;
+                }
                 else
-                    return _bdSup.BitmapObjects.Count;
+                {
+                    return this._bdSup.BitmapObjects.Count;
+                }
             }
         }
 
+        /// <summary>
+        /// Gets full image if 'ActiveImageIndex' not set, otherwise only gets image by index
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Bitmap"/>.
+        /// </returns>
+        public Bitmap GetActiveImage()
+        {
+            if (this._bdSup != null)
+            {
+                return this._bdSup.GetBitmap();
+            }
+
+            if (this.ActiveImageIndex.HasValue && this.ActiveImageIndex >= 0 && this.ActiveImageIndex < this.Pes.ObjectDataList.Count)
+            {
+                return (Bitmap)this.Pes.GetImage(this.Pes.ObjectDataList[this.ActiveImageIndex.Value]).Clone();
+            }
+
+            return this.Pes.GetImageFull();
+        }
     }
 }

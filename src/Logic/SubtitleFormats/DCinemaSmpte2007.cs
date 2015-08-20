@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="DCinemaSmpte2007.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The d cinema smpte 2007.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -14,6 +23,9 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The d cinema smpte 2007.
+    /// </summary>
     public class DCinemaSmpte2007 : SubtitleFormat
     {
         // <?xml version="1.0" encoding="UTF-8"?>
@@ -35,10 +47,19 @@
         // </Subtitle>
         // </SubtitleList
         // </dcst:SubtitleReel>
+        /// <summary>
+        /// The frame rate.
+        /// </summary>
         private double frameRate = 24;
 
+        /// <summary>
+        /// Gets or sets the version.
+        /// </summary>
         public int Version { get; set; }
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -47,6 +68,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -55,6 +79,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -63,6 +90,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             StringBuilder sb = new StringBuilder();
@@ -95,6 +134,18 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             SubtitleSettings ss = Configuration.Settings.SubtitleSettings;
@@ -515,6 +566,18 @@
             return result;
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -812,6 +875,15 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The get color string for d cinema.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetColorStringForDCinema(string p)
         {
             string s = p.ToUpper().Trim();
@@ -823,6 +895,15 @@
             return p;
         }
 
+        /// <summary>
+        /// The get color string from d cinema.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetColorStringFromDCinema(string p)
         {
             string s = p.ToLower().Trim();
@@ -839,6 +920,15 @@
             return p;
         }
 
+        /// <summary>
+        /// The remove sub station alpha formatting.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveSubStationAlphaFormatting(string s)
         {
             int indexOfBegin = s.IndexOf('{');
@@ -852,11 +942,31 @@
             return s;
         }
 
+        /// <summary>
+        /// The validation call back.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        /// <exception cref="Exception">
+        /// </exception>
         private void ValidationCallBack(object sender, ValidationEventArgs e)
         {
             throw new Exception(e.Message);
         }
 
+        /// <summary>
+        /// The get time code.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private TimeCode GetTimeCode(string s)
         {
             string[] parts = s.Split(':', '.', ',');
@@ -870,6 +980,15 @@
             return new TimeCode(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), milliseconds);
         }
 
+        /// <summary>
+        /// The convert to time string.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string ConvertToTimeString(TimeCode time)
         {
             return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", time.Hours, time.Minutes, time.Seconds, DCinemaSmpte2010.MsToFramesMaxFrameRate(time.Milliseconds, this.frameRate));

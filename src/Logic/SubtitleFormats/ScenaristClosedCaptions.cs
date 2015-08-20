@@ -1,4 +1,15 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ScenaristClosedCaptions.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   http://www.theneitherworld.com/mcpoodle/SCC_TOOLS/DOCS/SCC_FORMAT.HTML
+//   § 15.119 47 CFR Ch. I (10–1–10 Edition) (pdf)
+//   Maximum four lines + max 32 characters on each line
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -17,10 +28,19 @@
     public class ScenaristClosedCaptions : SubtitleFormat
     {
         // 00:01:00:29   9420 9420 94ae 94ae 94d0 94d0 4920 f761 7320 ...    semi colon (instead of colon) before frame number is used to indicate drop frame
+        /// <summary>
+        /// The time code reg ex.
+        /// </summary>
         private const string TimeCodeRegEx = @"^\d+:\d\d:\d\d[:,]\d\d\t";
 
+        /// <summary>
+        /// The regex.
+        /// </summary>
         private static readonly Regex Regex = new Regex(TimeCodeRegEx, RegexOptions.Compiled);
 
+        /// <summary>
+        /// The letters.
+        /// </summary>
         private static readonly List<string> Letters = new List<string> { " ", "!", "\"", "#", "$", "%", "&", "'", "(", ")", "á", "+", ",", "-", ".", "/", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", "@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "[", "é", "]", "í", "ó", "ú", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "ç", "y", "z", string.Empty, string.Empty, "Ñ", "ñ", // "fe"
                                                                           "■", // "7f"
                                                                           "ç", // "7b"
@@ -98,6 +118,9 @@
                                                                           "¿" // 91b3 91b3
                                                                         };
 
+        /// <summary>
+        /// The letter codes.
+        /// </summary>
         private static readonly List<string> LetterCodes = new List<string> { "20", // " ",
                                                                               "a1", // "!",
                                                                               "a2", // "\"",
@@ -349,8 +372,14 @@
                                                                               "91b3 91b3" // ¡
                                                                             };
 
+        /// <summary>
+        /// The drop frame.
+        /// </summary>
         protected bool DropFrame = false;
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -359,6 +388,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -367,6 +399,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -375,6 +410,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the regex time codes.
+        /// </summary>
         protected virtual Regex RegexTimeCodes
         {
             get
@@ -383,6 +421,21 @@
             }
         }
 
+        /// <summary>
+        /// The get center codes.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="lineNumber">
+        /// The line number.
+        /// </param>
+        /// <param name="totalLines">
+        /// The total lines.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GetCenterCodes(string text, int lineNumber, int totalLines)
         {
             int row = 14 - (totalLines - lineNumber);
@@ -443,6 +496,18 @@
             return code + " " + code + " ";
         }
 
+        /// <summary>
+        /// The get scc text.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="errorCount">
+        /// The error count.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GetSccText(string s, ref int errorCount)
         {
             int y = 0;
@@ -583,6 +648,15 @@
             return HtmlUtil.FixInvalidItalicTags(res);
         }
 
+        /// <summary>
+        /// The get color and position.
+        /// </summary>
+        /// <param name="code">
+        /// The code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SccPositionAndStyle"/>.
+        /// </returns>
         public static SccPositionAndStyle GetColorAndPosition(string code)
         {
             switch (code.ToLower(CultureInfo.InvariantCulture))
@@ -1981,6 +2055,18 @@
             return null;
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -1988,6 +2074,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             StringBuilder sb = new StringBuilder();
@@ -2011,6 +2109,18 @@
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -2060,6 +2170,18 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The fix max 4 lines and max 32 chars per line.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="language">
+        /// The language.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string FixMax4LinesAndMax32CharsPerLine(string text, string language)
         {
             string[] lines = text.Trim().SplitToLines();
@@ -2146,6 +2268,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The get last index of space.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="endCount">
+        /// The end count.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private static int GetLastIndexOfSpace(string s, int endCount)
         {
             int end = endCount;
@@ -2168,6 +2302,18 @@
             return -1;
         }
 
+        /// <summary>
+        /// The auto break line max 4 lines.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="maxLength">
+        /// The max length.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string AutoBreakLineMax4Lines(string text, int maxLength)
         {
             string s = text.Replace(Environment.NewLine, " ");
@@ -2234,6 +2380,18 @@
             return text;
         }
 
+        /// <summary>
+        /// The to scc text.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="language">
+        /// The language.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string ToSccText(string text, string language)
         {
             text = FixMax4LinesAndMax32CharsPerLine(text, language);
@@ -2364,6 +2522,15 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The get letter.
+        /// </summary>
+        /// <param name="hexCode">
+        /// The hex code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetLetter(string hexCode)
         {
             int index = LetterCodes.IndexOf(hexCode.ToLower(CultureInfo.InvariantCulture));
@@ -2375,6 +2542,15 @@
             return Letters[index];
         }
 
+        /// <summary>
+        /// The parse time code.
+        /// </summary>
+        /// <param name="start">
+        /// The start.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode ParseTimeCode(string start)
         {
             string[] arr = start.Split(new[] { ':', ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -2388,6 +2564,15 @@
             return new TimeCode(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]), milliseconds);
         }
 
+        /// <summary>
+        /// The to time code.
+        /// </summary>
+        /// <param name="totalMilliseconds">
+        /// The total milliseconds.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string ToTimeCode(double totalMilliseconds)
         {
             TimeSpan ts = TimeSpan.FromMilliseconds(totalMilliseconds);
@@ -2399,8 +2584,26 @@
             return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", ts.Hours, ts.Minutes, ts.Seconds, MillisecondsToFramesMaxFrameRate(ts.Milliseconds));
         }
 
+        /// <summary>
+        /// The scc position and style.
+        /// </summary>
         public class SccPositionAndStyle
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="SccPositionAndStyle"/> class.
+            /// </summary>
+            /// <param name="color">
+            /// The color.
+            /// </param>
+            /// <param name="style">
+            /// The style.
+            /// </param>
+            /// <param name="y">
+            /// The y.
+            /// </param>
+            /// <param name="x">
+            /// The x.
+            /// </param>
             public SccPositionAndStyle(Color color, FontStyle style, int y, int x)
             {
                 this.ForeColor = color;
@@ -2409,12 +2612,24 @@
                 this.Y = y;
             }
 
+            /// <summary>
+            /// Gets or sets the fore color.
+            /// </summary>
             public Color ForeColor { get; set; }
 
+            /// <summary>
+            /// Gets or sets the style.
+            /// </summary>
             public FontStyle Style { get; set; }
 
+            /// <summary>
+            /// Gets or sets the x.
+            /// </summary>
             public int X { get; set; }
 
+            /// <summary>
+            /// Gets or sets the y.
+            /// </summary>
             public int Y { get; set; }
         }
     }

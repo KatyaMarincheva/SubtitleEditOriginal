@@ -1,9 +1,17 @@
-﻿#region #Disclaimer
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ColorChooser.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   Summary description for ColorChooser.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+#region #Disclaimer
 
 // Author: Adalberto L. Simeone (Taranto, Italy)
 // E-Mail: avengerdragon@gmail.com
 // Website: http://www.avengersutd.com/blog
-//
 // This source code is Intellectual property of the Author
 // and is released under the Creative Commons Attribution
 // NonCommercial License, available at:
@@ -12,241 +20,488 @@
 // provided that you do not use the results in commercial
 // projects, without the express and written consent of
 // the Author.
-
 #endregion #Disclaimer
-
-#region Using directives
-
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.ColorChooser;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-
-#endregion Using directives
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Drawing;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.ColorChooser;
+
     /// <summary>
     ///   Summary description for ColorChooser.
     /// </summary>
     public sealed class ColorChooser : Form
     {
         /// <summary>
+        /// The _show alpha.
+        /// </summary>
+        private bool _showAlpha = true;
+
+        /// <summary>
         ///   Required designer variable.
         /// </summary>
         private ColorHandler.ARGB argb;
-        private ChangeStyle changeType = ChangeStyle.None;
-        private FlowLayoutPanel flowLayoutPanel1;
-        private ColorHandler.HSV hsv;
-        private Label label1;
-        private Label label2;
-        private Label labelRed;
-        private Label labelGreen;
-        private Label label5;
-        private Label labelBlue;
-        private Label labelAlpha1;
-        private Label lblAlpha2;
-        private Label lblBlue;
-        private Label lblGreen;
-        private Label lblHue;
-        private Label lblRed;
-        private Label lblSaturation;
-        private Label lblValue;
-        private ColorWheel myColorWheel;
-        private Panel pnlBrightness;
-        private Panel pnlColor;
-        private Panel pnlSelectedColor;
-        private Point selectedPoint;
-        private TrackBar tbAlpha;
-        private TrackBar tbBlue;
-        private TrackBar tbGreen;
-        private TextBox tbHexCode;
-        private TrackBar tbHue;
-        private TrackBar tbRed;
-        private TrackBar tbSaturation;
-        private Button buttonCancel;
-        private Button buttonOK;
-        private TrackBar tbValue;
-        private bool _showAlpha = true;
 
+        /// <summary>
+        /// The button cancel.
+        /// </summary>
+        private Button buttonCancel;
+
+        /// <summary>
+        /// The button ok.
+        /// </summary>
+        private Button buttonOK;
+
+        /// <summary>
+        /// The change type.
+        /// </summary>
+        private ChangeStyle changeType = ChangeStyle.None;
+
+        /// <summary>
+        /// The flow layout panel 1.
+        /// </summary>
+        private FlowLayoutPanel flowLayoutPanel1;
+
+        /// <summary>
+        /// The hsv.
+        /// </summary>
+        private ColorHandler.HSV hsv;
+
+        /// <summary>
+        /// The label 1.
+        /// </summary>
+        private Label label1;
+
+        /// <summary>
+        /// The label 2.
+        /// </summary>
+        private Label label2;
+
+        /// <summary>
+        /// The label 5.
+        /// </summary>
+        private Label label5;
+
+        /// <summary>
+        /// The label alpha 1.
+        /// </summary>
+        private Label labelAlpha1;
+
+        /// <summary>
+        /// The label blue.
+        /// </summary>
+        private Label labelBlue;
+
+        /// <summary>
+        /// The label green.
+        /// </summary>
+        private Label labelGreen;
+
+        /// <summary>
+        /// The label red.
+        /// </summary>
+        private Label labelRed;
+
+        /// <summary>
+        /// The lbl alpha 2.
+        /// </summary>
+        private Label lblAlpha2;
+
+        /// <summary>
+        /// The lbl blue.
+        /// </summary>
+        private Label lblBlue;
+
+        /// <summary>
+        /// The lbl green.
+        /// </summary>
+        private Label lblGreen;
+
+        /// <summary>
+        /// The lbl hue.
+        /// </summary>
+        private Label lblHue;
+
+        /// <summary>
+        /// The lbl red.
+        /// </summary>
+        private Label lblRed;
+
+        /// <summary>
+        /// The lbl saturation.
+        /// </summary>
+        private Label lblSaturation;
+
+        /// <summary>
+        /// The lbl value.
+        /// </summary>
+        private Label lblValue;
+
+        /// <summary>
+        /// The my color wheel.
+        /// </summary>
+        private ColorWheel myColorWheel;
+
+        /// <summary>
+        /// The pnl brightness.
+        /// </summary>
+        private Panel pnlBrightness;
+
+        /// <summary>
+        /// The pnl color.
+        /// </summary>
+        private Panel pnlColor;
+
+        /// <summary>
+        /// The pnl selected color.
+        /// </summary>
+        private Panel pnlSelectedColor;
+
+        /// <summary>
+        /// The selected point.
+        /// </summary>
+        private Point selectedPoint;
+
+        /// <summary>
+        /// The tb alpha.
+        /// </summary>
+        private TrackBar tbAlpha;
+
+        /// <summary>
+        /// The tb blue.
+        /// </summary>
+        private TrackBar tbBlue;
+
+        /// <summary>
+        /// The tb green.
+        /// </summary>
+        private TrackBar tbGreen;
+
+        /// <summary>
+        /// The tb hex code.
+        /// </summary>
+        private TextBox tbHexCode;
+
+        /// <summary>
+        /// The tb hue.
+        /// </summary>
+        private TrackBar tbHue;
+
+        /// <summary>
+        /// The tb red.
+        /// </summary>
+        private TrackBar tbRed;
+
+        /// <summary>
+        /// The tb saturation.
+        /// </summary>
+        private TrackBar tbSaturation;
+
+        /// <summary>
+        /// The tb value.
+        /// </summary>
+        private TrackBar tbValue;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ColorChooser"/> class.
+        /// </summary>
         public ColorChooser()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            Text = Configuration.Settings.Language.ColorChooser.Title;
-            labelRed.Text = Configuration.Settings.Language.ColorChooser.Red;
-            labelGreen.Text = Configuration.Settings.Language.ColorChooser.Green;
-            labelBlue.Text = Configuration.Settings.Language.ColorChooser.Blue;
-            labelAlpha1.Text = Configuration.Settings.Language.ColorChooser.Alpha;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            this.Text = Configuration.Settings.Language.ColorChooser.Title;
+            this.labelRed.Text = Configuration.Settings.Language.ColorChooser.Red;
+            this.labelGreen.Text = Configuration.Settings.Language.ColorChooser.Green;
+            this.labelBlue.Text = Configuration.Settings.Language.ColorChooser.Blue;
+            this.labelAlpha1.Text = Configuration.Settings.Language.ColorChooser.Alpha;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether show alpha.
+        /// </summary>
         public bool ShowAlpha
         {
             get
             {
-                return _showAlpha;
+                return this._showAlpha;
             }
+
             set
             {
-                if (!value && ShowAlpha)
+                if (!value && this.ShowAlpha)
                 {
                     this.Height -= 40;
-                    buttonOK.Top -= 40;
-                    buttonCancel.Top -= 40;
+                    this.buttonOK.Top -= 40;
+                    this.buttonCancel.Top -= 40;
                 }
-                else if (value && !ShowAlpha)
+                else if (value && !this.ShowAlpha)
                 {
                     this.Height += 40;
-                    buttonOK.Top += 40;
-                    buttonCancel.Top += 40;
+                    this.buttonOK.Top += 40;
+                    this.buttonCancel.Top += 40;
                 }
-                labelAlpha1.Visible = value;
-                lblAlpha2.Visible = value;
-                tbAlpha.Visible = value;
-                _showAlpha = value;
+
+                this.labelAlpha1.Visible = value;
+                this.lblAlpha2.Visible = value;
+                this.tbAlpha.Visible = value;
+                this._showAlpha = value;
             }
         }
 
+        /// <summary>
+        /// Gets or sets the color.
+        /// </summary>
         public Color Color
         {
             // Get or set the color to be
             // displayed in the color wheel.
-            get { return myColorWheel.Color; }
+            get
+            {
+                return this.myColorWheel.Color;
+            }
 
             set
             {
                 // Indicate the color change type. Either RGB or HSV
                 // will cause the color wheel to update the position
                 // of the pointer.
-                changeType = ChangeStyle.RGB;
-                argb = new ColorHandler.ARGB(value.A, value.R, value.G, value.B);
-                hsv = ColorHandler.RGBtoHSV(argb);
+                this.changeType = ChangeStyle.RGB;
+                this.argb = new ColorHandler.ARGB(value.A, value.R, value.G, value.B);
+                this.hsv = ColorHandler.RGBtoHSV(this.argb);
             }
         }
 
+        /// <summary>
+        /// The color chooser load.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ColorChooserLoad(object sender, EventArgs e)
         {
             // Turn on double-buffering, so the form looks better.
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            SetStyle(ControlStyles.UserPaint, true);
-            SetStyle(ControlStyles.DoubleBuffer, true);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            this.SetStyle(ControlStyles.UserPaint, true);
+            this.SetStyle(ControlStyles.DoubleBuffer, true);
 
             // These properties are set in design view, as well, but they
             // have to be set to false in order for the Paint
             // event to be able to display their contents.
             // Never hurts to make sure they're invisible.
-            pnlSelectedColor.Visible = false;
-            pnlBrightness.Visible = false;
-            pnlColor.Visible = false;
+            this.pnlSelectedColor.Visible = false;
+            this.pnlBrightness.Visible = false;
+            this.pnlColor.Visible = false;
 
             // Calculate the coordinates of the three
             // required regions on the form.
-            Rectangle selectedColorRectangle = new Rectangle(pnlSelectedColor.Location, pnlSelectedColor.Size);
-            Rectangle brightnessRectangle = new Rectangle(pnlBrightness.Location, pnlBrightness.Size);
-            Rectangle colorRectangle = new Rectangle(pnlColor.Location, pnlColor.Size);
+            Rectangle selectedColorRectangle = new Rectangle(this.pnlSelectedColor.Location, this.pnlSelectedColor.Size);
+            Rectangle brightnessRectangle = new Rectangle(this.pnlBrightness.Location, this.pnlBrightness.Size);
+            Rectangle colorRectangle = new Rectangle(this.pnlColor.Location, this.pnlColor.Size);
 
             // Create the new ColorWheel class, indicating
             // the locations of the color wheel itself, the
             // brightness area, and the position of the selected color.
-            myColorWheel = new ColorWheel(colorRectangle, brightnessRectangle, selectedColorRectangle);
-            myColorWheel.ColorChanged += MyColorWheelColorChanged;
+            this.myColorWheel = new ColorWheel(colorRectangle, brightnessRectangle, selectedColorRectangle);
+            this.myColorWheel.ColorChanged += this.MyColorWheelColorChanged;
 
             // Set the RGB and HSV values
             // of the NumericUpDown controls.
-            SetRGB(argb);
-            SetHSV(hsv);
+            this.SetRGB(this.argb);
+            this.SetHSV(this.hsv);
         }
 
+        /// <summary>
+        /// The handle mouse.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void HandleMouse(object sender, MouseEventArgs e)
         {
             // If you have the left mouse button down,
             // then update the selectedPoint value and
             // force a repaint of the color wheel.
-            if (e.Button != MouseButtons.Left) return;
-            changeType = ChangeStyle.MouseMove;
-            selectedPoint = new Point(e.X, e.Y);
-            Invalidate();
+            if (e.Button != MouseButtons.Left)
+            {
+                return;
+            }
+
+            this.changeType = ChangeStyle.MouseMove;
+            this.selectedPoint = new Point(e.X, e.Y);
+            this.Invalidate();
         }
 
+        /// <summary>
+        /// The form main mouse up.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void FormMainMouseUp(object sender, MouseEventArgs e)
         {
-            myColorWheel.SetMouseUp();
-            changeType = ChangeStyle.None;
+            this.myColorWheel.SetMouseUp();
+            this.changeType = ChangeStyle.None;
         }
 
+        /// <summary>
+        /// The set rgb labels.
+        /// </summary>
+        /// <param name="argb">
+        /// The argb.
+        /// </param>
         private void SetRGBLabels(ColorHandler.ARGB argb)
         {
-            RefreshText(lblRed, argb.Red);
-            RefreshText(lblBlue, argb.Blue);
-            RefreshText(lblGreen, argb.Green);
-            RefreshText(lblAlpha2, argb.Alpha);
-            if (_showAlpha)
-                tbHexCode.Text = string.Format("{0:X2}{1:X2}{2:X2}{3:X2}", argb.Alpha, argb.Red, argb.Green, argb.Blue);
+            RefreshText(this.lblRed, argb.Red);
+            RefreshText(this.lblBlue, argb.Blue);
+            RefreshText(this.lblGreen, argb.Green);
+            RefreshText(this.lblAlpha2, argb.Alpha);
+            if (this._showAlpha)
+            {
+                this.tbHexCode.Text = string.Format("{0:X2}{1:X2}{2:X2}{3:X2}", argb.Alpha, argb.Red, argb.Green, argb.Blue);
+            }
             else
-                tbHexCode.Text = string.Format("{0:X2}{1:X2}{2:X2}", argb.Red, argb.Green, argb.Blue);
+            {
+                this.tbHexCode.Text = string.Format("{0:X2}{1:X2}{2:X2}", argb.Red, argb.Green, argb.Blue);
+            }
         }
 
+        /// <summary>
+        /// The set hsv labels.
+        /// </summary>
+        /// <param name="HSV">
+        /// The hsv.
+        /// </param>
         private void SetHSVLabels(ColorHandler.HSV HSV)
         {
-            RefreshText(lblHue, HSV.Hue);
-            RefreshText(lblSaturation, HSV.Saturation);
-            RefreshText(lblValue, HSV.Value);
-            RefreshText(lblAlpha2, HSV.Alpha);
+            RefreshText(this.lblHue, HSV.Hue);
+            RefreshText(this.lblSaturation, HSV.Saturation);
+            RefreshText(this.lblValue, HSV.Value);
+            RefreshText(this.lblAlpha2, HSV.Alpha);
         }
 
+        /// <summary>
+        /// The set rgb.
+        /// </summary>
+        /// <param name="argb">
+        /// The argb.
+        /// </param>
         private void SetRGB(ColorHandler.ARGB argb)
         {
             // Update the RGB values on the form.
-            RefreshValue(tbRed, argb.Red);
-            RefreshValue(tbBlue, argb.Blue);
-            RefreshValue(tbGreen, argb.Green);
-            RefreshValue(tbAlpha, argb.Alpha);
-            SetRGBLabels(argb);
+            RefreshValue(this.tbRed, argb.Red);
+            RefreshValue(this.tbBlue, argb.Blue);
+            RefreshValue(this.tbGreen, argb.Green);
+            RefreshValue(this.tbAlpha, argb.Alpha);
+            this.SetRGBLabels(argb);
         }
 
+        /// <summary>
+        /// The set hsv.
+        /// </summary>
+        /// <param name="HSV">
+        /// The hsv.
+        /// </param>
         private void SetHSV(ColorHandler.HSV HSV)
         {
             // Update the HSV values on the form.
-            RefreshValue(tbHue, HSV.Hue);
-            RefreshValue(tbSaturation, HSV.Saturation);
-            RefreshValue(tbValue, HSV.Value);
-            RefreshValue(tbAlpha, HSV.Alpha);
-            SetHSVLabels(HSV);
+            RefreshValue(this.tbHue, HSV.Hue);
+            RefreshValue(this.tbSaturation, HSV.Saturation);
+            RefreshValue(this.tbValue, HSV.Value);
+            RefreshValue(this.tbAlpha, HSV.Alpha);
+            this.SetHSVLabels(HSV);
         }
 
+        /// <summary>
+        /// The refresh value.
+        /// </summary>
+        /// <param name="hsv">
+        /// The hsv.
+        /// </param>
+        /// <param name="value">
+        /// The value.
+        /// </param>
         private static void RefreshValue(TrackBar hsv, int value)
         {
             hsv.Value = value;
         }
 
+        /// <summary>
+        /// The refresh text.
+        /// </summary>
+        /// <param name="lbl">
+        /// The lbl.
+        /// </param>
+        /// <param name="value">
+        /// The value.
+        /// </param>
         private static void RefreshText(Control lbl, int value)
         {
             lbl.Text = value.ToString();
         }
 
+        /// <summary>
+        /// The my color wheel color changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void MyColorWheelColorChanged(object sender, ColorChangedEventArgs e)
         {
-            SetRGB(e.ARGB);
-            SetHSV(e.HSV);
+            this.SetRGB(e.ARGB);
+            this.SetHSV(e.HSV);
         }
 
+        /// <summary>
+        /// The handle hsv scroll.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void HandleHSVScroll(object sender, EventArgs e)
-        // If the H, S, or V values change, use this
-        // code to update the RGB values and invalidate
-        // the color wheel (so it updates the pointers).
-        // Check the isInUpdate flag to avoid recursive events
-        // when you update the NumericUpdownControls.
+
+            // If the H, S, or V values change, use this
+            // code to update the RGB values and invalidate
+            // the color wheel (so it updates the pointers).
+            // Check the isInUpdate flag to avoid recursive events
         {
-            changeType = ChangeStyle.HSV;
-            hsv = new ColorHandler.HSV(tbAlpha.Value, tbHue.Value, tbSaturation.Value, tbValue.Value);
-            SetRGB(ColorHandler.HSVtoRGB(hsv));
-            SetHSVLabels(hsv);
-            Invalidate();
+            // when you update the NumericUpdownControls.
+            this.changeType = ChangeStyle.HSV;
+            this.hsv = new ColorHandler.HSV(this.tbAlpha.Value, this.tbHue.Value, this.tbSaturation.Value, this.tbValue.Value);
+            this.SetRGB(ColorHandler.HSVtoRGB(this.hsv));
+            this.SetHSVLabels(this.hsv);
+            this.Invalidate();
         }
 
+        /// <summary>
+        /// The handle rgb scroll.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void HandleRGBScroll(object sender, EventArgs e)
         {
             // If the R, G, or B values change, use this
@@ -254,45 +509,72 @@ namespace Nikse.SubtitleEdit.Forms
             // the color wheel (so it updates the pointers).
             // Check the isInUpdate flag to avoid recursive events
             // when you update the NumericUpdownControls.
-            changeType = ChangeStyle.RGB;
-            argb = new ColorHandler.ARGB(tbAlpha.Value, tbRed.Value, tbGreen.Value, tbBlue.Value);
-            SetHSV(ColorHandler.RGBtoHSV(argb));
-            SetRGBLabels(argb);
-            Invalidate();
+            this.changeType = ChangeStyle.RGB;
+            this.argb = new ColorHandler.ARGB(this.tbAlpha.Value, this.tbRed.Value, this.tbGreen.Value, this.tbBlue.Value);
+            this.SetHSV(ColorHandler.RGBtoHSV(this.argb));
+            this.SetRGBLabels(this.argb);
+            this.Invalidate();
         }
 
+        /// <summary>
+        /// The tb alpha scroll.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void TbAlphaScroll(object sender, EventArgs e)
         {
-            changeType = ChangeStyle.RGB;
-            argb = new ColorHandler.ARGB(tbAlpha.Value, tbRed.Value, tbGreen.Value, tbBlue.Value);
-            RefreshText(lblAlpha2, tbAlpha.Value);
-            tbHexCode.Text = string.Format("{0:X2}{1:X2}{2:X2}{3:X2}", argb.Alpha, argb.Red, argb.Green, argb.Blue);
-            Invalidate();
+            this.changeType = ChangeStyle.RGB;
+            this.argb = new ColorHandler.ARGB(this.tbAlpha.Value, this.tbRed.Value, this.tbGreen.Value, this.tbBlue.Value);
+            RefreshText(this.lblAlpha2, this.tbAlpha.Value);
+            this.tbHexCode.Text = string.Format("{0:X2}{1:X2}{2:X2}{3:X2}", this.argb.Alpha, this.argb.Red, this.argb.Green, this.argb.Blue);
+            this.Invalidate();
         }
 
+        /// <summary>
+        /// The color chooser paint.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ColorChooserPaint(object sender, PaintEventArgs e)
         {
             // Depending on the circumstances, force a repaint
             // of the color wheel passing different information.
-            switch (changeType)
+            switch (this.changeType)
             {
                 case ChangeStyle.HSV:
-                    myColorWheel.Draw(e.Graphics, hsv);
+                    this.myColorWheel.Draw(e.Graphics, this.hsv);
                     break;
                 case ChangeStyle.MouseMove:
                 case ChangeStyle.None:
-                    myColorWheel.Draw(e.Graphics, selectedPoint);
+                    this.myColorWheel.Draw(e.Graphics, this.selectedPoint);
                     break;
                 case ChangeStyle.RGB:
-                    myColorWheel.Draw(e.Graphics, argb);
+                    this.myColorWheel.Draw(e.Graphics, this.argb);
                     break;
             }
         }
 
+        /// <summary>
+        /// The tb hex code mouse down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void TbHexCodeMouseDown(object sender, MouseEventArgs e)
         {
-            tbHexCode.SelectionStart = 0;
-            tbHexCode.SelectionLength = tbHexCode.Text.Length;
+            this.tbHexCode.SelectionStart = 0;
+            this.tbHexCode.SelectionLength = this.tbHexCode.Text.Length;
         }
 
         #region Windows Form Designer generated code
@@ -332,48 +614,44 @@ namespace Nikse.SubtitleEdit.Forms
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOK = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tbRed)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbGreen)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbBlue)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbAlpha)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbHue)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbSaturation)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbValue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbRed).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbGreen).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbBlue).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbAlpha).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbHue).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbSaturation).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbValue).BeginInit();
             this.SuspendLayout();
-            //
+
             // lblBlue
-            //
-            this.lblBlue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBlue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.lblBlue.Location = new System.Drawing.Point(322, 70);
             this.lblBlue.Name = "lblBlue";
             this.lblBlue.Size = new System.Drawing.Size(39, 23);
             this.lblBlue.TabIndex = 54;
             this.lblBlue.Text = "Blue";
             this.lblBlue.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+
             // lblGreen
-            //
-            this.lblGreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblGreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.lblGreen.Location = new System.Drawing.Point(322, 35);
             this.lblGreen.Name = "lblGreen";
             this.lblGreen.Size = new System.Drawing.Size(39, 23);
             this.lblGreen.TabIndex = 53;
             this.lblGreen.Text = "Green";
             this.lblGreen.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+
             // lblRed
-            //
-            this.lblRed.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRed.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.lblRed.Location = new System.Drawing.Point(322, 0);
             this.lblRed.Name = "lblRed";
             this.lblRed.Size = new System.Drawing.Size(39, 23);
             this.lblRed.TabIndex = 52;
             this.lblRed.Text = "Red";
             this.lblRed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+
             // lblValue
-            //
-            this.lblValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.lblValue.Location = new System.Drawing.Point(623, 217);
             this.lblValue.Name = "lblValue";
             this.lblValue.Size = new System.Drawing.Size(39, 23);
@@ -381,10 +659,9 @@ namespace Nikse.SubtitleEdit.Forms
             this.lblValue.Text = "Value";
             this.lblValue.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblValue.Visible = false;
-            //
+
             // lblSaturation
-            //
-            this.lblSaturation.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSaturation.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.lblSaturation.Location = new System.Drawing.Point(623, 182);
             this.lblSaturation.Name = "lblSaturation";
             this.lblSaturation.Size = new System.Drawing.Size(39, 23);
@@ -392,10 +669,9 @@ namespace Nikse.SubtitleEdit.Forms
             this.lblSaturation.Text = "Sat";
             this.lblSaturation.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblSaturation.Visible = false;
-            //
+
             // lblHue
-            //
-            this.lblHue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblHue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.lblHue.Location = new System.Drawing.Point(623, 155);
             this.lblHue.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
             this.lblHue.Name = "lblHue";
@@ -404,18 +680,16 @@ namespace Nikse.SubtitleEdit.Forms
             this.lblHue.Text = "Hue";
             this.lblHue.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblHue.Visible = false;
-            //
+
             // pnlColor
-            //
             this.pnlColor.Location = new System.Drawing.Point(5, 8);
             this.pnlColor.Name = "pnlColor";
             this.pnlColor.Size = new System.Drawing.Size(224, 216);
             this.pnlColor.TabIndex = 38;
             this.pnlColor.Visible = false;
-            //
+
             // label5
-            //
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.label5.Location = new System.Drawing.Point(304, 155);
             this.label5.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
             this.label5.Name = "label5";
@@ -424,29 +698,26 @@ namespace Nikse.SubtitleEdit.Forms
             this.label5.Text = "Hue";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.label5.Visible = false;
-            //
+
             // pnlBrightness
-            //
             this.pnlBrightness.Location = new System.Drawing.Point(254, 8);
             this.pnlBrightness.Name = "pnlBrightness";
             this.pnlBrightness.Size = new System.Drawing.Size(24, 216);
             this.pnlBrightness.TabIndex = 39;
             this.pnlBrightness.Visible = false;
-            //
+
             // lblAlpha2
-            //
-            this.lblAlpha2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAlpha2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.lblAlpha2.Location = new System.Drawing.Point(322, 111);
             this.lblAlpha2.Name = "lblAlpha2";
             this.lblAlpha2.Size = new System.Drawing.Size(39, 24);
             this.lblAlpha2.TabIndex = 57;
             this.lblAlpha2.Text = "Alpha";
             this.lblAlpha2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+
             // tbHexCode
-            //
             this.tbHexCode.BackColor = System.Drawing.Color.White;
-            this.tbHexCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbHexCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.tbHexCode.Location = new System.Drawing.Point(295, 50);
             this.tbHexCode.MaxLength = 8;
             this.tbHexCode.Name = "tbHexCode";
@@ -454,9 +725,8 @@ namespace Nikse.SubtitleEdit.Forms
             this.tbHexCode.Size = new System.Drawing.Size(96, 22);
             this.tbHexCode.TabIndex = 58;
             this.tbHexCode.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TbHexCodeMouseDown);
-            //
+
             // flowLayoutPanel1
-            //
             this.flowLayoutPanel1.Controls.Add(this.labelRed);
             this.flowLayoutPanel1.Controls.Add(this.tbRed);
             this.flowLayoutPanel1.Controls.Add(this.lblRed);
@@ -473,10 +743,9 @@ namespace Nikse.SubtitleEdit.Forms
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(386, 157);
             this.flowLayoutPanel1.TabIndex = 59;
-            //
+
             // labelRed
-            //
-            this.labelRed.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelRed.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.labelRed.Location = new System.Drawing.Point(3, 8);
             this.labelRed.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
             this.labelRed.Name = "labelRed";
@@ -484,9 +753,8 @@ namespace Nikse.SubtitleEdit.Forms
             this.labelRed.TabIndex = 42;
             this.labelRed.Text = "Red";
             this.labelRed.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+
             // tbRed
-            //
             this.tbRed.AutoSize = false;
             this.tbRed.LargeChange = 16;
             this.tbRed.Location = new System.Drawing.Point(78, 3);
@@ -497,10 +765,9 @@ namespace Nikse.SubtitleEdit.Forms
             this.tbRed.TabIndex = 43;
             this.tbRed.TickFrequency = 32;
             this.tbRed.Scroll += new System.EventHandler(this.HandleRGBScroll);
-            //
+
             // labelGreen
-            //
-            this.labelGreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelGreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.labelGreen.Location = new System.Drawing.Point(3, 43);
             this.labelGreen.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
             this.labelGreen.Name = "labelGreen";
@@ -508,9 +775,8 @@ namespace Nikse.SubtitleEdit.Forms
             this.labelGreen.TabIndex = 44;
             this.labelGreen.Text = "Green";
             this.labelGreen.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+
             // tbGreen
-            //
             this.tbGreen.AutoSize = false;
             this.tbGreen.LargeChange = 16;
             this.tbGreen.Location = new System.Drawing.Point(78, 38);
@@ -521,10 +787,9 @@ namespace Nikse.SubtitleEdit.Forms
             this.tbGreen.TabIndex = 45;
             this.tbGreen.TickFrequency = 32;
             this.tbGreen.Scroll += new System.EventHandler(this.HandleRGBScroll);
-            //
+
             // labelBlue
-            //
-            this.labelBlue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelBlue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.labelBlue.Location = new System.Drawing.Point(3, 78);
             this.labelBlue.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
             this.labelBlue.Name = "labelBlue";
@@ -532,9 +797,8 @@ namespace Nikse.SubtitleEdit.Forms
             this.labelBlue.TabIndex = 46;
             this.labelBlue.Text = "Blue";
             this.labelBlue.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+
             // tbBlue
-            //
             this.tbBlue.AutoSize = false;
             this.tbBlue.LargeChange = 16;
             this.tbBlue.Location = new System.Drawing.Point(78, 73);
@@ -545,10 +809,9 @@ namespace Nikse.SubtitleEdit.Forms
             this.tbBlue.TabIndex = 47;
             this.tbBlue.TickFrequency = 32;
             this.tbBlue.Scroll += new System.EventHandler(this.HandleRGBScroll);
-            //
+
             // labelAlpha1
-            //
-            this.labelAlpha1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelAlpha1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.labelAlpha1.Location = new System.Drawing.Point(3, 119);
             this.labelAlpha1.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
             this.labelAlpha1.Name = "labelAlpha1";
@@ -556,9 +819,8 @@ namespace Nikse.SubtitleEdit.Forms
             this.labelAlpha1.TabIndex = 55;
             this.labelAlpha1.Text = "Alpha";
             this.labelAlpha1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+
             // tbAlpha
-            //
             this.tbAlpha.AutoSize = false;
             this.tbAlpha.LargeChange = 16;
             this.tbAlpha.Location = new System.Drawing.Point(78, 114);
@@ -569,9 +831,8 @@ namespace Nikse.SubtitleEdit.Forms
             this.tbAlpha.TabIndex = 56;
             this.tbAlpha.TickFrequency = 32;
             this.tbAlpha.Scroll += new System.EventHandler(this.TbAlphaScroll);
-            //
+
             // tbHue
-            //
             this.tbHue.AutoSize = false;
             this.tbHue.LargeChange = 16;
             this.tbHue.Location = new System.Drawing.Point(379, 150);
@@ -583,10 +844,9 @@ namespace Nikse.SubtitleEdit.Forms
             this.tbHue.TickFrequency = 32;
             this.tbHue.Visible = false;
             this.tbHue.Scroll += new System.EventHandler(this.HandleHSVScroll);
-            //
+
             // label1
-            //
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.label1.Location = new System.Drawing.Point(304, 190);
             this.label1.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
             this.label1.Name = "label1";
@@ -595,9 +855,8 @@ namespace Nikse.SubtitleEdit.Forms
             this.label1.Text = "Saturation";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.label1.Visible = false;
-            //
+
             // tbSaturation
-            //
             this.tbSaturation.AutoSize = false;
             this.tbSaturation.LargeChange = 16;
             this.tbSaturation.Location = new System.Drawing.Point(379, 185);
@@ -609,10 +868,9 @@ namespace Nikse.SubtitleEdit.Forms
             this.tbSaturation.TickFrequency = 32;
             this.tbSaturation.Visible = false;
             this.tbSaturation.Scroll += new System.EventHandler(this.HandleHSVScroll);
-            //
+
             // label2
-            //
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
             this.label2.Location = new System.Drawing.Point(304, 225);
             this.label2.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
             this.label2.Name = "label2";
@@ -621,9 +879,8 @@ namespace Nikse.SubtitleEdit.Forms
             this.label2.Text = "Value";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.label2.Visible = false;
-            //
+
             // tbValue
-            //
             this.tbValue.AutoSize = false;
             this.tbValue.LargeChange = 16;
             this.tbValue.Location = new System.Drawing.Point(379, 220);
@@ -635,19 +892,17 @@ namespace Nikse.SubtitleEdit.Forms
             this.tbValue.TickFrequency = 32;
             this.tbValue.Visible = false;
             this.tbValue.Scroll += new System.EventHandler(this.HandleHSVScroll);
-            //
+
             // pnlSelectedColor
-            //
-            this.pnlSelectedColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.pnlSelectedColor.BackColor = System.Drawing.Color.FromArgb((int)(((byte)(0))), (int)(((byte)(0))), (int)(((byte)(0))), (int)(((byte)(0))));
             this.pnlSelectedColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlSelectedColor.Location = new System.Drawing.Point(295, 12);
             this.pnlSelectedColor.Name = "pnlSelectedColor";
             this.pnlSelectedColor.Size = new System.Drawing.Size(96, 32);
             this.pnlSelectedColor.TabIndex = 40;
             this.pnlSelectedColor.Visible = false;
-            //
+
             // buttonCancel
-            //
             this.buttonCancel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.buttonCancel.Location = new System.Drawing.Point(311, 408);
             this.buttonCancel.Name = "buttonCancel";
@@ -656,9 +911,8 @@ namespace Nikse.SubtitleEdit.Forms
             this.buttonCancel.Text = "C&ancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
-            //
+
             // buttonOK
-            //
             this.buttonOK.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.buttonOK.Location = new System.Drawing.Point(230, 408);
             this.buttonOK.Name = "buttonOK";
@@ -667,9 +921,8 @@ namespace Nikse.SubtitleEdit.Forms
             this.buttonOK.Text = "&OK";
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
-            //
+
             // ColorChooser
-            //
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(398, 441);
             this.Controls.Add(this.buttonCancel);
@@ -704,59 +957,111 @@ namespace Nikse.SubtitleEdit.Forms
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.HandleMouse);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FormMainMouseUp);
             this.flowLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.tbRed)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbGreen)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbBlue)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbAlpha)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbHue)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbSaturation)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbRed).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbGreen).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbBlue).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbAlpha).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbHue).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbSaturation).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.tbValue).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
         }
 
         #endregion Windows Form Designer generated code
 
-        #region Nested type: ChangeStyle
-
-        private enum ChangeStyle
-        {
-            MouseMove,
-            RGB,
-            HSV,
-            None
-        }
-
-        #endregion Nested type: ChangeStyle
-
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
 
+        /// <summary>
+        /// The color chooser_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ColorChooser_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
 
+        /// <summary>
+        /// The dispose.
+        /// </summary>
+        /// <param name="disposing">
+        /// The disposing.
+        /// </param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 base.Dispose(true);
-                if (myColorWheel != null)
+                if (this.myColorWheel != null)
                 {
-                    myColorWheel.Dispose();
-                    myColorWheel = null;
+                    this.myColorWheel.Dispose();
+                    this.myColorWheel = null;
                 }
             }
         }
 
+        #region Nested type: ChangeStyle
+
+        /// <summary>
+        /// The change style.
+        /// </summary>
+        private enum ChangeStyle
+        {
+            /// <summary>
+            /// The mouse move.
+            /// </summary>
+            MouseMove, 
+
+            /// <summary>
+            /// The rgb.
+            /// </summary>
+            RGB, 
+
+            /// <summary>
+            /// The hsv.
+            /// </summary>
+            HSV, 
+
+            /// <summary>
+            /// The none.
+            /// </summary>
+            None
+        }
+
+        #endregion Nested type: ChangeStyle
     }
 }

@@ -1,18 +1,43 @@
-﻿using System.Collections.Generic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ClutDefinitionSegment.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The clut definition segment.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic.TransportStream
 {
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// The clut definition segment.
+    /// </summary>
     public class ClutDefinitionSegment
     {
-        public int ClutId { get; set; }
-        public int ClutVersionNumber { get; set; }
+        /// <summary>
+        /// The entries.
+        /// </summary>
         public List<RegionClutSegmentEntry> Entries = new List<RegionClutSegmentEntry>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClutDefinitionSegment"/> class.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="segmentLength">
+        /// The segment length.
+        /// </param>
         public ClutDefinitionSegment(byte[] buffer, int index, int segmentLength)
         {
-            Entries = new List<RegionClutSegmentEntry>();
-            ClutId = buffer[index];
-            ClutVersionNumber = buffer[index + 1] >> 4;
+            this.Entries = new List<RegionClutSegmentEntry>();
+            this.ClutId = buffer[index];
+            this.ClutVersionNumber = buffer[index + 1] >> 4;
 
             int k = index + 2;
             while (k + 6 <= index + segmentLength)
@@ -37,13 +62,24 @@ namespace Nikse.SubtitleEdit.Logic.TransportStream
                 else
                 {
                     rcse.ClutEntryY = buffer[k + 2] >> 2;
-                    rcse.ClutEntryCr = ((buffer[k + 2] & Helper.B00000011) << 2) + (buffer[k + 2]) >> 6;
-                    rcse.ClutEntryCb = ((buffer[k + 3] & Helper.B00111111) >> 2);
+                    rcse.ClutEntryCr = ((buffer[k + 2] & Helper.B00000011) << 2) + buffer[k + 2] >> 6;
+                    rcse.ClutEntryCb = (buffer[k + 3] & Helper.B00111111) >> 2;
                     rcse.ClutEntryT = buffer[k + 3] & Helper.B00000011;
                     k += 4;
                 }
-                Entries.Add(rcse);
+
+                this.Entries.Add(rcse);
             }
         }
+
+        /// <summary>
+        /// Gets or sets the clut id.
+        /// </summary>
+        public int ClutId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the clut version number.
+        /// </summary>
+        public int ClutVersionNumber { get; set; }
     }
 }

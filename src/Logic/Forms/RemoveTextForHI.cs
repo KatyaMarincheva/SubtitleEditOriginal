@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.Forms
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="RemoveTextForHI.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The remove text for hi.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.Forms
 {
     using System;
     using System.Collections.Generic;
@@ -8,26 +17,59 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The remove text for hi.
+    /// </summary>
     public class RemoveTextForHI
     {
-        public int WarningIndex;
-
-        public List<int> Warnings;
-
+        /// <summary>
+        /// The _interjection list.
+        /// </summary>
         private List<string> _interjectionList;
 
+        /// <summary>
+        /// The warning index.
+        /// </summary>
+        public int WarningIndex;
+
+        /// <summary>
+        /// The warnings.
+        /// </summary>
+        public List<int> Warnings;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RemoveTextForHI"/> class.
+        /// </summary>
+        /// <param name="removeTextForHISettings">
+        /// The remove text for hi settings.
+        /// </param>
         public RemoveTextForHI(RemoveTextForHISettings removeTextForHISettings)
         {
             this.Settings = removeTextForHISettings;
         }
 
+        /// <summary>
+        /// Gets or sets the settings.
+        /// </summary>
         public RemoveTextForHISettings Settings { get; set; }
 
+        /// <summary>
+        /// The reset interjections.
+        /// </summary>
         public void ResetInterjections()
         {
             this._interjectionList = null;
         }
 
+        /// <summary>
+        /// The remove hear impairedtags inside line.
+        /// </summary>
+        /// <param name="newText">
+        /// The new text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string RemoveHearImpairedtagsInsideLine(string newText)
         {
             for (int i = 6; i < newText.Length; i++)
@@ -81,6 +123,15 @@
             return newText;
         }
 
+        /// <summary>
+        /// The remove colon.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string RemoveColon(string text)
         {
             if (!this.Settings.RemoveTextBeforeColon || text.IndexOf(':') < 0)
@@ -440,6 +491,15 @@
             return preAssTag + newText;
         }
 
+        /// <summary>
+        /// The remove text from hear impaired.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string RemoveTextFromHearImpaired(string text)
         {
             if (this.Settings.RemoveWhereContains)
@@ -682,6 +742,15 @@
             return text.Trim();
         }
 
+        /// <summary>
+        /// The remove interjections.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string RemoveInterjections(string text)
         {
             string oldText = text;
@@ -1044,6 +1113,15 @@
             return text;
         }
 
+        /// <summary>
+        /// The remove hear impaired tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string RemoveHearImpairedTags(string text)
         {
             string preAssTag = string.Empty;
@@ -1091,6 +1169,15 @@
             return preAssTag + text.TrimStart();
         }
 
+        /// <summary>
+        /// The has hear imparied tags at start.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool HasHearImpariedTagsAtStart(string text)
         {
             if (this.Settings.OnlyIfInSeparateLine)
@@ -1101,6 +1188,15 @@
             return this.HasHearImpairedText(text);
         }
 
+        /// <summary>
+        /// The has hear imparied tags at end.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool HasHearImpariedTagsAtEnd(string text)
         {
             if (this.Settings.OnlyIfInSeparateLine)
@@ -1111,6 +1207,15 @@
             return this.HasHearImpairedText(text);
         }
 
+        /// <summary>
+        /// The remove line if all uppercase.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string RemoveLineIfAllUppercase(string text)
         {
             if (!this.Settings.RemoveIfAllUppercase)
@@ -1141,6 +1246,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The get removed string.
+        /// </summary>
+        /// <param name="oldText">
+        /// The old text.
+        /// </param>
+        /// <param name="newText">
+        /// The new text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetRemovedString(string oldText, string newText)
         {
             oldText = oldText.ToLower();
@@ -1160,11 +1277,38 @@
             return result;
         }
 
+        /// <summary>
+        /// The compare length.
+        /// </summary>
+        /// <param name="a">
+        /// The a.
+        /// </param>
+        /// <param name="b">
+        /// The b.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private static int CompareLength(string a, string b)
         {
             return b.Length.CompareTo(a.Length);
         }
 
+        /// <summary>
+        /// The remove text between tags.
+        /// </summary>
+        /// <param name="startTag">
+        /// The start tag.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveTextBetweenTags(string startTag, string endTag, string text)
         {
             text = text.Trim();
@@ -1207,6 +1351,18 @@
             return text.FixExtraSpaces().TrimEnd();
         }
 
+        /// <summary>
+        /// The is not inside brackets.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="colonIdx">
+        /// The colon idx.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool IsNotInsideBrackets(string text, int colonIdx)
         {
             // <i>♪ (THE CAPITOLS: "COOL JERK") ♪</i>
@@ -1225,6 +1381,15 @@
             return true;
         }
 
+        /// <summary>
+        /// The do remove.
+        /// </summary>
+        /// <param name="pre">
+        /// The pre.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool DoRemove(string pre)
         {
             // Skip these: Barry, remember: She cannot; http://google.com; Improved by: ...
@@ -1242,6 +1407,15 @@
             return true;
         }
 
+        /// <summary>
+        /// The remove empty font tag.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string RemoveEmptyFontTag(string text)
         {
             int indexOfStartFont = text.IndexOf("<font ", StringComparison.OrdinalIgnoreCase);
@@ -1270,6 +1444,9 @@
             return text;
         }
 
+        /// <summary>
+        /// The add warning.
+        /// </summary>
         private void AddWarning()
         {
             if (this.Warnings == null || this.WarningIndex < 0)
@@ -1280,6 +1457,15 @@
             this.Warnings.Add(this.WarningIndex);
         }
 
+        /// <summary>
+        /// The is hi description.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool IsHIDescription(string text)
         {
             text = text.Trim(' ', '(', ')', '[', ']', '?', '{', '}');
@@ -1298,6 +1484,15 @@
             return false;
         }
 
+        /// <summary>
+        /// The remove start end tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string RemoveStartEndTags(string text)
         {
             string newText = text;
@@ -1347,11 +1542,29 @@
             return newText;
         }
 
+        /// <summary>
+        /// The has hear impaired text.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool HasHearImpairedText(string text)
         {
             return this.RemoveHearImpairedTags(text) != text;
         }
 
+        /// <summary>
+        /// The start and ends with hear imparied tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool StartAndEndsWithHearImpariedTags(string text)
         {
             return (text.StartsWith('[') && text.EndsWith(']') && !text.Trim('[').Contains('[') && this.Settings.RemoveTextBetweenSquares) || (text.StartsWith('{') && text.EndsWith('}') && !text.Trim('{').Contains('{') && this.Settings.RemoveTextBetweenBrackets) || (text.StartsWith('?') && text.EndsWith('?') && !text.Trim('?').Contains('?') && this.Settings.RemoveTextBetweenQuestionMarks) || (text.StartsWith('(') && text.EndsWith(')') && !text.Trim('(').Contains('(') && this.Settings.RemoveTextBetweenParentheses) || (text.StartsWith('[') && text.EndsWith("]:", StringComparison.Ordinal) && !text.Trim('[').Contains('[') && this.Settings.RemoveTextBetweenSquares) || (text.StartsWith('{') && text.EndsWith("}:", StringComparison.Ordinal) && !text.Trim('{').Contains('{') && this.Settings.RemoveTextBetweenBrackets) || (text.StartsWith('?') && text.EndsWith("?:", StringComparison.Ordinal) && !text.Trim('?').Contains('?') && this.Settings.RemoveTextBetweenQuestionMarks) || (text.StartsWith('(') && text.EndsWith("):", StringComparison.Ordinal) && !text.Trim('(').Contains('(') && this.Settings.RemoveTextBetweenParentheses) || (this.Settings.RemoveTextBetweenCustomTags && this.Settings.CustomStart.Length > 0 && this.Settings.CustomEnd.Length > 0 && text.StartsWith(this.Settings.CustomStart, StringComparison.Ordinal) && text.EndsWith(this.Settings.CustomEnd, StringComparison.Ordinal));

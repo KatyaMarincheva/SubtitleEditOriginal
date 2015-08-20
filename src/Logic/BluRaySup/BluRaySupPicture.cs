@@ -1,27 +1,21 @@
-﻿/*
- * Copyright 2009 Volker Oth (0xdeadbeef)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * NOTE: Converted to C# and modified by Nikse.dk@gmail.com
- */
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright company="" file="BluRaySupPicture.cs">
+//   
+// </copyright>
+// <summary>
+//   The blu ray sup picture.
+// </summary>
+// 
+// --------------------------------------------------------------------------------------------------------------------
 namespace Nikse.SubtitleEdit.Logic.BluRaySup
 {
     using System;
     using System.Collections.Generic;
     using System.Drawing;
 
+    /// <summary>
+    /// The blu ray sup picture.
+    /// </summary>
     public class BluRaySupPicture
     {
         /// <summary>
@@ -49,6 +43,9 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
         /// </summary>
         public long StartTime { get; set; }
 
+        /// <summary>
+        /// Gets the start time for write.
+        /// </summary>
         public int StartTimeForWrite
         {
             get
@@ -62,6 +59,9 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
         /// </summary>
         public long EndTime { get; set; }
 
+        /// <summary>
+        /// Gets the end time for write.
+        /// </summary>
         public int EndTimeForWrite
         {
             get
@@ -111,21 +111,35 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
         public int FramesPerSecondType { get; set; }
 
         /// <summary>
-        ///     Create RLE buffer from bitmap
+        /// Create RLE buffer from bitmap
         /// </summary>
-        /// <param name="bm">Bitmap to compress</param>
-        /// <param name="palette">Palette used for bitmap encoding</param>
-        /// <returns>RLE buffer</returns>
+        /// <returns>
+        /// RLE buffer
+        /// </returns>
         /// <summary>
-        ///     Create the binary stream representation of one caption
+        /// Create the binary stream representation of one caption
         /// </summary>
-        /// <param name="pic">SubPicture object containing caption info</param>
-        /// <param name="bmp">Bitmap</param>
-        /// <param name="fps">Frames per second</param>
-        /// <param name="bottomMargin">Image bottom margin</param>
-        /// <param name="leftOrRightMargin">Image left/right margin</param>
-        /// <param name="alignment">Alignment of image</param>
-        /// <returns>Byte buffer containing the binary stream representation of one caption</returns>
+        /// <param name="pic">
+        /// SubPicture object containing caption info
+        /// </param>
+        /// <param name="bmp">
+        /// Bitmap
+        /// </param>
+        /// <param name="fps">
+        /// Frames per second
+        /// </param>
+        /// <param name="bottomMargin">
+        /// Image bottom margin
+        /// </param>
+        /// <param name="leftOrRightMargin">
+        /// Image left/right margin
+        /// </param>
+        /// <param name="alignment">
+        /// Alignment of image
+        /// </param>
+        /// <returns>
+        /// Byte buffer containing the binary stream representation of one caption
+        /// </returns>
         public static byte[] CreateSupFrame(BluRaySupPicture pic, Bitmap bmp, double fps, int bottomMargin, int leftOrRightMargin, ContentAlignment alignment)
         {
             NikseBitmap bm = new NikseBitmap(bmp);
@@ -471,6 +485,18 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             return buf;
         }
 
+        /// <summary>
+        /// The encode image.
+        /// </summary>
+        /// <param name="bm">
+        /// The bm.
+        /// </param>
+        /// <param name="palette">
+        /// The palette.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         private static byte[] EncodeImage(NikseBitmap bm, Dictionary<Color, int> palette)
         {
             List<byte> bytes = new List<byte>();
@@ -571,6 +597,18 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             return retval;
         }
 
+        /// <summary>
+        /// The find best match.
+        /// </summary>
+        /// <param name="color">
+        /// The color.
+        /// </param>
+        /// <param name="palette">
+        /// The palette.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte"/>.
+        /// </returns>
         private static byte FindBestMatch(Color color, Dictionary<Color, int> palette)
         {
             int smallestDiff = 1000;
@@ -588,6 +626,21 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             return (byte)smallestDiffIndex;
         }
 
+        /// <summary>
+        /// The has close color.
+        /// </summary>
+        /// <param name="color">
+        /// The color.
+        /// </param>
+        /// <param name="palette">
+        /// The palette.
+        /// </param>
+        /// <param name="maxDifference">
+        /// The max difference.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool HasCloseColor(Color color, Dictionary<Color, int> palette, int maxDifference)
         {
             foreach (KeyValuePair<Color, int> kvp in palette)
@@ -602,6 +655,15 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
             return false;
         }
 
+        /// <summary>
+        /// The get bitmap palette.
+        /// </summary>
+        /// <param name="bitmap">
+        /// The bitmap.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Dictionary"/>.
+        /// </returns>
         private static Dictionary<Color, int> GetBitmapPalette(NikseBitmap bitmap)
         {
             Dictionary<Color, int> pal = new Dictionary<Color, int>();
@@ -629,10 +691,14 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
         }
 
         /// <summary>
-        ///     Get ID for given frame rate
+        /// Get ID for given frame rate
         /// </summary>
-        /// <param name="fps">frame rate</param>
-        /// <returns>byte ID for the given frame rate</returns>
+        /// <param name="fps">
+        /// frame rate
+        /// </param>
+        /// <returns>
+        /// byte ID for the given frame rate
+        /// </returns>
         private static int GetFpsId(double fps)
         {
             if (Math.Abs(fps - Core.Fps24Hz) < 0.01)

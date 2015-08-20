@@ -1,52 +1,82 @@
-﻿/*
- * Copyright 2009 Volker Oth (0xdeadbeef)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * NOTE: Converted to C# and modified by Nikse.dk@gmail.com
- */
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright company="" file="BluRaySupPalette.cs">
+//   
+// </copyright>
+// <summary>
+//   The blu ray sup palette.
+// </summary>
+// 
+// --------------------------------------------------------------------------------------------------------------------
 namespace Nikse.SubtitleEdit.Logic.BluRaySup
 {
     using System.Drawing;
 
+    /// <summary>
+    /// The blu ray sup palette.
+    /// </summary>
     public class BluRaySupPalette
     {
         /** Byte buffer for alpha info */
+
+        /// <summary>
+        /// The a.
+        /// </summary>
         private readonly byte[] a;
 
         /** Byte buffer for BLUE info */
+
+        /// <summary>
+        /// The b.
+        /// </summary>
         private readonly byte[] b;
 
         /** Byte buffer for Cb (chrominance blue) info */
+
+        /// <summary>
+        /// The cb.
+        /// </summary>
         private readonly byte[] cb;
 
         /** Byte buffer for Cr (chrominance red) info */
+
+        /// <summary>
+        /// The cr.
+        /// </summary>
         private readonly byte[] cr;
 
         /** Byte buffer for GREEN info */
+
+        /// <summary>
+        /// The g.
+        /// </summary>
         private readonly byte[] g;
 
         /** Byte buffer for RED info */
+
+        /// <summary>
+        /// The r.
+        /// </summary>
         private readonly byte[] r;
 
         /** Number of palette entries */
+
+        /// <summary>
+        /// The size.
+        /// </summary>
         private readonly int size;
 
         /** Use BT.601 color model instead of BT.709 */
+
+        /// <summary>
+        /// The use b t 601.
+        /// </summary>
         private readonly bool useBT601;
 
         /** Byte buffer for Y (luminance) info */
+
+        /// <summary>
+        /// The y.
+        /// </summary>
         private readonly byte[] y;
 
         /**
@@ -54,6 +84,16 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param palSize Number of palette entries
          * @param use601  Use BT.601 instead of BT.709
          */
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BluRaySupPalette"/> class.
+        /// </summary>
+        /// <param name="palSize">
+        /// The pal size.
+        /// </param>
+        /// <param name="use601">
+        /// The use 601.
+        /// </param>
         public BluRaySupPalette(int palSize, bool use601)
         {
             this.size = palSize;
@@ -84,6 +124,13 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * Ctor - initializes palette with transparent black (RGBA: 0x00000000)
          * @param palSize Number of palette entries
          */
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BluRaySupPalette"/> class.
+        /// </summary>
+        /// <param name="palSize">
+        /// The pal size.
+        /// </param>
         public BluRaySupPalette(int palSize)
             : this(palSize, false)
         {
@@ -97,6 +144,25 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param alpha  Byte buffer containing the alpha components
          * @param use601 Use BT.601 instead of BT.709
          */
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BluRaySupPalette"/> class.
+        /// </summary>
+        /// <param name="red">
+        /// The red.
+        /// </param>
+        /// <param name="green">
+        /// The green.
+        /// </param>
+        /// <param name="blue">
+        /// The blue.
+        /// </param>
+        /// <param name="alpha">
+        /// The alpha.
+        /// </param>
+        /// <param name="use601">
+        /// The use 601.
+        /// </param>
         public BluRaySupPalette(byte[] red, byte[] green, byte[] blue, byte[] alpha, bool use601)
         {
             this.size = red.Length;
@@ -129,6 +195,22 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param blue  Byte buffer containing the blue components
          * @param alpha Byte buffer containing the alpha components
          */
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BluRaySupPalette"/> class.
+        /// </summary>
+        /// <param name="red">
+        /// The red.
+        /// </param>
+        /// <param name="green">
+        /// The green.
+        /// </param>
+        /// <param name="blue">
+        /// The blue.
+        /// </param>
+        /// <param name="alpha">
+        /// The alpha.
+        /// </param>
         public BluRaySupPalette(byte[] red, byte[] green, byte[] blue, byte[] alpha)
             : this(red, green, blue, alpha, false)
         {
@@ -138,6 +220,13 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * Ctor - construct new (independent) palette from existing one
          * @param p Palette to copy values from
          */
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BluRaySupPalette"/> class.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
         public BluRaySupPalette(BluRaySupPalette p)
         {
             this.size = p.GetSize();
@@ -169,6 +258,25 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param cr 8 bit chrominance red
          * @return Integer array with red, blue, green component (in this order)
          */
+
+        /// <summary>
+        /// The y cb cr 2 rgb.
+        /// </summary>
+        /// <param name="y">
+        /// The y.
+        /// </param>
+        /// <param name="cb">
+        /// The cb.
+        /// </param>
+        /// <param name="cr">
+        /// The cr.
+        /// </param>
+        /// <param name="useBt601">
+        /// The use bt 601.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int[]"/>.
+        /// </returns>
         public static int[] YCbCr2Rgb(int y, int cb, int cr, bool useBt601)
         {
             int[] rgb = new int[3];
@@ -217,6 +325,16 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param index Palette index
          * @param c Color in ARGB format
          */
+
+        /// <summary>
+        /// The set argb.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="c">
+        /// The c.
+        /// </param>
         public void SetArgb(int index, int c)
         {
             int a1 = (c >> 24) & 0xff;
@@ -232,6 +350,16 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param index Palette index
          * @return Palette entry at index as Integer in ARGB format
          */
+
+        /// <summary>
+        /// The get argb.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public int GetArgb(int index)
         {
             return ((this.a[index] & 0xff) << 24) | ((this.r[index] & 0xff) << 16) | ((this.g[index] & 0xff) << 8) | (this.b[index] & 0xff);
@@ -244,6 +372,22 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param green 8bit green component
          * @param blue  8bit blue component
          */
+
+        /// <summary>
+        /// The set rgb.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="red">
+        /// The red.
+        /// </param>
+        /// <param name="green">
+        /// The green.
+        /// </param>
+        /// <param name="blue">
+        /// The blue.
+        /// </param>
         public void SetRgb(int index, int red, int green, int blue)
         {
             this.r[index] = (byte)red;
@@ -264,6 +408,22 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param cbn   8bit Cb component
          * @param crn   8bit Cr component
          */
+
+        /// <summary>
+        /// The set y cb cr.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="yn">
+        /// The yn.
+        /// </param>
+        /// <param name="cbn">
+        /// The cbn.
+        /// </param>
+        /// <param name="crn">
+        /// The crn.
+        /// </param>
         public void SetYCbCr(int index, int yn, int cbn, int crn)
         {
             this.y[index] = (byte)yn;
@@ -282,6 +442,16 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param index Palette index
          * @param alpha 8bit alpha channel value
          */
+
+        /// <summary>
+        /// The set alpha.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="alpha">
+        /// The alpha.
+        /// </param>
         public void SetAlpha(int index, int alpha)
         {
             this.a[index] = (byte)alpha;
@@ -292,6 +462,16 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param index Palette index
          * @return 8bit alpha channel value
          */
+
+        /// <summary>
+        /// The get alpha.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public int GetAlpha(int index)
         {
             return this.a[index] & 0xff;
@@ -301,6 +481,13 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * Return byte array of alpha channel components
          * @return Byte array of alpha channel components (don't modify!)
          */
+
+        /// <summary>
+        /// The get alpha.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         public byte[] GetAlpha()
         {
             return this.a;
@@ -311,6 +498,16 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param index Palette index
          * @return Integer array containing 8bit red, green, blue components (in this order)
          */
+
+        /// <summary>
+        /// The get rgb.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int[]"/>.
+        /// </returns>
         public int[] GetRgb(int index)
         {
             int[] rgb = new int[3];
@@ -325,6 +522,16 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param index Palette index
          * @return Integer array containing 8bit Y, Cb, Cr components (in this order)
          */
+
+        /// <summary>
+        /// The get y cb cr.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int[]"/>.
+        /// </returns>
         public int[] GetYCbCr(int index)
         {
             int[] yCbCr = new int[3];
@@ -338,6 +545,13 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * Return byte array of red components
          * @return Byte array of red components (don't modify!)
          */
+
+        /// <summary>
+        /// The get r.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         public byte[] GetR()
         {
             return this.r;
@@ -347,6 +561,13 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * Return byte array of green components
          * @return Byte array of green components (don't modify!)
          */
+
+        /// <summary>
+        /// The get g.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         public byte[] GetG()
         {
             return this.g;
@@ -356,6 +577,13 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * Return byte array of blue components
          * @return Byte array of blue components (don't modify!)
          */
+
+        /// <summary>
+        /// The get b.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         public byte[] GetB()
         {
             return this.b;
@@ -365,6 +593,13 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * Return byte array of Y components
          * @return Byte array of Y components (don't modify!)
          */
+
+        /// <summary>
+        /// The get y.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         public byte[] GetY()
         {
             return this.y;
@@ -374,6 +609,13 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * Return byte array of Cb components
          * @return Byte array of Cb components (don't modify!)
          */
+
+        /// <summary>
+        /// The get cb.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         public byte[] GetCb()
         {
             return this.cb;
@@ -383,6 +625,13 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * Return byte array of Cr components
          * @return Byte array of Cr components (don't modify!)
          */
+
+        /// <summary>
+        /// The get cr.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         public byte[] GetCr()
         {
             return this.cr;
@@ -392,6 +641,13 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * Get size of palette (number of entries)
          * @return Size of palette (number of entries)
          */
+
+        /// <summary>
+        /// The get size.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public int GetSize()
         {
             return this.size;
@@ -401,6 +657,13 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * Return index of most transparent palette entry or the index of the first completely transparent color
          * @return Index of most transparent palette entry or the index of the first completely transparent color
          */
+
+        /// <summary>
+        /// The get transparent index.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public int GetTransparentIndex()
         {
             // find (most) transparent index in palette
@@ -426,11 +689,27 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * Get: use of BT.601 color model instead of BT.709
          * @return True if BT.601 is used
          */
+
+        /// <summary>
+        /// The uses bt 601.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool UsesBt601()
         {
             return this.useBT601;
         }
 
+        /// <summary>
+        /// The set color.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="color">
+        /// The color.
+        /// </param>
         internal void SetColor(int index, Color color)
         {
             this.SetRgb(index, color.R, color.G, color.B);
@@ -444,6 +723,25 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param b 8 bit blue component
          * @return Integer array with luminance (Y), chrominance blue (Cb), chrominance red (Cr) (in this order)
          */
+
+        /// <summary>
+        /// The rgb 2 y cb cr.
+        /// </summary>
+        /// <param name="r">
+        /// The r.
+        /// </param>
+        /// <param name="g">
+        /// The g.
+        /// </param>
+        /// <param name="b">
+        /// The b.
+        /// </param>
+        /// <param name="useBt601">
+        /// The use bt 601.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int[]"/>.
+        /// </returns>
         private static int[] Rgb2YCbCr(int r, int g, int b, bool useBt601)
         {
             int[] yCbCr = new int[3];

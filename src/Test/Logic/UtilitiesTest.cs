@@ -1,14 +1,31 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.Forms;
-using Nikse.SubtitleEdit.Core;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="UtilitiesTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The utilities test.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic
 {
+    using System;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.Forms;
+
+    /// <summary>
+    /// The utilities test.
+    /// </summary>
     [TestClass]
     public class UtilitiesTest
     {
+        /// <summary>
+        /// The auto break line 1.
+        /// </summary>
         [TestMethod]
         public void AutoBreakLine1()
         {
@@ -20,6 +37,9 @@ namespace Test.Logic
             Assert.IsFalse(arr[1].Length > maxLength);
         }
 
+        /// <summary>
+        /// The auto break line 2.
+        /// </summary>
         [TestMethod]
         public void AutoBreakLine2()
         {
@@ -27,6 +47,9 @@ namespace Test.Logic
             Assert.IsFalse(s == "We're gonna lose him." + Environment.NewLine + "He's left him four signals in the last week.");
         }
 
+        /// <summary>
+        /// The auto break line 3.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void AutoBreakLine3()
@@ -36,6 +59,9 @@ namespace Test.Logic
             Assert.AreEqual(s1, s2);
         }
 
+        /// <summary>
+        /// The auto break line 4.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void AutoBreakLine4()
@@ -47,6 +73,9 @@ namespace Test.Logic
             Assert.AreEqual(target, s2);
         }
 
+        /// <summary>
+        /// The auto break line 5 do no break at period.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void AutoBreakLine5DoNoBreakAtPeriod()
@@ -58,6 +87,9 @@ namespace Test.Logic
             Assert.AreEqual(target, s2);
         }
 
+        /// <summary>
+        /// The auto break line do not break after dash dash.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void AutoBreakLineDoNotBreakAfterDashDash()
@@ -68,6 +100,9 @@ namespace Test.Logic
             Assert.AreEqual(s1, s2);
         }
 
+        /// <summary>
+        /// The auto break line dialog 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void AutoBreakLineDialog1()
@@ -77,6 +112,9 @@ namespace Test.Logic
             Assert.AreEqual("- Qu'est ce qui se passe ?" + Environment.NewLine + "- Je veux voir ce qu'ils veulent être.", s2);
         }
 
+        /// <summary>
+        /// The auto break line dialog 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void AutoBreakLineDialog2()
@@ -86,6 +124,9 @@ namespace Test.Logic
             Assert.AreEqual("- Je veux voir ce qu'ils veulent être." + Environment.NewLine + "- Qu'est ce qui se passe ?", s2);
         }
 
+        /// <summary>
+        /// The fix invalid italic tags 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixInvalidItalicTags2()
@@ -95,6 +136,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "Gledaj prema kameri i rici zdravo!");
         }
 
+        /// <summary>
+        /// The fix invalid italic tags 3.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixInvalidItalicTags3()
@@ -104,6 +148,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "<i>Line 1." + Environment.NewLine + "Line 2.</i>");
         }
 
+        /// <summary>
+        /// The fix invalid italic tags 4.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixInvalidItalicTags4()
@@ -113,6 +160,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, s1);
         }
 
+        /// <summary>
+        /// The fix invalid italic tags 5.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixInvalidItalicTags5()
@@ -122,6 +172,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "<i>- It is a telegram?" + Environment.NewLine + "- It is.</i>");
         }
 
+        /// <summary>
+        /// The fix invalid italic tags 6.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixInvalidItalicTags6()
@@ -131,6 +184,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "<i>- Text1!" + Environment.NewLine + "- Text2.</i>");
         }
 
+        /// <summary>
+        /// The fix invalid italic tags 7.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixInvalidItalicTags7()
@@ -140,6 +196,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "<i>- You think they're they gone?" + Environment.NewLine + "- That can't be.</i>");
         }
 
+        /// <summary>
+        /// The fix invalid italic tags 8.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixInvalidItalicTags8()
@@ -149,6 +208,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "<i>- You think they're they gone?" + Environment.NewLine + "- That can't be.</i>");
         }
 
+        /// <summary>
+        /// The fix invalid italic tags 9.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixInvalidItalicTags9()
@@ -158,6 +220,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "FALCONE: <i>I didn't think\r\nit was going to be you,</i>");
         }
 
+        /// <summary>
+        /// The fix unneeded spaces double space 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesDoubleSpace1()
@@ -167,6 +232,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "This is a test");
         }
 
+        /// <summary>
+        /// The fix unneeded spaces double space 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesDoubleSpace2()
@@ -176,6 +244,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "This is a test");
         }
 
+        /// <summary>
+        /// The fix unneeded spaces italics 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesItalics1()
@@ -185,6 +256,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "<i>This is a test</i>");
         }
 
+        /// <summary>
+        /// The fix unneeded spaces italics 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesItalics2()
@@ -194,6 +268,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "<i>This is a test</i>");
         }
 
+        /// <summary>
+        /// The fix unneeded spaces hyphen 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesHyphen1()
@@ -203,6 +280,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "This is a low-budget job");
         }
 
+        /// <summary>
+        /// The fix unneeded spaces hyphen 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesHyphen2()
@@ -212,6 +292,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, "This is a low-budget job");
         }
 
+        /// <summary>
+        /// The fix unneeded spaces hyphen do not change 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesHyphenDoNotChange1()
@@ -221,6 +304,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, s1);
         }
 
+        /// <summary>
+        /// The fix unneeded spaces hyphen do not change 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesHyphenDoNotChange2()
@@ -230,6 +316,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, s1);
         }
 
+        /// <summary>
+        /// The fix unneeded spaces hyphen do not change 3.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesHyphenDoNotChange3()
@@ -239,6 +328,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, s1);
         }
 
+        /// <summary>
+        /// The fix unneeded spaces hyphen do not change dutch 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesHyphenDoNotChangeDutch1()
@@ -248,6 +340,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, s1);
         }
 
+        /// <summary>
+        /// The fix unneeded spaces hyphen do not change dutch 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesHyphenDoNotChangeDutch2()
@@ -257,6 +352,9 @@ namespace Test.Logic
             Assert.AreEqual(s2, s1);
         }
 
+        /// <summary>
+        /// The fix unneeded spaces dialog dot dot dot line 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesDialogDotDotDotLine1()
@@ -265,6 +363,9 @@ namespace Test.Logic
             Assert.AreEqual(s, "- ...Careful");
         }
 
+        /// <summary>
+        /// The fix unneeded spaces dialog dot dot dot line 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesDialogDotDotDotLine2()
@@ -273,6 +374,9 @@ namespace Test.Logic
             Assert.AreEqual(s, "- Hi!" + Environment.NewLine + "- ...Careful");
         }
 
+        /// <summary>
+        /// The fix unneeded spaces font tag 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesFontTag1()
@@ -281,6 +385,9 @@ namespace Test.Logic
             Assert.AreEqual(s, "<font color=\"#808080\">(PEOPLE SPEAKING INDISTINCTLY)</font>");
         }
 
+        /// <summary>
+        /// The fix unneeded spaces font tag 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesFontTag2()
@@ -289,6 +396,9 @@ namespace Test.Logic
             Assert.AreEqual(s, "Foobar\r\n<font color=\"#808080\">(PEOPLE SPEAKING INDISTINCTLY)</font>");
         }
 
+        /// <summary>
+        /// The fix unneeded spaces font tag 3.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixUnneededSpacesFontTag3()
@@ -297,6 +407,9 @@ namespace Test.Logic
             Assert.AreEqual(s, "<font color=\"#808080\">- Foobar!</font>\r\n<font color=\"#808080\">(PEOPLE SPEAKING INDISTINCTLY)</font>");
         }
 
+        /// <summary>
+        /// The count tag in text string one letter string.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void CountTagInTextStringOneLetterString()
@@ -305,6 +418,9 @@ namespace Test.Logic
             Assert.AreEqual(count, 3);
         }
 
+        /// <summary>
+        /// The count tag in text string not there.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void CountTagInTextStringNotThere()
@@ -313,6 +429,9 @@ namespace Test.Logic
             Assert.AreEqual(count, 0);
         }
 
+        /// <summary>
+        /// The count tag in text char normal.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void CountTagInTextCharNormal()
@@ -321,6 +440,9 @@ namespace Test.Logic
             Assert.AreEqual(count, 3);
         }
 
+        /// <summary>
+        /// The count tag in text char not there.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void CountTagInTextCharNotThere()
@@ -329,6 +451,9 @@ namespace Test.Logic
             Assert.AreEqual(count, 0);
         }
 
+        /// <summary>
+        /// The fix hyphens add test.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void FixHyphensAddTest()
@@ -350,6 +475,9 @@ namespace Test.Logic
             Assert.AreEqual(output2, expected2);
         }
 
+        /// <summary>
+        /// The remove line breaks 1.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveLineBreaks1()
@@ -358,6 +486,9 @@ namespace Test.Logic
             Assert.AreEqual(result, "Hey you!");
         }
 
+        /// <summary>
+        /// The remove line breaks 2.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveLineBreaks2()
@@ -366,6 +497,9 @@ namespace Test.Logic
             Assert.AreEqual(result, "<i>Foobar</i> foobar.");
         }
 
+        /// <summary>
+        /// The remove line breaks 3.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveLineBreaks3()
@@ -374,6 +508,9 @@ namespace Test.Logic
             Assert.AreEqual(result, "<i>Foobar</i> foobar.");
         }
 
+        /// <summary>
+        /// The remove line breaks 4.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveLineBreaks4()
@@ -382,6 +519,9 @@ namespace Test.Logic
             Assert.AreEqual(result, "<i>Hey you!</i>");
         }
 
+        /// <summary>
+        /// The remove line breaks 5.
+        /// </summary>
         [TestMethod]
         [DeploymentItem("SubtitleEdit.exe")]
         public void RemoveLineBreaks5()

@@ -1,70 +1,115 @@
-﻿using System;
-using System.Net;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NetworkStart.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The network start.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Net;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.Networking;
+
+    /// <summary>
+    /// The network start.
+    /// </summary>
     public sealed partial class NetworkStart : PositionAndSizeForm
     {
-
-        private Logic.Networking.NikseWebServiceSession _networkSession;
+        /// <summary>
+        /// The _file name.
+        /// </summary>
         private string _fileName;
 
+        /// <summary>
+        /// The _network session.
+        /// </summary>
+        private NikseWebServiceSession _networkSession;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NetworkStart"/> class.
+        /// </summary>
         public NetworkStart()
         {
-            InitializeComponent();
-            labelStatus.Text = string.Empty;
-            Text = Configuration.Settings.Language.NetworkStart.Title;
-            labelInfo.Text = Configuration.Settings.Language.NetworkStart.Information;
-            labelSessionKey.Text = Configuration.Settings.Language.General.SessionKey;
-            labelUserName.Text = Configuration.Settings.Language.General.UserName;
-            labelWebServiceUrl.Text = Configuration.Settings.Language.General.WebServiceUrl;
-            buttonStart.Text = Configuration.Settings.Language.NetworkStart.Start;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
-            Utilities.FixLargeFonts(this, buttonCancel);
+            this.InitializeComponent();
+            this.labelStatus.Text = string.Empty;
+            this.Text = Configuration.Settings.Language.NetworkStart.Title;
+            this.labelInfo.Text = Configuration.Settings.Language.NetworkStart.Information;
+            this.labelSessionKey.Text = Configuration.Settings.Language.General.SessionKey;
+            this.labelUserName.Text = Configuration.Settings.Language.General.UserName;
+            this.labelWebServiceUrl.Text = Configuration.Settings.Language.General.WebServiceUrl;
+            this.buttonStart.Text = Configuration.Settings.Language.NetworkStart.Start;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            Utilities.FixLargeFonts(this, this.buttonCancel);
         }
 
-        internal void Initialize(Logic.Networking.NikseWebServiceSession networkSession, string fileName)
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="networkSession">
+        /// The network session.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        internal void Initialize(NikseWebServiceSession networkSession, string fileName)
         {
-            _networkSession = networkSession;
-            _fileName = fileName;
+            this._networkSession = networkSession;
+            this._fileName = fileName;
 
-            textBoxSessionKey.Text = Configuration.Settings.NetworkSettings.SessionKey;
-            if (textBoxSessionKey.Text.Trim().Length < 2)
-                textBoxSessionKey.Text = Guid.NewGuid().ToString().Replace("-", string.Empty);
+            this.textBoxSessionKey.Text = Configuration.Settings.NetworkSettings.SessionKey;
+            if (this.textBoxSessionKey.Text.Trim().Length < 2)
+            {
+                this.textBoxSessionKey.Text = Guid.NewGuid().ToString().Replace("-", string.Empty);
+            }
 
-            comboBoxWebServiceUrl.Text = Configuration.Settings.NetworkSettings.WebServiceUrl;
-            textBoxUserName.Text = Configuration.Settings.NetworkSettings.UserName;
-            if (textBoxUserName.Text.Trim().Length < 2)
-                textBoxUserName.Text = Dns.GetHostName();
+            this.comboBoxWebServiceUrl.Text = Configuration.Settings.NetworkSettings.WebServiceUrl;
+            this.textBoxUserName.Text = Configuration.Settings.NetworkSettings.UserName;
+            if (this.textBoxUserName.Text.Trim().Length < 2)
+            {
+                this.textBoxUserName.Text = Dns.GetHostName();
+            }
         }
 
+        /// <summary>
+        /// The button start_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonStart_Click(object sender, EventArgs e)
         {
-            Configuration.Settings.NetworkSettings.SessionKey = textBoxSessionKey.Text;
-            Configuration.Settings.NetworkSettings.WebServiceUrl = comboBoxWebServiceUrl.Text;
-            Configuration.Settings.NetworkSettings.UserName = textBoxUserName.Text;
+            Configuration.Settings.NetworkSettings.SessionKey = this.textBoxSessionKey.Text;
+            Configuration.Settings.NetworkSettings.WebServiceUrl = this.comboBoxWebServiceUrl.Text;
+            Configuration.Settings.NetworkSettings.UserName = this.textBoxUserName.Text;
 
-            buttonStart.Enabled = false;
-            buttonCancel.Enabled = false;
-            textBoxSessionKey.Enabled = false;
-            textBoxUserName.Enabled = false;
-            comboBoxWebServiceUrl.Enabled = false;
-            labelStatus.Text = string.Format(Configuration.Settings.Language.NetworkStart.ConnectionTo, comboBoxWebServiceUrl.Text);
-            Refresh();
+            this.buttonStart.Enabled = false;
+            this.buttonCancel.Enabled = false;
+            this.textBoxSessionKey.Enabled = false;
+            this.textBoxUserName.Enabled = false;
+            this.comboBoxWebServiceUrl.Enabled = false;
+            this.labelStatus.Text = string.Format(Configuration.Settings.Language.NetworkStart.ConnectionTo, this.comboBoxWebServiceUrl.Text);
+            this.Refresh();
 
             try
             {
                 string message;
-                _networkSession.StartServer(comboBoxWebServiceUrl.Text, textBoxSessionKey.Text, textBoxUserName.Text, _fileName, out message);
+                this._networkSession.StartServer(this.comboBoxWebServiceUrl.Text, this.textBoxSessionKey.Text, this.textBoxUserName.Text, this._fileName, out message);
                 if (message != "OK")
                 {
                     MessageBox.Show(message);
                 }
                 else
                 {
-                    DialogResult = DialogResult.OK;
+                    this.DialogResult = DialogResult.OK;
                     return;
                 }
             }
@@ -72,24 +117,43 @@ namespace Nikse.SubtitleEdit.Forms
             {
                 MessageBox.Show(exception.Message);
             }
-            buttonStart.Enabled = true;
-            buttonCancel.Enabled = true;
-            textBoxSessionKey.Enabled = false;
-            textBoxUserName.Enabled = true;
-            comboBoxWebServiceUrl.Enabled = true;
-            labelStatus.Text = string.Empty;
+
+            this.buttonStart.Enabled = true;
+            this.buttonCancel.Enabled = true;
+            this.textBoxSessionKey.Enabled = false;
+            this.textBoxUserName.Enabled = true;
+            this.comboBoxWebServiceUrl.Enabled = true;
+            this.labelStatus.Text = string.Empty;
         }
 
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
 
+        /// <summary>
+        /// The network new_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void NetworkNew_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                DialogResult = DialogResult.Cancel;
+                this.DialogResult = DialogResult.Cancel;
             }
             else if (e.KeyCode == Keys.F1)
             {
@@ -97,6 +161,5 @@ namespace Nikse.SubtitleEdit.Forms
                 e.SuppressKeyPress = true;
             }
         }
-
     }
 }

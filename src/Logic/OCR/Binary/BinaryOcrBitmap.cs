@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.Ocr.Binary
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="BinaryOcrBitmap.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The binary ocr bitmap.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.Ocr.Binary
 {
     using System.Collections.Generic;
     using System.Drawing;
@@ -7,10 +16,25 @@
 
     using Nikse.SubtitleEdit.Logic.VobSub;
 
+    /// <summary>
+    /// The binary ocr bitmap.
+    /// </summary>
     public class BinaryOcrBitmap
     {
+        /// <summary>
+        /// The _colors.
+        /// </summary>
         private byte[] _colors;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryOcrBitmap"/> class.
+        /// </summary>
+        /// <param name="width">
+        /// The width.
+        /// </param>
+        /// <param name="height">
+        /// The height.
+        /// </param>
         public BinaryOcrBitmap(int width, int height)
         {
             this.Width = width;
@@ -20,6 +44,12 @@
             this.CalcuateNumberOfColoredPixels();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryOcrBitmap"/> class.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
         public BinaryOcrBitmap(Stream stream)
         {
             try
@@ -58,11 +88,38 @@
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryOcrBitmap"/> class.
+        /// </summary>
+        /// <param name="nbmp">
+        /// The nbmp.
+        /// </param>
         public BinaryOcrBitmap(NikseBitmap nbmp)
         {
             this.InitializeViaNikseBmp(nbmp);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryOcrBitmap"/> class.
+        /// </summary>
+        /// <param name="nbmp">
+        /// The nbmp.
+        /// </param>
+        /// <param name="italic">
+        /// The italic.
+        /// </param>
+        /// <param name="expandCount">
+        /// The expand count.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="x">
+        /// The x.
+        /// </param>
+        /// <param name="y">
+        /// The y.
+        /// </param>
         public BinaryOcrBitmap(NikseBitmap nbmp, bool italic, int expandCount, string text, int x, int y)
         {
             this.InitializeViaNikseBmp(nbmp);
@@ -85,28 +142,64 @@
         // 1bytes=text len
         // text len bytes=text (UTF-8)
         // w*h bytes / 8=pixels as bits(byte aligned)
+        /// <summary>
+        /// Gets the width.
+        /// </summary>
         public int Width { get; private set; }
 
+        /// <summary>
+        /// Gets the height.
+        /// </summary>
         public int Height { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the x.
+        /// </summary>
         public int X { get; set; }
 
+        /// <summary>
+        /// Gets or sets the y.
+        /// </summary>
         public int Y { get; set; }
 
+        /// <summary>
+        /// Gets the number of colored pixels.
+        /// </summary>
         public int NumberOfColoredPixels { get; private set; }
 
+        /// <summary>
+        /// Gets the hash.
+        /// </summary>
         public uint Hash { get; private set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether italic.
+        /// </summary>
         public bool Italic { get; set; }
 
+        /// <summary>
+        /// Gets or sets the expand count.
+        /// </summary>
         public int ExpandCount { get; set; }
 
+        /// <summary>
+        /// Gets a value indicating whether loaded ok.
+        /// </summary>
         public bool LoadedOk { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the text.
+        /// </summary>
         public string Text { get; set; }
 
+        /// <summary>
+        /// Gets or sets the expanded list.
+        /// </summary>
         public List<BinaryOcrBitmap> ExpandedList { get; set; }
 
+        /// <summary>
+        /// Gets the key.
+        /// </summary>
         public string Key
         {
             get
@@ -115,6 +208,12 @@
             }
         }
 
+        /// <summary>
+        /// The to string.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToString()
         {
             if (this.Italic)
@@ -125,6 +224,12 @@
             return this.Text + " (" + this.Width + "x" + this.Height + ")";
         }
 
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
         public void Save(Stream stream)
         {
             WriteInt16(stream, (ushort)this.Width);
@@ -159,16 +264,52 @@
             stream.Write(this._colors, 0, this._colors.Length);
         }
 
+        /// <summary>
+        /// The get pixel.
+        /// </summary>
+        /// <param name="x">
+        /// The x.
+        /// </param>
+        /// <param name="y">
+        /// The y.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public int GetPixel(int x, int y)
         {
             return this._colors[this.Width * y + x];
         }
 
+        /// <summary>
+        /// The set pixel.
+        /// </summary>
+        /// <param name="x">
+        /// The x.
+        /// </param>
+        /// <param name="y">
+        /// The y.
+        /// </param>
+        /// <param name="c">
+        /// The c.
+        /// </param>
         public void SetPixel(int x, int y, int c)
         {
             this._colors[this.Width * y + x] = (byte)c;
         }
 
+        /// <summary>
+        /// The set pixel.
+        /// </summary>
+        /// <param name="x">
+        /// The x.
+        /// </param>
+        /// <param name="y">
+        /// The y.
+        /// </param>
+        /// <param name="c">
+        /// The c.
+        /// </param>
         public void SetPixel(int x, int y, Color c)
         {
             if (c.A < 100)
@@ -181,6 +322,18 @@
             }
         }
 
+        /// <summary>
+        /// The set pixel via alpha.
+        /// </summary>
+        /// <param name="x">
+        /// The x.
+        /// </param>
+        /// <param name="y">
+        /// The y.
+        /// </param>
+        /// <param name="alpha">
+        /// The alpha.
+        /// </param>
         public void SetPixelViaAlpha(int x, int y, int alpha)
         {
             if (alpha < 100)
@@ -194,10 +347,14 @@
         }
 
         /// <summary>
-        ///     Copies a rectangle from the bitmap to a new bitmap
+        /// Copies a rectangle from the bitmap to a new bitmap
         /// </summary>
-        /// <param name="section">Source rectangle</param>
-        /// <returns>Rectangle from current image as new bitmap</returns>
+        /// <param name="section">
+        /// Source rectangle
+        /// </param>
+        /// <returns>
+        /// Rectangle from current image as new bitmap
+        /// </returns>
         public ManagedBitmap GetRectangle(Rectangle section)
         {
             ManagedBitmap newRectangle = new ManagedBitmap(section.Width, section.Height);
@@ -224,6 +381,12 @@
             return newRectangle;
         }
 
+        /// <summary>
+        /// The to old bitmap.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Bitmap"/>.
+        /// </returns>
         public Bitmap ToOldBitmap()
         {
             if (this.ExpandedList != null && this.ExpandedList.Count > 0)
@@ -298,6 +461,15 @@
             }
         }
 
+        /// <summary>
+        /// The write int 16.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
+        /// <param name="val">
+        /// The val.
+        /// </param>
         private static void WriteInt16(Stream stream, ushort val)
         {
             byte[] buffer = new byte[2];
@@ -306,6 +478,15 @@
             stream.Write(buffer, 0, buffer.Length);
         }
 
+        /// <summary>
+        /// The write int 32.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
+        /// <param name="val">
+        /// The val.
+        /// </param>
         private static void WriteInt32(Stream stream, uint val)
         {
             byte[] buffer = new byte[4];
@@ -316,6 +497,12 @@
             stream.Write(buffer, 0, buffer.Length);
         }
 
+        /// <summary>
+        /// The initialize via nikse bmp.
+        /// </summary>
+        /// <param name="nbmp">
+        /// The nbmp.
+        /// </param>
         private void InitializeViaNikseBmp(NikseBitmap nbmp)
         {
             this.Width = nbmp.Width;
@@ -333,6 +520,9 @@
             this.CalcuateNumberOfColoredPixels();
         }
 
+        /// <summary>
+        /// The calcuate number of colored pixels.
+        /// </summary>
         private void CalcuateNumberOfColoredPixels()
         {
             this.NumberOfColoredPixels = 0;

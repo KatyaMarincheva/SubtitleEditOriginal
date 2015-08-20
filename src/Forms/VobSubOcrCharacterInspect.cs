@@ -1,139 +1,222 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Windows.Forms;
-using System.Xml;
-using Nikse.SubtitleEdit.Logic;
-using Nikse.SubtitleEdit.Logic.Ocr.Binary;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="VobSubOcrCharacterInspect.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The vob sub ocr character inspect.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Globalization;
+    using System.IO;
+    using System.Windows.Forms;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.Logic.Ocr.Binary;
+
+    /// <summary>
+    /// The vob sub ocr character inspect.
+    /// </summary>
     public sealed partial class VobSubOcrCharacterInspect : Form
     {
-
-        public XmlDocument ImageCompareDocument { get; private set; }
-        private List<VobSubOcr.CompareMatch> _matches;
-        private List<Bitmap> _imageSources;
-        private string _directoryPath;
-        private XmlNode _selectedCompareNode = null;
-        private BinaryOcrBitmap _selectedCompareBinaryOcrBitmap = null;
-        private VobSubOcr.CompareMatch _selectedMatch = null;
+        /// <summary>
+        /// The _bin ocr db.
+        /// </summary>
         private BinaryOcrDb _binOcrDb = null;
 
+        /// <summary>
+        /// The _directory path.
+        /// </summary>
+        private string _directoryPath;
+
+        /// <summary>
+        /// The _image sources.
+        /// </summary>
+        private List<Bitmap> _imageSources;
+
+        /// <summary>
+        /// The _matches.
+        /// </summary>
+        private List<VobSubOcr.CompareMatch> _matches;
+
+        /// <summary>
+        /// The _selected compare binary ocr bitmap.
+        /// </summary>
+        private BinaryOcrBitmap _selectedCompareBinaryOcrBitmap = null;
+
+        /// <summary>
+        /// The _selected compare node.
+        /// </summary>
+        private XmlNode _selectedCompareNode = null;
+
+        /// <summary>
+        /// The _selected match.
+        /// </summary>
+        private VobSubOcr.CompareMatch _selectedMatch = null;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VobSubOcrCharacterInspect"/> class.
+        /// </summary>
         public VobSubOcrCharacterInspect()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            labelCount.Text = string.Empty;
-            labelExpandCount.Text = string.Empty;
-            Text = Configuration.Settings.Language.VobSubOcrCharacterInspect.Title;
-            groupBoxInspectItems.Text = Configuration.Settings.Language.VobSubOcrCharacterInspect.InspectItems;
-            labelImageInfo.Text = string.Empty;
-            groupBoxCurrentCompareImage.Text = Configuration.Settings.Language.VobSubEditCharacters.CurrentCompareImage;
-            labelTextAssociatedWithImage.Text = Configuration.Settings.Language.VobSubEditCharacters.TextAssociatedWithImage;
-            checkBoxItalic.Text = Configuration.Settings.Language.VobSubEditCharacters.IsItalic;
-            buttonUpdate.Text = Configuration.Settings.Language.VobSubEditCharacters.Update;
-            buttonDelete.Text = Configuration.Settings.Language.VobSubEditCharacters.Delete;
-            buttonAddBetterMatch.Text = Configuration.Settings.Language.VobSubOcrCharacterInspect.AddBetterMatch;
-            labelDoubleSize.Text = Configuration.Settings.Language.VobSubEditCharacters.ImageDoubleSize;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
-            Utilities.FixLargeFonts(this, buttonOK);
+            this.labelCount.Text = string.Empty;
+            this.labelExpandCount.Text = string.Empty;
+            this.Text = Configuration.Settings.Language.VobSubOcrCharacterInspect.Title;
+            this.groupBoxInspectItems.Text = Configuration.Settings.Language.VobSubOcrCharacterInspect.InspectItems;
+            this.labelImageInfo.Text = string.Empty;
+            this.groupBoxCurrentCompareImage.Text = Configuration.Settings.Language.VobSubEditCharacters.CurrentCompareImage;
+            this.labelTextAssociatedWithImage.Text = Configuration.Settings.Language.VobSubEditCharacters.TextAssociatedWithImage;
+            this.checkBoxItalic.Text = Configuration.Settings.Language.VobSubEditCharacters.IsItalic;
+            this.buttonUpdate.Text = Configuration.Settings.Language.VobSubEditCharacters.Update;
+            this.buttonDelete.Text = Configuration.Settings.Language.VobSubEditCharacters.Delete;
+            this.buttonAddBetterMatch.Text = Configuration.Settings.Language.VobSubOcrCharacterInspect.AddBetterMatch;
+            this.labelDoubleSize.Text = Configuration.Settings.Language.VobSubEditCharacters.ImageDoubleSize;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            Utilities.FixLargeFonts(this, this.buttonOK);
         }
 
+        /// <summary>
+        /// Gets the image compare document.
+        /// </summary>
+        public XmlDocument ImageCompareDocument { get; private set; }
+
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="databaseFolderName">
+        /// The database folder name.
+        /// </param>
+        /// <param name="matches">
+        /// The matches.
+        /// </param>
+        /// <param name="imageSources">
+        /// The image sources.
+        /// </param>
+        /// <param name="binOcrDb">
+        /// The bin ocr db.
+        /// </param>
         internal void Initialize(string databaseFolderName, List<VobSubOcr.CompareMatch> matches, List<Bitmap> imageSources, BinaryOcrDb binOcrDb)
         {
-            _binOcrDb = binOcrDb;
-            _matches = matches;
-            _imageSources = imageSources;
+            this._binOcrDb = binOcrDb;
+            this._matches = matches;
+            this._imageSources = imageSources;
 
-            if (_binOcrDb == null)
+            if (this._binOcrDb == null)
             {
-                ImageCompareDocument = new XmlDocument();
-                _directoryPath = Configuration.VobSubCompareFolder + databaseFolderName + Path.DirectorySeparatorChar;
-                if (!File.Exists(_directoryPath + "Images.xml"))
-                    ImageCompareDocument.LoadXml("<OcrBitmaps></OcrBitmaps>");
+                this.ImageCompareDocument = new XmlDocument();
+                this._directoryPath = Configuration.VobSubCompareFolder + databaseFolderName + Path.DirectorySeparatorChar;
+                if (!File.Exists(this._directoryPath + "Images.xml"))
+                {
+                    this.ImageCompareDocument.LoadXml("<OcrBitmaps></OcrBitmaps>");
+                }
                 else
-                    ImageCompareDocument.Load(_directoryPath + "Images.xml");
+                {
+                    this.ImageCompareDocument.Load(this._directoryPath + "Images.xml");
+                }
             }
 
-            for (int i = 0; i < _matches.Count; i++)
-                listBoxInspectItems.Items.Add(_matches[i]);
-            if (listBoxInspectItems.Items.Count > 0)
-                listBoxInspectItems.SelectedIndex = 0;
-            ShowCount();
+            for (int i = 0; i < this._matches.Count; i++)
+            {
+                this.listBoxInspectItems.Items.Add(this._matches[i]);
+            }
+
+            if (this.listBoxInspectItems.Items.Count > 0)
+            {
+                this.listBoxInspectItems.SelectedIndex = 0;
+            }
+
+            this.ShowCount();
         }
 
+        /// <summary>
+        /// The list box inspect items_ selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void listBoxInspectItems_SelectedIndexChanged(object sender, EventArgs e)
         {
-            labelImageInfo.Text = string.Empty;
-            labelExpandCount.Text = string.Empty;
+            this.labelImageInfo.Text = string.Empty;
+            this.labelExpandCount.Text = string.Empty;
 
-            if (listBoxInspectItems.SelectedIndex < 0)
+            if (this.listBoxInspectItems.SelectedIndex < 0)
+            {
                 return;
+            }
 
-            _selectedCompareNode = null;
-            _selectedCompareBinaryOcrBitmap = null;
+            this._selectedCompareNode = null;
+            this._selectedCompareBinaryOcrBitmap = null;
 
-            pictureBoxInspectItem.Image = _imageSources[listBoxInspectItems.SelectedIndex];
-            pictureBoxCompareBitmap.Image = null;
-            pictureBoxCompareBitmapDouble.Image = null;
+            this.pictureBoxInspectItem.Image = this._imageSources[this.listBoxInspectItems.SelectedIndex];
+            this.pictureBoxCompareBitmap.Image = null;
+            this.pictureBoxCompareBitmapDouble.Image = null;
 
-            int index = (listBoxInspectItems.SelectedIndex);
-            var match = _matches[index];
-            _selectedMatch = match;
+            int index = this.listBoxInspectItems.SelectedIndex;
+            var match = this._matches[index];
+            this._selectedMatch = match;
             if (!string.IsNullOrEmpty(match.Name))
             {
-                if (_binOcrDb != null)
+                if (this._binOcrDb != null)
                 {
                     bool bobFound = false;
-                    foreach (BinaryOcrBitmap bob in _binOcrDb.CompareImages)
+                    foreach (BinaryOcrBitmap bob in this._binOcrDb.CompareImages)
                     {
                         if (match.Name == bob.Key)
                         {
-                            textBoxText.Text = bob.Text;
-                            checkBoxItalic.Checked = bob.Italic;
-                            _selectedCompareBinaryOcrBitmap = bob;
+                            this.textBoxText.Text = bob.Text;
+                            this.checkBoxItalic.Checked = bob.Italic;
+                            this._selectedCompareBinaryOcrBitmap = bob;
 
                             var bitmap = bob.ToOldBitmap();
-                            pictureBoxCompareBitmap.Image = bitmap;
-                            pictureBoxCompareBitmapDouble.Width = bitmap.Width * 2;
-                            pictureBoxCompareBitmapDouble.Height = bitmap.Height * 2;
-                            pictureBoxCompareBitmapDouble.Image = bitmap;
+                            this.pictureBoxCompareBitmap.Image = bitmap;
+                            this.pictureBoxCompareBitmapDouble.Width = bitmap.Width * 2;
+                            this.pictureBoxCompareBitmapDouble.Height = bitmap.Height * 2;
+                            this.pictureBoxCompareBitmapDouble.Image = bitmap;
 
-                            var matchBob = new BinaryOcrBitmap(new NikseBitmap(_imageSources[listBoxInspectItems.SelectedIndex]));
+                            var matchBob = new BinaryOcrBitmap(new NikseBitmap(this._imageSources[this.listBoxInspectItems.SelectedIndex]));
                             if (matchBob.Hash == bob.Hash && matchBob.Width == bob.Width && matchBob.Height == bob.Height && matchBob.NumberOfColoredPixels == bob.NumberOfColoredPixels)
                             {
-                                buttonAddBetterMatch.Enabled = false; // exact match
+                                this.buttonAddBetterMatch.Enabled = false; // exact match
                             }
                             else
                             {
-                                buttonAddBetterMatch.Enabled = true;
+                                this.buttonAddBetterMatch.Enabled = true;
                             }
 
                             bobFound = true;
                             break;
                         }
                     }
+
                     if (!bobFound)
                     {
-                        foreach (BinaryOcrBitmap bob in _binOcrDb.CompareImagesExpanded)
+                        foreach (BinaryOcrBitmap bob in this._binOcrDb.CompareImagesExpanded)
                         {
                             if (match.Name == bob.Key)
                             {
-                                textBoxText.Text = bob.Text;
-                                checkBoxItalic.Checked = bob.Italic;
-                                _selectedCompareBinaryOcrBitmap = bob;
+                                this.textBoxText.Text = bob.Text;
+                                this.checkBoxItalic.Checked = bob.Italic;
+                                this._selectedCompareBinaryOcrBitmap = bob;
 
                                 var bitmap = bob.ToOldBitmap();
-                                pictureBoxCompareBitmap.Image = bitmap;
-                                pictureBoxCompareBitmapDouble.Width = bitmap.Width * 2;
-                                pictureBoxCompareBitmapDouble.Height = bitmap.Height * 2;
-                                pictureBoxCompareBitmapDouble.Image = bitmap;
-                                buttonAddBetterMatch.Enabled = false; // exact match
-                                labelExpandCount.Text = string.Format("Expand count: {0}", bob.ExpandCount);
+                                this.pictureBoxCompareBitmap.Image = bitmap;
+                                this.pictureBoxCompareBitmapDouble.Width = bitmap.Width * 2;
+                                this.pictureBoxCompareBitmapDouble.Height = bitmap.Height * 2;
+                                this.pictureBoxCompareBitmapDouble.Image = bitmap;
+                                this.buttonAddBetterMatch.Enabled = false; // exact match
+                                this.labelExpandCount.Text = string.Format("Expand count: {0}", bob.ExpandCount);
                                 break;
                             }
                         }
@@ -141,17 +224,17 @@ namespace Nikse.SubtitleEdit.Forms
                 }
                 else
                 {
-                    foreach (XmlNode node in ImageCompareDocument.DocumentElement.ChildNodes)
+                    foreach (XmlNode node in this.ImageCompareDocument.DocumentElement.ChildNodes)
                     {
                         if (node.Attributes["Text"] != null && node.InnerText == match.Name)
                         {
                             string text = node.Attributes["Text"].InnerText;
                             string imageFileName = node.InnerText;
-                            imageFileName = Path.Combine(_directoryPath, imageFileName);
-                            textBoxText.Text = text;
-                            checkBoxItalic.Checked = node.Attributes["Italic"] != null;
+                            imageFileName = Path.Combine(this._directoryPath, imageFileName);
+                            this.textBoxText.Text = text;
+                            this.checkBoxItalic.Checked = node.Attributes["Italic"] != null;
 
-                            string databaseName = Path.Combine(_directoryPath, "Images.db");
+                            string databaseName = Path.Combine(this._directoryPath, "Images.db");
                             using (var f = new FileStream(databaseName, FileMode.Open))
                             {
                                 try
@@ -161,90 +244,110 @@ namespace Nikse.SubtitleEdit.Forms
                                     f.Position = pos;
                                     ManagedBitmap mbmp = new ManagedBitmap(f);
                                     var bitmap = mbmp.ToOldBitmap();
-                                    pictureBoxCompareBitmap.Image = bitmap;
-                                    pictureBoxCompareBitmapDouble.Width = bitmap.Width * 2;
-                                    pictureBoxCompareBitmapDouble.Height = bitmap.Height * 2;
-                                    pictureBoxCompareBitmapDouble.Image = bitmap;
-                                    labelImageInfo.Text = string.Format(Configuration.Settings.Language.VobSubEditCharacters.Image + " - {0}x{1}", bitmap.Width, bitmap.Height);
+                                    this.pictureBoxCompareBitmap.Image = bitmap;
+                                    this.pictureBoxCompareBitmapDouble.Width = bitmap.Width * 2;
+                                    this.pictureBoxCompareBitmapDouble.Height = bitmap.Height * 2;
+                                    this.pictureBoxCompareBitmapDouble.Image = bitmap;
+                                    this.labelImageInfo.Text = string.Format(Configuration.Settings.Language.VobSubEditCharacters.Image + " - {0}x{1}", bitmap.Width, bitmap.Height);
                                 }
                                 catch (Exception exception)
                                 {
-                                    labelImageInfo.Text = Configuration.Settings.Language.VobSubEditCharacters.Image;
+                                    this.labelImageInfo.Text = Configuration.Settings.Language.VobSubEditCharacters.Image;
                                     MessageBox.Show(exception.Message);
                                 }
                             }
 
-                            _selectedCompareNode = node;
+                            this._selectedCompareNode = node;
                             break;
                         }
                     }
                 }
             }
 
-            if (_selectedCompareNode == null && _selectedCompareBinaryOcrBitmap == null)
+            if (this._selectedCompareNode == null && this._selectedCompareBinaryOcrBitmap == null)
             {
-                buttonUpdate.Enabled = false;
-                buttonDelete.Enabled = false;
-                buttonAddBetterMatch.Enabled = false;
-                textBoxText.Enabled = false;
-                textBoxText.Text = string.Empty;
-                checkBoxItalic.Enabled = false;
+                this.buttonUpdate.Enabled = false;
+                this.buttonDelete.Enabled = false;
+                this.buttonAddBetterMatch.Enabled = false;
+                this.textBoxText.Enabled = false;
+                this.textBoxText.Text = string.Empty;
+                this.checkBoxItalic.Enabled = false;
             }
             else
             {
-                buttonUpdate.Enabled = true;
-                buttonDelete.Enabled = true;
-                if (_selectedCompareNode != null)
-                    buttonAddBetterMatch.Enabled = true;
-                textBoxText.Enabled = true;
-                checkBoxItalic.Enabled = true;
+                this.buttonUpdate.Enabled = true;
+                this.buttonDelete.Enabled = true;
+                if (this._selectedCompareNode != null)
+                {
+                    this.buttonAddBetterMatch.Enabled = true;
+                }
+
+                this.textBoxText.Enabled = true;
+                this.checkBoxItalic.Enabled = true;
             }
         }
 
+        /// <summary>
+        /// The button update_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonUpdate_Click(object sender, EventArgs e)
         {
-            if (_selectedCompareNode == null && _selectedCompareBinaryOcrBitmap == null)
-                return;
-
-            string newText = textBoxText.Text;
-
-            if (_selectedCompareBinaryOcrBitmap != null)
+            if (this._selectedCompareNode == null && this._selectedCompareBinaryOcrBitmap == null)
             {
-                foreach (var match in _matches)
+                return;
+            }
+
+            string newText = this.textBoxText.Text;
+
+            if (this._selectedCompareBinaryOcrBitmap != null)
+            {
+                foreach (var match in this._matches)
                 {
-                    if (match.Name == _selectedCompareBinaryOcrBitmap.Key)
+                    if (match.Name == this._selectedCompareBinaryOcrBitmap.Key)
                     {
-                        _selectedCompareBinaryOcrBitmap.Text = newText;
-                        _selectedCompareBinaryOcrBitmap.Italic = checkBoxItalic.Checked;
+                        this._selectedCompareBinaryOcrBitmap.Text = newText;
+                        this._selectedCompareBinaryOcrBitmap.Italic = this.checkBoxItalic.Checked;
                         match.Text = newText;
-                        match.Italic = checkBoxItalic.Checked;
-                        match.Name = _selectedCompareBinaryOcrBitmap.Key;
+                        match.Italic = this.checkBoxItalic.Checked;
+                        match.Name = this._selectedCompareBinaryOcrBitmap.Key;
                         break;
                     }
                 }
 
-                _selectedCompareBinaryOcrBitmap.Text = newText;
-                _selectedCompareBinaryOcrBitmap.Italic = checkBoxItalic.Checked;
-                listBoxInspectItems.SelectedIndexChanged -= listBoxInspectItems_SelectedIndexChanged;
-                listBoxInspectItems.Items[listBoxInspectItems.SelectedIndex] = newText;
-                listBoxInspectItems.SelectedIndexChanged += listBoxInspectItems_SelectedIndexChanged;
+                this._selectedCompareBinaryOcrBitmap.Text = newText;
+                this._selectedCompareBinaryOcrBitmap.Italic = this.checkBoxItalic.Checked;
+                this.listBoxInspectItems.SelectedIndexChanged -= this.listBoxInspectItems_SelectedIndexChanged;
+                this.listBoxInspectItems.Items[this.listBoxInspectItems.SelectedIndex] = newText;
+                this.listBoxInspectItems.SelectedIndexChanged += this.listBoxInspectItems_SelectedIndexChanged;
             }
             else
             {
-                XmlNode node = _selectedCompareNode;
-                listBoxInspectItems.SelectedIndexChanged -= listBoxInspectItems_SelectedIndexChanged;
-                listBoxInspectItems.Items[listBoxInspectItems.SelectedIndex] = newText;
-                listBoxInspectItems.SelectedIndexChanged += listBoxInspectItems_SelectedIndexChanged;
+                XmlNode node = this._selectedCompareNode;
+                this.listBoxInspectItems.SelectedIndexChanged -= this.listBoxInspectItems_SelectedIndexChanged;
+                this.listBoxInspectItems.Items[this.listBoxInspectItems.SelectedIndex] = newText;
+                this.listBoxInspectItems.SelectedIndexChanged += this.listBoxInspectItems_SelectedIndexChanged;
                 node.Attributes["Text"].InnerText = newText;
-                SetItalic(node);
+                this.SetItalic(node);
             }
 
-            listBoxInspectItems_SelectedIndexChanged(null, null);
+            this.listBoxInspectItems_SelectedIndexChanged(null, null);
         }
 
+        /// <summary>
+        /// The set italic.
+        /// </summary>
+        /// <param name="node">
+        /// The node.
+        /// </param>
         private void SetItalic(XmlNode node)
         {
-            if (checkBoxItalic.Checked)
+            if (this.checkBoxItalic.Checked)
             {
                 if (node.Attributes["Italic"] == null)
                 {
@@ -262,48 +365,76 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The button delete_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            if (_selectedCompareNode == null && _selectedCompareBinaryOcrBitmap == null)
-                return;
-
-            listBoxInspectItems.Items[listBoxInspectItems.SelectedIndex] = Configuration.Settings.Language.VobSubOcr.NoMatch;
-            if (_selectedCompareBinaryOcrBitmap != null)
+            if (this._selectedCompareNode == null && this._selectedCompareBinaryOcrBitmap == null)
             {
-                if (_selectedCompareBinaryOcrBitmap.ExpandCount > 0)
-                    _binOcrDb.CompareImagesExpanded.Remove(_selectedCompareBinaryOcrBitmap);
+                return;
+            }
+
+            this.listBoxInspectItems.Items[this.listBoxInspectItems.SelectedIndex] = Configuration.Settings.Language.VobSubOcr.NoMatch;
+            if (this._selectedCompareBinaryOcrBitmap != null)
+            {
+                if (this._selectedCompareBinaryOcrBitmap.ExpandCount > 0)
+                {
+                    this._binOcrDb.CompareImagesExpanded.Remove(this._selectedCompareBinaryOcrBitmap);
+                }
                 else
-                    _binOcrDb.CompareImages.Remove(_selectedCompareBinaryOcrBitmap);
-                _selectedCompareBinaryOcrBitmap = null;
+                {
+                    this._binOcrDb.CompareImages.Remove(this._selectedCompareBinaryOcrBitmap);
+                }
+
+                this._selectedCompareBinaryOcrBitmap = null;
             }
             else
             {
-                ImageCompareDocument.DocumentElement.RemoveChild(_selectedCompareNode);
-                _selectedCompareNode = null;
+                this.ImageCompareDocument.DocumentElement.RemoveChild(this._selectedCompareNode);
+                this._selectedCompareNode = null;
             }
-            listBoxInspectItems_SelectedIndexChanged(null, null);
+
+            this.listBoxInspectItems_SelectedIndexChanged(null, null);
         }
 
+        /// <summary>
+        /// The button add better match_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonAddBetterMatch_Click(object sender, EventArgs e)
         {
-            if (listBoxInspectItems.SelectedIndex < 0)
-                return;
-
-            if (listBoxInspectItems.Items[listBoxInspectItems.SelectedIndex].ToString() == textBoxText.Text)
+            if (this.listBoxInspectItems.SelectedIndex < 0)
             {
-                textBoxText.SelectAll();
-                textBoxText.Focus();
                 return;
             }
 
-            if (_selectedCompareNode != null)
+            if (this.listBoxInspectItems.Items[this.listBoxInspectItems.SelectedIndex].ToString() == this.textBoxText.Text)
             {
-                XmlNode newNode = ImageCompareDocument.CreateElement("Item");
+                this.textBoxText.SelectAll();
+                this.textBoxText.Focus();
+                return;
+            }
+
+            if (this._selectedCompareNode != null)
+            {
+                XmlNode newNode = this.ImageCompareDocument.CreateElement("Item");
                 XmlAttribute text = newNode.OwnerDocument.CreateAttribute("Text");
-                text.InnerText = textBoxText.Text;
+                text.InnerText = this.textBoxText.Text;
                 newNode.Attributes.Append(text);
 
-                string databaseName = Path.Combine(_directoryPath, "Images.db");
+                string databaseName = Path.Combine(this._directoryPath, "Images.db");
                 FileStream f;
                 long pos = 0;
                 if (!File.Exists(databaseName))
@@ -311,7 +442,7 @@ namespace Nikse.SubtitleEdit.Forms
                     using (f = new FileStream(databaseName, FileMode.Create))
                     {
                         pos = f.Position;
-                        new ManagedBitmap(pictureBoxInspectItem.Image as Bitmap).AppendToStream(f);
+                        new ManagedBitmap(this.pictureBoxInspectItem.Image as Bitmap).AppendToStream(f);
                     }
                 }
                 else
@@ -319,61 +450,75 @@ namespace Nikse.SubtitleEdit.Forms
                     using (f = new FileStream(databaseName, FileMode.Append))
                     {
                         pos = f.Position;
-                        new ManagedBitmap(pictureBoxInspectItem.Image as Bitmap).AppendToStream(f);
+                        new ManagedBitmap(this.pictureBoxInspectItem.Image as Bitmap).AppendToStream(f);
                     }
                 }
+
                 string name = pos.ToString(CultureInfo.InvariantCulture);
                 newNode.InnerText = name;
 
-                SetItalic(newNode);
-                ImageCompareDocument.DocumentElement.AppendChild(newNode);
+                this.SetItalic(newNode);
+                this.ImageCompareDocument.DocumentElement.AppendChild(newNode);
 
-                int index = listBoxInspectItems.SelectedIndex;
-                _matches[index].Name = name;
-                _matches[index].ExpandCount = 0;
-                _matches[index].Italic = checkBoxItalic.Checked;
-                _matches[index].Text = textBoxText.Text;
-                listBoxInspectItems.Items.Clear();
-                for (int i = 0; i < _matches.Count; i++)
-                    listBoxInspectItems.Items.Add(_matches[i].Text);
-                listBoxInspectItems.SelectedIndex = index;
-                ShowCount();
-                listBoxInspectItems_SelectedIndexChanged(null, null);
+                int index = this.listBoxInspectItems.SelectedIndex;
+                this._matches[index].Name = name;
+                this._matches[index].ExpandCount = 0;
+                this._matches[index].Italic = this.checkBoxItalic.Checked;
+                this._matches[index].Text = this.textBoxText.Text;
+                this.listBoxInspectItems.Items.Clear();
+                for (int i = 0; i < this._matches.Count; i++)
+                {
+                    this.listBoxInspectItems.Items.Add(this._matches[i].Text);
+                }
+
+                this.listBoxInspectItems.SelectedIndex = index;
+                this.ShowCount();
+                this.listBoxInspectItems_SelectedIndexChanged(null, null);
             }
-            else if (_selectedCompareBinaryOcrBitmap != null)
+            else if (this._selectedCompareBinaryOcrBitmap != null)
             {
-                var nbmp = new NikseBitmap((pictureBoxInspectItem.Image as Bitmap));
+                var nbmp = new NikseBitmap(this.pictureBoxInspectItem.Image as Bitmap);
                 int x = 0;
                 int y = 0;
-                if (_selectedMatch != null && _selectedMatch.ImageSplitterItem != null)
+                if (this._selectedMatch != null && this._selectedMatch.ImageSplitterItem != null)
                 {
-                    x = _selectedMatch.X;
-                    y = _selectedMatch.Y;
+                    x = this._selectedMatch.X;
+                    y = this._selectedMatch.Y;
                 }
-                var bob = new BinaryOcrBitmap(nbmp, checkBoxItalic.Checked, 0, textBoxText.Text, x, y);
-                _binOcrDb.Add(bob);
 
-                int index = listBoxInspectItems.SelectedIndex;
-                _matches[index].Name = bob.Key;
-                _matches[index].ExpandCount = 0;
-                _matches[index].Italic = checkBoxItalic.Checked;
-                _matches[index].Text = textBoxText.Text;
-                listBoxInspectItems.Items.Clear();
-                for (int i = 0; i < _matches.Count; i++)
-                    listBoxInspectItems.Items.Add(_matches[i].Text);
-                listBoxInspectItems.SelectedIndex = index;
-                listBoxInspectItems_SelectedIndexChanged(null, null);
-                ShowCount();
+                var bob = new BinaryOcrBitmap(nbmp, this.checkBoxItalic.Checked, 0, this.textBoxText.Text, x, y);
+                this._binOcrDb.Add(bob);
+
+                int index = this.listBoxInspectItems.SelectedIndex;
+                this._matches[index].Name = bob.Key;
+                this._matches[index].ExpandCount = 0;
+                this._matches[index].Italic = this.checkBoxItalic.Checked;
+                this._matches[index].Text = this.textBoxText.Text;
+                this.listBoxInspectItems.Items.Clear();
+                for (int i = 0; i < this._matches.Count; i++)
+                {
+                    this.listBoxInspectItems.Items.Add(this._matches[i].Text);
+                }
+
+                this.listBoxInspectItems.SelectedIndex = index;
+                this.listBoxInspectItems_SelectedIndexChanged(null, null);
+                this.ShowCount();
             }
         }
 
+        /// <summary>
+        /// The show count.
+        /// </summary>
         private void ShowCount()
         {
-            if (listBoxInspectItems.Items.Count > 1)
-                labelCount.Text = listBoxInspectItems.Items.Count.ToString();
+            if (this.listBoxInspectItems.Items.Count > 1)
+            {
+                this.labelCount.Text = this.listBoxInspectItems.Items.Count.ToString();
+            }
             else
-                labelCount.Text = string.Empty;
+            {
+                this.labelCount.Text = string.Empty;
+            }
         }
-
     }
 }

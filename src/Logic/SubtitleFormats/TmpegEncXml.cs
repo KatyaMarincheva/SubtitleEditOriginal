@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TmpegEncXml.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The tmpeg enc xml.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -17,8 +26,14 @@
     // </Text>
     // </SubtitleItem>
     // ...
+    /// <summary>
+    /// The tmpeg enc xml.
+    /// </summary>
     public class TmpegEncXml : SubtitleFormat
     {
+        /// <summary>
+        /// The layout.
+        /// </summary>
         internal const string Layout = @"<?xml version='1.0' encoding='UTF-8'?>
 <TMPGEncVMESubtitleTextFormat>
     <Layout>
@@ -193,6 +208,9 @@
     </Subtitle>
 </TMPGEncVMESubtitleTextFormat>";
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -201,6 +219,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -209,6 +230,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -217,6 +241,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             StringBuilder sb = new StringBuilder();
@@ -232,6 +268,18 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             string xmlStructure = Layout.Replace('\'', '"');
@@ -283,11 +331,35 @@
             return Layout.Replace("@", s);
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this.LoadTMpeg(subtitle, lines, false);
         }
 
+        /// <summary>
+        /// The load t mpeg.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="mustHaveLineBreakAsEnd">
+        /// The must have line break as end.
+        /// </param>
         internal void LoadTMpeg(Subtitle subtitle, List<string> lines, bool mustHaveLineBreakAsEnd)
         {
             this._errorCount = 0;
@@ -400,6 +472,15 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The get time code.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode GetTimeCode(string s)
         {
             if (s.EndsWith('s'))

@@ -1,124 +1,198 @@
-﻿using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Logic;
-using System;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using System.Xml;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="GoogleTranslate.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The google translate.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.IO;
+    using System.Net;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using System.Web.Services.Protocols;
+    using System.Windows.Forms;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
+    using Nikse.SubtitleEdit.MicrosoftTranslationService;
+
+    /// <summary>
+    /// The google translate.
+    /// </summary>
     public sealed partial class GoogleTranslate : PositionAndSizeForm
     {
-        private Subtitle _subtitle;
-        private Subtitle _translatedSubtitle;
-        private bool _breakTranslation;
-        private bool _googleTranslate = true;
-        private MicrosoftTranslationService.SoapService _microsoftTranslationService;
-        private bool _googleApiNotWorking;
+        /// <summary>
+        /// The splitter string.
+        /// </summary>
         private const string SplitterString = " == ";
+
+        /// <summary>
+        /// The newline string.
+        /// </summary>
         private const string NewlineString = " __ ";
 
-        private enum FormattingType
-        {
-            None,
-            Italic,
-            ItalicTwoLines
-        }
+        /// <summary>
+        /// The _break translation.
+        /// </summary>
+        private bool _breakTranslation;
 
+        /// <summary>
+        /// The _formatting types.
+        /// </summary>
         private FormattingType[] _formattingTypes;
 
+        /// <summary>
+        /// The _google api not working.
+        /// </summary>
+        private bool _googleApiNotWorking;
+
+        /// <summary>
+        /// The _google translate.
+        /// </summary>
+        private bool _googleTranslate = true;
+
+        /// <summary>
+        /// The _microsoft translation service.
+        /// </summary>
+        private SoapService _microsoftTranslationService;
+
+        /// <summary>
+        /// The _screen scraping encoding.
+        /// </summary>
         private Encoding _screenScrapingEncoding;
+
+        /// <summary>
+        /// The _subtitle.
+        /// </summary>
+        private Subtitle _subtitle;
+
+        /// <summary>
+        /// The _translated subtitle.
+        /// </summary>
+        private Subtitle _translatedSubtitle;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GoogleTranslate"/> class.
+        /// </summary>
+        public GoogleTranslate()
+        {
+            this.InitializeComponent();
+
+            this.Text = Configuration.Settings.Language.GoogleTranslate.Title;
+            this.labelFrom.Text = Configuration.Settings.Language.GoogleTranslate.From;
+            this.labelTo.Text = Configuration.Settings.Language.GoogleTranslate.To;
+            this.buttonTranslate.Text = Configuration.Settings.Language.GoogleTranslate.Translate;
+            this.labelPleaseWait.Text = Configuration.Settings.Language.GoogleTranslate.PleaseWait;
+            this.linkLabelPoweredByGoogleTranslate.Text = Configuration.Settings.Language.GoogleTranslate.PoweredByGoogleTranslate;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+
+            this.subtitleListViewFrom.InitializeLanguage(Configuration.Settings.Language.General, Configuration.Settings);
+            this.subtitleListViewTo.InitializeLanguage(Configuration.Settings.Language.General, Configuration.Settings);
+            Utilities.InitializeSubtitleFont(this.subtitleListViewFrom);
+            Utilities.InitializeSubtitleFont(this.subtitleListViewTo);
+            this.subtitleListViewFrom.AutoSizeAllColumns(this);
+            this.subtitleListViewTo.AutoSizeAllColumns(this);
+            Utilities.FixLargeFonts(this, this.buttonOK);
+        }
+
+        /// <summary>
+        /// Gets the screen scraping encoding.
+        /// </summary>
         public Encoding ScreenScrapingEncoding
         {
-            get { return _screenScrapingEncoding; }
-        }
-
-        public class ComboBoxItem
-        {
-            public string Text { get; set; }
-            public string Value { get; set; }
-
-            public ComboBoxItem(string text, string value)
+            get
             {
-                if (text.Length > 1)
-                    text = char.ToUpper(text[0]) + text.Substring(1).ToLower();
-                Text = text;
-
-                Value = value;
-            }
-
-            public override string ToString()
-            {
-                return Text;
+                return this._screenScrapingEncoding;
             }
         }
 
+        /// <summary>
+        /// Gets the translated subtitle.
+        /// </summary>
         public Subtitle TranslatedSubtitle
         {
             get
             {
-                return _translatedSubtitle;
+                return this._translatedSubtitle;
             }
         }
 
-        public GoogleTranslate()
+        /// <summary>
+        /// Gets the ms translation service client.
+        /// </summary>
+        private SoapService MsTranslationServiceClient
         {
-            InitializeComponent();
+            get
+            {
+                if (this._microsoftTranslationService == null)
+                {
+                    this._microsoftTranslationService = new MicrosoftTranslationService.SoapService { Proxy = Utilities.GetProxy() };
+                }
 
-            Text = Configuration.Settings.Language.GoogleTranslate.Title;
-            labelFrom.Text = Configuration.Settings.Language.GoogleTranslate.From;
-            labelTo.Text = Configuration.Settings.Language.GoogleTranslate.To;
-            buttonTranslate.Text = Configuration.Settings.Language.GoogleTranslate.Translate;
-            labelPleaseWait.Text = Configuration.Settings.Language.GoogleTranslate.PleaseWait;
-            linkLabelPoweredByGoogleTranslate.Text = Configuration.Settings.Language.GoogleTranslate.PoweredByGoogleTranslate;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
-
-            subtitleListViewFrom.InitializeLanguage(Configuration.Settings.Language.General, Configuration.Settings);
-            subtitleListViewTo.InitializeLanguage(Configuration.Settings.Language.General, Configuration.Settings);
-            Utilities.InitializeSubtitleFont(subtitleListViewFrom);
-            Utilities.InitializeSubtitleFont(subtitleListViewTo);
-            subtitleListViewFrom.AutoSizeAllColumns(this);
-            subtitleListViewTo.AutoSizeAllColumns(this);
-            Utilities.FixLargeFonts(this, buttonOK);
+                return this._microsoftTranslationService;
+            }
         }
 
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <param name="googleTranslate">
+        /// The google translate.
+        /// </param>
+        /// <param name="encoding">
+        /// The encoding.
+        /// </param>
         internal void Initialize(Subtitle subtitle, string title, bool googleTranslate, Encoding encoding)
         {
             if (title != null)
-                Text = title;
-
-            _googleTranslate = googleTranslate;
-            if (!_googleTranslate)
             {
-                linkLabelPoweredByGoogleTranslate.Text = Configuration.Settings.Language.GoogleTranslate.PoweredByMicrosoftTranslate;
+                this.Text = title;
             }
 
-            labelPleaseWait.Visible = false;
-            progressBar1.Visible = false;
-            _subtitle = subtitle;
-            _translatedSubtitle = new Subtitle(subtitle);
+            this._googleTranslate = googleTranslate;
+            if (!this._googleTranslate)
+            {
+                this.linkLabelPoweredByGoogleTranslate.Text = Configuration.Settings.Language.GoogleTranslate.PoweredByMicrosoftTranslate;
+            }
+
+            this.labelPleaseWait.Visible = false;
+            this.progressBar1.Visible = false;
+            this._subtitle = subtitle;
+            this._translatedSubtitle = new Subtitle(subtitle);
 
             string defaultFromLanguage = Utilities.AutoDetectGoogleLanguage(encoding); // Guess language via encoding
             if (string.IsNullOrEmpty(defaultFromLanguage))
+            {
                 defaultFromLanguage = Utilities.AutoDetectGoogleLanguage(subtitle); // Guess language based on subtitle contents
+            }
 
-            FillComboWithLanguages(comboBoxFrom);
+            this.FillComboWithLanguages(this.comboBoxFrom);
             int i = 0;
-            foreach (ComboBoxItem item in comboBoxFrom.Items)
+            foreach (ComboBoxItem item in this.comboBoxFrom.Items)
             {
                 if (item.Value == defaultFromLanguage)
                 {
-                    comboBoxFrom.SelectedIndex = i;
+                    this.comboBoxFrom.SelectedIndex = i;
                     break;
                 }
+
                 i++;
             }
 
-            FillComboWithLanguages(comboBoxTo);
+            this.FillComboWithLanguages(this.comboBoxTo);
             i = 0;
             string uiCultureTargetLanguage = Configuration.Settings.Tools.GoogleTranslateLastTargetLanguage;
             if (uiCultureTargetLanguage == defaultFromLanguage)
@@ -138,99 +212,118 @@ namespace Nikse.SubtitleEdit.Forms
                     }
                 }
             }
-            comboBoxTo.SelectedIndex = 0;
-            foreach (ComboBoxItem item in comboBoxTo.Items)
+
+            this.comboBoxTo.SelectedIndex = 0;
+            foreach (ComboBoxItem item in this.comboBoxTo.Items)
             {
                 if (item.Value == uiCultureTargetLanguage)
                 {
-                    comboBoxTo.SelectedIndex = i;
+                    this.comboBoxTo.SelectedIndex = i;
                     break;
                 }
+
                 i++;
             }
 
-            subtitleListViewFrom.Fill(subtitle);
-            GoogleTranslate_Resize(null, null);
+            this.subtitleListViewFrom.Fill(subtitle);
+            this.GoogleTranslate_Resize(null, null);
 
-            _googleApiNotWorking = !Configuration.Settings.Tools.UseGooleApiPaidService; // google has closed their free api service :(
+            this._googleApiNotWorking = !Configuration.Settings.Tools.UseGooleApiPaidService; // google has closed their free api service :(
         }
 
+        /// <summary>
+        /// The button translate_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonTranslate_Click(object sender, EventArgs e)
         {
-            if (buttonTranslate.Text == Configuration.Settings.Language.General.Cancel)
+            if (this.buttonTranslate.Text == Configuration.Settings.Language.General.Cancel)
             {
-                buttonTranslate.Enabled = false;
-                _breakTranslation = true;
-                buttonOK.Enabled = true;
-                buttonCancel.Enabled = true;
+                this.buttonTranslate.Enabled = false;
+                this._breakTranslation = true;
+                this.buttonOK.Enabled = true;
+                this.buttonCancel.Enabled = true;
                 return;
             }
 
             // empty all texts
-            foreach (Paragraph p in _translatedSubtitle.Paragraphs)
-                p.Text = string.Empty;
-
-            if (!_googleTranslate)
+            foreach (Paragraph p in this._translatedSubtitle.Paragraphs)
             {
-                string from = (comboBoxFrom.SelectedItem as ComboBoxItem).Value;
-                string to = (comboBoxTo.SelectedItem as ComboBoxItem).Value;
-                DoMicrosoftTranslate(from, to);
+                p.Text = string.Empty;
+            }
+
+            if (!this._googleTranslate)
+            {
+                string from = (this.comboBoxFrom.SelectedItem as ComboBoxItem).Value;
+                string to = (this.comboBoxTo.SelectedItem as ComboBoxItem).Value;
+                this.DoMicrosoftTranslate(from, to);
                 return;
             }
 
-            _formattingTypes = new FormattingType[_subtitle.Paragraphs.Count];
+            this._formattingTypes = new FormattingType[this._subtitle.Paragraphs.Count];
 
-            buttonOK.Enabled = false;
-            buttonCancel.Enabled = false;
-            _breakTranslation = false;
-            buttonTranslate.Text = Configuration.Settings.Language.General.Cancel;
+            this.buttonOK.Enabled = false;
+            this.buttonCancel.Enabled = false;
+            this._breakTranslation = false;
+            this.buttonTranslate.Text = Configuration.Settings.Language.General.Cancel;
             const int textMaxSize = 1000;
             Cursor.Current = Cursors.WaitCursor;
-            progressBar1.Maximum = _subtitle.Paragraphs.Count;
-            progressBar1.Value = 0;
-            progressBar1.Visible = true;
-            labelPleaseWait.Visible = true;
+            this.progressBar1.Maximum = this._subtitle.Paragraphs.Count;
+            this.progressBar1.Value = 0;
+            this.progressBar1.Visible = true;
+            this.labelPleaseWait.Visible = true;
             int start = 0;
             try
             {
                 var sb = new StringBuilder();
                 int index = 0;
-                for (int i = 0; i < _subtitle.Paragraphs.Count; i++)
+                for (int i = 0; i < this._subtitle.Paragraphs.Count; i++)
                 {
-                    Paragraph p = _subtitle.Paragraphs[i];
+                    Paragraph p = this._subtitle.Paragraphs[i];
                     string text = p.Text.Trim();
                     if (text.StartsWith("<i>", StringComparison.Ordinal) && text.EndsWith("</i>", StringComparison.Ordinal) && text.Contains("</i>" + Environment.NewLine + "<i>") && Utilities.GetNumberOfLines(text) == 2 && Utilities.CountTagInText(text, "<i>") == 1)
                     {
-                        _formattingTypes[i] = FormattingType.ItalicTwoLines;
+                        this._formattingTypes[i] = FormattingType.ItalicTwoLines;
                         text = HtmlUtil.RemoveOpenCloseTags(text, HtmlUtil.TagItalic);
                     }
                     else if (text.StartsWith("<i>", StringComparison.Ordinal) && text.EndsWith("</i>", StringComparison.Ordinal) && Utilities.CountTagInText(text, "<i>") == 1)
                     {
-                        _formattingTypes[i] = FormattingType.Italic;
+                        this._formattingTypes[i] = FormattingType.Italic;
                         text = text.Substring(3, text.Length - 7);
                     }
                     else
                     {
-                        _formattingTypes[i] = FormattingType.None;
+                        this._formattingTypes[i] = FormattingType.None;
                     }
 
                     text = string.Format("{1} {0} |", text, SplitterString);
                     if (Utilities.UrlEncode(sb + text).Length >= textMaxSize)
                     {
-                        FillTranslatedText(DoTranslate(sb.ToString()), start, index - 1);
+                        this.FillTranslatedText(this.DoTranslate(sb.ToString()), start, index - 1);
                         sb = new StringBuilder();
-                        progressBar1.Refresh();
+                        this.progressBar1.Refresh();
                         Application.DoEvents();
                         start = index;
                     }
+
                     sb.Append(text);
                     index++;
-                    progressBar1.Value = index;
-                    if (_breakTranslation)
+                    this.progressBar1.Value = index;
+                    if (this._breakTranslation)
+                    {
                         break;
+                    }
                 }
+
                 if (sb.Length > 0)
-                    FillTranslatedText(DoTranslate(sb.ToString()), start, index - 1);
+                {
+                    this.FillTranslatedText(this.DoTranslate(sb.ToString()), start, index - 1);
+                }
             }
             catch (WebException webException)
             {
@@ -238,32 +331,50 @@ namespace Nikse.SubtitleEdit.Forms
             }
             finally
             {
-                labelPleaseWait.Visible = false;
-                progressBar1.Visible = false;
+                this.labelPleaseWait.Visible = false;
+                this.progressBar1.Visible = false;
                 Cursor.Current = Cursors.Default;
-                buttonTranslate.Text = Configuration.Settings.Language.GoogleTranslate.Translate;
-                buttonTranslate.Enabled = true;
-                buttonOK.Enabled = true;
-                buttonCancel.Enabled = true;
+                this.buttonTranslate.Text = Configuration.Settings.Language.GoogleTranslate.Translate;
+                this.buttonTranslate.Enabled = true;
+                this.buttonOK.Enabled = true;
+                this.buttonCancel.Enabled = true;
 
-                Configuration.Settings.Tools.GoogleTranslateLastTargetLanguage = (comboBoxTo.SelectedItem as ComboBoxItem).Value;
+                Configuration.Settings.Tools.GoogleTranslateLastTargetLanguage = (this.comboBoxTo.SelectedItem as ComboBoxItem).Value;
             }
         }
 
+        /// <summary>
+        /// The fill translated text.
+        /// </summary>
+        /// <param name="translatedText">
+        /// The translated text.
+        /// </param>
+        /// <param name="start">
+        /// The start.
+        /// </param>
+        /// <param name="end">
+        /// The end.
+        /// </param>
         private void FillTranslatedText(string translatedText, int start, int end)
         {
             int index = start;
             foreach (string s in translatedText.Split(new[] { "|" }, StringSplitOptions.None))
             {
-                if (index < _translatedSubtitle.Paragraphs.Count)
+                if (index < this._translatedSubtitle.Paragraphs.Count)
                 {
                     string cleanText = s.Replace("</p>", string.Empty).Trim();
                     int indexOfP = cleanText.IndexOf(SplitterString.Trim(), StringComparison.Ordinal);
                     if (indexOfP >= 0 && indexOfP < 4)
+                    {
                         cleanText = cleanText.Remove(0, indexOfP);
+                    }
+
                     cleanText = cleanText.Replace(SplitterString.Trim(), string.Empty).Trim();
                     if (cleanText.Contains('\n') && !cleanText.Contains('\r'))
+                    {
                         cleanText = cleanText.Replace("\n", Environment.NewLine);
+                    }
+
                     cleanText = cleanText.Replace(" ...", "...");
                     cleanText = cleanText.Replace(NewlineString.Trim(), Environment.NewLine);
                     cleanText = cleanText.Replace("<br />", Environment.NewLine);
@@ -278,38 +389,57 @@ namespace Nikse.SubtitleEdit.Forms
                     cleanText = cleanText.Replace("</I>", "</i>");
                     cleanText = cleanText.Replace("< i >", "<i>");
                     if (cleanText.StartsWith("<i> ", StringComparison.Ordinal))
+                    {
                         cleanText = cleanText.Remove(3, 1);
+                    }
+
                     if (cleanText.EndsWith(" </i>", StringComparison.Ordinal))
+                    {
                         cleanText = cleanText.Remove(cleanText.Length - 5, 1);
+                    }
+
                     cleanText = cleanText.Replace(Environment.NewLine + "<i> ", Environment.NewLine + "<i>");
                     cleanText = cleanText.Replace(" </i>" + Environment.NewLine, "</i>" + Environment.NewLine);
 
-                    if (_formattingTypes[index] == FormattingType.ItalicTwoLines || _formattingTypes[index] == FormattingType.Italic)
+                    if (this._formattingTypes[index] == FormattingType.ItalicTwoLines || this._formattingTypes[index] == FormattingType.Italic)
                     {
-                        _translatedSubtitle.Paragraphs[index].Text = "<i>" + cleanText + "</i>";
+                        this._translatedSubtitle.Paragraphs[index].Text = "<i>" + cleanText + "</i>";
                     }
                     else
                     {
-                        _translatedSubtitle.Paragraphs[index].Text = cleanText;
+                        this._translatedSubtitle.Paragraphs[index].Text = cleanText;
                     }
                 }
+
                 index++;
             }
-            subtitleListViewTo.Fill(_translatedSubtitle);
-            subtitleListViewTo.SelectIndexAndEnsureVisible(end);
+
+            this.subtitleListViewTo.Fill(this._translatedSubtitle);
+            this.subtitleListViewTo.SelectIndexAndEnsureVisible(end);
         }
 
+        /// <summary>
+        /// The do translate.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string DoTranslate(string input)
         {
-            string languagePair = (comboBoxFrom.SelectedItem as ComboBoxItem).Value + "|" + (comboBoxTo.SelectedItem as ComboBoxItem).Value;
+            string languagePair = (this.comboBoxFrom.SelectedItem as ComboBoxItem).Value + "|" + (this.comboBoxTo.SelectedItem as ComboBoxItem).Value;
             bool romanji = languagePair.EndsWith("|romanji", StringComparison.InvariantCulture);
             if (romanji)
-                languagePair = (comboBoxFrom.SelectedItem as ComboBoxItem).Value + "|ja" ;
+            {
+                languagePair = (this.comboBoxFrom.SelectedItem as ComboBoxItem).Value + "|ja";
+            }
 
-            input = PreTranslate(input.TrimEnd('|').Trim());
+            input = this.PreTranslate(input.TrimEnd('|').Trim());
 
             string result = null;
-            if (!_googleApiNotWorking)
+            if (!this._googleApiNotWorking)
             {
                 try
                 {
@@ -317,7 +447,7 @@ namespace Nikse.SubtitleEdit.Forms
                 }
                 catch
                 {
-                    _googleApiNotWorking = true;
+                    this._googleApiNotWorking = true;
                     result = string.Empty;
                 }
             }
@@ -325,33 +455,48 @@ namespace Nikse.SubtitleEdit.Forms
             // fallback to screen scraping
             if (string.IsNullOrEmpty(result))
             {
-                if (_screenScrapingEncoding == null)
-                    _screenScrapingEncoding = GetScreenScrapingEncoding(languagePair);
-                result = TranslateTextViaScreenScraping(input, languagePair, _screenScrapingEncoding, romanji);
-                _googleApiNotWorking = true;
+                if (this._screenScrapingEncoding == null)
+                {
+                    this._screenScrapingEncoding = GetScreenScrapingEncoding(languagePair);
+                }
+
+                result = TranslateTextViaScreenScraping(input, languagePair, this._screenScrapingEncoding, romanji);
+                this._googleApiNotWorking = true;
             }
 
-            return PostTranslate(result);
+            return this.PostTranslate(result);
         }
 
+        /// <summary>
+        /// The translate text via api.
+        /// </summary>
+        /// <param name="input">
+        /// The input.
+        /// </param>
+        /// <param name="languagePair">
+        /// The language pair.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string TranslateTextViaApi(string input, string languagePair)
         {
-            //string googleApiKey = "ABQIAAAA4j5cWwa3lDH0RkZceh7PjBTDmNAghl5kWSyuukQ0wtoJG8nFBxRPlalq-gAvbeCXMCkmrysqjXV1Gw";
+            // string googleApiKey = "ABQIAAAA4j5cWwa3lDH0RkZceh7PjBTDmNAghl5kWSyuukQ0wtoJG8nFBxRPlalq-gAvbeCXMCkmrysqjXV1Gw";
             string googleApiKey = Configuration.Settings.Tools.GoogleApiKey;
 
             input = input.Replace(Environment.NewLine, NewlineString);
             input = input.Replace("'", "&apos;");
+
             // create the web request to the Google Translate REST interface
 
-            //API V 1.0
+            // API V 1.0
             var uri = new Uri("http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=" + Utilities.UrlEncode(input) + "&langpair=" + languagePair + "&key=" + googleApiKey);
 
-            //API V 2.0 ?
-            //string[] arr = languagePair.Split('|');
-            //string from = arr[0];
-            //string to = arr[1];
-            //string url = String.Format("https://www.googleapis.com/language/translate/v2?key={3}&q={0}&source={1}&target={2}", HttpUtility.UrlEncode(input), from, to, googleApiKey);
-
+            // API V 2.0 ?
+            // string[] arr = languagePair.Split('|');
+            // string from = arr[0];
+            // string to = arr[1];
+            // string url = String.Format("https://www.googleapis.com/language/translate/v2?key={3}&q={0}&source={1}&target={2}", HttpUtility.UrlEncode(input), from, to, googleApiKey);
             var request = WebRequest.Create(uri);
             request.Proxy = Utilities.GetProxy();
             var response = request.GetResponse();
@@ -380,9 +525,19 @@ namespace Nikse.SubtitleEdit.Forms
                 test = RemovePStyleParameters(test);
                 return test;
             }
+
             return string.Empty;
         }
 
+        /// <summary>
+        /// The remove p style parameters.
+        /// </summary>
+        /// <param name="test">
+        /// The test.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemovePStyleParameters(string test)
         {
             var startPosition = test.IndexOf("<p style", StringComparison.Ordinal);
@@ -390,16 +545,28 @@ namespace Nikse.SubtitleEdit.Forms
             {
                 var endPosition = test.IndexOf('>', startPosition + 8);
                 if (endPosition > 0)
+                {
                     return test.Remove(startPosition + 2, endPosition - startPosition - 2);
+                }
             }
+
             return test;
         }
 
+        /// <summary>
+        /// The get screen scraping encoding.
+        /// </summary>
+        /// <param name="languagePair">
+        /// The language pair.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Encoding"/>.
+        /// </returns>
         public static Encoding GetScreenScrapingEncoding(string languagePair)
         {
             try
             {
-                string url = String.Format("https://translate.google.com/?hl=en&eotf=1&sl={0}&tl={1}&q={2}", languagePair.Substring(0, 2), languagePair.Substring(3), "123 456");
+                string url = string.Format("https://translate.google.com/?hl=en&eotf=1&sl={0}&tl={1}&q={2}", languagePair.Substring(0, 2), languagePair.Substring(3), "123 456");
                 var result = Utilities.DownloadString(url).ToLower();
                 int idx = result.IndexOf("charset", StringComparison.Ordinal);
                 int end = result.IndexOf('"', idx + 8);
@@ -416,19 +583,30 @@ namespace Nikse.SubtitleEdit.Forms
         /// Translate Text using Google Translate API's
         /// Google URL - https://www.google.com/translate_t?hl=en&amp;ie=UTF8&amp;text={0}&amp;langpair={1}
         /// </summary>
-        /// <param name="input">Input string</param>
-        /// <param name="languagePair">2 letter Language Pair, delimited by "|".
-        /// E.g. "ar|en" language pair means to translate from Arabic to English</param>
-        /// <param name="encoding">Encoding to use when downloading text</param>
-        /// <param name="romanji">Get Romanjii text (made during Japanese) but in a separate div tag</param>
-        /// <returns>Translated to String</returns>
+        /// <param name="input">
+        /// Input string
+        /// </param>
+        /// <param name="languagePair">
+        /// 2 letter Language Pair, delimited by "|".
+        /// E.g. "ar|en" language pair means to translate from Arabic to English
+        /// </param>
+        /// <param name="encoding">
+        /// Encoding to use when downloading text
+        /// </param>
+        /// <param name="romanji">
+        /// Get Romanjii text (made during Japanese) but in a separate div tag
+        /// </param>
+        /// <returns>
+        /// Translated to String
+        /// </returns>
         public static string TranslateTextViaScreenScraping(string input, string languagePair, Encoding encoding, bool romanji)
         {
             input = input.Replace(Environment.NewLine, NewlineString);
-            //input = input.Replace("'", "&apos;");
 
-            //string url = String.Format("https://www.google.com/translate_t?hl=en&ie=UTF8&text={0}&langpair={1}", HttpUtility.UrlEncode(input), languagePair);
-            string url = String.Format("https://translate.google.com/?hl=en&eotf=1&sl={0}&tl={1}&q={2}", languagePair.Substring(0, 2), languagePair.Substring(3), Utilities.UrlEncode(input));
+            // input = input.Replace("'", "&apos;");
+
+            // string url = String.Format("https://www.google.com/translate_t?hl=en&ie=UTF8&text={0}&langpair={1}", HttpUtility.UrlEncode(input), languagePair);
+            string url = string.Format("https://translate.google.com/?hl=en&eotf=1&sl={0}&tl={1}&q={2}", languagePair.Substring(0, 2), languagePair.Substring(3), Utilities.UrlEncode(input));
             var result = Utilities.DownloadString(url, encoding);
 
             var sb = new StringBuilder();
@@ -471,6 +649,7 @@ namespace Nikse.SubtitleEdit.Forms
                     }
                 }
             }
+
             string res = sb.ToString();
             res = res.Replace(NewlineString, Environment.NewLine);
             res = res.Replace("<BR>", Environment.NewLine);
@@ -490,57 +669,88 @@ namespace Nikse.SubtitleEdit.Forms
             res = res.Replace(" " + Environment.NewLine, Environment.NewLine).Trim();
             int end = res.LastIndexOf("<p>", StringComparison.Ordinal);
             if (end > 0)
+            {
                 res = res.Substring(0, end);
+            }
+
             return res;
         }
 
+        /// <summary>
+        /// The fill combo with languages.
+        /// </summary>
+        /// <param name="comboBox">
+        /// The combo box.
+        /// </param>
         public void FillComboWithLanguages(ComboBox comboBox)
         {
-            if (!_googleTranslate)
+            if (!this._googleTranslate)
             {
-                if (comboBox == comboBoxTo)
+                if (comboBox == this.comboBoxTo)
                 {
-                    foreach (ComboBoxItem item in comboBoxFrom.Items)
+                    foreach (ComboBoxItem item in this.comboBoxFrom.Items)
                     {
-                        comboBoxTo.Items.Add(new ComboBoxItem(item.Text, item.Value));
+                        this.comboBoxTo.Items.Add(new ComboBoxItem(item.Text, item.Value));
                     }
+
                     return;
                 }
 
                 // MicrosoftTranslationService.SoapService client = MsTranslationServiceClient;
 
-                //string[] locales = client.GetLanguagesForTranslate(BingApiId);
+                // string[] locales = client.GetLanguagesForTranslate(BingApiId);
                 string[] locales = GetMsLocales();
 
-                //                string[] names = client.GetLanguageNames(BingApiId, "en", locales);
+                // string[] names = client.GetLanguageNames(BingApiId, "en", locales);
                 string[] names = GetMsNames();
 
                 for (int i = 0; i < locales.Length; i++)
                 {
                     if (names.Length > i && locales.Length > i)
+                    {
                         comboBox.Items.Add(new ComboBoxItem(names[i], locales[i]));
+                    }
                 }
 
                 return;
             }
 
-            FillComboWithGoogleLanguages(comboBox);
+            this.FillComboWithGoogleLanguages(comboBox);
         }
 
+        /// <summary>
+        /// The get ms locales.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string[]"/>.
+        /// </returns>
         private static string[] GetMsLocales()
         {
             return new[] { "ar", "bg", "zh-CHS", "zh-CHT", "cs", "da", "nl", "en", "et", "fi", "fr", "de", "el", "ht", "he", "hu", "id", "it", "ja", "ko", "lv", "lt", "no", "pl", "pt", "ro", "ru", "sk", "sl", "es", "sv", "th", "tr", "uk", "vi" };
         }
 
+        /// <summary>
+        /// The get ms names.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string[]"/>.
+        /// </returns>
         private static string[] GetMsNames()
         {
             return new[] { "Arabic", "Bulgarian", "Chinese Simplified", "Chinese Traditional", "Czech", "Danish", "Dutch", "English", "Estonian", "Finnish", "French", "German", "Greek", "Haitian Creole", "Hebrew", "Hungarian", "Indonesian", "Italian", "Japanese", "Korean", "Latvian", "Lithuanian", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Slovak", "Slovenian", "Spanish", "Swedish", "Thai", "Turkish", "Ukrainian", "Vietnamese" };
         }
 
+        /// <summary>
+        /// The fill combo with google languages.
+        /// </summary>
+        /// <param name="comboBox">
+        /// The combo box.
+        /// </param>
         public void FillComboWithGoogleLanguages(ComboBox comboBox)
         {
             comboBox.Items.Add(new ComboBoxItem("AFRIKAANS", "af"));
             comboBox.Items.Add(new ComboBoxItem("ALBANIAN", "sq"));
+
             // comboBox.Items.Add(new ComboBoxItem("AMHARIC" , "am"));
             comboBox.Items.Add(new ComboBoxItem("ARABIC", "ar"));
             comboBox.Items.Add(new ComboBoxItem("ARMENIAN", "hy"));
@@ -548,12 +758,15 @@ namespace Nikse.SubtitleEdit.Forms
             comboBox.Items.Add(new ComboBoxItem("BASQUE", "eu"));
             comboBox.Items.Add(new ComboBoxItem("BELARUSIAN", "be"));
             comboBox.Items.Add(new ComboBoxItem("BENGALI", "bn"));
+
             // comboBox.Items.Add(new ComboBoxItem("BIHARI" , "bh"));
             comboBox.Items.Add(new ComboBoxItem("BOSNIAN", "bs"));
             comboBox.Items.Add(new ComboBoxItem("BULGARIAN", "bg"));
+
             // comboBox.Items.Add(new ComboBoxItem("BURMESE" , "my"));
             comboBox.Items.Add(new ComboBoxItem("CATALAN", "ca"));
             comboBox.Items.Add(new ComboBoxItem("CEBUANO", "ceb"));
+
             // comboBox.Items.Add(new ComboBoxItem("CHEROKEE" , "chr"));
             comboBox.Items.Add(new ComboBoxItem("CHINESE", "zh"));
             comboBox.Items.Add(new ComboBoxItem("CHINESE_SIMPLIFIED", "zh-CN"));
@@ -561,6 +774,7 @@ namespace Nikse.SubtitleEdit.Forms
             comboBox.Items.Add(new ComboBoxItem("CROATIAN", "hr"));
             comboBox.Items.Add(new ComboBoxItem("CZECH", "cs"));
             comboBox.Items.Add(new ComboBoxItem("DANISH", "da"));
+
             // comboBox.Items.Add(new ComboBoxItem("DHIVEHI" , "dv"));
             comboBox.Items.Add(new ComboBoxItem("DUTCH", "nl"));
             comboBox.Items.Add(new ComboBoxItem("ENGLISH", "en"));
@@ -573,6 +787,7 @@ namespace Nikse.SubtitleEdit.Forms
             comboBox.Items.Add(new ComboBoxItem("GEORGIAN", "ka"));
             comboBox.Items.Add(new ComboBoxItem("GERMAN", "de"));
             comboBox.Items.Add(new ComboBoxItem("GREEK", "el"));
+
             // comboBox.Items.Add(new ComboBoxItem("GUARANI" , "gn"));
             comboBox.Items.Add(new ComboBoxItem("GUJARATI", "gu"));
             comboBox.Items.Add(new ComboBoxItem("HAITIAN CREOLE", "ht"));
@@ -585,14 +800,17 @@ namespace Nikse.SubtitleEdit.Forms
             comboBox.Items.Add(new ComboBoxItem("IGBO", "ig"));
             comboBox.Items.Add(new ComboBoxItem("INDONESIAN", "id"));
             comboBox.Items.Add(new ComboBoxItem("IRISH", "ga"));
+
             // comboBox.Items.Add(new ComboBoxItem("INUKTITUT" , "iu"));
             comboBox.Items.Add(new ComboBoxItem("ITALIAN", "it"));
             comboBox.Items.Add(new ComboBoxItem("JAPANESE", "ja"));
             comboBox.Items.Add(new ComboBoxItem("JAVANESE", "jw"));
             comboBox.Items.Add(new ComboBoxItem("KANNADA", "kn"));
+
             // comboBox.Items.Add(new ComboBoxItem("KAZAKH" , "kk"));
             comboBox.Items.Add(new ComboBoxItem("KHMER", "km"));
             comboBox.Items.Add(new ComboBoxItem("KOREAN", "ko"));
+
             // comboBox.Items.Add(new ComboBoxItem("KURDISH", "ku"));
             // comboBox.Items.Add(new ComboBoxItem("KYRGYZ", "ky"));
             comboBox.Items.Add(new ComboBoxItem("LAO", "lo"));
@@ -608,6 +826,7 @@ namespace Nikse.SubtitleEdit.Forms
             comboBox.Items.Add(new ComboBoxItem("MONGOLIAN", "mn"));
             comboBox.Items.Add(new ComboBoxItem("NEPALI", "ne"));
             comboBox.Items.Add(new ComboBoxItem("NORWEGIAN", "no"));
+
             // comboBox.Items.Add(new ComboBoxItem("ORIYA" , "or"));
             // comboBox.Items.Add(new ComboBoxItem("PASHTO" , "ps"));
             comboBox.Items.Add(new ComboBoxItem("PERSIAN", "fa"));
@@ -616,12 +835,16 @@ namespace Nikse.SubtitleEdit.Forms
             comboBox.Items.Add(new ComboBoxItem("PUNJABI", "pa"));
             comboBox.Items.Add(new ComboBoxItem("ROMANIAN", "ro"));
 
-            if (comboBox == comboBoxTo && !_googleApiNotWorking)
+            if (comboBox == this.comboBoxTo && !this._googleApiNotWorking)
+            {
                 comboBox.Items.Add(new ComboBoxItem("ROMANJI", "romanji"));
+            }
 
             comboBox.Items.Add(new ComboBoxItem("RUSSIAN", "ru"));
+
             // comboBox.Items.Add(new ComboBoxItem("SANSKRIT" , "sa"));
             comboBox.Items.Add(new ComboBoxItem("SERBIAN", "sr"));
+
             // comboBox.Items.Add(new ComboBoxItem("SINDHI" , "sd"));
             comboBox.Items.Add(new ComboBoxItem("SESOTHO", "st"));
             comboBox.Items.Add(new ComboBoxItem("SINHALA", "si"));
@@ -631,16 +854,20 @@ namespace Nikse.SubtitleEdit.Forms
             comboBox.Items.Add(new ComboBoxItem("SPANISH", "es"));
             comboBox.Items.Add(new ComboBoxItem("SWAHILI", "sw"));
             comboBox.Items.Add(new ComboBoxItem("SWEDISH", "sv"));
+
             // comboBox.Items.Add(new ComboBoxItem("TAJIK" , "tg"));
             comboBox.Items.Add(new ComboBoxItem("TAMIL", "ta"));
+
             // comboBox.Items.Add(new ComboBoxItem("TAGALOG" , "tl"));
             comboBox.Items.Add(new ComboBoxItem("TELUGU", "te"));
             comboBox.Items.Add(new ComboBoxItem("THAI", "th"));
+
             // comboBox.Items.Add(new ComboBoxItem("TIBETAN" , "bo"));
             comboBox.Items.Add(new ComboBoxItem("TURKISH", "tr"));
             comboBox.Items.Add(new ComboBoxItem("UKRAINIAN", "uk"));
             comboBox.Items.Add(new ComboBoxItem("URDU", "ur"));
             comboBox.Items.Add(new ComboBoxItem("UZBEK", "uz"));
+
             // comboBox.Items.Add(new ComboBoxItem("UIGHUR" , "ug"));
             comboBox.Items.Add(new ComboBoxItem("VIETNAMESE", "vi"));
             comboBox.Items.Add(new ComboBoxItem("WELSH", "cy"));
@@ -649,34 +876,65 @@ namespace Nikse.SubtitleEdit.Forms
             comboBox.Items.Add(new ComboBoxItem("ZULU", "zu"));
         }
 
+        /// <summary>
+        /// The link label 1 link clicked.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void LinkLabel1LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (_googleTranslate)
+            if (this._googleTranslate)
+            {
                 System.Diagnostics.Process.Start("https://www.google.com/translate");
+            }
             else
+            {
                 System.Diagnostics.Process.Start("http://www.microsofttranslator.com/");
+            }
         }
 
+        /// <summary>
+        /// The button ok click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonOkClick(object sender, EventArgs e)
         {
-            if (subtitleListViewTo.Items.Count > 0)
+            if (this.subtitleListViewTo.Items.Count > 0)
             {
-                DialogResult = DialogResult.OK;
+                this.DialogResult = DialogResult.OK;
             }
             else
             {
-                DialogResult = DialogResult.Cancel;
+                this.DialogResult = DialogResult.Cancel;
             }
         }
 
+        /// <summary>
+        /// The pre translate.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string PreTranslate(string s)
         {
-            if ((comboBoxFrom.SelectedItem as ComboBoxItem).Value == "en")
+            if ((this.comboBoxFrom.SelectedItem as ComboBoxItem).Value == "en")
             {
                 s = Regex.Replace(s, @"\bI'm ", "I am ");
                 s = Regex.Replace(s, @"\bI've ", "I have ");
                 s = Regex.Replace(s, @"\bI'll ", "I will ");
-                s = Regex.Replace(s, @"\bI'd ", "I would ");  // had or would???
+                s = Regex.Replace(s, @"\bI'd ", "I would "); // had or would???
                 s = Regex.Replace(s, @"\b(I|i)t's ", "$1t is ");
                 s = Regex.Replace(s, @"\b(Y|y)ou're ", "$1ou are ");
                 s = Regex.Replace(s, @"\b(Y|y)ou've ", "$1ou have ");
@@ -696,12 +954,22 @@ namespace Nikse.SubtitleEdit.Forms
                 s = Regex.Replace(s, @"\b(W|w)ho's ", "$1ho is ");
                 s = Regex.Replace(s, @"\B'(C|c)ause ", "$1ecause "); // \b (word boundry) does not workig with '
             }
+
             return s;
         }
 
+        /// <summary>
+        /// The post translate.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string PostTranslate(string s)
         {
-            if ((comboBoxTo.SelectedItem as ComboBoxItem).Value == "da")
+            if ((this.comboBoxTo.SelectedItem as ComboBoxItem).Value == "da")
             {
                 s = s.Replace("Jeg ved.", "Jeg ved det.");
                 s = s.Replace(", jeg ved.", ", jeg ved det.");
@@ -721,48 +989,80 @@ namespace Nikse.SubtitleEdit.Forms
 
                 s = s.Replace("Ked af.", "Undskyld.");
             }
+
             return s;
         }
 
+        /// <summary>
+        /// The form google translate_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void FormGoogleTranslate_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape && labelPleaseWait.Visible == false)
-                DialogResult = DialogResult.Cancel;
-            else if (e.KeyCode == Keys.Escape && labelPleaseWait.Visible)
+            if (e.KeyCode == Keys.Escape && this.labelPleaseWait.Visible == false)
             {
-                _breakTranslation = true;
+                this.DialogResult = DialogResult.Cancel;
+            }
+            else if (e.KeyCode == Keys.Escape && this.labelPleaseWait.Visible)
+            {
+                this._breakTranslation = true;
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.F1)
+            {
                 Utilities.ShowHelp("#translation");
+            }
             else if (e.Control && e.Shift && e.Alt && e.KeyCode == Keys.L)
             {
                 Cursor.Current = Cursors.WaitCursor;
                 Configuration.Settings.Language.Save(Path.Combine(Configuration.BaseDirectory, "LanguageMaster.xml"));
-                TranslateViaGoogle((comboBoxFrom.SelectedItem as ComboBoxItem).Value + "|" +
-                                            (comboBoxTo.SelectedItem as ComboBoxItem).Value);
+                TranslateViaGoogle((this.comboBoxFrom.SelectedItem as ComboBoxItem).Value + "|" + (this.comboBoxTo.SelectedItem as ComboBoxItem).Value);
                 Cursor.Current = Cursors.Default;
             }
         }
 
+        /// <summary>
+        /// The translate via google.
+        /// </summary>
+        /// <param name="languagePair">
+        /// The language pair.
+        /// </param>
         public static void TranslateViaGoogle(string languagePair)
         {
             var doc = new XmlDocument();
             doc.Load(Configuration.BaseDirectory + "Language.xml");
             if (doc.DocumentElement != null)
+            {
                 foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+                {
                     TranslateNode(node, languagePair);
+                }
+            }
 
             doc.Save(Configuration.BaseDirectory + "Language.xml");
         }
 
+        /// <summary>
+        /// The translate node.
+        /// </summary>
+        /// <param name="node">
+        /// The node.
+        /// </param>
+        /// <param name="languagePair">
+        /// The language pair.
+        /// </param>
         private static void TranslateNode(XmlNode node, string languagePair)
         {
             if (node.ChildNodes.Count == 0)
             {
                 string oldText = node.InnerText;
-                string newText = Nikse.SubtitleEdit.Forms.GoogleTranslate.TranslateTextViaApi(node.InnerText, languagePair);
+                string newText = TranslateTextViaApi(node.InnerText, languagePair);
                 if (!string.IsNullOrEmpty(oldText) && !string.IsNullOrEmpty(newText))
                 {
                     if (oldText.Contains("{0:"))
@@ -772,19 +1072,29 @@ namespace Nikse.SubtitleEdit.Forms
                     else
                     {
                         if (!oldText.Contains(" / "))
+                        {
                             newText = newText.Replace(" / ", "/");
+                        }
 
                         if (!oldText.Contains(" ..."))
+                        {
                             newText = newText.Replace(" ...", "...");
+                        }
 
                         if (!oldText.Contains("& "))
+                        {
                             newText = newText.Replace("& ", "&");
+                        }
 
                         if (!oldText.Contains("# "))
+                        {
                             newText = newText.Replace("# ", "#");
+                        }
 
                         if (!oldText.Contains("@ "))
+                        {
                             newText = newText.Replace("@ ", "@");
+                        }
 
                         if (oldText.Contains("{0}"))
                         {
@@ -799,68 +1109,77 @@ namespace Nikse.SubtitleEdit.Forms
                         }
                     }
                 }
+
                 node.InnerText = newText;
             }
             else
             {
                 foreach (XmlNode childNode in node.ChildNodes)
+                {
                     TranslateNode(childNode, languagePair);
+                }
             }
         }
 
+        /// <summary>
+        /// The google translate_ resize.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void GoogleTranslate_Resize(object sender, EventArgs e)
         {
-            int width = (Width / 2) - (subtitleListViewFrom.Left * 3) + 19;
-            subtitleListViewFrom.Width = width;
-            subtitleListViewTo.Width = width;
+            int width = (this.Width / 2) - (this.subtitleListViewFrom.Left * 3) + 19;
+            this.subtitleListViewFrom.Width = width;
+            this.subtitleListViewTo.Width = width;
 
-            int height = Height - (subtitleListViewFrom.Top + buttonTranslate.Height + 60);
-            subtitleListViewFrom.Height = height;
-            subtitleListViewTo.Height = height;
+            int height = this.Height - (this.subtitleListViewFrom.Top + this.buttonTranslate.Height + 60);
+            this.subtitleListViewFrom.Height = height;
+            this.subtitleListViewTo.Height = height;
 
-            comboBoxFrom.Left = subtitleListViewFrom.Left + (subtitleListViewFrom.Width - comboBoxFrom.Width);
-            labelFrom.Left = comboBoxFrom.Left - 5 - labelFrom.Width;
+            this.comboBoxFrom.Left = this.subtitleListViewFrom.Left + (this.subtitleListViewFrom.Width - this.comboBoxFrom.Width);
+            this.labelFrom.Left = this.comboBoxFrom.Left - 5 - this.labelFrom.Width;
 
-            subtitleListViewTo.Left = width + (subtitleListViewFrom.Left * 2);
-            labelTo.Left = subtitleListViewTo.Left;
-            comboBoxTo.Left = labelTo.Left + labelTo.Width + 5;
-            buttonTranslate.Left = comboBoxTo.Left + comboBoxTo.Width + 9;
-            labelPleaseWait.Left = buttonTranslate.Left + buttonTranslate.Width + 9;
-            progressBar1.Left = labelPleaseWait.Left;
-            progressBar1.Width = subtitleListViewTo.Width - (progressBar1.Left - subtitleListViewTo.Left);
+            this.subtitleListViewTo.Left = width + (this.subtitleListViewFrom.Left * 2);
+            this.labelTo.Left = this.subtitleListViewTo.Left;
+            this.comboBoxTo.Left = this.labelTo.Left + this.labelTo.Width + 5;
+            this.buttonTranslate.Left = this.comboBoxTo.Left + this.comboBoxTo.Width + 9;
+            this.labelPleaseWait.Left = this.buttonTranslate.Left + this.buttonTranslate.Width + 9;
+            this.progressBar1.Left = this.labelPleaseWait.Left;
+            this.progressBar1.Width = this.subtitleListViewTo.Width - (this.progressBar1.Left - this.subtitleListViewTo.Left);
         }
 
-        private MicrosoftTranslationService.SoapService MsTranslationServiceClient
-        {
-            get
-            {
-                if (_microsoftTranslationService == null)
-                {
-                    _microsoftTranslationService = new MicrosoftTranslationService.SoapService { Proxy = Utilities.GetProxy() };
-                }
-                return _microsoftTranslationService;
-            }
-        }
-
+        /// <summary>
+        /// The do microsoft translate.
+        /// </summary>
+        /// <param name="from">
+        /// The from.
+        /// </param>
+        /// <param name="to">
+        /// The to.
+        /// </param>
         public void DoMicrosoftTranslate(string from, string to)
         {
-            MicrosoftTranslationService.SoapService client = MsTranslationServiceClient;
+            SoapService client = this.MsTranslationServiceClient;
 
-            _breakTranslation = false;
-            buttonTranslate.Text = Configuration.Settings.Language.General.Cancel;
+            this._breakTranslation = false;
+            this.buttonTranslate.Text = Configuration.Settings.Language.General.Cancel;
             const int textMaxSize = 10000;
             Cursor.Current = Cursors.WaitCursor;
-            progressBar1.Maximum = _subtitle.Paragraphs.Count;
-            progressBar1.Value = 0;
-            progressBar1.Visible = true;
-            labelPleaseWait.Visible = true;
+            this.progressBar1.Maximum = this._subtitle.Paragraphs.Count;
+            this.progressBar1.Value = 0;
+            this.progressBar1.Visible = true;
+            this.labelPleaseWait.Visible = true;
             int start = 0;
             bool overQuota = false;
             try
             {
                 var sb = new StringBuilder();
                 int index = 0;
-                foreach (Paragraph p in _subtitle.Paragraphs)
+                foreach (Paragraph p in this._subtitle.Paragraphs)
                 {
                     string text = string.Format("{1}{0}|", p.Text, SplitterString);
                     if (!overQuota)
@@ -869,32 +1188,38 @@ namespace Nikse.SubtitleEdit.Forms
                         {
                             try
                             {
-                                FillTranslatedText(client.Translate(Configuration.Settings.Tools.MicrosoftBingApiId, sb.ToString().Replace(Environment.NewLine, "<br />"), from, to, "text/plain", "general"), start, index - 1);
+                                this.FillTranslatedText(client.Translate(Configuration.Settings.Tools.MicrosoftBingApiId, sb.ToString().Replace(Environment.NewLine, "<br />"), from, to, "text/plain", "general"), start, index - 1);
                             }
-                            catch (System.Web.Services.Protocols.SoapHeaderException exception)
+                            catch (SoapHeaderException exception)
                             {
                                 MessageBox.Show("Sorry, Microsoft is closing their free api: " + exception.Message);
                                 overQuota = true;
                             }
+
                             sb = new StringBuilder();
-                            progressBar1.Refresh();
+                            this.progressBar1.Refresh();
                             Application.DoEvents();
                             start = index;
                         }
+
                         sb.Append(text);
                     }
+
                     index++;
-                    progressBar1.Value = index;
-                    if (_breakTranslation)
+                    this.progressBar1.Value = index;
+                    if (this._breakTranslation)
+                    {
                         break;
+                    }
                 }
+
                 if (sb.Length > 0 && !overQuota)
                 {
                     try
                     {
-                        FillTranslatedText(client.Translate(Configuration.Settings.Tools.MicrosoftBingApiId, sb.ToString().Replace(Environment.NewLine, "<br />"), from, to, "text/plain", "general"), start, index - 1);
+                        this.FillTranslatedText(client.Translate(Configuration.Settings.Tools.MicrosoftBingApiId, sb.ToString().Replace(Environment.NewLine, "<br />"), from, to, "text/plain", "general"), start, index - 1);
                     }
-                    catch (System.Web.Services.Protocols.SoapHeaderException exception)
+                    catch (SoapHeaderException exception)
                     {
                         MessageBox.Show("Sorry, Microsoft is closing their free api: " + exception.Message);
                         overQuota = true;
@@ -903,37 +1228,123 @@ namespace Nikse.SubtitleEdit.Forms
             }
             finally
             {
-                labelPleaseWait.Visible = false;
-                progressBar1.Visible = false;
+                this.labelPleaseWait.Visible = false;
+                this.progressBar1.Visible = false;
                 Cursor.Current = Cursors.Default;
-                buttonTranslate.Text = Configuration.Settings.Language.GoogleTranslate.Translate;
-                buttonTranslate.Enabled = true;
+                this.buttonTranslate.Text = Configuration.Settings.Language.GoogleTranslate.Translate;
+                this.buttonTranslate.Enabled = true;
             }
         }
 
+        /// <summary>
+        /// The subtitle list view from_ double click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void subtitleListViewFrom_DoubleClick(object sender, EventArgs e)
         {
-            if (subtitleListViewFrom.SelectedItems.Count > 0)
+            if (this.subtitleListViewFrom.SelectedItems.Count > 0)
             {
-                int index = subtitleListViewFrom.SelectedItems[0].Index;
-                if (index < subtitleListViewTo.Items.Count)
+                int index = this.subtitleListViewFrom.SelectedItems[0].Index;
+                if (index < this.subtitleListViewTo.Items.Count)
                 {
-                    subtitleListViewTo.SelectIndexAndEnsureVisible(index);
+                    this.subtitleListViewTo.SelectIndexAndEnsureVisible(index);
                 }
             }
         }
 
+        /// <summary>
+        /// The subtitle list view to_ double click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void subtitleListViewTo_DoubleClick(object sender, EventArgs e)
         {
-            if (subtitleListViewTo.SelectedItems.Count > 0)
+            if (this.subtitleListViewTo.SelectedItems.Count > 0)
             {
-                int index = subtitleListViewTo.SelectedItems[0].Index;
-                if (index < subtitleListViewFrom.Items.Count)
+                int index = this.subtitleListViewTo.SelectedItems[0].Index;
+                if (index < this.subtitleListViewFrom.Items.Count)
                 {
-                    subtitleListViewFrom.SelectIndexAndEnsureVisible(index);
+                    this.subtitleListViewFrom.SelectIndexAndEnsureVisible(index);
                 }
             }
         }
 
+        /// <summary>
+        /// The formatting type.
+        /// </summary>
+        private enum FormattingType
+        {
+            /// <summary>
+            /// The none.
+            /// </summary>
+            None, 
+
+            /// <summary>
+            /// The italic.
+            /// </summary>
+            Italic, 
+
+            /// <summary>
+            /// The italic two lines.
+            /// </summary>
+            ItalicTwoLines
+        }
+
+        /// <summary>
+        /// The combo box item.
+        /// </summary>
+        public class ComboBoxItem
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ComboBoxItem"/> class.
+            /// </summary>
+            /// <param name="text">
+            /// The text.
+            /// </param>
+            /// <param name="value">
+            /// The value.
+            /// </param>
+            public ComboBoxItem(string text, string value)
+            {
+                if (text.Length > 1)
+                {
+                    text = char.ToUpper(text[0]) + text.Substring(1).ToLower();
+                }
+
+                this.Text = text;
+
+                this.Value = value;
+            }
+
+            /// <summary>
+            /// Gets or sets the text.
+            /// </summary>
+            public string Text { get; set; }
+
+            /// <summary>
+            /// Gets or sets the value.
+            /// </summary>
+            public string Value { get; set; }
+
+            /// <summary>
+            /// The to string.
+            /// </summary>
+            /// <returns>
+            /// The <see cref="string"/>.
+            /// </returns>
+            public override string ToString()
+            {
+                return this.Text;
+            }
+        }
     }
 }

@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Core
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="HtmlUtil.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   HTML specific string manipulations.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Core
 {
     using System;
     using System.Linq;
@@ -13,26 +22,53 @@
     /// </summary>
     public static class HtmlUtil
     {
+        /// <summary>
+        /// The tag italic.
+        /// </summary>
         public const string TagItalic = "i";
 
+        /// <summary>
+        /// The tag bold.
+        /// </summary>
         public const string TagBold = "b";
 
+        /// <summary>
+        /// The tag underline.
+        /// </summary>
         public const string TagUnderline = "u";
 
+        /// <summary>
+        /// The tag paragraph.
+        /// </summary>
         public const string TagParagraph = "p";
 
+        /// <summary>
+        /// The tag font.
+        /// </summary>
         public const string TagFont = "font";
 
+        /// <summary>
+        /// The tag cyrillic i.
+        /// </summary>
         public const string TagCyrillicI = "\u0456"; // Cyrillic Small Letter Byelorussian-Ukrainian i (http://graphemica.com/%D1%96)
 
+        /// <summary>
+        /// The tag open regex.
+        /// </summary>
         private static readonly Regex TagOpenRegex = new Regex(@"<\s*(?:/\s*)?(\w+)[^>]*>", RegexOptions.Compiled);
 
         /// <summary>
-        ///     Remove all of the specified opening and closing tags from the source HTML string.
+        /// Remove all of the specified opening and closing tags from the source HTML string.
         /// </summary>
-        /// <param name="source">The source string to search for specified HTML tags.</param>
-        /// <param name="tags">The HTML tags to remove.</param>
-        /// <returns>A new string without the specified opening and closing tags.</returns>
+        /// <param name="source">
+        /// The source string to search for specified HTML tags.
+        /// </param>
+        /// <param name="tags">
+        /// The HTML tags to remove.
+        /// </param>
+        /// <returns>
+        /// A new string without the specified opening and closing tags.
+        /// </returns>
         public static string RemoveOpenCloseTags(string source, params string[] tags)
         {
             // This pattern matches these tag formats:
@@ -46,10 +82,14 @@
         }
 
         /// <summary>
-        ///     Converts a string to an HTML-encoded string using named character references.
+        /// Converts a string to an HTML-encoded string using named character references.
         /// </summary>
-        /// <param name="source">The string to encode.</param>
-        /// <returns>An encoded string.</returns>
+        /// <param name="source">
+        /// The string to encode.
+        /// </param>
+        /// <returns>
+        /// An encoded string.
+        /// </returns>
         public static string EncodeText(string source)
         {
             if (source == null)
@@ -78,6 +118,18 @@
             return encoded.ToString();
         }
 
+        /// <summary>
+        /// The remove html tags.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="alsoSsaTags">
+        /// The also ssa tags.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string RemoveHtmlTags(string s, bool alsoSsaTags = false)
         {
             if (s == null || s.Length < 3)
@@ -103,6 +155,15 @@
             return RemoveOpenCloseTags(s, TagItalic, TagBold, TagUnderline, TagParagraph, TagFont, TagCyrillicI);
         }
 
+        /// <summary>
+        /// The is url.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public static bool IsUrl(string text)
         {
             if (string.IsNullOrWhiteSpace(text) || text.Length < 6 || !text.Contains('.') || text.Contains(' '))
@@ -124,6 +185,15 @@
             return false;
         }
 
+        /// <summary>
+        /// The starts with url.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public static bool StartsWithUrl(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
@@ -140,6 +210,15 @@
             return IsUrl(arr[0]);
         }
 
+        /// <summary>
+        /// The fix upper tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FixUpperTags(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -165,6 +244,15 @@
             return text;
         }
 
+        /// <summary>
+        /// The fix invalid italic tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FixInvalidItalicTags(string text)
         {
             const string BeginTag = "<i>";
@@ -219,6 +307,27 @@
             return text;
         }
 
+        /// <summary>
+        /// The remove multiple begin tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="italicBeginTagCount">
+        /// The italic begin tag count.
+        /// </param>
+        /// <param name="italicEndTagCount">
+        /// The italic end tag count.
+        /// </param>
+        /// <param name="beginTag">
+        /// The begin tag.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveMultipleBeginTags(string text, int italicBeginTagCount, int italicEndTagCount, string beginTag, string endTag)
         {
             if ((italicBeginTagCount == 3 && italicEndTagCount == 1) && Utilities.GetNumberOfLines(text) == 2)
@@ -239,6 +348,15 @@
             return text;
         }
 
+        /// <summary>
+        /// The remove italic begin end tag group.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveItalicBeginEndTagGroup(string text)
         {
             const string BeginEndTagPattern = @"<i>[ ]*</i>";
@@ -246,6 +364,27 @@
             return text;
         }
 
+        /// <summary>
+        /// The set begin and end tag for 2 lines text.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="italicBeginTagCount">
+        /// The italic begin tag count.
+        /// </param>
+        /// <param name="italicEndTagCount">
+        /// The italic end tag count.
+        /// </param>
+        /// <param name="beginTag">
+        /// The begin tag.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string SetBeginAndEndTagFor2LinesText(string text, int italicBeginTagCount, int italicEndTagCount, string beginTag, string endTag)
         {
             if (italicBeginTagCount == 2 && italicEndTagCount == 2 && Utilities.GetNumberOfLines(text) == 2)
@@ -311,6 +450,24 @@
             return text;
         }
 
+        /// <summary>
+        /// The two end tags convert first to begin tag.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="italicBeginTagCount">
+        /// The italic begin tag count.
+        /// </param>
+        /// <param name="italicEndTagCount">
+        /// The italic end tag count.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string TwoEndTagsConvertFirstToBeginTag(string text, int italicBeginTagCount, int italicEndTagCount, string endTag)
         {
             if (italicBeginTagCount == 0 && italicEndTagCount == 2 && text.StartsWith("</i>", StringComparison.Ordinal) && text.EndsWith("</i>", StringComparison.Ordinal))
@@ -322,6 +479,27 @@
             return text;
         }
 
+        /// <summary>
+        /// The two end tags set begin and end tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="italicBeginTagCount">
+        /// The italic begin tag count.
+        /// </param>
+        /// <param name="italicEndTagCount">
+        /// The italic end tag count.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <param name="beginTag">
+        /// The begin tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string TwoEndTagsSetBeginAndEndTags(string text, int italicBeginTagCount, int italicEndTagCount, string endTag, string beginTag)
         {
             if (italicBeginTagCount == 0 && italicEndTagCount == 2 && text.Contains(endTag + Environment.NewLine, StringComparison.Ordinal) && text.EndsWith(endTag, StringComparison.Ordinal))
@@ -333,6 +511,27 @@
             return text;
         }
 
+        /// <summary>
+        /// The add missing begin tag.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="italicBeginTagCount">
+        /// The italic begin tag count.
+        /// </param>
+        /// <param name="italicEndTagCount">
+        /// The italic end tag count.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <param name="beginTag">
+        /// The begin tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string AddMissingBeginTag(string text, int italicBeginTagCount, int italicEndTagCount, string endTag, string beginTag)
         {
             if (italicBeginTagCount == 0 && italicEndTagCount == 1)
@@ -381,6 +580,30 @@
             return text;
         }
 
+        /// <summary>
+        /// The add missing end tag.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="italicBeginTagCount">
+        /// The italic begin tag count.
+        /// </param>
+        /// <param name="italicEndTagCount">
+        /// The italic end tag count.
+        /// </param>
+        /// <param name="beginTag">
+        /// The begin tag.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <param name="noOfLines">
+        /// The no of lines.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string AddMissingEndTag(string text, int italicBeginTagCount, int italicEndTagCount, string beginTag, string endTag, int noOfLines)
         {
             if (italicBeginTagCount == 1 && italicEndTagCount == 0)
@@ -405,6 +628,27 @@
             return text;
         }
 
+        /// <summary>
+        /// The remove duplicate begin tag.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="italicBeginTagCount">
+        /// The italic begin tag count.
+        /// </param>
+        /// <param name="italicEndTagCount">
+        /// The italic end tag count.
+        /// </param>
+        /// <param name="beginTag">
+        /// The begin tag.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveDuplicateBeginTag(string text, int italicBeginTagCount, int italicEndTagCount, string beginTag, string endTag)
         {
             if (italicBeginTagCount == 2 && italicEndTagCount == 1)
@@ -436,6 +680,24 @@
             return text;
         }
 
+        /// <summary>
+        /// The remove duplicate end tag.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="italicBeginTagCount">
+        /// The italic begin tag count.
+        /// </param>
+        /// <param name="italicEndTagCount">
+        /// The italic end tag count.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveDuplicateEndTag(string text, int italicBeginTagCount, int italicEndTagCount, string endTag)
         {
             if (italicBeginTagCount == 1 && italicEndTagCount == 2)
@@ -470,6 +732,30 @@
             return text;
         }
 
+        /// <summary>
+        /// The if two begin tags convert second to end tag.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="italicBeginTagCount">
+        /// The italic begin tag count.
+        /// </param>
+        /// <param name="italicEndTagCount">
+        /// The italic end tag count.
+        /// </param>
+        /// <param name="beginTag">
+        /// The begin tag.
+        /// </param>
+        /// <param name="noOfLines">
+        /// The no of lines.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string IfTwoBeginTagsConvertSecondToEndTag(string text, int italicBeginTagCount, int italicEndTagCount, string beginTag, int noOfLines, string endTag)
         {
             if (italicBeginTagCount == 2 && italicEndTagCount == 0)
@@ -494,6 +780,27 @@
             return text;
         }
 
+        /// <summary>
+        /// The swap end and begin tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="italicBeginTagCount">
+        /// The italic begin tag count.
+        /// </param>
+        /// <param name="italicEndTagCount">
+        /// The italic end tag count.
+        /// </param>
+        /// <param name="beginTag">
+        /// The begin tag.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string SwapEndAndBeginTags(string text, int italicBeginTagCount, int italicEndTagCount, string beginTag, string endTag)
         {
             if (italicBeginTagCount == 1 && italicEndTagCount == 1 && text.IndexOf(beginTag, StringComparison.Ordinal) > text.IndexOf(endTag, StringComparison.Ordinal))
@@ -506,6 +813,18 @@
             return text;
         }
 
+        /// <summary>
+        /// The remove adjacent duplicate end tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveAdjacentDuplicateEndTags(string text, string endTag)
         {
             const string DuplicateEndTagPattern = @"((</i>[ ]*){2,})";
@@ -513,6 +832,18 @@
             return text;
         }
 
+        /// <summary>
+        /// The remove adjacent duplicate begin tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="beginTag">
+        /// The begin tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveAdjacentDuplicateBeginTags(string text, string beginTag)
         {
             const string DuplicateBeginTagPattern = @"((<i>[ ]*){2,})";
@@ -520,12 +851,36 @@
             return text;
         }
 
+        /// <summary>
+        /// The remove unnecessary self closing tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="beginTag">
+        /// The begin tag.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveUnnecessarySelfClosingTags(string text, string beginTag, string endTag)
         {
             text = text.Replace("<i/>", text.Contains(beginTag) ? endTag : string.Empty);
             return text;
         }
 
+        /// <summary>
+        /// The remove italic end begin tag groups.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveItalicEndBeginTagGroups(string text)
         {
             const string EndBeginTagPattern = @"\s*</i>[ ]*<i>\s*";
@@ -533,6 +888,18 @@
             return text;
         }
 
+        /// <summary>
+        /// The fix end tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string FixEndTags(string text, string endTag)
         {
             const string EndTagPattern = @"<\s*/\s*i\s*>";
@@ -540,6 +907,18 @@
             return text;
         }
 
+        /// <summary>
+        /// The fix begin tags.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="beginTag">
+        /// The begin tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string FixBeginTags(string text, string beginTag)
         {
             const string BeginTagPattern = @"<\s*i\s*>";

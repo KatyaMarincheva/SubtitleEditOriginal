@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="WebVTT.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   http://www.whatwg.org/specs/web-apps/current-work/webvtt.html
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -13,12 +22,24 @@
     /// </summary>
     public class WebVTT : SubtitleFormat
     {
+        /// <summary>
+        /// The regex time codes.
+        /// </summary>
         private static readonly Regex RegexTimeCodes = new Regex(@"^-?\d+:-?\d+:-?\d+\.-?\d+\s*-->\s*-?\d+:-?\d+:-?\d+\.-?\d+", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The regex time codes middle.
+        /// </summary>
         private static readonly Regex RegexTimeCodesMiddle = new Regex(@"^-?\d+:-?\d+\.-?\d+\s*-->\s*-?\d+:-?\d+:-?\d+\.-?\d+", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The regex time codes short.
+        /// </summary>
         private static readonly Regex RegexTimeCodesShort = new Regex(@"^-?\d+:-?\d+\.-?\d+\s*-->\s*-?\d+:-?\d+\.-?\d+", RegexOptions.Compiled);
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -27,6 +48,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -35,6 +59,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -43,6 +70,15 @@
             }
         }
 
+        /// <summary>
+        /// The get voices.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public static List<string> GetVoices(Subtitle subtitle)
         {
             List<string> list = new List<string>();
@@ -79,6 +115,18 @@
             return list;
         }
 
+        /// <summary>
+        /// The remove tag.
+        /// </summary>
+        /// <param name="tag">
+        /// The tag.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string RemoveTag(string tag, string text)
         {
             int indexOfTag = text.IndexOf("<" + tag + " ", StringComparison.Ordinal);
@@ -95,6 +143,18 @@
             return text;
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -102,6 +162,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             const string timeCodeFormatHours = "{0:00}:{1:00}:{2:00}.{3:000}"; // hh:mm:ss.cc
@@ -127,6 +199,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -195,6 +279,15 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The remove native formatting.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="newFormat">
+        /// The new format.
+        /// </param>
         public override void RemoveNativeFormatting(Subtitle subtitle, SubtitleFormat newFormat)
         {
             foreach (Paragraph p in subtitle.Paragraphs)
@@ -212,6 +305,15 @@
             }
         }
 
+        /// <summary>
+        /// The format text.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string FormatText(Paragraph p)
         {
             string text = p.Text;
@@ -223,6 +325,15 @@
             return text;
         }
 
+        /// <summary>
+        /// The get time code from string.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode GetTimeCodeFromString(string time)
         {
             // hh:mm:ss.mmm

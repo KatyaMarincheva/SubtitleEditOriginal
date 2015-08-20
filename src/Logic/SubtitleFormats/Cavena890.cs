@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Cavena890.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The cavena 890.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -8,28 +17,64 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The cavena 890.
+    /// </summary>
     public class Cavena890 : SubtitleFormat
     {
+        /// <summary>
+        /// The name of format.
+        /// </summary>
         public const string NameOfFormat = "Cavena 890";
 
+        /// <summary>
+        /// The language id english.
+        /// </summary>
         private const int LanguageIdEnglish = 0x01;
 
+        /// <summary>
+        /// The language id danish.
+        /// </summary>
         private const int LanguageIdDanish = 0x07;
 
+        /// <summary>
+        /// The language id albanian.
+        /// </summary>
         private const int LanguageIdAlbanian = 0x09;
 
+        /// <summary>
+        /// The language id swedish.
+        /// </summary>
         private const int LanguageIdSwedish = 0x28;
 
+        /// <summary>
+        /// The language id hebrew.
+        /// </summary>
         private const int LanguageIdHebrew = 0x56;
 
+        /// <summary>
+        /// The language id arabic.
+        /// </summary>
         private const int LanguageIdArabic = 0x80;
 
+        /// <summary>
+        /// The language id russian.
+        /// </summary>
         private const int LanguageIdRussian = 0x8f;
 
+        /// <summary>
+        /// The language id chinese traditional.
+        /// </summary>
         private const int LanguageIdChineseTraditional = 0x90;
 
+        /// <summary>
+        /// The language id chinese simplified.
+        /// </summary>
         private const int LanguageIdChineseSimplified = 0x91;
 
+        /// <summary>
+        /// The _hebrew codes.
+        /// </summary>
         private static readonly List<int> _hebrewCodes = new List<int> { 0x40, // א
                                                                          0x41, // ב
                                                                          0x42, // ג
@@ -59,8 +104,14 @@
                                                                          0x55 // ץ
                                                                        };
 
+        /// <summary>
+        /// The _hebrew letters.
+        /// </summary>
         private static readonly List<string> _hebrewLetters = new List<string> { "א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "י", "ל", "ם", "מ", "ן", "נ", "ס", "ע", "פ", "צ", "ק", "ר", "ש", "ת", "כ", "ך", "ט", "ף", "ץ" };
 
+        /// <summary>
+        /// The _russian codes.
+        /// </summary>
         private static readonly List<int> _russianCodes = new List<int> { 0x42, // Б
                                                                           0x45, // Е
                                                                           0x5A, // З
@@ -107,16 +158,34 @@
                                                                           0x68 // П
                                                                         };
 
+        /// <summary>
+        /// The _russian letters.
+        /// </summary>
         private static readonly List<string> _russianLetters = new List<string> { "Б", "Е", "З", "В", "И", "Н", "Ы", "Я", "V", "С", "р", "и", "я", "н", "т", "Э", "ю", "Ф", "Ч", "Д", "б", "с", "у", "д", "ж", "й", "л", "Г", "ы", "з", "ч", "м", "г", "ь", "п", "в", "У", "щ", "ф", "э", "ш", "П", "Р", "х" };
 
+        /// <summary>
+        /// The _font name line 1.
+        /// </summary>
         private string _fontNameLine1;
 
+        /// <summary>
+        /// The _font name line 2.
+        /// </summary>
         private string _fontNameLine2;
 
+        /// <summary>
+        /// The _language id line 1.
+        /// </summary>
         private int _languageIdLine1 = LanguageIdEnglish;
 
+        /// <summary>
+        /// The _language id line 2.
+        /// </summary>
         private int _languageIdLine2 = LanguageIdEnglish;
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -125,6 +194,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -133,6 +205,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -141,6 +216,15 @@
             }
         }
 
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         public void Save(string fileName, Subtitle subtitle)
         {
             this._fontNameLine1 = "HLV23N";
@@ -257,6 +341,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
@@ -279,11 +375,35 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             return "Not supported!";
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             const int textLength = 51;
@@ -407,6 +527,15 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The get font bytes from language id.
+        /// </summary>
+        /// <param name="languageId">
+        /// The language id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         private static byte[] GetFontBytesFromLanguageId(int languageId)
         {
             byte[] buffer = Encoding.ASCII.GetBytes("HLV23N");
@@ -430,6 +559,24 @@
             return buffer;
         }
 
+        /// <summary>
+        /// The write text.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="isLast">
+        /// The is last.
+        /// </param>
+        /// <param name="languageIdLine1">
+        /// The language id line 1.
+        /// </param>
+        /// <param name="languageIdLine2">
+        /// The language id line 2.
+        /// </param>
         private static void WriteText(FileStream fs, string text, bool isLast, int languageIdLine1, int languageIdLine2)
         {
             string line1 = string.Empty;
@@ -466,6 +613,18 @@
             }
         }
 
+        /// <summary>
+        /// The get text as bytes.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="languageId">
+        /// The language id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
         private static byte[] GetTextAsBytes(string text, int languageId)
         {
             byte[] buffer = new byte[51];
@@ -713,6 +872,15 @@
             return buffer;
         }
 
+        /// <summary>
+        /// The write time.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
         private static void WriteTime(FileStream fs, TimeCode timeCode)
         {
             double totalMilliseconds = timeCode.TotalMilliseconds;
@@ -722,6 +890,24 @@
             fs.WriteByte((byte)(frames % 256));
         }
 
+        /// <summary>
+        /// The fix text.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="start">
+        /// The start.
+        /// </param>
+        /// <param name="textLength">
+        /// The text length.
+        /// </param>
+        /// <param name="languageId">
+        /// The language id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string FixText(byte[] buffer, int start, int textLength, int languageId)
         {
             string text;

@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Mp4Parser.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   http://wiki.multimedia.cx/index.php?title=QuickTime_container
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4
 {
     using System;
     using System.Collections.Generic;
@@ -12,6 +21,12 @@
     /// </summary>
     public class MP4Parser : Box
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MP4Parser"/> class.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public MP4Parser(string fileName)
         {
             this.FileName = fileName;
@@ -22,16 +37,31 @@
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MP4Parser"/> class.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
         public MP4Parser(FileStream fs)
         {
             this.FileName = null;
             this.ParseMp4(fs);
         }
 
+        /// <summary>
+        /// Gets the file name.
+        /// </summary>
         public string FileName { get; private set; }
 
+        /// <summary>
+        /// Gets the moov.
+        /// </summary>
         public Moov Moov { get; private set; }
 
+        /// <summary>
+        /// Gets the duration.
+        /// </summary>
         public TimeSpan Duration
         {
             get
@@ -45,6 +75,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the creation date.
+        /// </summary>
         public DateTime CreationDate
         {
             get
@@ -83,6 +116,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the frame rate.
+        /// </summary>
         internal double FrameRate
         {
             get
@@ -103,6 +139,12 @@
             }
         }
 
+        /// <summary>
+        /// The get subtitle tracks.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public List<Trak> GetSubtitleTracks()
         {
             List<Trak> list = new List<Trak>();
@@ -120,6 +162,12 @@
             return list;
         }
 
+        /// <summary>
+        /// The get audio tracks.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public List<Trak> GetAudioTracks()
         {
             List<Trak> list = new List<Trak>();
@@ -137,6 +185,12 @@
             return list;
         }
 
+        /// <summary>
+        /// The get video tracks.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public List<Trak> GetVideoTracks()
         {
             List<Trak> list = new List<Trak>();
@@ -154,6 +208,12 @@
             return list;
         }
 
+        /// <summary>
+        /// The parse mp 4.
+        /// </summary>
+        /// <param name="fs">
+        /// The fs.
+        /// </param>
         private void ParseMp4(FileStream fs)
         {
             int count = 0;

@@ -1,147 +1,239 @@
-﻿using System;
-using System.Globalization;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="DCinemaPropertiesInterop.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The d cinema properties interop.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms.DCinema
 {
+    using System;
+    using System.Globalization;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The d cinema properties interop.
+    /// </summary>
     public sealed partial class DCinemaPropertiesInterop : DCinemaPropertiesForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DCinemaPropertiesInterop"/> class.
+        /// </summary>
         public DCinemaPropertiesInterop()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             var l = Configuration.Settings.Language.DCinemaProperties;
-            Text = l.Title;
-            labelSubtitleID.Text = l.SubtitleId;
-            labelMovieTitle.Text = l.MovieTitle;
-            labelReelNumber.Text = l.ReelNumber;
-            labelLanguage.Text = l.Language;
-            groupBoxFont.Text = l.Font;
-            labelFontId.Text = l.FontId;
-            labelFontUri.Text = l.FontUri;
-            labelFontColor.Text = l.FontColor;
-            buttonFontColor.Text = l.ChooseColor;
-            labelEffect.Text = l.FontEffect;
-            labelEffectColor.Text = l.FontEffectColor;
-            buttonFontEffectColor.Text = l.ChooseColor;
-            labelFontSize.Text = l.FontSize;
-            labelTopBottomMargin.Text = l.TopBottomMargin;
-            labelZPosition.Text = l.ZPosition;
-            labelZPositionHelp.Text = l.ZPositionHelp;
-            labelFadeUpTime.Text = l.FadeUpTime;
-            labelFadeDownTime.Text = l.FadeDownTime;
+            this.Text = l.Title;
+            this.labelSubtitleID.Text = l.SubtitleId;
+            this.labelMovieTitle.Text = l.MovieTitle;
+            this.labelReelNumber.Text = l.ReelNumber;
+            this.labelLanguage.Text = l.Language;
+            this.groupBoxFont.Text = l.Font;
+            this.labelFontId.Text = l.FontId;
+            this.labelFontUri.Text = l.FontUri;
+            this.labelFontColor.Text = l.FontColor;
+            this.buttonFontColor.Text = l.ChooseColor;
+            this.labelEffect.Text = l.FontEffect;
+            this.labelEffectColor.Text = l.FontEffectColor;
+            this.buttonFontEffectColor.Text = l.ChooseColor;
+            this.labelFontSize.Text = l.FontSize;
+            this.labelTopBottomMargin.Text = l.TopBottomMargin;
+            this.labelZPosition.Text = l.ZPosition;
+            this.labelZPositionHelp.Text = l.ZPositionHelp;
+            this.labelFadeUpTime.Text = l.FadeUpTime;
+            this.labelFadeDownTime.Text = l.FadeDownTime;
 
             foreach (CultureInfo x in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
             {
-                comboBoxLanguage.Items.Add(x.EnglishName);
+                this.comboBoxLanguage.Items.Add(x.EnglishName);
             }
-            comboBoxLanguage.Sorted = true;
+
+            this.comboBoxLanguage.Sorted = true;
 
             var ss = Configuration.Settings.SubtitleSettings;
             if (!string.IsNullOrEmpty(ss.CurrentDCinemaSubtitleId))
             {
-                textBoxSubtitleID.Text = ss.CurrentDCinemaSubtitleId;
-                textBoxMovieTitle.Text = ss.CurrentDCinemaMovieTitle;
+                this.textBoxSubtitleID.Text = ss.CurrentDCinemaSubtitleId;
+                this.textBoxMovieTitle.Text = ss.CurrentDCinemaMovieTitle;
                 int number;
                 if (int.TryParse(ss.CurrentDCinemaReelNumber, out number))
                 {
-                    if (numericUpDownReelNumber.Minimum <= number && numericUpDownReelNumber.Maximum >= number)
-                        numericUpDownReelNumber.Value = number;
+                    if (this.numericUpDownReelNumber.Minimum <= number && this.numericUpDownReelNumber.Maximum >= number)
+                    {
+                        this.numericUpDownReelNumber.Value = number;
+                    }
                 }
-                comboBoxLanguage.Text = ss.CurrentDCinemaLanguage;
-                textBoxFontID.Text = ss.CurrentDCinemaFontId;
-                textBoxFontUri.Text = ss.CurrentDCinemaFontUri;
-                panelFontColor.BackColor = ss.CurrentDCinemaFontColor;
+
+                this.comboBoxLanguage.Text = ss.CurrentDCinemaLanguage;
+                this.textBoxFontID.Text = ss.CurrentDCinemaFontId;
+                this.textBoxFontUri.Text = ss.CurrentDCinemaFontUri;
+                this.panelFontColor.BackColor = ss.CurrentDCinemaFontColor;
                 if (ss.CurrentDCinemaFontEffect == "border")
-                    comboBoxFontEffect.SelectedIndex = 1;
+                {
+                    this.comboBoxFontEffect.SelectedIndex = 1;
+                }
                 else if (ss.CurrentDCinemaFontEffect == "shadow")
-                    comboBoxFontEffect.SelectedIndex = 2;
+                {
+                    this.comboBoxFontEffect.SelectedIndex = 2;
+                }
                 else
-                    comboBoxFontEffect.SelectedIndex = 0;
-                panelFontEffectColor.BackColor = ss.CurrentDCinemaFontEffectColor;
-                numericUpDownFontSize.Value = ss.CurrentDCinemaFontSize;
-                if (numericUpDownTopBottomMargin.Minimum <= ss.DCinemaBottomMargin &&
-                   numericUpDownTopBottomMargin.Maximum >= ss.DCinemaBottomMargin)
-                    numericUpDownTopBottomMargin.Value = ss.DCinemaBottomMargin;
-                else
-                    numericUpDownTopBottomMargin.Value = 8;
+                {
+                    this.comboBoxFontEffect.SelectedIndex = 0;
+                }
 
-                if (numericUpDownFadeUp.Minimum <= ss.DCinemaFadeUpTime &&
-                   numericUpDownFadeUp.Maximum >= ss.DCinemaFadeUpTime)
-                    numericUpDownFadeUp.Value = ss.DCinemaFadeUpTime;
+                this.panelFontEffectColor.BackColor = ss.CurrentDCinemaFontEffectColor;
+                this.numericUpDownFontSize.Value = ss.CurrentDCinemaFontSize;
+                if (this.numericUpDownTopBottomMargin.Minimum <= ss.DCinemaBottomMargin && this.numericUpDownTopBottomMargin.Maximum >= ss.DCinemaBottomMargin)
+                {
+                    this.numericUpDownTopBottomMargin.Value = ss.DCinemaBottomMargin;
+                }
                 else
-                    numericUpDownFadeUp.Value = 5;
+                {
+                    this.numericUpDownTopBottomMargin.Value = 8;
+                }
 
-                if (numericUpDownFadeDown.Minimum <= ss.DCinemaFadeDownTime &&
-                   numericUpDownFadeDown.Maximum >= ss.DCinemaFadeDownTime)
-                    numericUpDownFadeDown.Value = ss.DCinemaFadeDownTime;
+                if (this.numericUpDownFadeUp.Minimum <= ss.DCinemaFadeUpTime && this.numericUpDownFadeUp.Maximum >= ss.DCinemaFadeUpTime)
+                {
+                    this.numericUpDownFadeUp.Value = ss.DCinemaFadeUpTime;
+                }
                 else
-                    numericUpDownFadeDown.Value = 5;
+                {
+                    this.numericUpDownFadeUp.Value = 5;
+                }
+
+                if (this.numericUpDownFadeDown.Minimum <= ss.DCinemaFadeDownTime && this.numericUpDownFadeDown.Maximum >= ss.DCinemaFadeDownTime)
+                {
+                    this.numericUpDownFadeDown.Value = ss.DCinemaFadeDownTime;
+                }
+                else
+                {
+                    this.numericUpDownFadeDown.Value = 5;
+                }
 
                 decimal zPosition = (decimal)ss.DCinemaZPosition;
-                if (numericUpDownZPosition.Minimum <= zPosition &&
-                   numericUpDownZPosition.Maximum >= zPosition)
-                    numericUpDownZPosition.Value = zPosition;
+                if (this.numericUpDownZPosition.Minimum <= zPosition && this.numericUpDownZPosition.Maximum >= zPosition)
+                {
+                    this.numericUpDownZPosition.Value = zPosition;
+                }
                 else
-                    numericUpDownZPosition.Value = 0;
+                {
+                    this.numericUpDownZPosition.Value = 0;
+                }
             }
-            Utilities.FixLargeFonts(this, buttonCancel);
+
+            Utilities.FixLargeFonts(this, this.buttonCancel);
         }
 
+        /// <summary>
+        /// The button generate i d_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonGenerateID_Click(object sender, EventArgs e)
         {
             string hex = Guid.NewGuid().ToString().Replace("-", string.Empty);
-            textBoxSubtitleID.Text = hex.Insert(8, "-").Insert(13, "-").Insert(18, "-").Insert(23, "-");
+            this.textBoxSubtitleID.Text = hex.Insert(8, "-").Insert(13, "-").Insert(18, "-").Insert(23, "-");
         }
 
+        /// <summary>
+        /// The button font color_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonFontColor_Click(object sender, EventArgs e)
         {
-            colorDialog1.Color = panelFontColor.BackColor;
-            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            this.colorDialog1.Color = this.panelFontColor.BackColor;
+            if (this.colorDialog1.ShowDialog() == DialogResult.OK)
             {
-                panelFontColor.BackColor = colorDialog1.Color;
+                this.panelFontColor.BackColor = this.colorDialog1.Color;
             }
         }
 
+        /// <summary>
+        /// The button font effect color_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonFontEffectColor_Click(object sender, EventArgs e)
         {
-            colorDialog1.Color = panelFontEffectColor.BackColor;
-            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            this.colorDialog1.Color = this.panelFontEffectColor.BackColor;
+            if (this.colorDialog1.ShowDialog() == DialogResult.OK)
             {
-                panelFontEffectColor.BackColor = colorDialog1.Color;
+                this.panelFontEffectColor.BackColor = this.colorDialog1.Color;
             }
         }
 
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
             var ss = Configuration.Settings.SubtitleSettings;
-            ss.CurrentDCinemaSubtitleId = textBoxSubtitleID.Text;
-            ss.CurrentDCinemaMovieTitle = textBoxMovieTitle.Text;
-            ss.CurrentDCinemaReelNumber = numericUpDownReelNumber.Value.ToString();
-            ss.CurrentDCinemaLanguage = comboBoxLanguage.Text;
-            ss.CurrentDCinemaFontId = textBoxFontID.Text;
-            ss.CurrentDCinemaFontUri = textBoxFontUri.Text;
-            ss.CurrentDCinemaFontColor = panelFontColor.BackColor;
-            if (comboBoxFontEffect.SelectedIndex == 1)
+            ss.CurrentDCinemaSubtitleId = this.textBoxSubtitleID.Text;
+            ss.CurrentDCinemaMovieTitle = this.textBoxMovieTitle.Text;
+            ss.CurrentDCinemaReelNumber = this.numericUpDownReelNumber.Value.ToString();
+            ss.CurrentDCinemaLanguage = this.comboBoxLanguage.Text;
+            ss.CurrentDCinemaFontId = this.textBoxFontID.Text;
+            ss.CurrentDCinemaFontUri = this.textBoxFontUri.Text;
+            ss.CurrentDCinemaFontColor = this.panelFontColor.BackColor;
+            if (this.comboBoxFontEffect.SelectedIndex == 1)
+            {
                 ss.CurrentDCinemaFontEffect = "border";
-            else if (comboBoxFontEffect.SelectedIndex == 2)
+            }
+            else if (this.comboBoxFontEffect.SelectedIndex == 2)
+            {
                 ss.CurrentDCinemaFontEffect = "shadow";
+            }
             else
+            {
                 ss.CurrentDCinemaFontEffect = string.Empty;
-            ss.CurrentDCinemaFontEffectColor = panelFontEffectColor.BackColor;
-            ss.CurrentDCinemaFontSize = (int)numericUpDownFontSize.Value;
-            ss.DCinemaBottomMargin = (int)numericUpDownTopBottomMargin.Value;
-            ss.DCinemaFadeUpTime = (int)numericUpDownFadeUp.Value;
-            ss.DCinemaFadeDownTime = (int)numericUpDownFadeDown.Value;
-            ss.DCinemaZPosition = (double)numericUpDownZPosition.Value;
+            }
 
-            DialogResult = DialogResult.OK;
+            ss.CurrentDCinemaFontEffectColor = this.panelFontEffectColor.BackColor;
+            ss.CurrentDCinemaFontSize = (int)this.numericUpDownFontSize.Value;
+            ss.DCinemaBottomMargin = (int)this.numericUpDownTopBottomMargin.Value;
+            ss.DCinemaFadeUpTime = (int)this.numericUpDownFadeUp.Value;
+            ss.DCinemaFadeDownTime = (int)this.numericUpDownFadeDown.Value;
+            ss.DCinemaZPosition = (double)this.numericUpDownZPosition.Value;
+
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
     }
 }

@@ -1,153 +1,265 @@
-﻿using System;
-using System.Globalization;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="DCinemaPropertiesSmpte.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The d cinema properties smpte.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms.DCinema
 {
+    using System;
+    using System.Globalization;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The d cinema properties smpte.
+    /// </summary>
     public sealed partial class DCinemaPropertiesSmpte : DCinemaPropertiesForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DCinemaPropertiesSmpte"/> class.
+        /// </summary>
         public DCinemaPropertiesSmpte()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             var l = Configuration.Settings.Language.DCinemaProperties;
-            Text = l.TitleSmpte;
-            labelSubtitleID.Text = l.SubtitleId;
-            labelMovieTitle.Text = l.MovieTitle;
-            labelReelNumber.Text = l.ReelNumber;
-            labelLanguage.Text = l.Language;
-            labelIssueDate.Text = l.IssueDate;
-            labelEditRate.Text = l.EditRate;
-            labelTimeCodeRate.Text = l.TimeCodeRate;
-            labelStartTime.Text = l.StartTime;
-            groupBoxFont.Text = l.Font;
-            labelFontId.Text = l.FontId;
-            labelFontUri.Text = l.FontUri;
-            labelFontColor.Text = l.FontColor;
-            buttonFontColor.Text = l.ChooseColor;
-            labelEffect.Text = l.FontEffect;
-            labelEffectColor.Text = l.FontEffectColor;
-            buttonFontEffectColor.Text = l.ChooseColor;
-            labelFontSize.Text = l.FontSize;
-            buttonGenerateID.Text = l.Generate;
-            buttonGenFontUri.Text = l.Generate;
+            this.Text = l.TitleSmpte;
+            this.labelSubtitleID.Text = l.SubtitleId;
+            this.labelMovieTitle.Text = l.MovieTitle;
+            this.labelReelNumber.Text = l.ReelNumber;
+            this.labelLanguage.Text = l.Language;
+            this.labelIssueDate.Text = l.IssueDate;
+            this.labelEditRate.Text = l.EditRate;
+            this.labelTimeCodeRate.Text = l.TimeCodeRate;
+            this.labelStartTime.Text = l.StartTime;
+            this.groupBoxFont.Text = l.Font;
+            this.labelFontId.Text = l.FontId;
+            this.labelFontUri.Text = l.FontUri;
+            this.labelFontColor.Text = l.FontColor;
+            this.buttonFontColor.Text = l.ChooseColor;
+            this.labelEffect.Text = l.FontEffect;
+            this.labelEffectColor.Text = l.FontEffectColor;
+            this.buttonFontEffectColor.Text = l.ChooseColor;
+            this.labelFontSize.Text = l.FontSize;
+            this.buttonGenerateID.Text = l.Generate;
+            this.buttonGenFontUri.Text = l.Generate;
 
             foreach (CultureInfo x in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
             {
-                comboBoxLanguage.Items.Add(x.TwoLetterISOLanguageName);
+                this.comboBoxLanguage.Items.Add(x.TwoLetterISOLanguageName);
             }
-            comboBoxLanguage.Sorted = true;
+
+            this.comboBoxLanguage.Sorted = true;
 
             var ss = Configuration.Settings.SubtitleSettings;
             if (!string.IsNullOrEmpty(ss.CurrentDCinemaSubtitleId))
             {
-                textBoxSubtitleID.Text = ss.CurrentDCinemaSubtitleId;
+                this.textBoxSubtitleID.Text = ss.CurrentDCinemaSubtitleId;
                 int number;
-                if (int.TryParse(ss.CurrentDCinemaReelNumber, out number) &&
-                    numericUpDownReelNumber.Minimum <= number && numericUpDownReelNumber.Maximum >= number)
+                if (int.TryParse(ss.CurrentDCinemaReelNumber, out number) && this.numericUpDownReelNumber.Minimum <= number && this.numericUpDownReelNumber.Maximum >= number)
                 {
-                    numericUpDownReelNumber.Value = number;
+                    this.numericUpDownReelNumber.Value = number;
                 }
-                textBoxMovieTitle.Text = ss.CurrentDCinemaMovieTitle;
-                comboBoxLanguage.Text = ss.CurrentDCinemaLanguage;
-                textBoxFontID.Text = ss.CurrentDCinemaFontId;
-                textBoxEditRate.Text = ss.CurrentDCinemaEditRate;
-                comboBoxTimeCodeRate.Text = ss.CurrentDCinemaTimeCodeRate;
 
-                timeUpDownStartTime.ForceHHMMSSFF();
+                this.textBoxMovieTitle.Text = ss.CurrentDCinemaMovieTitle;
+                this.comboBoxLanguage.Text = ss.CurrentDCinemaLanguage;
+                this.textBoxFontID.Text = ss.CurrentDCinemaFontId;
+                this.textBoxEditRate.Text = ss.CurrentDCinemaEditRate;
+                this.comboBoxTimeCodeRate.Text = ss.CurrentDCinemaTimeCodeRate;
+
+                this.timeUpDownStartTime.ForceHHMMSSFF();
                 if (string.IsNullOrEmpty(ss.CurrentDCinemaStartTime))
+                {
                     ss.CurrentDCinemaStartTime = "00:00:00:00";
-                timeUpDownStartTime.MaskedTextBox.Text = ss.CurrentDCinemaStartTime;
+                }
 
-                textBoxFontUri.Text = ss.CurrentDCinemaFontUri;
-                textBoxIssueDate.Text = ss.CurrentDCinemaIssueDate;
-                panelFontColor.BackColor = ss.CurrentDCinemaFontColor;
+                this.timeUpDownStartTime.MaskedTextBox.Text = ss.CurrentDCinemaStartTime;
+
+                this.textBoxFontUri.Text = ss.CurrentDCinemaFontUri;
+                this.textBoxIssueDate.Text = ss.CurrentDCinemaIssueDate;
+                this.panelFontColor.BackColor = ss.CurrentDCinemaFontColor;
                 if (ss.CurrentDCinemaFontEffect == "border")
-                    comboBoxFontEffect.SelectedIndex = 1;
+                {
+                    this.comboBoxFontEffect.SelectedIndex = 1;
+                }
                 else if (ss.CurrentDCinemaFontEffect == "shadow")
-                    comboBoxFontEffect.SelectedIndex = 2;
+                {
+                    this.comboBoxFontEffect.SelectedIndex = 2;
+                }
                 else
-                    comboBoxFontEffect.SelectedIndex = 0;
-                panelFontEffectColor.BackColor = ss.CurrentDCinemaFontEffectColor;
-                numericUpDownFontSize.Value = ss.CurrentDCinemaFontSize;
-                if (numericUpDownTopBottomMargin.Minimum <= ss.DCinemaBottomMargin &&
-                    numericUpDownTopBottomMargin.Maximum >= ss.DCinemaBottomMargin)
-                    numericUpDownTopBottomMargin.Value = ss.DCinemaBottomMargin;
+                {
+                    this.comboBoxFontEffect.SelectedIndex = 0;
+                }
+
+                this.panelFontEffectColor.BackColor = ss.CurrentDCinemaFontEffectColor;
+                this.numericUpDownFontSize.Value = ss.CurrentDCinemaFontSize;
+                if (this.numericUpDownTopBottomMargin.Minimum <= ss.DCinemaBottomMargin && this.numericUpDownTopBottomMargin.Maximum >= ss.DCinemaBottomMargin)
+                {
+                    this.numericUpDownTopBottomMargin.Value = ss.DCinemaBottomMargin;
+                }
                 else
-                    numericUpDownTopBottomMargin.Value = 8;
+                {
+                    this.numericUpDownTopBottomMargin.Value = 8;
+                }
             }
-            Utilities.FixLargeFonts(this, buttonCancel);
+
+            Utilities.FixLargeFonts(this, this.buttonCancel);
         }
 
+        /// <summary>
+        /// The button font color_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonFontColor_Click(object sender, EventArgs e)
         {
-            colorDialog1.Color = panelFontColor.BackColor;
-            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            this.colorDialog1.Color = this.panelFontColor.BackColor;
+            if (this.colorDialog1.ShowDialog() == DialogResult.OK)
             {
-                panelFontColor.BackColor = colorDialog1.Color;
+                this.panelFontColor.BackColor = this.colorDialog1.Color;
             }
         }
 
+        /// <summary>
+        /// The button font effect color_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonFontEffectColor_Click(object sender, EventArgs e)
         {
-            colorDialog1.Color = panelFontEffectColor.BackColor;
-            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            this.colorDialog1.Color = this.panelFontEffectColor.BackColor;
+            if (this.colorDialog1.ShowDialog() == DialogResult.OK)
             {
-                panelFontEffectColor.BackColor = colorDialog1.Color;
+                this.panelFontEffectColor.BackColor = this.colorDialog1.Color;
             }
         }
 
+        /// <summary>
+        /// The button generate i d_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonGenerateID_Click(object sender, EventArgs e)
         {
-            textBoxSubtitleID.Text = GenerateID();
+            this.textBoxSubtitleID.Text = this.GenerateID();
         }
 
+        /// <summary>
+        /// The button today_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonToday_Click(object sender, EventArgs e)
         {
-            textBoxIssueDate.Text = DateTime.Now.ToString("s") + ".000-00:00";
+            this.textBoxIssueDate.Text = DateTime.Now.ToString("s") + ".000-00:00";
         }
 
+        /// <summary>
+        /// The button o k_ click_1.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click_1(object sender, EventArgs e)
         {
             var ss = Configuration.Settings.SubtitleSettings;
-            ss.CurrentDCinemaSubtitleId = textBoxSubtitleID.Text;
-            ss.CurrentDCinemaMovieTitle = textBoxMovieTitle.Text;
-            ss.CurrentDCinemaReelNumber = numericUpDownReelNumber.Value.ToString();
-            ss.CurrentDCinemaEditRate = textBoxEditRate.Text;
-            ss.CurrentDCinemaTimeCodeRate = comboBoxTimeCodeRate.Text;
-            ss.CurrentDCinemaStartTime = timeUpDownStartTime.TimeCode.ToHHMMSSFF();
-            if (comboBoxLanguage.SelectedItem != null)
-                ss.CurrentDCinemaLanguage = comboBoxLanguage.SelectedItem.ToString();
+            ss.CurrentDCinemaSubtitleId = this.textBoxSubtitleID.Text;
+            ss.CurrentDCinemaMovieTitle = this.textBoxMovieTitle.Text;
+            ss.CurrentDCinemaReelNumber = this.numericUpDownReelNumber.Value.ToString();
+            ss.CurrentDCinemaEditRate = this.textBoxEditRate.Text;
+            ss.CurrentDCinemaTimeCodeRate = this.comboBoxTimeCodeRate.Text;
+            ss.CurrentDCinemaStartTime = this.timeUpDownStartTime.TimeCode.ToHHMMSSFF();
+            if (this.comboBoxLanguage.SelectedItem != null)
+            {
+                ss.CurrentDCinemaLanguage = this.comboBoxLanguage.SelectedItem.ToString();
+            }
             else
+            {
                 ss.CurrentDCinemaLanguage = string.Empty;
-            ss.CurrentDCinemaIssueDate = textBoxIssueDate.Text;
-            ss.CurrentDCinemaFontId = textBoxFontID.Text;
-            ss.CurrentDCinemaFontUri = textBoxFontUri.Text;
-            ss.CurrentDCinemaFontColor = panelFontColor.BackColor;
-            if (comboBoxFontEffect.SelectedIndex == 1)
-                ss.CurrentDCinemaFontEffect = "border";
-            else if (comboBoxFontEffect.SelectedIndex == 2)
-                ss.CurrentDCinemaFontEffect = "shadow";
-            else
-                ss.CurrentDCinemaFontEffect = string.Empty;
-            ss.CurrentDCinemaFontEffectColor = panelFontEffectColor.BackColor;
-            ss.CurrentDCinemaFontSize = (int)numericUpDownFontSize.Value;
-            ss.DCinemaBottomMargin = (int)numericUpDownTopBottomMargin.Value;
+            }
 
-            DialogResult = DialogResult.OK;
+            ss.CurrentDCinemaIssueDate = this.textBoxIssueDate.Text;
+            ss.CurrentDCinemaFontId = this.textBoxFontID.Text;
+            ss.CurrentDCinemaFontUri = this.textBoxFontUri.Text;
+            ss.CurrentDCinemaFontColor = this.panelFontColor.BackColor;
+            if (this.comboBoxFontEffect.SelectedIndex == 1)
+            {
+                ss.CurrentDCinemaFontEffect = "border";
+            }
+            else if (this.comboBoxFontEffect.SelectedIndex == 2)
+            {
+                ss.CurrentDCinemaFontEffect = "shadow";
+            }
+            else
+            {
+                ss.CurrentDCinemaFontEffect = string.Empty;
+            }
+
+            ss.CurrentDCinemaFontEffectColor = this.panelFontEffectColor.BackColor;
+            ss.CurrentDCinemaFontSize = (int)this.numericUpDownFontSize.Value;
+            ss.DCinemaBottomMargin = (int)this.numericUpDownTopBottomMargin.Value;
+
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The button 1_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void button1_Click(object sender, EventArgs e)
         {
-            textBoxFontUri.Text = GenerateID();
+            this.textBoxFontUri.Text = this.GenerateID();
         }
 
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
 
+        /// <summary>
+        /// The generate id.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string GenerateID()
         {
             var hex = Guid.NewGuid().ToString().Replace("-", string.Empty);

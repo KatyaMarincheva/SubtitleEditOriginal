@@ -1,12 +1,29 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ParagraphTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The paragraph test.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic
 {
+    using System;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The paragraph test.
+    /// </summary>
     [TestClass]
     public class ParagraphTest
     {
+        /// <summary>
+        /// The test method number of lines two lines.
+        /// </summary>
         [TestMethod]
         public void TestMethodNumberOfLinesTwoLines()
         {
@@ -14,6 +31,9 @@ namespace Test.Logic
             Assert.AreEqual(2, p.NumberOfLines);
         }
 
+        /// <summary>
+        /// The test method number of lines three lines.
+        /// </summary>
         [TestMethod]
         public void TestMethodNumberOfLinesThreeLines()
         {
@@ -21,6 +41,9 @@ namespace Test.Logic
             Assert.AreEqual(3, p.NumberOfLines);
         }
 
+        /// <summary>
+        /// The test method number of lines one line.
+        /// </summary>
         [TestMethod]
         public void TestMethodNumberOfLinesOneLine()
         {
@@ -28,13 +51,14 @@ namespace Test.Logic
             Assert.AreEqual(1, p.NumberOfLines);
         }
 
+        /// <summary>
+        /// The test method number of lines zero.
+        /// </summary>
         [TestMethod]
         public void TestMethodNumberOfLinesZero()
         {
             var p = new Paragraph { Text = string.Empty };
             Assert.AreEqual(0, p.NumberOfLines);
         }
-
-
     }
 }

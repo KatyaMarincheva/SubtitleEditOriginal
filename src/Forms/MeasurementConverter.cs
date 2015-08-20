@@ -1,327 +1,428 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MeasurementConverter.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The measurement converter.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Drawing;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The measurement converter.
+    /// </summary>
     public partial class MeasurementConverter : Form
     {
+        /// <summary>
+        /// The _default back color.
+        /// </summary>
         private Color _defaultBackColor = Color.White;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MeasurementConverter"/> class.
+        /// </summary>
         public MeasurementConverter()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             var l = Configuration.Settings.Language.MeasurementConverter;
-            Text = l.Title;
-            labelConvertFrom.Text = l.ConvertFrom;
-            labelConvertTo.Text = l.ConvertTo;
-            linkLabel1.Text = l.CopyToClipboard;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.Text = l.Title;
+            this.labelConvertFrom.Text = l.ConvertFrom;
+            this.labelConvertTo.Text = l.ConvertTo;
+            this.linkLabel1.Text = l.CopyToClipboard;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
 
-            _defaultBackColor = textBoxInput.BackColor;
-            textBoxInput.Text = "1";
+            this._defaultBackColor = this.textBoxInput.BackColor;
+            this.textBoxInput.Text = "1";
 
-            comboBoxFrom.Items.Add(l.Fahrenheit);
-            comboBoxFrom.Items.Add(l.Celsius);
+            this.comboBoxFrom.Items.Add(l.Fahrenheit);
+            this.comboBoxFrom.Items.Add(l.Celsius);
 
-            comboBoxFrom.Items.Add(l.Miles);
-            comboBoxFrom.Items.Add(l.Kilometers);
-            comboBoxFrom.Items.Add(l.Meters);
-            comboBoxFrom.Items.Add(l.Yards);
-            comboBoxFrom.Items.Add(l.Feet);
-            comboBoxFrom.Items.Add(l.Inches);
+            this.comboBoxFrom.Items.Add(l.Miles);
+            this.comboBoxFrom.Items.Add(l.Kilometers);
+            this.comboBoxFrom.Items.Add(l.Meters);
+            this.comboBoxFrom.Items.Add(l.Yards);
+            this.comboBoxFrom.Items.Add(l.Feet);
+            this.comboBoxFrom.Items.Add(l.Inches);
 
-            comboBoxFrom.Items.Add(l.Pounds);
-            comboBoxFrom.Items.Add(l.Kilos);
+            this.comboBoxFrom.Items.Add(l.Pounds);
+            this.comboBoxFrom.Items.Add(l.Kilos);
 
-            comboBoxFrom.SelectedIndex = 0;
+            this.comboBoxFrom.SelectedIndex = 0;
 
-            Utilities.FixLargeFonts(this, buttonOK);
+            Utilities.FixLargeFonts(this, this.buttonOK);
         }
 
+        /// <summary>
+        /// The combo box from_ selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void comboBoxFrom_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string text = comboBoxFrom.SelectedItem.ToString();
-            comboBoxTo.Items.Clear();
+            string text = this.comboBoxFrom.SelectedItem.ToString();
+            this.comboBoxTo.Items.Clear();
             var l = Configuration.Settings.Language.MeasurementConverter;
             if (text == l.Fahrenheit)
             {
-                comboBoxTo.Items.Add(l.Celsius);
+                this.comboBoxTo.Items.Add(l.Celsius);
             }
             else if (text == l.Celsius)
             {
-                comboBoxTo.Items.Add(l.Fahrenheit);
+                this.comboBoxTo.Items.Add(l.Fahrenheit);
             }
             else if (text == l.Miles)
             {
-                comboBoxTo.Items.Add(l.Kilometers);
-                comboBoxTo.Items.Add(l.Meters);
-                comboBoxTo.Items.Add(l.Yards);
-                comboBoxTo.Items.Add(l.Feet);
-                comboBoxTo.Items.Add(l.Inches);
+                this.comboBoxTo.Items.Add(l.Kilometers);
+                this.comboBoxTo.Items.Add(l.Meters);
+                this.comboBoxTo.Items.Add(l.Yards);
+                this.comboBoxTo.Items.Add(l.Feet);
+                this.comboBoxTo.Items.Add(l.Inches);
             }
             else if (text == l.Kilometers)
             {
-                comboBoxTo.Items.Add(l.Miles);
-                comboBoxTo.Items.Add(l.Meters);
-                comboBoxTo.Items.Add(l.Yards);
-                comboBoxTo.Items.Add(l.Feet);
-                comboBoxTo.Items.Add(l.Inches);
+                this.comboBoxTo.Items.Add(l.Miles);
+                this.comboBoxTo.Items.Add(l.Meters);
+                this.comboBoxTo.Items.Add(l.Yards);
+                this.comboBoxTo.Items.Add(l.Feet);
+                this.comboBoxTo.Items.Add(l.Inches);
             }
             else if (text == l.Meters)
             {
-                comboBoxTo.Items.Add(l.Miles);
-                comboBoxTo.Items.Add(l.Kilometers);
-                comboBoxTo.Items.Add(l.Yards);
-                comboBoxTo.Items.Add(l.Feet);
-                comboBoxTo.Items.Add(l.Inches);
+                this.comboBoxTo.Items.Add(l.Miles);
+                this.comboBoxTo.Items.Add(l.Kilometers);
+                this.comboBoxTo.Items.Add(l.Yards);
+                this.comboBoxTo.Items.Add(l.Feet);
+                this.comboBoxTo.Items.Add(l.Inches);
             }
             else if (text == l.Yards)
             {
-                comboBoxTo.Items.Add(l.Miles);
-                comboBoxTo.Items.Add(l.Kilometers);
-                comboBoxTo.Items.Add(l.Meters);
-                comboBoxTo.Items.Add(l.Feet);
-                comboBoxTo.Items.Add(l.Inches);
+                this.comboBoxTo.Items.Add(l.Miles);
+                this.comboBoxTo.Items.Add(l.Kilometers);
+                this.comboBoxTo.Items.Add(l.Meters);
+                this.comboBoxTo.Items.Add(l.Feet);
+                this.comboBoxTo.Items.Add(l.Inches);
             }
             else if (text == l.Feet)
             {
-                comboBoxTo.Items.Add(l.Miles);
-                comboBoxTo.Items.Add(l.Kilometers);
-                comboBoxTo.Items.Add(l.Meters);
-                comboBoxTo.Items.Add(l.Yards);
-                comboBoxTo.Items.Add(l.Inches);
+                this.comboBoxTo.Items.Add(l.Miles);
+                this.comboBoxTo.Items.Add(l.Kilometers);
+                this.comboBoxTo.Items.Add(l.Meters);
+                this.comboBoxTo.Items.Add(l.Yards);
+                this.comboBoxTo.Items.Add(l.Inches);
             }
             else if (text == l.Inches)
             {
-                comboBoxTo.Items.Add(l.Miles);
-                comboBoxTo.Items.Add(l.Kilometers);
-                comboBoxTo.Items.Add(l.Meters);
-                comboBoxTo.Items.Add(l.Yards);
-                comboBoxTo.Items.Add(l.Feet);
+                this.comboBoxTo.Items.Add(l.Miles);
+                this.comboBoxTo.Items.Add(l.Kilometers);
+                this.comboBoxTo.Items.Add(l.Meters);
+                this.comboBoxTo.Items.Add(l.Yards);
+                this.comboBoxTo.Items.Add(l.Feet);
             }
             else if (text == l.Pounds)
             {
-                comboBoxTo.Items.Add(l.Kilos);
+                this.comboBoxTo.Items.Add(l.Kilos);
             }
             else if (text == l.Kilos)
             {
-                comboBoxTo.Items.Add(l.Pounds);
+                this.comboBoxTo.Items.Add(l.Pounds);
             }
-            if (comboBoxTo.Items.Count > 0)
-                comboBoxTo.SelectedIndex = 0;
-            textBoxInput_TextChanged(null, null);
+
+            if (this.comboBoxTo.Items.Count > 0)
+            {
+                this.comboBoxTo.SelectedIndex = 0;
+            }
+
+            this.textBoxInput_TextChanged(null, null);
         }
 
+        /// <summary>
+        /// The show result.
+        /// </summary>
+        /// <param name="d">
+        /// The d.
+        /// </param>
         private void ShowResult(double d)
         {
-            textBoxResult.Text = string.Format("{0:0.##}", d);
+            this.textBoxResult.Text = string.Format("{0:0.##}", d);
         }
 
+        /// <summary>
+        /// The combo box to_ selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void comboBoxTo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            textBoxInput_TextChanged(null, null);
+            this.textBoxInput_TextChanged(null, null);
         }
 
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+        /// <summary>
+        /// The link label 1_ link clicked.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (textBoxResult.Text.Length > 0)
-                Clipboard.SetText(textBoxResult.Text);
+            if (this.textBoxResult.Text.Length > 0)
+            {
+                Clipboard.SetText(this.textBoxResult.Text);
+            }
         }
 
+        /// <summary>
+        /// The text box input_ text changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void textBoxInput_TextChanged(object sender, EventArgs e)
         {
-            if (comboBoxFrom.SelectedIndex == -1 || comboBoxTo.SelectedIndex == -1)
-                return;
-
-            double d;
-            if (!double.TryParse(textBoxInput.Text, out d))
+            if (this.comboBoxFrom.SelectedIndex == -1 || this.comboBoxTo.SelectedIndex == -1)
             {
-                textBoxInput.BackColor = Configuration.Settings.Tools.ListViewSyntaxErrorColor;
                 return;
             }
-            textBoxInput.BackColor = _defaultBackColor;
 
-            string text = comboBoxFrom.SelectedItem.ToString();
-            string textTo = comboBoxTo.SelectedItem.ToString();
+            double d;
+            if (!double.TryParse(this.textBoxInput.Text, out d))
+            {
+                this.textBoxInput.BackColor = Configuration.Settings.Tools.ListViewSyntaxErrorColor;
+                return;
+            }
+
+            this.textBoxInput.BackColor = this._defaultBackColor;
+
+            string text = this.comboBoxFrom.SelectedItem.ToString();
+            string textTo = this.comboBoxTo.SelectedItem.ToString();
             var l = Configuration.Settings.Language.MeasurementConverter;
             if (text == l.Fahrenheit)
             {
-                ShowResult((d - 32) * 5 / 9);
+                this.ShowResult((d - 32) * 5 / 9);
             }
             else if (text == l.Celsius)
             {
-                ShowResult(Convert.ToDouble(d) * 1.80 + 32);
+                this.ShowResult(Convert.ToDouble(d) * 1.80 + 32);
             }
             else if (text == l.Miles)
             {
                 if (textTo == l.Kilometers)
                 {
-                    ShowResult(Convert.ToDouble(d) / 0.621371192);
+                    this.ShowResult(Convert.ToDouble(d) / 0.621371192);
                 }
                 else if (textTo == l.Meters)
                 {
-                    ShowResult(Convert.ToDouble(d) / 0.000621371192);
+                    this.ShowResult(Convert.ToDouble(d) / 0.000621371192);
                 }
                 else if (textTo == l.Yards)
                 {
-                    ShowResult(Convert.ToDouble(d) * 1760);
+                    this.ShowResult(Convert.ToDouble(d) * 1760);
                 }
                 else if (textTo == l.Feet)
                 {
-                    ShowResult(Convert.ToDouble(d) * 5280);
+                    this.ShowResult(Convert.ToDouble(d) * 5280);
                 }
                 else if (textTo == l.Inches)
                 {
-                    ShowResult(Convert.ToDouble(d) * 63360);
+                    this.ShowResult(Convert.ToDouble(d) * 63360);
                 }
             }
             else if (text == l.Kilometers)
             {
                 if (textTo == l.Miles)
                 {
-                    ShowResult(Convert.ToDouble(d) * 0.621371192);
+                    this.ShowResult(Convert.ToDouble(d) * 0.621371192);
                 }
                 else if (textTo == l.Yards)
                 {
-                    ShowResult(Convert.ToDouble(d) * 1093.61);
+                    this.ShowResult(Convert.ToDouble(d) * 1093.61);
                 }
                 else if (textTo == l.Meters)
                 {
-                    ShowResult(Convert.ToDouble(d) * TimeCode.BaseUnit);
+                    this.ShowResult(Convert.ToDouble(d) * TimeCode.BaseUnit);
                 }
                 else if (textTo == l.Feet)
                 {
-                    ShowResult(Convert.ToDouble(d) / 0.0003048);
+                    this.ShowResult(Convert.ToDouble(d) / 0.0003048);
                 }
                 else if (textTo == l.Inches)
                 {
-                    ShowResult(Convert.ToDouble(d) * 39370.0787);
+                    this.ShowResult(Convert.ToDouble(d) * 39370.0787);
                 }
             }
             else if (text == l.Meters)
             {
                 if (textTo == l.Miles)
                 {
-                    ShowResult(Convert.ToDouble(d) * 0.000621371192);
+                    this.ShowResult(Convert.ToDouble(d) * 0.000621371192);
                 }
                 else if (textTo == l.Kilometers)
                 {
-                    ShowResult(Convert.ToDouble(d) / TimeCode.BaseUnit);
+                    this.ShowResult(Convert.ToDouble(d) / TimeCode.BaseUnit);
                 }
                 else if (textTo == l.Yards)
                 {
-                    ShowResult(Convert.ToDouble(d) * 1.0936133);
+                    this.ShowResult(Convert.ToDouble(d) * 1.0936133);
                 }
                 else if (textTo == l.Feet)
                 {
-                    ShowResult(Convert.ToDouble(d) * 3.28084);
+                    this.ShowResult(Convert.ToDouble(d) * 3.28084);
                 }
                 else if (textTo == l.Inches)
                 {
-                    ShowResult(Convert.ToDouble(d) * 39.3700787);
+                    this.ShowResult(Convert.ToDouble(d) * 39.3700787);
                 }
             }
             else if (text == l.Yards)
             {
                 if (textTo == l.Kilometers)
                 {
-                    ShowResult(Convert.ToDouble(d) * 0.0009144);
+                    this.ShowResult(Convert.ToDouble(d) * 0.0009144);
                 }
                 else if (textTo == l.Miles)
                 {
-                    ShowResult(Convert.ToDouble(d) * 0.000568181818);
+                    this.ShowResult(Convert.ToDouble(d) * 0.000568181818);
                 }
                 else if (textTo == l.Meters)
                 {
-                    ShowResult(Convert.ToDouble(d) * 0.9144);
+                    this.ShowResult(Convert.ToDouble(d) * 0.9144);
                 }
                 else if (textTo == l.Feet)
                 {
-                    ShowResult(Convert.ToDouble(d) * 3);
+                    this.ShowResult(Convert.ToDouble(d) * 3);
                 }
                 else if (textTo == l.Inches)
                 {
-                    ShowResult(Convert.ToDouble(d) * 36);
+                    this.ShowResult(Convert.ToDouble(d) * 36);
                 }
             }
             else if (text == l.Feet)
             {
                 if (textTo == l.Kilometers)
                 {
-                    ShowResult(Convert.ToDouble(d) * 0.0003048);
+                    this.ShowResult(Convert.ToDouble(d) * 0.0003048);
                 }
                 else if (textTo == l.Miles)
                 {
-                    ShowResult(Convert.ToDouble(d) / 5280);
+                    this.ShowResult(Convert.ToDouble(d) / 5280);
                 }
                 else if (textTo == l.Meters)
                 {
-                    ShowResult(Convert.ToDouble(d) * 0.3048);
+                    this.ShowResult(Convert.ToDouble(d) * 0.3048);
                 }
                 else if (textTo == l.Yards)
                 {
-                    ShowResult(Convert.ToDouble(d) / 3);
+                    this.ShowResult(Convert.ToDouble(d) / 3);
                 }
                 else if (textTo == l.Inches)
                 {
-                    ShowResult(Convert.ToDouble(d) * 12);
+                    this.ShowResult(Convert.ToDouble(d) * 12);
                 }
             }
             else if (text == l.Inches)
             {
                 if (textTo == l.Kilometers)
                 {
-                    ShowResult(Convert.ToDouble(d) / 39370.0787);
+                    this.ShowResult(Convert.ToDouble(d) / 39370.0787);
                 }
                 else if (textTo == l.Miles)
                 {
-                    ShowResult(Convert.ToDouble(d) / 63360);
+                    this.ShowResult(Convert.ToDouble(d) / 63360);
                 }
                 else if (textTo == l.Meters)
                 {
-                    ShowResult(Convert.ToDouble(d) * 0.0254);
+                    this.ShowResult(Convert.ToDouble(d) * 0.0254);
                 }
                 else if (textTo == l.Yards)
                 {
-                    ShowResult(Convert.ToDouble(d) * 0.0277777778);
+                    this.ShowResult(Convert.ToDouble(d) * 0.0277777778);
                 }
                 else if (textTo == l.Feet)
                 {
-                    ShowResult(Convert.ToDouble(d) * 0.0833333333);
+                    this.ShowResult(Convert.ToDouble(d) * 0.0833333333);
                 }
             }
             else if (text == l.Pounds)
             {
-                ShowResult(Convert.ToDouble(d) * 0.45359237);
+                this.ShowResult(Convert.ToDouble(d) * 0.45359237);
             }
             else if (text == l.Kilos)
             {
-                ShowResult(Convert.ToDouble(d) / 0.45359237);
+                this.ShowResult(Convert.ToDouble(d) / 0.45359237);
             }
         }
 
+        /// <summary>
+        /// The text box input_ key up.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void textBoxInput_KeyUp(object sender, KeyEventArgs e)
         {
-            textBoxInput_TextChanged(null, null);
+            this.textBoxInput_TextChanged(null, null);
         }
 
+        /// <summary>
+        /// The text box input_ key press.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void textBoxInput_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (Char.IsDigit(e.KeyChar))
+            if (char.IsDigit(e.KeyChar))
+            {
                 return;
+            }
 
             if (e.KeyChar == Convert.ToChar(Keys.Back) || (e.KeyChar == '.') || (e.KeyChar == ',') || (e.KeyChar == '-'))
+            {
                 return;
+            }
 
             e.Handled = true;
         }
-
     }
 }

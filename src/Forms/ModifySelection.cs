@@ -1,111 +1,239 @@
-﻿using Nikse.SubtitleEdit.Controls;
-using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Logic;
-using System;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ModifySelection.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The modify selection.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Controls;
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The modify selection.
+    /// </summary>
     public partial class ModifySelection : PositionAndSizeForm
     {
-        private SubtitleListView _subtitleListView;
-        private Subtitle _subtitle;
-        private bool _loading;
-
+        /// <summary>
+        /// The function contains.
+        /// </summary>
         private const int FunctionContains = 0;
+
+        /// <summary>
+        /// The function starts with.
+        /// </summary>
         private const int FunctionStartsWith = 1;
+
+        /// <summary>
+        /// The function ends with.
+        /// </summary>
         private const int FunctionEndsWith = 2;
+
+        /// <summary>
+        /// The function not contains.
+        /// </summary>
         private const int FunctionNotContains = 3;
+
+        /// <summary>
+        /// The function reg ex.
+        /// </summary>
         private const int FunctionRegEx = 4;
+
+        /// <summary>
+        /// The function unequal.
+        /// </summary>
         private const int FunctionUnequal = 5;
+
+        /// <summary>
+        /// The function equal.
+        /// </summary>
         private const int FunctionEqual = 6;
 
+        /// <summary>
+        /// The _loading.
+        /// </summary>
+        private bool _loading;
+
+        /// <summary>
+        /// The _subtitle.
+        /// </summary>
+        private Subtitle _subtitle;
+
+        /// <summary>
+        /// The _subtitle list view.
+        /// </summary>
+        private SubtitleListView _subtitleListView;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ModifySelection"/> class.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="subtitleListView">
+        /// The subtitle list view.
+        /// </param>
         public ModifySelection(Subtitle subtitle, SubtitleListView subtitleListView)
         {
-            InitializeComponent();
-            _loading = true;
-            _subtitle = subtitle;
-            _subtitleListView = subtitleListView;
-            labelInfo.Text = string.Empty;
-            comboBoxRule.SelectedIndex = 0;
-            Text = Configuration.Settings.Language.ModifySelection.Title;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
-            buttonApply.Text = Configuration.Settings.Language.General.Apply;
-            groupBoxRule.Text = Configuration.Settings.Language.ModifySelection.Rule;
-            groupBoxWhatToDo.Text = Configuration.Settings.Language.ModifySelection.DoWithMatches;
-            checkBoxCaseSensitive.Text = Configuration.Settings.Language.ModifySelection.CaseSensitive;
-            radioButtonNewSelection.Text = Configuration.Settings.Language.ModifySelection.MakeNewSelection;
-            radioButtonAddToSelection.Text = Configuration.Settings.Language.ModifySelection.AddToCurrentSelection;
-            radioButtonSubtractFromSelection.Text = Configuration.Settings.Language.ModifySelection.SubtractFromCurrentSelection;
-            radioButtonIntersect.Text = Configuration.Settings.Language.ModifySelection.IntersectWithCurrentSelection;
-            columnHeaderApply.Text = Configuration.Settings.Language.General.Apply;
-            columnHeaderLine.Text = Configuration.Settings.Language.General.LineNumber;
-            columnHeaderText.Text = Configuration.Settings.Language.General.Text;
+            this.InitializeComponent();
+            this._loading = true;
+            this._subtitle = subtitle;
+            this._subtitleListView = subtitleListView;
+            this.labelInfo.Text = string.Empty;
+            this.comboBoxRule.SelectedIndex = 0;
+            this.Text = Configuration.Settings.Language.ModifySelection.Title;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            this.buttonApply.Text = Configuration.Settings.Language.General.Apply;
+            this.groupBoxRule.Text = Configuration.Settings.Language.ModifySelection.Rule;
+            this.groupBoxWhatToDo.Text = Configuration.Settings.Language.ModifySelection.DoWithMatches;
+            this.checkBoxCaseSensitive.Text = Configuration.Settings.Language.ModifySelection.CaseSensitive;
+            this.radioButtonNewSelection.Text = Configuration.Settings.Language.ModifySelection.MakeNewSelection;
+            this.radioButtonAddToSelection.Text = Configuration.Settings.Language.ModifySelection.AddToCurrentSelection;
+            this.radioButtonSubtractFromSelection.Text = Configuration.Settings.Language.ModifySelection.SubtractFromCurrentSelection;
+            this.radioButtonIntersect.Text = Configuration.Settings.Language.ModifySelection.IntersectWithCurrentSelection;
+            this.columnHeaderApply.Text = Configuration.Settings.Language.General.Apply;
+            this.columnHeaderLine.Text = Configuration.Settings.Language.General.LineNumber;
+            this.columnHeaderText.Text = Configuration.Settings.Language.General.Text;
 
-            Utilities.FixLargeFonts(this, buttonOK);
+            Utilities.FixLargeFonts(this, this.buttonOK);
 
-            comboBoxRule.Items.Clear();
-            comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.Contains);
-            comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.StartsWith);
-            comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.EndsWith);
-            comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.NoContains);
-            comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.RegEx);
-            comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.UnequalLines);
-            comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.EqualLines);
+            this.comboBoxRule.Items.Clear();
+            this.comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.Contains);
+            this.comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.StartsWith);
+            this.comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.EndsWith);
+            this.comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.NoContains);
+            this.comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.RegEx);
+            this.comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.UnequalLines);
+            this.comboBoxRule.Items.Add(Configuration.Settings.Language.ModifySelection.EqualLines);
 
-            checkBoxCaseSensitive.Checked = Configuration.Settings.Tools.ModifySelectionCaseSensitive;
-            textBox1.Text = Configuration.Settings.Tools.ModifySelectionText;
+            this.checkBoxCaseSensitive.Checked = Configuration.Settings.Tools.ModifySelectionCaseSensitive;
+            this.textBox1.Text = Configuration.Settings.Tools.ModifySelectionText;
             if (Configuration.Settings.Tools.ModifySelectionRule == "Starts with")
-                comboBoxRule.SelectedIndex = FunctionStartsWith;
+            {
+                this.comboBoxRule.SelectedIndex = FunctionStartsWith;
+            }
             else if (Configuration.Settings.Tools.ModifySelectionRule == "Ends with")
-                comboBoxRule.SelectedIndex = FunctionEndsWith;
+            {
+                this.comboBoxRule.SelectedIndex = FunctionEndsWith;
+            }
             else if (Configuration.Settings.Tools.ModifySelectionRule == "Not contains")
-                comboBoxRule.SelectedIndex = FunctionNotContains;
+            {
+                this.comboBoxRule.SelectedIndex = FunctionNotContains;
+            }
             else if (Configuration.Settings.Tools.ModifySelectionRule == "RegEx")
-                comboBoxRule.SelectedIndex = FunctionRegEx;
+            {
+                this.comboBoxRule.SelectedIndex = FunctionRegEx;
+            }
             else
-                comboBoxRule.SelectedIndex = 0;
-            _loading = false;
-            Preview();
+            {
+                this.comboBoxRule.SelectedIndex = 0;
+            }
+
+            this._loading = false;
+            this.Preview();
         }
 
+        /// <summary>
+        /// The modify selection_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ModifySelection_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
 
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
 
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            ApplySelection();
-            DialogResult = DialogResult.OK;
+            this.ApplySelection();
+            this.DialogResult = DialogResult.OK;
 
-            Configuration.Settings.Tools.ModifySelectionCaseSensitive = checkBoxCaseSensitive.Checked;
-            Configuration.Settings.Tools.ModifySelectionText = textBox1.Text;
-            if (comboBoxRule.SelectedIndex == FunctionContains)
+            Configuration.Settings.Tools.ModifySelectionCaseSensitive = this.checkBoxCaseSensitive.Checked;
+            Configuration.Settings.Tools.ModifySelectionText = this.textBox1.Text;
+            if (this.comboBoxRule.SelectedIndex == FunctionContains)
+            {
                 Configuration.Settings.Tools.ModifySelectionRule = "Contains";
-            else if (comboBoxRule.SelectedIndex == FunctionStartsWith)
+            }
+            else if (this.comboBoxRule.SelectedIndex == FunctionStartsWith)
+            {
                 Configuration.Settings.Tools.ModifySelectionRule = "Starts with";
-            else if (comboBoxRule.SelectedIndex == FunctionEndsWith)
+            }
+            else if (this.comboBoxRule.SelectedIndex == FunctionEndsWith)
+            {
                 Configuration.Settings.Tools.ModifySelectionRule = "Ends with";
-            else if (comboBoxRule.SelectedIndex == FunctionNotContains)
+            }
+            else if (this.comboBoxRule.SelectedIndex == FunctionNotContains)
+            {
                 Configuration.Settings.Tools.ModifySelectionRule = "Not contains";
-            else if (comboBoxRule.SelectedIndex == FunctionRegEx)
+            }
+            else if (this.comboBoxRule.SelectedIndex == FunctionRegEx)
+            {
                 Configuration.Settings.Tools.ModifySelectionRule = "RegEx";
+            }
         }
 
+        /// <summary>
+        /// The button apply_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonApply_Click(object sender, EventArgs e)
         {
-            ApplySelection();
+            this.ApplySelection();
         }
 
+        /// <summary>
+        /// The add to list view.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
         private void AddToListView(Paragraph p, int index)
         {
             var item = new ListViewItem(string.Empty) { Tag = index, Checked = true };
@@ -114,52 +242,71 @@ namespace Nikse.SubtitleEdit.Forms
             subItem = new ListViewItem.ListViewSubItem(item, p.Text.Replace(Environment.NewLine, Configuration.Settings.General.ListViewLineSeparatorString));
             item.SubItems.Add(subItem);
 
-            listViewFixes.Items.Add(item);
+            this.listViewFixes.Items.Add(item);
         }
 
+        /// <summary>
+        /// The preview.
+        /// </summary>
         private void Preview()
         {
-            if (_loading)
+            if (this._loading)
+            {
                 return;
+            }
 
             Regex regEx = null;
-            listViewFixes.BeginUpdate();
-            listViewFixes.Items.Clear();
-            string text = textBox1.Text;
-            if (comboBoxRule.SelectedIndex != FunctionRegEx)
-                text = text.Replace("\\r\\n", Environment.NewLine);
-
-            for (int i = 0; i < _subtitle.Paragraphs.Count; i++)
+            this.listViewFixes.BeginUpdate();
+            this.listViewFixes.Items.Clear();
+            string text = this.textBox1.Text;
+            if (this.comboBoxRule.SelectedIndex != FunctionRegEx)
             {
-                if ((radioButtonSubtractFromSelection.Checked || radioButtonIntersect.Checked) && _subtitleListView.Items[i].Selected ||
-                    !radioButtonSubtractFromSelection.Checked && !radioButtonIntersect.Checked)
+                text = text.Replace("\\r\\n", Environment.NewLine);
+            }
+
+            for (int i = 0; i < this._subtitle.Paragraphs.Count; i++)
+            {
+                if ((this.radioButtonSubtractFromSelection.Checked || this.radioButtonIntersect.Checked) && this._subtitleListView.Items[i].Selected || !this.radioButtonSubtractFromSelection.Checked && !this.radioButtonIntersect.Checked)
                 {
-                    Paragraph p = _subtitle.Paragraphs[i];
+                    Paragraph p = this._subtitle.Paragraphs[i];
                     if (text.Length > 0)
                     {
-                        if (comboBoxRule.SelectedIndex == FunctionContains) // Contains
+                        if (this.comboBoxRule.SelectedIndex == FunctionContains)
                         {
-                            if (checkBoxCaseSensitive.Checked && p.Text.Contains(text, StringComparison.Ordinal) || !checkBoxCaseSensitive.Checked && p.Text.Contains(text, StringComparison.OrdinalIgnoreCase))
-                                AddToListView(p, i);
+                            // Contains
+                            if (this.checkBoxCaseSensitive.Checked && p.Text.Contains(text, StringComparison.Ordinal) || !this.checkBoxCaseSensitive.Checked && p.Text.Contains(text, StringComparison.OrdinalIgnoreCase))
+                            {
+                                this.AddToListView(p, i);
+                            }
                         }
-                        else if (comboBoxRule.SelectedIndex == FunctionStartsWith) // Starts with
+                        else if (this.comboBoxRule.SelectedIndex == FunctionStartsWith)
                         {
-                            if (checkBoxCaseSensitive.Checked && p.Text.StartsWith(text, StringComparison.Ordinal) || !checkBoxCaseSensitive.Checked && p.Text.StartsWith(text, StringComparison.OrdinalIgnoreCase))
-                                AddToListView(p, i);
+                            // Starts with
+                            if (this.checkBoxCaseSensitive.Checked && p.Text.StartsWith(text, StringComparison.Ordinal) || !this.checkBoxCaseSensitive.Checked && p.Text.StartsWith(text, StringComparison.OrdinalIgnoreCase))
+                            {
+                                this.AddToListView(p, i);
+                            }
                         }
-                        else if (comboBoxRule.SelectedIndex == FunctionEndsWith) // Ends with
+                        else if (this.comboBoxRule.SelectedIndex == FunctionEndsWith)
                         {
-                            if (checkBoxCaseSensitive.Checked && p.Text.EndsWith(text, StringComparison.Ordinal) || !checkBoxCaseSensitive.Checked && p.Text.EndsWith(text, StringComparison.OrdinalIgnoreCase))
-                                AddToListView(p, i);
+                            // Ends with
+                            if (this.checkBoxCaseSensitive.Checked && p.Text.EndsWith(text, StringComparison.Ordinal) || !this.checkBoxCaseSensitive.Checked && p.Text.EndsWith(text, StringComparison.OrdinalIgnoreCase))
+                            {
+                                this.AddToListView(p, i);
+                            }
                         }
-                        else if (comboBoxRule.SelectedIndex == FunctionNotContains) // Not contains
+                        else if (this.comboBoxRule.SelectedIndex == FunctionNotContains)
                         {
-                            if (checkBoxCaseSensitive.Checked && !p.Text.Contains(text, StringComparison.Ordinal) || !checkBoxCaseSensitive.Checked && !p.Text.Contains(text, StringComparison.OrdinalIgnoreCase))
-                                AddToListView(p, i);
+                            // Not contains
+                            if (this.checkBoxCaseSensitive.Checked && !p.Text.Contains(text, StringComparison.Ordinal) || !this.checkBoxCaseSensitive.Checked && !p.Text.Contains(text, StringComparison.OrdinalIgnoreCase))
+                            {
+                                this.AddToListView(p, i);
+                            }
                         }
-                        else if (comboBoxRule.SelectedIndex == FunctionRegEx) // RegEx
+                        else if (this.comboBoxRule.SelectedIndex == FunctionRegEx)
                         {
-                            labelInfo.Text = string.Empty;
+                            // RegEx
+                            this.labelInfo.Text = string.Empty;
                             if (regEx == null)
                             {
                                 try
@@ -168,96 +315,149 @@ namespace Nikse.SubtitleEdit.Forms
                                 }
                                 catch (Exception e)
                                 {
-                                    labelInfo.Text = e.Message;
+                                    this.labelInfo.Text = e.Message;
                                     break;
                                 }
                             }
+
                             if (regEx.IsMatch(p.Text))
-                                AddToListView(p, i);
+                            {
+                                this.AddToListView(p, i);
+                            }
                         }
                     }
-                    if (comboBoxRule.SelectedIndex == FunctionUnequal) // select unequal lines
+
+                    if (this.comboBoxRule.SelectedIndex == FunctionUnequal)
                     {
+                        // select unequal lines
                         if (i % 2 == 0)
-                            AddToListView(p, i);
+                        {
+                            this.AddToListView(p, i);
+                        }
                     }
-                    else if (comboBoxRule.SelectedIndex == FunctionEqual) // select equal lines
+                    else if (this.comboBoxRule.SelectedIndex == FunctionEqual)
                     {
+                        // select equal lines
                         if (i % 2 == 1)
-                            AddToListView(p, i);
+                        {
+                            this.AddToListView(p, i);
+                        }
                     }
                 }
             }
 
-            listViewFixes.EndUpdate();
-            groupBoxPreview.Text = string.Format(Configuration.Settings.Language.ModifySelection.MatchingLinesX, listViewFixes.Items.Count);
+            this.listViewFixes.EndUpdate();
+            this.groupBoxPreview.Text = string.Format(Configuration.Settings.Language.ModifySelection.MatchingLinesX, this.listViewFixes.Items.Count);
         }
 
+        /// <summary>
+        /// The apply selection.
+        /// </summary>
         private void ApplySelection()
         {
-            _subtitleListView.BeginUpdate();
-            if (radioButtonNewSelection.Checked || radioButtonIntersect.Checked)
-                _subtitleListView.SelectNone();
+            this._subtitleListView.BeginUpdate();
+            if (this.radioButtonNewSelection.Checked || this.radioButtonIntersect.Checked)
+            {
+                this._subtitleListView.SelectNone();
+            }
 
-            if (radioButtonNewSelection.Checked || radioButtonAddToSelection.Checked || radioButtonIntersect.Checked)
+            if (this.radioButtonNewSelection.Checked || this.radioButtonAddToSelection.Checked || this.radioButtonIntersect.Checked)
             {
-                foreach (ListViewItem item in listViewFixes.Items)
+                foreach (ListViewItem item in this.listViewFixes.Items)
                 {
                     if (item.Checked)
                     {
                         int index = Convert.ToInt32(item.Tag);
-                        _subtitleListView.Items[index].Selected = true;
+                        this._subtitleListView.Items[index].Selected = true;
                     }
                 }
             }
-            else if (radioButtonSubtractFromSelection.Checked)
+            else if (this.radioButtonSubtractFromSelection.Checked)
             {
-                foreach (ListViewItem item in listViewFixes.Items)
+                foreach (ListViewItem item in this.listViewFixes.Items)
                 {
                     if (item.Checked)
                     {
                         int index = Convert.ToInt32(item.Tag);
-                        _subtitleListView.Items[index].Selected = false;
+                        this._subtitleListView.Items[index].Selected = false;
                     }
                 }
             }
-            _subtitleListView.EndUpdate();
+
+            this._subtitleListView.EndUpdate();
         }
 
+        /// <summary>
+        /// The text box 1_ text changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            Preview();
+            this.Preview();
         }
 
+        /// <summary>
+        /// The combo box rule_ selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void comboBoxRule_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxRule.SelectedIndex == FunctionRegEx) // regex
+            if (this.comboBoxRule.SelectedIndex == FunctionRegEx)
             {
-                textBox1.ContextMenu = FindReplaceDialogHelper.GetRegExContextMenu(textBox1);
-                checkBoxCaseSensitive.Enabled = false;
+                // regex
+                this.textBox1.ContextMenu = FindReplaceDialogHelper.GetRegExContextMenu(this.textBox1);
+                this.checkBoxCaseSensitive.Enabled = false;
             }
-            else if (comboBoxRule.SelectedIndex == FunctionUnequal || comboBoxRule.SelectedIndex == FunctionEqual)
+            else if (this.comboBoxRule.SelectedIndex == FunctionUnequal || this.comboBoxRule.SelectedIndex == FunctionEqual)
             {
-                textBox1.ContextMenuStrip = null;
-                checkBoxCaseSensitive.Enabled = false;
+                this.textBox1.ContextMenuStrip = null;
+                this.checkBoxCaseSensitive.Enabled = false;
             }
             else
             {
-                textBox1.ContextMenuStrip = null;
-                checkBoxCaseSensitive.Enabled = true;
+                this.textBox1.ContextMenuStrip = null;
+                this.checkBoxCaseSensitive.Enabled = true;
             }
-            Preview();
+
+            this.Preview();
         }
 
+        /// <summary>
+        /// The check box case sensitive_ checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void checkBoxCaseSensitive_CheckedChanged(object sender, EventArgs e)
         {
-            Preview();
+            this.Preview();
         }
 
+        /// <summary>
+        /// The radio button_ checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void radioButton_CheckedChanged(object sender, EventArgs e)
         {
-            Preview();
+            this.Preview();
         }
-
     }
 }

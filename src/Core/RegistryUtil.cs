@@ -1,16 +1,35 @@
-﻿using Microsoft.Win32;
-using System.Security;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="RegistryUtil.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The registry util.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Core
 {
+    using System.Security;
+
+    using Microsoft.Win32;
+
+    /// <summary>
+    /// The registry util.
+    /// </summary>
     internal static class RegistryUtil
     {
         /// <summary>
         /// Retrieves the specified registry subkey value.
         /// </summary>
-        /// <param name="keyName">The path of the subkey to open.</param>
-        /// <param name="valueName">The name of the value to retrieve.</param>
-        /// <returns>The value of the subkey requested, or <b>null</b> if the operation failed.</returns>
+        /// <param name="keyName">
+        /// The path of the subkey to open.
+        /// </param>
+        /// <param name="valueName">
+        /// The name of the value to retrieve.
+        /// </param>
+        /// <returns>
+        /// The value of the subkey requested, or <b>null</b> if the operation failed.
+        /// </returns>
         public static string GetValue(string keyName, string valueName)
         {
             RegistryKey key = null;
@@ -37,6 +56,7 @@ namespace Nikse.SubtitleEdit.Core
                     key.Dispose();
                 }
             }
+
             return null;
         }
     }

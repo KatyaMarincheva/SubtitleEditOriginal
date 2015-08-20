@@ -1,27 +1,57 @@
-﻿using Nikse.SubtitleEdit.Core;
-using System;
-using System.IO;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Configuration.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   Configuration settings via Singleton pattern
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic
 {
+    using System;
+    using System.IO;
+
+    using Nikse.SubtitleEdit.Core;
+
     /// <summary>
     /// Configuration settings via Singleton pattern
     /// </summary>
     public class Configuration
     {
+        /// <summary>
+        /// The _instance.
+        /// </summary>
         private static readonly Lazy<Configuration> _instance = new Lazy<Configuration>(() => new Configuration());
 
+        /// <summary>
+        /// The _base dir.
+        /// </summary>
         private readonly string _baseDir;
+
+        /// <summary>
+        /// The _data dir.
+        /// </summary>
         private readonly string _dataDir;
+
+        /// <summary>
+        /// The _settings.
+        /// </summary>
         private readonly Lazy<Settings> _settings;
 
+        /// <summary>
+        /// Prevents a default instance of the <see cref="Configuration"/> class from being created.
+        /// </summary>
         private Configuration()
         {
-            _baseDir = GetBaseDirectory();
-            _dataDir = GetDataDirectory();
-            _settings = new Lazy<Settings>(Settings.GetSettings);
+            this._baseDir = GetBaseDirectory();
+            this._dataDir = this.GetDataDirectory();
+            this._settings = new Lazy<Settings>(Settings.GetSettings);
         }
 
+        /// <summary>
+        /// Gets the settings file name.
+        /// </summary>
         public static string SettingsFileName
         {
             get
@@ -30,6 +60,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// Gets the dictionaries folder.
+        /// </summary>
         public static string DictionariesFolder
         {
             get
@@ -38,6 +71,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// Gets the icons folder.
+        /// </summary>
         public static string IconsFolder
         {
             get
@@ -46,16 +82,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
-        public static bool IsRunningOnLinux()
-        {
-            return Environment.OSVersion.Platform == PlatformID.Unix;
-        }
-
-        public static bool IsRunningOnMac()
-        {
-            return Environment.OSVersion.Platform == PlatformID.MacOSX;
-        }
-
+        /// <summary>
+        /// Gets the tesseract data folder.
+        /// </summary>
         public static string TesseractDataFolder
         {
             get
@@ -63,16 +92,28 @@ namespace Nikse.SubtitleEdit.Logic
                 if (IsRunningOnLinux() || IsRunningOnMac())
                 {
                     if (Directory.Exists("/usr/share/tesseract-ocr/tessdata"))
+                    {
                         return "/usr/share/tesseract-ocr/tessdata";
+                    }
+
                     if (Directory.Exists("/usr/share/tesseract/tessdata"))
+                    {
                         return "/usr/share/tesseract/tessdata";
+                    }
+
                     if (Directory.Exists("/usr/share/tessdata"))
+                    {
                         return "/usr/share/tessdata";
+                    }
                 }
+
                 return TesseractFolder + "tessdata";
             }
         }
 
+        /// <summary>
+        /// Gets the tesseract original folder.
+        /// </summary>
         public static string TesseractOriginalFolder
         {
             get
@@ -81,6 +122,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// Gets the tesseract folder.
+        /// </summary>
         public static string TesseractFolder
         {
             get
@@ -89,6 +133,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// Gets the vob sub compare folder.
+        /// </summary>
         public static string VobSubCompareFolder
         {
             get
@@ -97,6 +144,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// Gets the ocr folder.
+        /// </summary>
         public static string OcrFolder
         {
             get
@@ -105,6 +155,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// Gets the waveforms folder.
+        /// </summary>
         public static string WaveformsFolder
         {
             get
@@ -113,6 +166,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// Gets the spectrograms folder.
+        /// </summary>
         public static string SpectrogramsFolder
         {
             get
@@ -121,6 +177,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// Gets the auto backup folder.
+        /// </summary>
         public static string AutoBackupFolder
         {
             get
@@ -129,6 +188,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// Gets the plugins directory.
+        /// </summary>
         public static string PluginsDirectory
         {
             get
@@ -137,6 +199,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// Gets the data directory.
+        /// </summary>
         public static string DataDirectory
         {
             get
@@ -145,6 +210,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// Gets the base directory.
+        /// </summary>
         public static string BaseDirectory
         {
             get
@@ -153,6 +221,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// Gets the settings.
+        /// </summary>
         public static Settings Settings
         {
             get
@@ -161,6 +232,34 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// The is running on linux.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public static bool IsRunningOnLinux()
+        {
+            return Environment.OSVersion.Platform == PlatformID.Unix;
+        }
+
+        /// <summary>
+        /// The is running on mac.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public static bool IsRunningOnMac()
+        {
+            return Environment.OSVersion.Platform == PlatformID.MacOSX;
+        }
+
+        /// <summary>
+        /// The get installer path.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetInstallerPath()
         {
             const string valueName = "InstallLocation";
@@ -179,34 +278,41 @@ namespace Nikse.SubtitleEdit.Logic
             return null;
         }
 
+        /// <summary>
+        /// The get base directory.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetBaseDirectory()
         {
             var assembly = System.Reflection.Assembly.GetEntryAssembly();
-            var baseDirectory = Path.GetDirectoryName(assembly == null
-                ? System.Reflection.Assembly.GetExecutingAssembly().Location
-                : assembly.Location);
+            var baseDirectory = Path.GetDirectoryName(assembly == null ? System.Reflection.Assembly.GetExecutingAssembly().Location : assembly.Location);
 
-            return baseDirectory.EndsWith(Path.DirectorySeparatorChar)
-                ? baseDirectory
-                : baseDirectory + Path.DirectorySeparatorChar;
+            return baseDirectory.EndsWith(Path.DirectorySeparatorChar) ? baseDirectory : baseDirectory + Path.DirectorySeparatorChar;
         }
 
+        /// <summary>
+        /// The get data directory.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string GetDataDirectory()
         {
             if (IsRunningOnLinux() || IsRunningOnMac())
             {
-                return _baseDir;
+                return this._baseDir;
             }
 
             var installerPath = GetInstallerPath();
-            var hasUninstallFiles = Directory.GetFiles(_baseDir, "unins*.*").Length > 0;
-            var hasDictionaryFolder = Directory.Exists(Path.Combine(_baseDir, "Dictionaries"));
+            var hasUninstallFiles = Directory.GetFiles(this._baseDir, "unins*.*").Length > 0;
+            var hasDictionaryFolder = Directory.Exists(Path.Combine(this._baseDir, "Dictionaries"));
             var appDataRoamingPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Subtitle Edit");
 
-            if ((installerPath == null || !installerPath.TrimEnd(Path.DirectorySeparatorChar).Equals(_baseDir.TrimEnd(Path.DirectorySeparatorChar), StringComparison.OrdinalIgnoreCase))
-                && !hasUninstallFiles && (hasDictionaryFolder || !Directory.Exists(Path.Combine(appDataRoamingPath, "Dictionaries"))))
+            if ((installerPath == null || !installerPath.TrimEnd(Path.DirectorySeparatorChar).Equals(this._baseDir.TrimEnd(Path.DirectorySeparatorChar), StringComparison.OrdinalIgnoreCase)) && !hasUninstallFiles && (hasDictionaryFolder || !Directory.Exists(Path.Combine(appDataRoamingPath, "Dictionaries"))))
             {
-                return _baseDir;
+                return this._baseDir;
             }
 
             if (Directory.Exists(appDataRoamingPath))
@@ -224,7 +330,7 @@ namespace Nikse.SubtitleEdit.Logic
             {
                 System.Windows.Forms.MessageBox.Show("Please re-install Subtitle Edit (installer version)");
                 System.Windows.Forms.Application.ExitThread();
-                return _baseDir;
+                return this._baseDir;
             }
         }
     }

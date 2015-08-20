@@ -1,4 +1,14 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="YouTubeSbv.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   YouTube "SubViewer" format... I think YouTube tried to add "SubViewer 2.0" support but instread they created their
+//   own format... nice ;)
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -11,19 +21,24 @@
     /// </summary>
     public class YouTubeSbv : SubtitleFormat
     {
+        /// <summary>
+        /// The regex time codes.
+        /// </summary>
         private static readonly Regex RegexTimeCodes = new Regex(@"^-?\d+:-?\d+:-?\d+[:,.]-?\d+,\d+:-?\d+:-?\d+[:,.]-?\d+$", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The _expecting.
+        /// </summary>
         private ExpectingLine _expecting = ExpectingLine.TimeCodes;
 
+        /// <summary>
+        /// The _paragraph.
+        /// </summary>
         private Paragraph _paragraph;
 
-        private enum ExpectingLine
-        {
-            TimeCodes,
-
-            Text
-        }
-
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -32,6 +47,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -40,6 +58,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -48,6 +69,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -55,6 +88,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             const string paragraphWriteFormat = "{0},{1}\r\n{2}\r\n\r\n";
@@ -68,6 +113,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             // 0:00:07.500,0:00:13.500
@@ -111,11 +168,29 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The format time.
+        /// </summary>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string FormatTime(TimeCode timeCode)
         {
             return string.Format("{0}:{1:00}:{2:00}.{3:000}", timeCode.Hours, timeCode.Minutes, timeCode.Seconds, timeCode.Milliseconds);
         }
 
+        /// <summary>
+        /// The is text.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool IsText(string text)
         {
             if (string.IsNullOrWhiteSpace(text) || Utilities.IsInteger(text) || RegexTimeCodes.IsMatch(text))
@@ -126,11 +201,32 @@
             return true;
         }
 
+        /// <summary>
+        /// The remove bad chars.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveBadChars(string line)
         {
             return line.Replace('\0', ' ');
         }
 
+        /// <summary>
+        /// The try read time codes line.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool TryReadTimeCodesLine(string line, Paragraph paragraph)
         {
             line = line.Replace('.', ':');
@@ -164,6 +260,18 @@
             return false;
         }
 
+        /// <summary>
+        /// The read line.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <param name="next">
+        /// The next.
+        /// </param>
         private void ReadLine(Subtitle subtitle, string line, string next)
         {
             switch (this._expecting)
@@ -208,6 +316,22 @@
 
                     break;
             }
+        }
+
+        /// <summary>
+        /// The expecting line.
+        /// </summary>
+        private enum ExpectingLine
+        {
+            /// <summary>
+            /// The time codes.
+            /// </summary>
+            TimeCodes, 
+
+            /// <summary>
+            /// The text.
+            /// </summary>
+            Text
         }
     }
 }

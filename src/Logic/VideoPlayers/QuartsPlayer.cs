@@ -1,30 +1,83 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using QuartzTypeLib;
-using System.ComponentModel;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="QuartsPlayer.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The quarts player.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-//http://msdn.microsoft.com/en-us/library/dd375454%28VS.85%29.aspx
+ //http://msdn.microsoft.com/en-us/library/dd375454%28VS.85%29.aspx
 //http://msdn.microsoft.com/en-us/library/dd387928%28v=vs.85%29.aspx
-
 namespace Nikse.SubtitleEdit.Logic.VideoPlayers
 {
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.InteropServices;
+    using System.Windows.Forms;
+
+    using QuartzTypeLib;
+
+    /// <summary>
+    /// The quarts player.
+    /// </summary>
     public class QuartsPlayer : VideoPlayer, IDisposable
     {
-        public override event EventHandler OnVideoLoaded;
-        public override event EventHandler OnVideoEnded;
-
-        private QuartzTypeLib.IVideoWindow _quartzVideo;
-        private QuartzTypeLib.FilgraphManager _quartzFilgraphManager;
-        private IMediaPosition _mediaPosition;
+        /// <summary>
+        /// The _is paused.
+        /// </summary>
         private bool _isPaused;
+
+        /// <summary>
+        /// The _media position.
+        /// </summary>
+        private IMediaPosition _mediaPosition;
+
+        /// <summary>
+        /// The _owner.
+        /// </summary>
         private Control _owner;
-        private Timer _videoEndTimer;
-        private BackgroundWorker _videoLoader;
-        private int _sourceWidth;
+
+        /// <summary>
+        /// The _quartz filgraph manager.
+        /// </summary>
+        private FilgraphManager _quartzFilgraphManager;
+
+        /// <summary>
+        /// The _quartz video.
+        /// </summary>
+        private IVideoWindow _quartzVideo;
+
+        /// <summary>
+        /// The _source height.
+        /// </summary>
         private int _sourceHeight;
 
-        public override string PlayerName { get { return "DirectShow"; } }
+        /// <summary>
+        /// The _source width.
+        /// </summary>
+        private int _sourceWidth;
+
+        /// <summary>
+        /// The _video end timer.
+        /// </summary>
+        private Timer _videoEndTimer;
+
+        /// <summary>
+        /// The _video loader.
+        /// </summary>
+        private BackgroundWorker _videoLoader;
+
+        /// <summary>
+        /// Gets the player name.
+        /// </summary>
+        public override string PlayerName
+        {
+            get
+            {
+                return "DirectShow";
+            }
+        }
 
         /// <summary>
         /// In DirectX -10000 is silent and 0 is full volume.
@@ -36,21 +89,26 @@ namespace Nikse.SubtitleEdit.Logic.VideoPlayers
             {
                 try
                 {
-                    return ((_quartzFilgraphManager as IBasicAudio).Volume / 35) + 100;
+                    return ((this._quartzFilgraphManager as IBasicAudio).Volume / 35) + 100;
                 }
                 catch
                 {
                     return 0;
                 }
             }
+
             set
             {
                 try
                 {
                     if (value == 0)
-                        (_quartzFilgraphManager as IBasicAudio).Volume = -10000;
+                    {
+                        (this._quartzFilgraphManager as IBasicAudio).Volume = -10000;
+                    }
                     else
-                        (_quartzFilgraphManager as IBasicAudio).Volume = (value - 100) * 35;
+                    {
+                        (this._quartzFilgraphManager as IBasicAudio).Volume = (value - 100) * 35;
+                    }
                 }
                 catch
                 {
@@ -58,13 +116,16 @@ namespace Nikse.SubtitleEdit.Logic.VideoPlayers
             }
         }
 
+        /// <summary>
+        /// Gets the duration.
+        /// </summary>
         public override double Duration
         {
             get
             {
                 try
                 {
-                    return _mediaPosition.Duration;
+                    return this._mediaPosition.Duration;
                 }
                 catch
                 {
@@ -73,70 +134,134 @@ namespace Nikse.SubtitleEdit.Logic.VideoPlayers
             }
         }
 
+        /// <summary>
+        /// Gets or sets the current position.
+        /// </summary>
         public override double CurrentPosition
         {
             get
             {
                 try
                 {
-                    return _mediaPosition.CurrentPosition;
+                    return this._mediaPosition.CurrentPosition;
                 }
                 catch
                 {
                     return 0;
                 }
             }
+
             set
             {
-                if (value >= 0 && value <= Duration)
-                    _mediaPosition.CurrentPosition = value;
+                if (value >= 0 && value <= this.Duration)
+                {
+                    this._mediaPosition.CurrentPosition = value;
+                }
             }
         }
 
+        /// <summary>
+        /// Gets or sets the play rate.
+        /// </summary>
         public override double PlayRate
         {
-            get { return _mediaPosition.Rate; }
+            get
+            {
+                return this._mediaPosition.Rate;
+            }
+
             set
             {
                 if (value >= 0 && value <= 2.0)
-                    _mediaPosition.Rate = value;
+                {
+                    this._mediaPosition.Rate = value;
+                }
             }
         }
 
-        public override void Play()
-        {
-            _quartzFilgraphManager.Run();
-            _isPaused = false;
-        }
-
-        public override void Pause()
-        {
-            _quartzFilgraphManager.Pause();
-            _isPaused = true;
-        }
-
-        public override void Stop()
-        {
-            _quartzFilgraphManager.Stop();
-            _isPaused = true;
-        }
-
+        /// <summary>
+        /// Gets a value indicating whether is paused.
+        /// </summary>
         public override bool IsPaused
         {
             get
             {
-                return _isPaused;
+                return this._isPaused;
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is playing.
+        /// </summary>
         public override bool IsPlaying
         {
             get
             {
-                return !IsPaused;
+                return !this.IsPaused;
             }
         }
 
+        /// <summary>
+        /// The dispose.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// The on video loaded.
+        /// </summary>
+        public override event EventHandler OnVideoLoaded;
+
+        /// <summary>
+        /// The on video ended.
+        /// </summary>
+        public override event EventHandler OnVideoEnded;
+
+        /// <summary>
+        /// The play.
+        /// </summary>
+        public override void Play()
+        {
+            this._quartzFilgraphManager.Run();
+            this._isPaused = false;
+        }
+
+        /// <summary>
+        /// The pause.
+        /// </summary>
+        public override void Pause()
+        {
+            this._quartzFilgraphManager.Pause();
+            this._isPaused = true;
+        }
+
+        /// <summary>
+        /// The stop.
+        /// </summary>
+        public override void Stop()
+        {
+            this._quartzFilgraphManager.Stop();
+            this._isPaused = true;
+        }
+
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="ownerControl">
+        /// The owner control.
+        /// </param>
+        /// <param name="videoFileName">
+        /// The video file name.
+        /// </param>
+        /// <param name="onVideoLoaded">
+        /// The on video loaded.
+        /// </param>
+        /// <param name="onVideoEnded">
+        /// The on video ended.
+        /// </param>
         public override void Initialize(Control ownerControl, string videoFileName, EventHandler onVideoLoaded, EventHandler onVideoEnded)
         {
             const int wsChild = 0x40000000;
@@ -144,45 +269,58 @@ namespace Nikse.SubtitleEdit.Logic.VideoPlayers
             string ext = System.IO.Path.GetExtension(videoFileName).ToLower();
             bool isAudio = ext == ".mp3" || ext == ".wav" || ext == ".wma" || ext == ".m4a";
 
-            OnVideoLoaded = onVideoLoaded;
-            OnVideoEnded = onVideoEnded;
+            this.OnVideoLoaded = onVideoLoaded;
+            this.OnVideoEnded = onVideoEnded;
 
-            VideoFileName = videoFileName;
-            _owner = ownerControl;
-            _quartzFilgraphManager = new FilgraphManager();
-            _quartzFilgraphManager.RenderFile(VideoFileName);
+            this.VideoFileName = videoFileName;
+            this._owner = ownerControl;
+            this._quartzFilgraphManager = new FilgraphManager();
+            this._quartzFilgraphManager.RenderFile(this.VideoFileName);
 
             if (!isAudio)
             {
-                _quartzVideo = _quartzFilgraphManager as IVideoWindow;
-                _quartzVideo.Owner = (int)ownerControl.Handle;
-                _quartzVideo.SetWindowPosition(0, 0, ownerControl.Width, ownerControl.Height);
-                _quartzVideo.WindowStyle = wsChild;
+                this._quartzVideo = this._quartzFilgraphManager as IVideoWindow;
+                this._quartzVideo.Owner = (int)ownerControl.Handle;
+                this._quartzVideo.SetWindowPosition(0, 0, ownerControl.Width, ownerControl.Height);
+                this._quartzVideo.WindowStyle = wsChild;
             }
-            //Play();
 
+            // Play();
             if (!isAudio)
-                (_quartzFilgraphManager as IBasicVideo).GetVideoSize(out _sourceWidth, out _sourceHeight);
-
-            _owner.Resize += OwnerControlResize;
-            _mediaPosition = (IMediaPosition)_quartzFilgraphManager;
-            if (OnVideoLoaded != null)
             {
-                _videoLoader = new BackgroundWorker();
-                _videoLoader.RunWorkerCompleted += VideoLoaderRunWorkerCompleted;
-                _videoLoader.DoWork += VideoLoaderDoWork;
-                _videoLoader.RunWorkerAsync();
+                (this._quartzFilgraphManager as IBasicVideo).GetVideoSize(out this._sourceWidth, out this._sourceHeight);
             }
 
-            OwnerControlResize(this, null);
-            _videoEndTimer = new Timer { Interval = 500 };
-            _videoEndTimer.Tick += VideoEndTimerTick;
-            _videoEndTimer.Start();
+            this._owner.Resize += this.OwnerControlResize;
+            this._mediaPosition = (IMediaPosition)this._quartzFilgraphManager;
+            if (this.OnVideoLoaded != null)
+            {
+                this._videoLoader = new BackgroundWorker();
+                this._videoLoader.RunWorkerCompleted += this.VideoLoaderRunWorkerCompleted;
+                this._videoLoader.DoWork += this.VideoLoaderDoWork;
+                this._videoLoader.RunWorkerAsync();
+            }
+
+            this.OwnerControlResize(this, null);
+            this._videoEndTimer = new Timer { Interval = 500 };
+            this._videoEndTimer.Tick += this.VideoEndTimerTick;
+            this._videoEndTimer.Start();
 
             if (!isAudio)
-                _quartzVideo.MessageDrain = (int)ownerControl.Handle;
+            {
+                this._quartzVideo.MessageDrain = (int)ownerControl.Handle;
+            }
         }
 
+        /// <summary>
+        /// The get video info.
+        /// </summary>
+        /// <param name="videoFileName">
+        /// The video file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="VideoInfo"/>.
+        /// </returns>
         public static VideoInfo GetVideoInfo(string videoFileName)
         {
             var info = new VideoInfo { Success = false };
@@ -197,11 +335,14 @@ namespace Nikse.SubtitleEdit.Logic.VideoPlayers
 
                 info.Width = width;
                 info.Height = height;
-                var basicVideo2 = (quartzFilgraphManager as IBasicVideo2);
+                var basicVideo2 = quartzFilgraphManager as IBasicVideo2;
                 if (basicVideo2.AvgTimePerFrame > 0)
+                {
                     info.FramesPerSecond = 1 / basicVideo2.AvgTimePerFrame;
+                }
+
                 info.Success = true;
-                var iMediaPosition = (quartzFilgraphManager as IMediaPosition);
+                var iMediaPosition = quartzFilgraphManager as IMediaPosition;
                 info.TotalMilliseconds = iMediaPosition.Duration * 1000;
                 info.TotalSeconds = iMediaPosition.Duration;
                 info.TotalFrames = info.TotalSeconds * info.FramesPerSecond;
@@ -212,128 +353,187 @@ namespace Nikse.SubtitleEdit.Logic.VideoPlayers
             catch
             {
             }
+
             return info;
         }
 
+        /// <summary>
+        /// The video loader do work.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void VideoLoaderDoWork(object sender, DoWorkEventArgs e)
         {
-            //int i = 0;
-            //while (CurrentPosition < 1 && i < 100)
-            //{
+            // int i = 0;
+            // while (CurrentPosition < 1 && i < 100)
+            // {
             Application.DoEvents();
-            //    System.Threading.Thread.Sleep(5);
-            //    i++;
-            //}
+
+            // System.Threading.Thread.Sleep(5);
+            // i++;
+            // }
         }
 
+        /// <summary>
+        /// The video loader run worker completed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void VideoLoaderRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (OnVideoLoaded != null)
+            if (this.OnVideoLoaded != null)
             {
                 try
                 {
-                    OnVideoLoaded.Invoke(_quartzFilgraphManager, new EventArgs());
+                    this.OnVideoLoaded.Invoke(this._quartzFilgraphManager, new EventArgs());
                 }
                 catch
                 {
                 }
             }
-            _videoEndTimer = null;
+
+            this._videoEndTimer = null;
         }
 
+        /// <summary>
+        /// The video end timer tick.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void VideoEndTimerTick(object sender, EventArgs e)
         {
-            if (_isPaused == false && _quartzFilgraphManager != null && CurrentPosition >= Duration)
+            if (this._isPaused == false && this._quartzFilgraphManager != null && this.CurrentPosition >= this.Duration)
             {
-                _isPaused = true;
-                if (OnVideoEnded != null && _quartzFilgraphManager != null)
-                    OnVideoEnded.Invoke(_quartzFilgraphManager, new EventArgs());
+                this._isPaused = true;
+                if (this.OnVideoEnded != null && this._quartzFilgraphManager != null)
+                {
+                    this.OnVideoEnded.Invoke(this._quartzFilgraphManager, new EventArgs());
+                }
             }
         }
 
+        /// <summary>
+        /// The owner control resize.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void OwnerControlResize(object sender, EventArgs e)
         {
-            if (_quartzVideo == null)
+            if (this._quartzVideo == null)
+            {
                 return;
+            }
 
             // calc new scaled size with correct aspect ratio
-            float factorX = _owner.Width / (float)_sourceWidth;
-            float factorY = _owner.Height / (float)_sourceHeight;
+            float factorX = this._owner.Width / (float)this._sourceWidth;
+            float factorY = this._owner.Height / (float)this._sourceHeight;
 
             if (factorX > factorY)
             {
-                _quartzVideo.Width = (int)(_sourceWidth * factorY);
-                _quartzVideo.Height = (int)(_sourceHeight * factorY);
+                this._quartzVideo.Width = (int)(this._sourceWidth * factorY);
+                this._quartzVideo.Height = (int)(this._sourceHeight * factorY);
             }
             else
             {
-                _quartzVideo.Width = (int)(_sourceWidth * factorX);
-                _quartzVideo.Height = (int)(_sourceHeight * factorX);
+                this._quartzVideo.Width = (int)(this._sourceWidth * factorX);
+                this._quartzVideo.Height = (int)(this._sourceHeight * factorX);
             }
 
-            _quartzVideo.Left = (_owner.Width - _quartzVideo.Width) / 2;
-            _quartzVideo.Top = (_owner.Height - _quartzVideo.Height) / 2;
+            this._quartzVideo.Left = (this._owner.Width - this._quartzVideo.Width) / 2;
+            this._quartzVideo.Top = (this._owner.Height - this._quartzVideo.Height) / 2;
         }
 
+        /// <summary>
+        /// The dispose video player.
+        /// </summary>
         public override void DisposeVideoPlayer()
         {
-            System.Threading.ThreadPool.QueueUserWorkItem(DisposeQuarts, _quartzFilgraphManager);
+            System.Threading.ThreadPool.QueueUserWorkItem(this.DisposeQuarts, this._quartzFilgraphManager);
         }
 
+        /// <summary>
+        /// The dispose quarts.
+        /// </summary>
+        /// <param name="player">
+        /// The player.
+        /// </param>
         private void DisposeQuarts(object player)
         {
-            Dispose();
+            this.Dispose();
         }
 
+        /// <summary>
+        /// The release unmanged resources.
+        /// </summary>
         private void ReleaseUnmangedResources()
         {
             try
             {
-                if (_quartzVideo != null)
-                    _quartzVideo.Owner = -1;
+                if (this._quartzVideo != null)
+                {
+                    this._quartzVideo.Owner = -1;
+                }
             }
             catch
             {
             }
 
-            if (_quartzFilgraphManager != null)
+            if (this._quartzFilgraphManager != null)
             {
                 try
                 {
-                    _quartzFilgraphManager.Stop();
-                    Marshal.ReleaseComObject(_quartzFilgraphManager);
-                    _quartzFilgraphManager = null;
+                    this._quartzFilgraphManager.Stop();
+                    Marshal.ReleaseComObject(this._quartzFilgraphManager);
+                    this._quartzFilgraphManager = null;
                 }
                 catch
                 {
                 }
             }
-            _quartzVideo = null;
+
+            this._quartzVideo = null;
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
+        /// <summary>
+        /// The dispose.
+        /// </summary>
+        /// <param name="disposing">
+        /// The disposing.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                if (_videoEndTimer != null)
+                if (this._videoEndTimer != null)
                 {
-                    _videoEndTimer.Dispose();
-                    _videoEndTimer = null;
+                    this._videoEndTimer.Dispose();
+                    this._videoEndTimer = null;
                 }
-                if (_videoLoader != null)
+
+                if (this._videoLoader != null)
                 {
-                    _videoLoader.Dispose();
-                    _videoLoader = null;
+                    this._videoLoader.Dispose();
+                    this._videoLoader = null;
                 }
             }
-            ReleaseUnmangedResources();
-        }
 
+            this.ReleaseUnmangedResources();
+        }
     }
 }

@@ -1,14 +1,30 @@
-﻿using System.Drawing;
-using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nikse.SubtitleEdit.Logic.Ocr;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NOcrTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The n ocr test.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic.Ocr
 {
+    using System.Drawing;
+    using System.IO;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Nikse.SubtitleEdit.Logic.Ocr;
+
+    /// <summary>
+    /// The n ocr test.
+    /// </summary>
     [TestClass]
     public class NOcrTest
     {
-
+        /// <summary>
+        /// The test n ocr save load.
+        /// </summary>
         [TestMethod]
         public void TestNOcrSaveLoad()
         {

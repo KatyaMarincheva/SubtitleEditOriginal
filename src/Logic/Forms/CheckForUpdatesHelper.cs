@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.Forms
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="CheckForUpdatesHelper.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The check for updates helper.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.Forms
 {
     using System;
     using System.IO;
@@ -9,26 +18,50 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The check for updates helper.
+    /// </summary>
     public class CheckForUpdatesHelper
     {
         // private const string ReleasesUrl = "https://api.github.com/repos/SubtitleEdit/subtitleedit/releases";
+        /// <summary>
+        /// The change log url.
+        /// </summary>
         private const string ChangeLogUrl = "https://raw.githubusercontent.com/SubtitleEdit/subtitleedit/master/Changelog.txt";
 
+        /// <summary>
+        /// The regex.
+        /// </summary>
         private static readonly Regex regex = new Regex(@"\d\.\d", RegexOptions.Compiled); // 3.4.0 (xth June 2014)
 
         // private string _jsonReleases;
+        /// <summary>
+        /// The _change log.
+        /// </summary>
         private string _changeLog;
 
+        /// <summary>
+        /// The _success count.
+        /// </summary>
         private int _successCount;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CheckForUpdatesHelper"/> class.
+        /// </summary>
         public CheckForUpdatesHelper()
         {
             this.Error = null;
             this._successCount = 0;
         }
 
+        /// <summary>
+        /// Gets or sets the error.
+        /// </summary>
         public string Error { get; set; }
 
+        /// <summary>
+        /// Gets a value indicating whether done.
+        /// </summary>
         public bool Done
         {
             get
@@ -37,10 +70,19 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the latest version number.
+        /// </summary>
         public string LatestVersionNumber { get; set; }
 
+        /// <summary>
+        /// Gets or sets the latest change log.
+        /// </summary>
         public string LatestChangeLog { get; set; }
 
+        /// <summary>
+        /// The check for updates.
+        /// </summary>
         public void CheckForUpdates()
         {
             // load github release json
@@ -50,6 +92,12 @@
             this.StartDownloadString(ChangeLogUrl, null, this.FinishWebRequestChangeLog);
         }
 
+        /// <summary>
+        /// The is update available.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool IsUpdateAvailable()
         {
             try
@@ -92,6 +140,15 @@
             }
         }
 
+        /// <summary>
+        /// The get lastest version number.
+        /// </summary>
+        /// <param name="latestChangeLog">
+        /// The latest change log.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetLastestVersionNumber(string latestChangeLog)
         {
             foreach (string line in latestChangeLog.Replace(Environment.NewLine, "\n").Split('\n'))
@@ -110,6 +167,15 @@
             return null;
         }
 
+        /// <summary>
+        /// The get lastest change log.
+        /// </summary>
+        /// <param name="changeLog">
+        /// The change log.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetLastestChangeLog(string changeLog)
         {
             bool releaseOn = false;
@@ -139,6 +205,18 @@
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The start download string.
+        /// </summary>
+        /// <param name="url">
+        /// The url.
+        /// </param>
+        /// <param name="contentType">
+        /// The content type.
+        /// </param>
+        /// <param name="callback">
+        /// The callback.
+        /// </param>
         private void StartDownloadString(string url, string contentType, AsyncCallback callback)
         {
             try
@@ -175,6 +253,12 @@
         // }
         // }
         // }
+        /// <summary>
+        /// The finish web request change log.
+        /// </summary>
+        /// <param name="result">
+        /// The result.
+        /// </param>
         private void FinishWebRequestChangeLog(IAsyncResult result)
         {
             try
@@ -192,6 +276,15 @@
             }
         }
 
+        /// <summary>
+        /// The get string from response.
+        /// </summary>
+        /// <param name="result">
+        /// The result.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string GetStringFromResponse(IAsyncResult result)
         {
             HttpWebResponse response = (result.AsyncState as HttpWebRequest).EndGetResponse(result) as HttpWebResponse;

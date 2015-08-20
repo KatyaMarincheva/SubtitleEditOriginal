@@ -1,5 +1,12 @@
-﻿// (c) Giora Tamir (giora@gtamir.com), 2005
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright company="" file="RiffParser.cs">
+//   
+// </copyright>
+// <summary>
+//   The riff parser exception.
+// </summary>
+// 
+// --------------------------------------------------------------------------------------------------------------------
 namespace Nikse.SubtitleEdit.Logic.ContainerFormats
 {
     using System;
@@ -8,23 +15,53 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
 
     #region RiffParserException
 
+    /// <summary>
+    /// The riff parser exception.
+    /// </summary>
     [Serializable]
     public class RiffParserException : ApplicationException
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RiffParserException"/> class.
+        /// </summary>
         public RiffParserException()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RiffParserException"/> class.
+        /// </summary>
+        /// <param name="message">
+        /// The message.
+        /// </param>
         public RiffParserException(string message)
             : base(message)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RiffParserException"/> class.
+        /// </summary>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        /// <param name="inner">
+        /// The inner.
+        /// </param>
         public RiffParserException(string message, Exception inner)
             : base(message, inner)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RiffParserException"/> class.
+        /// </summary>
+        /// <param name="info">
+        /// The info.
+        /// </param>
+        /// <param name="context">
+        /// The context.
+        /// </param>
         public RiffParserException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -33,8 +70,14 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
 
     #endregion RiffParserException
 
+    /// <summary>
+    /// The riff parser.
+    /// </summary>
     public class RiffParser : IDisposable
     {
+        /// <summary>
+        /// The dispose.
+        /// </summary>
         public void Dispose()
         {
             this.Dispose(true);
@@ -42,10 +85,11 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
         }
 
         /// <summary>
-        ///     Determine if the file is a valid RIFF file
+        /// Determine if the file is a valid RIFF file
         /// </summary>
-        /// <param name="filename">File to examine</param>
-        /// <returns>True if file is a RIFF file</returns>
+        /// <param name="filename">
+        /// File to examine
+        /// </param>
         public void OpenFile(string filename)
         {
             // Sanity check
@@ -128,13 +172,21 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
         }
 
         /// <summary>
-        ///     Read the next RIFF element invoking the correct delegate.
+        /// Read the next RIFF element invoking the correct delegate.
         ///     Returns true if an element can be read
         /// </summary>
-        /// <param name="bytesleft">Reference to number of bytes left in the current list</param>
-        /// <param name="chunk">Method to invoke if a chunk is found</param>
-        /// <param name="list">Method to invoke if a list is found</param>
-        /// <returns></returns>
+        /// <param name="bytesleft">
+        /// Reference to number of bytes left in the current list
+        /// </param>
+        /// <param name="chunk">
+        /// Method to invoke if a chunk is found
+        /// </param>
+        /// <param name="list">
+        /// Method to invoke if a list is found
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool ReadElement(ref int bytesleft, ProcessChunkElement chunk, ProcessListElement list)
         {
             // Are we done?
@@ -208,6 +260,12 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
             return true;
         }
 
+        /// <summary>
+        /// The dispose.
+        /// </summary>
+        /// <param name="disposing">
+        /// The disposing.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -222,34 +280,70 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
 
         #region CONSTANTS
 
+        /// <summary>
+        /// The dwordsize.
+        /// </summary>
         public const int DWORDSIZE = 4;
 
+        /// <summary>
+        /// The twodwordssize.
+        /// </summary>
         public const int TWODWORDSSIZE = 8;
 
+        /// <summary>
+        /// The rif f 4 cc.
+        /// </summary>
         public const string RIFF4CC = "RIFF";
 
+        /// <summary>
+        /// The rif x 4 cc.
+        /// </summary>
         public const string RIFX4CC = "RIFX";
 
+        /// <summary>
+        /// The lis t 4 cc.
+        /// </summary>
         public const string LIST4CC = "LIST";
 
         // Known file types
+        /// <summary>
+        /// The ckid avi.
+        /// </summary>
         public static readonly int ckidAVI = ToFourCC("AVI ");
 
+        /// <summary>
+        /// The ckid wav.
+        /// </summary>
         public static readonly int ckidWAV = ToFourCC("WAVE");
 
+        /// <summary>
+        /// The ckid rmid.
+        /// </summary>
         public static readonly int ckidRMID = ToFourCC("RMID");
 
         #endregion CONSTANTS
 
         #region private members
 
+        /// <summary>
+        /// The m_filesize.
+        /// </summary>
         private long m_filesize;
 
+        /// <summary>
+        /// The m_stream.
+        /// </summary>
         private FileStream m_stream;
 
         // For non-thread-safe memory optimization
+        /// <summary>
+        /// The m_eight bytes.
+        /// </summary>
         private readonly byte[] m_eightBytes = new byte[TWODWORDSSIZE];
 
+        /// <summary>
+        /// The m_four bytes.
+        /// </summary>
         private readonly byte[] m_fourBytes = new byte[DWORDSIZE];
 
         #endregion private members
@@ -305,10 +399,14 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
         #region Stream access
 
         /// <summary>
-        ///     Non-thread-safe method to read two ints from the stream
+        /// Non-thread-safe method to read two ints from the stream
         /// </summary>
-        /// <param name="FourCC">Output FourCC int</param>
-        /// <param name="size">Output chunk/list size</param>
+        /// <param name="FourCC">
+        /// Output FourCC int
+        /// </param>
+        /// <param name="size">
+        /// Output chunk/list size
+        /// </param>
         public unsafe void ReadTwoInts(out int FourCC, out int size)
         {
             try
@@ -333,9 +431,11 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
         }
 
         /// <summary>
-        ///     Non-thread-safe read a single int from the stream
+        /// Non-thread-safe read a single int from the stream
         /// </summary>
-        /// <param name="FourCC">Output int</param>
+        /// <param name="FourCC">
+        /// Output int
+        /// </param>
         public unsafe void ReadOneInt(out int FourCC)
         {
             try
@@ -359,9 +459,11 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
         }
 
         /// <summary>
-        ///     Skip the specified number of bytes
+        /// Skip the specified number of bytes
         /// </summary>
-        /// <param name="skipBytes">Number of bytes to skip</param>
+        /// <param name="skipBytes">
+        /// Number of bytes to skip
+        /// </param>
         public void SkipData(int skipBytes)
         {
             try
@@ -375,13 +477,21 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
         }
 
         /// <summary>
-        ///     Read the specified length into the byte array at the specified
+        /// Read the specified length into the byte array at the specified
         ///     offset in the array
         /// </summary>
-        /// <param name="data">Array of bytes to read into</param>
-        /// <param name="offset">Offset in the array to start from</param>
-        /// <param name="length">Number of bytes to read</param>
-        /// <returns>Number of bytes actually read</returns>
+        /// <param name="data">
+        /// Array of bytes to read into
+        /// </param>
+        /// <param name="offset">
+        /// Offset in the array to start from
+        /// </param>
+        /// <param name="length">
+        /// Number of bytes to read
+        /// </param>
+        /// <returns>
+        /// Number of bytes actually read
+        /// </returns>
         public int ReadData(byte[] data, int offset, int length)
         {
             try
@@ -410,6 +520,15 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
 
         #region FourCC conversion methods
 
+        /// <summary>
+        /// The from four cc.
+        /// </summary>
+        /// <param name="FourCC">
+        /// The four cc.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FromFourCC(int FourCC)
         {
             char[] chars = new char[4];
@@ -421,6 +540,17 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
             return new string(chars);
         }
 
+        /// <summary>
+        /// The to four cc.
+        /// </summary>
+        /// <param name="FourCC">
+        /// The four cc.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// </exception>
         public static int ToFourCC(string FourCC)
         {
             if (FourCC.Length != 4)
@@ -433,6 +563,17 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
             return result;
         }
 
+        /// <summary>
+        /// The to four cc.
+        /// </summary>
+        /// <param name="FourCC">
+        /// The four cc.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// </exception>
         public static int ToFourCC(char[] FourCC)
         {
             if (FourCC.Length != 4)
@@ -445,6 +586,24 @@ namespace Nikse.SubtitleEdit.Logic.ContainerFormats
             return result;
         }
 
+        /// <summary>
+        /// The to four cc.
+        /// </summary>
+        /// <param name="c0">
+        /// The c 0.
+        /// </param>
+        /// <param name="c1">
+        /// The c 1.
+        /// </param>
+        /// <param name="c2">
+        /// The c 2.
+        /// </param>
+        /// <param name="c3">
+        /// The c 3.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int ToFourCC(char c0, char c1, char c2, char c3)
         {
             int result = c3 << 24 | c2 << 16 | c1 << 8 | c0;

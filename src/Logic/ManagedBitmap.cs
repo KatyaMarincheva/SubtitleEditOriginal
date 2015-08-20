@@ -1,17 +1,34 @@
-﻿using System.Drawing;
-using System.IO;
-using System.IO.Compression;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ManagedBitmap.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The managed bitmap.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic
 {
+    using System.Drawing;
+    using System.IO;
+    using System.IO.Compression;
+
+    /// <summary>
+    /// The managed bitmap.
+    /// </summary>
     public class ManagedBitmap
     {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-
+        /// <summary>
+        /// The _colors.
+        /// </summary>
         private Color[] _colors;
-        public bool LoadedOk { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ManagedBitmap"/> class.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public ManagedBitmap(string fileName)
         {
             try
@@ -26,84 +43,141 @@ namespace Nikse.SubtitleEdit.Logic
                     {
                         fd.Write(buffer, 0, nRead);
                     }
+
                     csStream.Flush();
                     buffer = fd.ToArray();
                 }
 
-                Width = buffer[4] << 8 | buffer[5];
-                Height = buffer[6] << 8 | buffer[7];
-                _colors = new Color[Width * Height];
+                this.Width = buffer[4] << 8 | buffer[5];
+                this.Height = buffer[6] << 8 | buffer[7];
+                this._colors = new Color[this.Width * this.Height];
                 int start = 8;
-                for (int i = 0; i < _colors.Length; i++)
+                for (int i = 0; i < this._colors.Length; i++)
                 {
-                    _colors[i] = Color.FromArgb(buffer[start], buffer[start + 1], buffer[start + 2], buffer[start + 3]);
+                    this._colors[i] = Color.FromArgb(buffer[start], buffer[start + 1], buffer[start + 2], buffer[start + 3]);
                     start += 4;
                 }
             }
             catch
             {
-                LoadedOk = false;
+                this.LoadedOk = false;
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ManagedBitmap"/> class.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
         public ManagedBitmap(Stream stream)
         {
             byte[] buffer = new byte[8];
             stream.Read(buffer, 0, buffer.Length);
-            Width = buffer[4] << 8 | buffer[5];
-            Height = buffer[6] << 8 | buffer[7];
-            _colors = new Color[Width * Height];
-            buffer = new byte[Width * Height * 4];
+            this.Width = buffer[4] << 8 | buffer[5];
+            this.Height = buffer[6] << 8 | buffer[7];
+            this._colors = new Color[this.Width * this.Height];
+            buffer = new byte[this.Width * this.Height * 4];
             stream.Read(buffer, 0, buffer.Length);
             int start = 0;
-            for (int i = 0; i < _colors.Length; i++)
+            for (int i = 0; i < this._colors.Length; i++)
             {
-                _colors[i] = Color.FromArgb(buffer[start], buffer[start + 1], buffer[start + 2], buffer[start + 3]);
+                this._colors[i] = Color.FromArgb(buffer[start], buffer[start + 1], buffer[start + 2], buffer[start + 3]);
                 start += 4;
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ManagedBitmap"/> class.
+        /// </summary>
+        /// <param name="oldBitmap">
+        /// The old bitmap.
+        /// </param>
         public ManagedBitmap(Bitmap oldBitmap)
         {
             NikseBitmap nbmp = new NikseBitmap(oldBitmap);
-            Width = nbmp.Width;
-            Height = nbmp.Height;
-            _colors = new Color[Width * Height];
-            for (int y = 0; y < Height; y++)
+            this.Width = nbmp.Width;
+            this.Height = nbmp.Height;
+            this._colors = new Color[this.Width * this.Height];
+            for (int y = 0; y < this.Height; y++)
             {
-                for (int x = 0; x < Width; x++)
+                for (int x = 0; x < this.Width; x++)
                 {
                     this.SetPixel(x, y, nbmp.GetPixel(x, y));
                 }
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ManagedBitmap"/> class.
+        /// </summary>
+        /// <param name="nbmp">
+        /// The nbmp.
+        /// </param>
         public ManagedBitmap(NikseBitmap nbmp)
         {
-            Width = nbmp.Width;
-            Height = nbmp.Height;
-            _colors = new Color[Width * Height];
-            for (int y = 0; y < Height; y++)
+            this.Width = nbmp.Width;
+            this.Height = nbmp.Height;
+            this._colors = new Color[this.Width * this.Height];
+            for (int y = 0; y < this.Height; y++)
             {
-                for (int x = 0; x < Width; x++)
+                for (int x = 0; x < this.Width; x++)
                 {
                     this.SetPixel(x, y, nbmp.GetPixel(x, y));
                 }
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ManagedBitmap"/> class.
+        /// </summary>
+        /// <param name="width">
+        /// The width.
+        /// </param>
+        /// <param name="height">
+        /// The height.
+        /// </param>
+        public ManagedBitmap(int width, int height)
+        {
+            this.Width = width;
+            this.Height = height;
+            this._colors = new Color[this.Width * this.Height];
+        }
+
+        /// <summary>
+        /// Gets the width.
+        /// </summary>
+        public int Width { get; private set; }
+
+        /// <summary>
+        /// Gets the height.
+        /// </summary>
+        public int Height { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether loaded ok.
+        /// </summary>
+        public bool LoadedOk { get; private set; }
+
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public void Save(string fileName)
         {
             using (MemoryStream outFile = new MemoryStream())
             {
                 byte[] buffer = System.Text.Encoding.UTF8.GetBytes("MBMP");
                 outFile.Write(buffer, 0, buffer.Length);
-                WriteInt16(outFile, (short)Width);
-                WriteInt16(outFile, (short)Height);
-                foreach (Color c in _colors)
+                WriteInt16(outFile, (short)this.Width);
+                WriteInt16(outFile, (short)this.Height);
+                foreach (Color c in this._colors)
                 {
                     WriteColor(outFile, c);
                 }
+
                 buffer = outFile.ToArray();
                 using (GZipStream gz = new GZipStream(new FileStream(fileName, FileMode.Create), CompressionMode.Compress, false))
                 {
@@ -112,30 +186,46 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// The append to stream.
+        /// </summary>
+        /// <param name="targetStream">
+        /// The target stream.
+        /// </param>
         public void AppendToStream(Stream targetStream)
         {
             using (MemoryStream outFile = new MemoryStream())
             {
                 byte[] buffer = System.Text.Encoding.UTF8.GetBytes("MBMP");
                 outFile.Write(buffer, 0, buffer.Length);
-                WriteInt16(outFile, (short)Width);
-                WriteInt16(outFile, (short)Height);
-                foreach (Color c in _colors)
+                WriteInt16(outFile, (short)this.Width);
+                WriteInt16(outFile, (short)this.Height);
+                foreach (Color c in this._colors)
                 {
                     WriteColor(outFile, c);
                 }
+
                 buffer = outFile.ToArray();
                 targetStream.Write(buffer, 0, buffer.Length);
             }
         }
 
-        //private static int ReadInt16(Stream stream)
-        //{
-        //    byte b0 = (byte)stream.ReadByte();
-        //    byte b1 = (byte)stream.ReadByte();
-        //    return b0 << 8 | b1;
-        //}
+        // private static int ReadInt16(Stream stream)
+        // {
+        // byte b0 = (byte)stream.ReadByte();
+        // byte b1 = (byte)stream.ReadByte();
+        // return b0 << 8 | b1;
+        // }
 
+        /// <summary>
+        /// The write int 16.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
+        /// <param name="val">
+        /// The val.
+        /// </param>
         private static void WriteInt16(Stream stream, short val)
         {
             byte[] buffer = new byte[2];
@@ -144,6 +234,15 @@ namespace Nikse.SubtitleEdit.Logic
             stream.Write(buffer, 0, buffer.Length);
         }
 
+        /// <summary>
+        /// The write color.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
+        /// <param name="c">
+        /// The c.
+        /// </param>
         private static void WriteColor(Stream stream, Color c)
         {
             byte[] buffer = new byte[4];
@@ -154,28 +253,49 @@ namespace Nikse.SubtitleEdit.Logic
             stream.Write(buffer, 0, buffer.Length);
         }
 
-        public ManagedBitmap(int width, int height)
-        {
-            Width = width;
-            Height = height;
-            _colors = new Color[Width * Height];
-        }
-
+        /// <summary>
+        /// The get pixel.
+        /// </summary>
+        /// <param name="x">
+        /// The x.
+        /// </param>
+        /// <param name="y">
+        /// The y.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Color"/>.
+        /// </returns>
         public Color GetPixel(int x, int y)
         {
-            return _colors[Width * y + x];
+            return this._colors[this.Width * y + x];
         }
 
+        /// <summary>
+        /// The set pixel.
+        /// </summary>
+        /// <param name="x">
+        /// The x.
+        /// </param>
+        /// <param name="y">
+        /// The y.
+        /// </param>
+        /// <param name="c">
+        /// The c.
+        /// </param>
         public void SetPixel(int x, int y, Color c)
         {
-            _colors[Width * y + x] = c;
+            this._colors[this.Width * y + x] = c;
         }
 
         /// <summary>
         /// Copies a rectangle from the bitmap to a new bitmap
         /// </summary>
-        /// <param name="section">Source rectangle</param>
-        /// <returns>Rectangle from current image as new bitmap</returns>
+        /// <param name="section">
+        /// Source rectangle
+        /// </param>
+        /// <returns>
+        /// Rectangle from current image as new bitmap
+        /// </returns>
         public ManagedBitmap GetRectangle(Rectangle section)
         {
             ManagedBitmap newRectangle = new ManagedBitmap(section.Width, section.Height);
@@ -189,23 +309,31 @@ namespace Nikse.SubtitleEdit.Logic
                     newRectangle.SetPixel(rectx, recty, this.GetPixel(x, y));
                     rectx++;
                 }
+
                 recty++;
             }
+
             return newRectangle;
         }
 
+        /// <summary>
+        /// The to old bitmap.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Bitmap"/>.
+        /// </returns>
         public Bitmap ToOldBitmap()
         {
-            NikseBitmap nbmp = new NikseBitmap(Width, Height);
-            for (int y = 0; y < Height; y++)
+            NikseBitmap nbmp = new NikseBitmap(this.Width, this.Height);
+            for (int y = 0; y < this.Height; y++)
             {
-                for (int x = 0; x < Width; x++)
+                for (int x = 0; x < this.Width; x++)
                 {
                     nbmp.SetPixel(x, y, this.GetPixel(x, y));
                 }
             }
+
             return nbmp.GetBitmap();
         }
-
     }
 }

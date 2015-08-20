@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AdvancedSubStationAlpha.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The advanced sub station alpha.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -9,10 +18,19 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The advanced sub station alpha.
+    /// </summary>
     public class AdvancedSubStationAlpha : SubtitleFormat
     {
+        /// <summary>
+        /// The name of format.
+        /// </summary>
         public const string NameOfFormat = "Advanced Sub Station Alpha";
 
+        /// <summary>
+        /// Gets the default style.
+        /// </summary>
         public static string DefaultStyle
         {
             get
@@ -27,6 +45,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the default header.
+        /// </summary>
         public static string DefaultHeader
         {
             get
@@ -46,8 +67,14 @@
             }
         }
 
+        /// <summary>
+        /// Gets the errors.
+        /// </summary>
         public string Errors { get; private set; }
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -56,6 +83,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -64,6 +94,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -72,6 +105,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether has style support.
+        /// </summary>
         public override bool HasStyleSupport
         {
             get
@@ -80,6 +116,15 @@
             }
         }
 
+        /// <summary>
+        /// The get styles from header.
+        /// </summary>
+        /// <param name="headerLines">
+        /// The header lines.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public static List<string> GetStylesFromHeader(string headerLines)
         {
             List<string> list = new List<string>();
@@ -104,6 +149,15 @@
             return list;
         }
 
+        /// <summary>
+        /// The format text.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FormatText(Paragraph p)
         {
             string text = p.Text.Replace(Environment.NewLine, "\\N");
@@ -154,6 +208,15 @@
             return text.Replace("{\\c}", "@___@@").Replace("}{", string.Empty).Replace("@___@@", "{\\c}").Replace("{\\c}{\\c&", "{\\c&");
         }
 
+        /// <summary>
+        /// The get formatted text.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GetFormattedText(string text)
         {
             text = text.Replace("\\N", Environment.NewLine).Replace("\\n", Environment.NewLine);
@@ -332,11 +395,17 @@
         }
 
         /// <summary>
-        ///     BGR color like this: &amp;HBBGGRR&amp; (where BB, GG, and RR are hex values in uppercase)
+        /// BGR color like this: &amp;HBBGGRR&amp; (where BB, GG, and RR are hex values in uppercase)
         /// </summary>
-        /// <param name="f">Input string</param>
-        /// <param name="defaultColor">Default color</param>
-        /// <returns>Input string as color, or default color if problems</returns>
+        /// <param name="f">
+        /// Input string
+        /// </param>
+        /// <param name="defaultColor">
+        /// Default color
+        /// </param>
+        /// <returns>
+        /// Input string as color, or default color if problems
+        /// </returns>
         public static Color GetSsaColor(string f, Color defaultColor)
         {
             // Red = &H0000FF&
@@ -394,11 +463,29 @@
             return defaultColor;
         }
 
+        /// <summary>
+        /// The get ssa color string.
+        /// </summary>
+        /// <param name="c">
+        /// The c.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GetSsaColorString(Color c)
         {
             return string.Format("&H00{0:X2}{1:X2}{2:X2}", c.B, c.G, c.R);
         }
 
+        /// <summary>
+        /// The check for errors.
+        /// </summary>
+        /// <param name="header">
+        /// The header.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string CheckForErrors(string header)
         {
             if (string.IsNullOrEmpty(header))
@@ -681,9 +768,17 @@
         }
 
         /// <summary>
-        ///     Add new style to ASS header
+        /// Add new style to ASS header
         /// </summary>
-        /// <returns>Header with new style</returns>
+        /// <param name="style">
+        /// The style.
+        /// </param>
+        /// <param name="header">
+        /// The header.
+        /// </param>
+        /// <returns>
+        /// Header with new style
+        /// </returns>
         public static string AddSsaStyle(SsaStyle style, string header)
         {
             if (string.IsNullOrEmpty(header))
@@ -723,6 +818,18 @@
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The get ssa style.
+        /// </summary>
+        /// <param name="styleName">
+        /// The style name.
+        /// </param>
+        /// <param name="header">
+        /// The header.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SsaStyle"/>.
+        /// </returns>
         public static SsaStyle GetSsaStyle(string styleName, string header)
         {
             SsaStyle style = new SsaStyle { Name = styleName };
@@ -956,6 +1063,18 @@
             return new SsaStyle { Name = styleName };
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -990,6 +1109,18 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             string header = @"[Script Info]
@@ -1087,6 +1218,18 @@
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -1308,6 +1451,15 @@
             this.Errors = errors.ToString();
         }
 
+        /// <summary>
+        /// The remove native formatting.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="newFormat">
+        /// The new format.
+        /// </param>
         public override void RemoveNativeFormatting(Subtitle subtitle, SubtitleFormat newFormat)
         {
             if (newFormat != null && newFormat.Name == SubStationAlpha.NameOfFormat)
@@ -1374,6 +1526,24 @@
             }
         }
 
+        /// <summary>
+        /// The load styles from substation alpha.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <param name="header">
+        /// The header.
+        /// </param>
+        /// <param name="headerNoStyles">
+        /// The header no styles.
+        /// </param>
+        /// <param name="sb">
+        /// The sb.
+        /// </param>
         private static void LoadStylesFromSubstationAlpha(Subtitle subtitle, string title, string header, string headerNoStyles, StringBuilder sb)
         {
             try
@@ -1462,6 +1632,24 @@
             }
         }
 
+        /// <summary>
+        /// The load styles from timed text 10.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <param name="header">
+        /// The header.
+        /// </param>
+        /// <param name="headerNoStyles">
+        /// The header no styles.
+        /// </param>
+        /// <param name="sb">
+        /// The sb.
+        /// </param>
         private static void LoadStylesFromTimedText10(Subtitle subtitle, string title, string header, string headerNoStyles, StringBuilder sb)
         {
             try
@@ -1594,6 +1782,30 @@
             }
         }
 
+        /// <summary>
+        /// The format tag.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="start">
+        /// The start.
+        /// </param>
+        /// <param name="fontTag">
+        /// The font tag.
+        /// </param>
+        /// <param name="tag">
+        /// The tag.
+        /// </param>
+        /// <param name="ssaTagName">
+        /// The ssa tag name.
+        /// </param>
+        /// <param name="endSsaTag">
+        /// The end ssa tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string FormatTag(ref string text, int start, string fontTag, string tag, string ssaTagName, string endSsaTag)
         {
             if (fontTag.Contains(tag))
@@ -1625,6 +1837,18 @@
             return fontTag;
         }
 
+        /// <summary>
+        /// The check and add sub tags.
+        /// </summary>
+        /// <param name="tagName">
+        /// The tag name.
+        /// </param>
+        /// <param name="extraTags">
+        /// The extra tags.
+        /// </param>
+        /// <param name="italic">
+        /// The italic.
+        /// </param>
         private static void CheckAndAddSubTags(ref string tagName, ref string extraTags, out bool italic)
         {
             italic = false;
@@ -1714,6 +1938,15 @@
             }
         }
 
+        /// <summary>
+        /// The get time code from string.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TimeCode"/>.
+        /// </returns>
         private static TimeCode GetTimeCodeFromString(string time)
         {
             // h:mm:ss.cc
@@ -1721,6 +1954,18 @@
             return new TimeCode(int.Parse(timeCode[0]), int.Parse(timeCode[1]), int.Parse(timeCode[2]), int.Parse(timeCode[3]) * 10);
         }
 
+        /// <summary>
+        /// The remove tag.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="tag">
+        /// The tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveTag(string s, string tag)
         {
             int indexOfTag = s.IndexOf(@"\" + tag, StringComparison.Ordinal);

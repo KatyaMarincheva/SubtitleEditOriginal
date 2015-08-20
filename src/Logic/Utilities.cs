@@ -1,28 +1,44 @@
-﻿using Nikse.SubtitleEdit.Controls;
-using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Forms;
-using Nikse.SubtitleEdit.Logic.ContainerFormats;
-using Nikse.SubtitleEdit.Logic.ContainerFormats.Matroska;
-using Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4;
-using Nikse.SubtitleEdit.Logic.SubtitleFormats;
-using Nikse.SubtitleEdit.Logic.VideoPlayers;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Net;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Xml;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Utilities.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The utilities.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Globalization;
+    using System.IO;
+    using System.Net;
+    using System.Reflection;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Controls;
+    using Nikse.SubtitleEdit.Core;
+    using Nikse.SubtitleEdit.Forms;
+    using Nikse.SubtitleEdit.Logic.ContainerFormats;
+    using Nikse.SubtitleEdit.Logic.ContainerFormats.Matroska;
+    using Nikse.SubtitleEdit.Logic.ContainerFormats.Mp4;
+    using Nikse.SubtitleEdit.Logic.SubtitleFormats;
+    using Nikse.SubtitleEdit.Logic.VideoPlayers;
+
+    /// <summary>
+    /// The utilities.
+    /// </summary>
     public static class Utilities
     {
+        /// <summary>
+        /// The win x p 2 k unicode font name.
+        /// </summary>
         public const string WinXP2KUnicodeFontName = "Times New Roman";
 
         /// <summary>
@@ -30,32 +46,252 @@ namespace Nikse.SubtitleEdit.Logic
         /// </summary>
         internal static readonly char[] NewLineChars = Environment.NewLine.ToCharArray();
 
+        /// <summary>
+        /// The _last no break after list language.
+        /// </summary>
+        private static string _lastNoBreakAfterListLanguage;
+
+        /// <summary>
+        /// The _last no break after list.
+        /// </summary>
+        private static List<NoBreakAfterItem> _lastNoBreakAfterList = new List<NoBreakAfterItem>();
+
+        /// <summary>
+        /// The color dark orange.
+        /// </summary>
+        public static Color ColorDarkOrange = Color.FromArgb(220, 90, 10);
+
+        /// <summary>
+        /// The uppercase letters.
+        /// </summary>
+        public static readonly string UppercaseLetters = GetLetters(true, false, false);
+
+        /// <summary>
+        /// The lowercase letters.
+        /// </summary>
+        public static readonly string LowercaseLetters = GetLetters(false, true, false);
+
+        /// <summary>
+        /// The lowercase letters with numbers.
+        /// </summary>
+        public static readonly string LowercaseLettersWithNumbers = GetLetters(false, true, true);
+
+        /// <summary>
+        /// The all letters.
+        /// </summary>
+        public static readonly string AllLetters = GetLetters(true, true, false);
+
+        /// <summary>
+        /// The all letters and numbers.
+        /// </summary>
+        public static readonly string AllLettersAndNumbers = GetLetters(true, true, true);
+
+        /// <summary>
+        /// The all keys.
+        /// </summary>
+        private static readonly Dictionary<string, Keys> AllKeys = new Dictionary<string, Keys>();
+
+        /// <summary>
+        /// Gets the dictionary folder.
+        /// </summary>
+        public static string DictionaryFolder
+        {
+            get
+            {
+                return Configuration.DictionariesFolder;
+            }
+        }
+
+        /// <summary>
+        /// Gets the assembly version.
+        /// </summary>
+        public static string AssemblyVersion
+        {
+            get
+            {
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Gets the assembly description.
+        /// </summary>
+        public static string AssemblyDescription
+        {
+            get
+            {
+                Assembly assy = Assembly.GetExecutingAssembly();
+                string assyName = assy.GetName().Name;
+                bool isdef = Attribute.IsDefined(assy, typeof(AssemblyDescriptionAttribute));
+                if (isdef)
+                {
+                    Console.WriteLine(assyName);
+                    var adAttr = (AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(assy, typeof(AssemblyDescriptionAttribute));
+                    if (adAttr != null)
+                    {
+                        return adAttr.Description;
+                    }
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether is quarts dll installed.
+        /// </summary>
+        public static bool IsQuartsDllInstalled
+        {
+            get
+            {
+                if (IsRunningOnMono())
+                {
+                    return false;
+                }
+
+                string quartzFileName = Environment.GetFolderPath(Environment.SpecialFolder.System).TrimEnd('\\') + @"\quartz.dll";
+                return File.Exists(quartzFileName);
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether is managed direct x installed.
+        /// </summary>
+        public static bool IsManagedDirectXInstalled
+        {
+            get
+            {
+                if (IsRunningOnMono())
+                {
+                    return false;
+                }
+
+                try
+                {
+                    // Check if this folder exists: C:\WINDOWS\Microsoft.NET\DirectX for Managed Code
+                    string folderName = Environment.SystemDirectory.TrimEnd('\\');
+                    folderName = folderName.Substring(0, folderName.LastIndexOf('\\'));
+                    folderName = folderName + @"\\Microsoft.NET\DirectX for Managed Code";
+                    return Directory.Exists(folderName);
+                }
+                catch (FileNotFoundException)
+                {
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether is m player available.
+        /// </summary>
+        public static bool IsMPlayerAvailable
+        {
+            get
+            {
+                if (Configuration.IsRunningOnLinux() || IsRunningOnMono())
+                {
+                    return File.Exists(Path.Combine(Configuration.BaseDirectory, "mplayer"));
+                }
+
+                return MPlayer.GetMPlayerFileName != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether is mpc hc installed.
+        /// </summary>
+        public static bool IsMpcHcInstalled
+        {
+            get
+            {
+                if (IsRunningOnMono())
+                {
+                    return false;
+                }
+
+                try
+                {
+                    return VideoPlayers.MpcHC.MpcHc.GetMpcHcFileName() != null;
+                }
+                catch (FileNotFoundException)
+                {
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the lowercase vowels.
+        /// </summary>
+        public static string LowercaseVowels
+        {
+            get
+            {
+                return "aeiouyæøåéóáôèòæøåäöïɤəɛʊʉɨ";
+            }
+        }
+
+        /// <summary>
+        /// The get video info.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="VideoInfo"/>.
+        /// </returns>
         public static VideoInfo GetVideoInfo(string fileName)
         {
             VideoInfo info = TryReadVideoInfoViaAviHeader(fileName);
             if (info.Success)
+            {
                 return info;
+            }
 
             info = TryReadVideoInfoViaMatroskaHeader(fileName);
             if (info.Success)
+            {
                 return info;
+            }
 
             info = TryReadVideoInfoViaDirectShow(fileName);
             if (info.Success)
+            {
                 return info;
+            }
 
             info = TryReadVideoInfoViaMp4(fileName);
             if (info.Success)
+            {
                 return info;
+            }
 
             return new VideoInfo { VideoCodec = "Unknown" };
         }
 
+        /// <summary>
+        /// The try read video info via direct show.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="VideoInfo"/>.
+        /// </returns>
         private static VideoInfo TryReadVideoInfoViaDirectShow(string fileName)
         {
             return QuartsPlayer.GetVideoInfo(fileName);
         }
 
+        /// <summary>
+        /// The try read video info via matroska header.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="VideoInfo"/>.
+        /// </returns>
         private static VideoInfo TryReadVideoInfoViaMatroskaHeader(string fileName)
         {
             var info = new VideoInfo { Success = false };
@@ -98,6 +334,15 @@ namespace Nikse.SubtitleEdit.Logic
             return info;
         }
 
+        /// <summary>
+        /// The try read video info via avi header.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="VideoInfo"/>.
+        /// </returns>
         private static VideoInfo TryReadVideoInfoViaAviHeader(string fileName)
         {
             var info = new VideoInfo { Success = false };
@@ -126,9 +371,19 @@ namespace Nikse.SubtitleEdit.Logic
             catch
             {
             }
+
             return info;
         }
 
+        /// <summary>
+        /// The try read video info via mp 4.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="VideoInfo"/>.
+        /// </returns>
         private static VideoInfo TryReadVideoInfoViaMp4(string fileName)
         {
             var info = new VideoInfo { Success = false };
@@ -149,14 +404,30 @@ namespace Nikse.SubtitleEdit.Logic
             catch
             {
             }
+
             return info;
         }
 
+        /// <summary>
+        /// The get movie file extensions.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public static List<string> GetMovieFileExtensions()
         {
             return new List<string> { ".avi", ".mkv", ".wmv", ".mpg", ".mpeg", ".divx", ".mp4", ".asf", ".flv", ".mov", ".m4v", ".vob", ".ogv", ".webm", ".ts", ".m2ts", ".avs", ".mxf" };
         }
 
+        /// <summary>
+        /// The get video file filter.
+        /// </summary>
+        /// <param name="includeAudioFiles">
+        /// The include audio files.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GetVideoFileFilter(bool includeAudioFiles)
         {
             var sb = new StringBuilder();
@@ -165,50 +436,106 @@ namespace Nikse.SubtitleEdit.Logic
             foreach (string extension in GetMovieFileExtensions())
             {
                 if (i > 0)
+                {
                     sb.Append(';');
+                }
+
                 sb.Append('*');
                 sb.Append(extension);
                 i++;
             }
+
             if (includeAudioFiles)
             {
                 sb.Append('|');
                 sb.Append(Configuration.Settings.Language.General.AudioFiles);
                 sb.Append("|*.mp3;*.wav;*.wma;*.ogg;*.mpa;*.m4a;*.ape;*.aiff;*.flac;*.aac");
             }
+
             sb.Append('|');
             sb.Append(Configuration.Settings.Language.General.AllFiles);
             sb.Append("|*.*");
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The is integer.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public static bool IsInteger(string s)
         {
             int i;
             return int.TryParse(s, out i);
         }
 
+        /// <summary>
+        /// The get subtitle format by friendly name.
+        /// </summary>
+        /// <param name="friendlyName">
+        /// The friendly name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SubtitleFormat"/>.
+        /// </returns>
         public static SubtitleFormat GetSubtitleFormatByFriendlyName(string friendlyName)
         {
             foreach (SubtitleFormat format in SubtitleFormat.AllSubtitleFormats)
             {
                 if (format.FriendlyName == friendlyName || format.Name == friendlyName)
+                {
                     return format;
+                }
             }
+
             return null;
         }
 
+        /// <summary>
+        /// The format bytes to display file size.
+        /// </summary>
+        /// <param name="fileSize">
+        /// The file size.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FormatBytesToDisplayFileSize(long fileSize)
         {
             if (fileSize <= 1024)
+            {
                 return string.Format("{0} bytes", fileSize);
+            }
+
             if (fileSize <= 1024 * 1024)
+            {
                 return string.Format("{0} kb", fileSize / 1024);
+            }
+
             if (fileSize <= 1024 * 1024 * 1024)
+            {
                 return string.Format("{0:0.0} mb", (float)fileSize / (1024 * 1024));
+            }
+
             return string.Format("{0:0.0} gb", (float)fileSize / (1024 * 1024 * 1024));
         }
 
+        /// <summary>
+        /// The get subtitle index.
+        /// </summary>
+        /// <param name="paragraphs">
+        /// The paragraphs.
+        /// </param>
+        /// <param name="videoPlayerContainer">
+        /// The video player container.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int GetSubtitleIndex(List<Paragraph> paragraphs, VideoPlayerContainer videoPlayerContainer)
         {
             if (videoPlayerContainer.VideoPlayer != null)
@@ -221,15 +548,33 @@ namespace Nikse.SubtitleEdit.Logic
                     {
                         bool isInfo = p == paragraphs[0] && (p.StartTime.TotalMilliseconds == 0 && p.Duration.TotalMilliseconds == 0 || p.StartTime.TotalMilliseconds == Pac.PacNullTime.TotalMilliseconds);
                         if (!isInfo)
+                        {
                             return i;
+                        }
                     }
                 }
+
                 if (!string.IsNullOrEmpty(videoPlayerContainer.SubtitleText))
+                {
                     videoPlayerContainer.SetSubtitleText(string.Empty, null);
+                }
             }
+
             return -1;
         }
 
+        /// <summary>
+        /// The show subtitle.
+        /// </summary>
+        /// <param name="paragraphs">
+        /// The paragraphs.
+        /// </param>
+        /// <param name="videoPlayerContainer">
+        /// The video player container.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int ShowSubtitle(List<Paragraph> paragraphs, VideoPlayerContainer videoPlayerContainer)
         {
             if (videoPlayerContainer.VideoPlayer != null)
@@ -238,27 +583,50 @@ namespace Nikse.SubtitleEdit.Logic
                 for (int i = 0; i < paragraphs.Count; i++)
                 {
                     var p = paragraphs[i];
-                    if (p.StartTime.TotalMilliseconds <= positionInMilliseconds &&
-                        p.EndTime.TotalMilliseconds > positionInMilliseconds)
+                    if (p.StartTime.TotalMilliseconds <= positionInMilliseconds && p.EndTime.TotalMilliseconds > positionInMilliseconds)
                     {
                         string text = p.Text.Replace("|", Environment.NewLine);
                         bool isInfo = p == paragraphs[0] && (p.StartTime.TotalMilliseconds == 0 && p.Duration.TotalMilliseconds == 0 || p.StartTime.TotalMilliseconds == Pac.PacNullTime.TotalMilliseconds);
                         if (!isInfo)
                         {
                             if (videoPlayerContainer.LastParagraph != p)
+                            {
                                 videoPlayerContainer.SetSubtitleText(text, p);
+                            }
                             else if (videoPlayerContainer.SubtitleText != text)
+                            {
                                 videoPlayerContainer.SetSubtitleText(text, p);
+                            }
+
                             return i;
                         }
                     }
                 }
+
                 if (!string.IsNullOrEmpty(videoPlayerContainer.SubtitleText))
+                {
                     videoPlayerContainer.SetSubtitleText(string.Empty, null);
+                }
             }
+
             return -1;
         }
 
+        /// <summary>
+        /// The show subtitle.
+        /// </summary>
+        /// <param name="paragraphs">
+        /// The paragraphs.
+        /// </param>
+        /// <param name="original">
+        /// The original.
+        /// </param>
+        /// <param name="videoPlayerContainer">
+        /// The video player container.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int ShowSubtitle(List<Paragraph> paragraphs, Subtitle original, VideoPlayerContainer videoPlayerContainer)
         {
             if (videoPlayerContainer.VideoPlayer != null)
@@ -267,37 +635,51 @@ namespace Nikse.SubtitleEdit.Logic
                 for (int i = 0; i < paragraphs.Count; i++)
                 {
                     var p = paragraphs[i];
-                    if (p.StartTime.TotalMilliseconds <= positionInMilliseconds &&
-                        p.EndTime.TotalMilliseconds > positionInMilliseconds)
+                    if (p.StartTime.TotalMilliseconds <= positionInMilliseconds && p.EndTime.TotalMilliseconds > positionInMilliseconds)
                     {
                         var op = GetOriginalParagraph(0, p, original.Paragraphs);
 
                         string text = p.Text.Replace("|", Environment.NewLine);
                         if (op != null)
+                        {
                             text = text + Environment.NewLine + Environment.NewLine + op.Text.Replace("|", Environment.NewLine);
+                        }
 
                         bool isInfo = p == paragraphs[0] && p.StartTime.TotalMilliseconds == 0 && positionInMilliseconds > 3000;
                         if (!isInfo)
                         {
                             if (videoPlayerContainer.LastParagraph != p)
+                            {
                                 videoPlayerContainer.SetSubtitleText(text, p);
+                            }
                             else if (videoPlayerContainer.SubtitleText != text)
+                            {
                                 videoPlayerContainer.SetSubtitleText(text, p);
+                            }
+
                             return i;
                         }
                     }
                 }
             }
+
             if (!string.IsNullOrEmpty(videoPlayerContainer.SubtitleText))
+            {
                 videoPlayerContainer.SetSubtitleText(string.Empty, null);
+            }
+
             return -1;
         }
 
         /// <summary>
         /// Downloads the requested resource as a <see cref="String"/> using the configured <see cref="WebProxy"/>.
         /// </summary>
-        /// <param name="address">A <see cref="String"/> containing the URI to download.</param>
-        /// <returns>A <see cref="String"/> containing the requested resource.</returns>
+        /// <param name="address">
+        /// A <see cref="String"/> containing the URI to download.
+        /// </param>
+        /// <returns>
+        /// A <see cref="String"/> containing the requested resource.
+        /// </returns>
         public static string DownloadString(string address)
         {
             using (var wc = new WebClient())
@@ -307,6 +689,18 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// The download string.
+        /// </summary>
+        /// <param name="address">
+        /// The address.
+        /// </param>
+        /// <param name="encoding">
+        /// The encoding.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string DownloadString(string address, Encoding encoding)
         {
             using (var wc = new WebClient())
@@ -317,6 +711,12 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// The get proxy.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="WebProxy"/>.
+        /// </returns>
         public static WebProxy GetProxy()
         {
             if (!string.IsNullOrEmpty(Configuration.Settings.Proxy.ProxyAddress))
@@ -326,56 +726,136 @@ namespace Nikse.SubtitleEdit.Logic
                 if (!string.IsNullOrEmpty(Configuration.Settings.Proxy.UserName))
                 {
                     if (string.IsNullOrEmpty(Configuration.Settings.Proxy.Domain))
+                    {
                         proxy.Credentials = new NetworkCredential(Configuration.Settings.Proxy.UserName, Configuration.Settings.Proxy.DecodePassword());
+                    }
                     else
+                    {
                         proxy.Credentials = new NetworkCredential(Configuration.Settings.Proxy.UserName, Configuration.Settings.Proxy.DecodePassword(), Configuration.Settings.Proxy.Domain);
+                    }
                 }
                 else
+                {
                     proxy.UseDefaultCredentials = true;
+                }
 
                 return proxy;
             }
+
             return null;
         }
 
+        /// <summary>
+        /// The is part of number.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="position">
+        /// The position.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool IsPartOfNumber(string s, int position)
         {
             if (string.IsNullOrWhiteSpace(s) || position + 1 >= s.Length)
+            {
                 return false;
+            }
 
             if (position > 0 && @",.".Contains(s[position]))
             {
                 return char.IsDigit(s[position - 1]) && char.IsDigit(s[position + 1]);
             }
+
             return false;
         }
 
+        /// <summary>
+        /// The is between numbers.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="position">
+        /// The position.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public static bool IsBetweenNumbers(string s, int position)
         {
             if (string.IsNullOrEmpty(s) || position < 1 || position + 2 > s.Length)
+            {
                 return false;
+            }
+
             return char.IsDigit(s[position - 1]) && char.IsDigit(s[position + 1]);
         }
 
+        /// <summary>
+        /// The auto break line.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="language">
+        /// The language.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string AutoBreakLine(string text, string language)
         {
             return AutoBreakLine(text, Configuration.Settings.General.SubtitleLineMaximumLength, Configuration.Settings.Tools.MergeLinesShorterThan, language);
         }
 
+        /// <summary>
+        /// The auto break line.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string AutoBreakLine(string text)
         {
             return AutoBreakLine(text, string.Empty); // no language
         }
 
+        /// <summary>
+        /// The can break.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="language">
+        /// The language.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool CanBreak(string s, int index, string language)
         {
             char nextChar = ' ';
             if (index >= 0 && index < s.Length)
+            {
                 nextChar = s[index];
+            }
             else
+            {
                 return false;
+            }
+
             if (!"\r\n\t ".Contains(nextChar))
+            {
                 return false;
+            }
 
             // Some words we don't like breaking after
             string s2 = s.Substring(0, index);
@@ -384,29 +864,44 @@ namespace Nikse.SubtitleEdit.Logic
                 foreach (NoBreakAfterItem ending in NoBreakAfterList(language))
                 {
                     if (ending.IsMatch(s2))
+                    {
                         return false;
+                    }
                 }
             }
 
             if (s2.EndsWith("? -", StringComparison.Ordinal) || s2.EndsWith("! -", StringComparison.Ordinal) || s2.EndsWith(". -", StringComparison.Ordinal))
+            {
                 return false;
+            }
 
             return true;
         }
 
-        private static string _lastNoBreakAfterListLanguage;
-        private static List<NoBreakAfterItem> _lastNoBreakAfterList = new List<NoBreakAfterItem>();
+        /// <summary>
+        /// The no break after list.
+        /// </summary>
+        /// <param name="languageName">
+        /// The language name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
         private static IEnumerable<NoBreakAfterItem> NoBreakAfterList(string languageName)
         {
             if (string.IsNullOrEmpty(languageName))
+            {
                 return new List<NoBreakAfterItem>();
+            }
 
             if (languageName == _lastNoBreakAfterListLanguage)
+            {
                 return _lastNoBreakAfterList;
+            }
 
             _lastNoBreakAfterList = new List<NoBreakAfterItem>();
 
-            //load words via xml
+            // load words via xml
             string noBreakAfterFileName = DictionaryFolder + languageName + "_NoBreakAfterList.xml";
             var doc = new XmlDocument();
             if (File.Exists(noBreakAfterFileName))
@@ -428,21 +923,41 @@ namespace Nikse.SubtitleEdit.Logic
                     }
                 }
             }
+
             _lastNoBreakAfterListLanguage = languageName;
 
             return _lastNoBreakAfterList;
         }
 
+        /// <summary>
+        /// The auto break line more than two lines.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="maximumLineLength">
+        /// The maximum line length.
+        /// </param>
+        /// <param name="language">
+        /// The language.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string AutoBreakLineMoreThanTwoLines(string text, int maximumLineLength, string language)
         {
             if (text == null || text.Length < 3)
+            {
                 return text;
+            }
 
             string s = AutoBreakLine(text, 0, 0, language);
 
             var arr = s.SplitToLines();
             if ((arr.Length < 2 && arr[0].Length <= maximumLineLength) || (arr[0].Length <= maximumLineLength && arr[1].Length <= maximumLineLength))
+            {
                 return s;
+            }
 
             s = RemoveLineBreaks(s);
 
@@ -452,26 +967,25 @@ namespace Nikse.SubtitleEdit.Logic
             while (six < s.Length)
             {
                 var letter = s[six];
-                var tagFound = letter == '<' && (s.Substring(six).StartsWith("<font", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("</font", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("<u", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("</u", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("<b", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("</b", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("<i", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("</i", StringComparison.OrdinalIgnoreCase));
+                var tagFound = letter == '<' && (s.Substring(six).StartsWith("<font", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("</font", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("<u", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("</u", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("<b", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("</b", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("<i", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("</i", StringComparison.OrdinalIgnoreCase));
                 int endIndex = -1;
                 if (tagFound)
+                {
                     endIndex = s.IndexOf('>', six + 1);
+                }
 
                 if (tagFound && endIndex > 0)
                 {
                     string tag = s.Substring(six, endIndex - six + 1);
                     s = s.Remove(six, tag.Length);
                     if (htmlTags.ContainsKey(six))
+                    {
                         htmlTags[six] = htmlTags[six] + tag;
+                    }
                     else
+                    {
                         htmlTags.Add(six, tag);
+                    }
                 }
                 else
                 {
@@ -479,6 +993,7 @@ namespace Nikse.SubtitleEdit.Logic
                     six++;
                 }
             }
+
             s = sb.ToString();
 
             var words = s.Split(' ');
@@ -492,8 +1007,11 @@ namespace Nikse.SubtitleEdit.Logic
                     foreach (var lineLength in list)
                     {
                         if (lineLength > maximumLineLength)
+                        {
                             allOk = false;
+                        }
                     }
+
                     if (allOk)
                     {
                         int index = 0;
@@ -502,6 +1020,7 @@ namespace Nikse.SubtitleEdit.Logic
                             index += item;
                             htmlTags.Add(index, Environment.NewLine);
                         }
+
                         s = ReInsertHtmlTags(s, htmlTags);
                         s = s.Replace(" " + Environment.NewLine, Environment.NewLine);
                         s = s.Replace(Environment.NewLine + " ", Environment.NewLine);
@@ -517,6 +1036,21 @@ namespace Nikse.SubtitleEdit.Logic
             return text;
         }
 
+        /// <summary>
+        /// The split to x.
+        /// </summary>
+        /// <param name="words">
+        /// The words.
+        /// </param>
+        /// <param name="count">
+        /// The count.
+        /// </param>
+        /// <param name="average">
+        /// The average.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         private static List<int> SplitToX(string[] words, int count, int average)
         {
             var list = new List<int>();
@@ -530,19 +1064,46 @@ namespace Nikse.SubtitleEdit.Logic
                     currentIdx++;
                     currentCount = 0;
                 }
+
                 currentCount += word.Length + 1;
             }
+
             if (currentIdx < count)
+            {
                 list.Add(currentCount);
+            }
             else
+            {
                 list[list.Count - 1] += currentCount;
+            }
+
             return list;
         }
 
+        /// <summary>
+        /// The auto break line.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="maximumLength">
+        /// The maximum length.
+        /// </param>
+        /// <param name="mergeLinesShorterThan">
+        /// The merge lines shorter than.
+        /// </param>
+        /// <param name="language">
+        /// The language.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string AutoBreakLine(string text, int maximumLength, int mergeLinesShorterThan, string language)
         {
             if (text == null || text.Length < 3)
+            {
                 return text;
+            }
 
             // do not autobreak dialogs
             if (text.Contains('-') && text.Contains(Environment.NewLine))
@@ -552,7 +1113,9 @@ namespace Nikse.SubtitleEdit.Logic
                 {
                     var arr0 = noTagLines[0].Trim().TrimEnd('"').TrimEnd('\'').TrimEnd();
                     if (arr0.StartsWith('-') && noTagLines[1].TrimStart().StartsWith('-') && arr0.Length > 1 && ".?!)]".Contains(arr0[arr0.Length - 1]) || arr0.EndsWith("--", StringComparison.Ordinal) || arr0.EndsWith('–'))
+                    {
                         return text;
+                    }
                 }
             }
 
@@ -570,11 +1133,13 @@ namespace Nikse.SubtitleEdit.Logic
                         var noTagLine = line.TrimStart();
                         isDialog = isDialog && (noTagLine.StartsWith('-') || noTagLine.StartsWith('—'));
                     }
+
                     if (isDialog)
                     {
                         return text;
                     }
                 }
+
                 return s;
             }
 
@@ -584,26 +1149,25 @@ namespace Nikse.SubtitleEdit.Logic
             while (six < s.Length)
             {
                 var letter = s[six];
-                var tagFound = letter == '<' && (s.Substring(six).StartsWith("<font", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("</font", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("<u", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("</u", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("<b", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("</b", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("<i", StringComparison.OrdinalIgnoreCase)
-                                                 || s.Substring(six).StartsWith("</i", StringComparison.OrdinalIgnoreCase));
+                var tagFound = letter == '<' && (s.Substring(six).StartsWith("<font", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("</font", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("<u", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("</u", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("<b", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("</b", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("<i", StringComparison.OrdinalIgnoreCase) || s.Substring(six).StartsWith("</i", StringComparison.OrdinalIgnoreCase));
                 int endIndex = -1;
                 if (tagFound)
+                {
                     endIndex = s.IndexOf('>', six + 1);
+                }
 
                 if (tagFound && endIndex > 0)
                 {
                     string tag = s.Substring(six, endIndex - six + 1);
                     s = s.Remove(six, tag.Length);
                     if (htmlTags.ContainsKey(six))
+                    {
                         htmlTags[six] = htmlTags[six] + tag;
+                    }
                     else
+                    {
                         htmlTags.Add(six, tag);
+                    }
                 }
                 else
                 {
@@ -611,6 +1175,7 @@ namespace Nikse.SubtitleEdit.Logic
                     six++;
                 }
             }
+
             s = sb.ToString();
 
             int splitPos = -1;
@@ -633,6 +1198,7 @@ namespace Nikse.SubtitleEdit.Logic
                             }
                         }
                     }
+
                     if (mid - (j + 1) > 4)
                     {
                         if (s[mid - j] == '-' && s[mid - j + 1] == ' ' && s[mid - j - 1] == ' ')
@@ -651,8 +1217,11 @@ namespace Nikse.SubtitleEdit.Logic
                 }
             }
 
-            if (splitPos == maximumLength + 1 && s[maximumLength] != ' ') // only allow space for last char (as it does not count)
+            if (splitPos == maximumLength + 1 && s[maximumLength] != ' ')
+            {
+                // only allow space for last char (as it does not count)
                 splitPos = -1;
+            }
 
             if (splitPos < 0)
             {
@@ -667,10 +1236,14 @@ namespace Nikse.SubtitleEdit.Logic
                             { // do not break double/tripple end lines like "!!!" or "..."
                                 splitPos++;
                                 if (@".!?0123456789".Contains(s[mid + j + 1]))
+                                {
                                     splitPos++;
+                                }
                             }
+
                             break;
                         }
+
                         if (@".!?".Contains(s[mid - j]) && !IsPartOfNumber(s, mid - j) && CanBreak(s, mid - j, language))
                         {
                             splitPos = mid - j;
@@ -681,13 +1254,18 @@ namespace Nikse.SubtitleEdit.Logic
                 }
             }
 
-            if (splitPos > maximumLength) // too long first line
+            if (splitPos > maximumLength)
             {
-                if (splitPos != maximumLength + 1 || s[maximumLength] != ' ') // allow for maxlength+1 char to be space (does not count)
+                // too long first line
+                if (splitPos != maximumLength + 1 || s[maximumLength] != ' ')
+                {
+                    // allow for maxlength+1 char to be space (does not count)
                     splitPos = -1;
+                }
             }
-            else if (splitPos >= 0 && s.Length - splitPos > maximumLength) // too long second line
+            else if (splitPos >= 0 && s.Length - splitPos > maximumLength)
             {
+                // too long second line
                 splitPos = -1;
             }
 
@@ -704,19 +1282,32 @@ namespace Nikse.SubtitleEdit.Logic
                             {
                                 splitPos++;
                                 if (@" .!?".Contains(s[mid + j + 2]))
+                                {
                                     splitPos++;
+                                }
                             }
+
                             break;
                         }
+
                         if (@".!?, ".Contains(s[mid - j]) && !IsPartOfNumber(s, mid - j) && s.Length > mid + j + 2 && CanBreak(s, mid - j, language))
                         {
                             splitPos = mid - j;
                             if (@".!?".Contains(s[splitPos]))
+                            {
                                 splitPos--;
+                            }
+
                             if (@".!?".Contains(s[splitPos]))
+                            {
                                 splitPos--;
+                            }
+
                             if (@".!?".Contains(s[splitPos]))
+                            {
                                 splitPos--;
+                            }
+
                             break;
                         }
                     }
@@ -731,8 +1322,11 @@ namespace Nikse.SubtitleEdit.Logic
                 htmlTags = new Dictionary<int, string>();
                 s = s.Replace(Environment.NewLine, "-");
             }
+
             if (splitPos < s.Length - 2)
+            {
                 s = s.Substring(0, splitPos) + Environment.NewLine + s.Substring(splitPos);
+            }
 
             s = ReInsertHtmlTags(s, htmlTags);
             s = s.Replace(" " + Environment.NewLine, Environment.NewLine);
@@ -741,6 +1335,15 @@ namespace Nikse.SubtitleEdit.Logic
             return s.TrimEnd();
         }
 
+        /// <summary>
+        /// The remove line breaks.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         internal static string RemoveLineBreaks(string s)
         {
             s = HtmlUtil.FixUpperTags(s);
@@ -760,6 +1363,18 @@ namespace Nikse.SubtitleEdit.Logic
             return s.Trim();
         }
 
+        /// <summary>
+        /// The re insert html tags.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="htmlTags">
+        /// The html tags.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string ReInsertHtmlTags(string s, Dictionary<int, string> htmlTags)
         {
             if (htmlTags.Count > 0)
@@ -778,30 +1393,48 @@ namespace Nikse.SubtitleEdit.Logic
                         {
                             sb.Append(htmlTags[six]);
                         }
+
                         sb.Append(letter);
                         six++;
                     }
                 }
+
                 if (htmlTags.ContainsKey(six))
                 {
                     sb.Append(htmlTags[six]);
                 }
+
                 return sb.ToString();
             }
+
             return s;
         }
 
+        /// <summary>
+        /// The unbreak line.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string UnbreakLine(string text)
         {
             if (!text.Contains(Environment.NewLine))
+            {
                 return text;
+            }
 
             var singleLine = text.Replace(Environment.NewLine, " ");
             while (singleLine.Contains("  "))
-                singleLine = singleLine.Replace("  ", " ");
-
-            if (singleLine.Contains("</")) // Fix tag
             {
+                singleLine = singleLine.Replace("  ", " ");
+            }
+
+            if (singleLine.Contains("</"))
+            {
+                // Fix tag
                 singleLine = singleLine.Replace("</i> <i>", " ");
                 singleLine = singleLine.Replace("</i><i>", " ");
 
@@ -811,22 +1444,35 @@ namespace Nikse.SubtitleEdit.Logic
                 singleLine = singleLine.Replace("</u> <u>", " ");
                 singleLine = singleLine.Replace("</u><u>", " ");
             }
+
             return singleLine;
         }
 
+        /// <summary>
+        /// The initialize subtitle font.
+        /// </summary>
+        /// <param name="control">
+        /// The control.
+        /// </param>
         public static void InitializeSubtitleFont(Control control)
         {
             var gs = Configuration.Settings.General;
 
             if (string.IsNullOrEmpty(gs.SubtitleFontName))
+            {
                 gs.SubtitleFontName = "Tahoma";
+            }
 
             try
             {
                 if (gs.SubtitleFontBold)
+                {
                     control.Font = new Font(gs.SubtitleFontName, gs.SubtitleFontSize, FontStyle.Bold);
+                }
                 else
+                {
                     control.Font = new Font(gs.SubtitleFontName, gs.SubtitleFontSize);
+                }
 
                 control.BackColor = gs.SubtitleBackgroundColor;
                 control.ForeColor = gs.SubtitleFontColor;
@@ -836,6 +1482,15 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// The remove ssa tags.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string RemoveSsaTags(string s)
         {
             int k = s.IndexOf('{');
@@ -846,18 +1501,32 @@ namespace Nikse.SubtitleEdit.Logic
                 {
                     s = s.Remove(k, l - k + 1);
                     if (s.Length > 1 && s.Length > k)
+                    {
                         k = s.IndexOf('{', k);
+                    }
                     else
+                    {
                         break;
+                    }
                 }
                 else
                 {
                     break;
                 }
             }
+
             return s;
         }
 
+        /// <summary>
+        /// The get encoding from file.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Encoding"/>.
+        /// </returns>
         public static Encoding GetEncodingFromFile(string fileName)
         {
             Encoding encoding = Encoding.Default;
@@ -866,9 +1535,7 @@ namespace Nikse.SubtitleEdit.Logic
             {
                 foreach (EncodingInfo ei in Encoding.GetEncodings())
                 {
-                    if (ei.CodePage + ": " + ei.DisplayName == Configuration.Settings.General.DefaultEncoding &&
-                        ei.Name != Encoding.UTF8.BodyName &&
-                        ei.Name != Encoding.Unicode.BodyName)
+                    if (ei.CodePage + ": " + ei.DisplayName == Configuration.Settings.General.DefaultEncoding && ei.Name != Encoding.UTF8.BodyName && ei.Name != Encoding.Unicode.BodyName)
                     {
                         encoding = ei.GetEncoding();
                         break;
@@ -881,20 +1548,35 @@ namespace Nikse.SubtitleEdit.Logic
                     file.Position = 0;
                     file.Read(bom, 0, 12);
                     if (bom[0] == 0xef && bom[1] == 0xbb && bom[2] == 0xbf)
+                    {
                         encoding = Encoding.UTF8;
+                    }
                     else if (bom[0] == 0xff && bom[1] == 0xfe)
+                    {
                         encoding = Encoding.Unicode;
-                    else if (bom[0] == 0xfe && bom[1] == 0xff) // utf-16 and ucs-2
+                    }
+                    else if (bom[0] == 0xfe && bom[1] == 0xff)
+                    {
+                        // utf-16 and ucs-2
                         encoding = Encoding.BigEndianUnicode;
-                    else if (bom[0] == 0 && bom[1] == 0 && bom[2] == 0xfe && bom[3] == 0xff) // ucs-4
+                    }
+                    else if (bom[0] == 0 && bom[1] == 0 && bom[2] == 0xfe && bom[3] == 0xff)
+                    {
+                        // ucs-4
                         encoding = Encoding.UTF32;
-                    else if (bom[0] == 0x2b && bom[1] == 0x2f && bom[2] == 0x76 && (bom[3] == 0x38 || bom[3] == 0x39 || bom[3] == 0x2b || bom[3] == 0x2f)) // utf-7
+                    }
+                    else if (bom[0] == 0x2b && bom[1] == 0x2f && bom[2] == 0x76 && (bom[3] == 0x38 || bom[3] == 0x39 || bom[3] == 0x2b || bom[3] == 0x2f))
+                    {
+                        // utf-7
                         encoding = Encoding.UTF7;
+                    }
                     else if (file.Length > 12)
                     {
                         long length = file.Length;
                         if (length > 500000)
+                        {
                             length = 500000;
+                        }
 
                         file.Position = 0;
                         var buffer = new byte[length];
@@ -919,39 +1601,63 @@ namespace Nikse.SubtitleEdit.Logic
 
                             Encoding greekEncoding = Encoding.GetEncoding(1253); // Greek
                             if (GetCount(greekEncoding.GetString(buffer), "μου", "είναι", "Είναι", "αυτό", "Τόμπυ", "καλά") > 5)
+                            {
                                 return greekEncoding;
+                            }
 
                             Encoding russianEncoding = Encoding.GetEncoding(1251); // Cyrillic
-                            if (GetCount(russianEncoding.GetString(buffer), "что", "быть", "весь", "этот", "один", "такой") > 5) // Russian
+                            if (GetCount(russianEncoding.GetString(buffer), "что", "быть", "весь", "этот", "один", "такой") > 5)
+                            {
+                                // Russian
                                 return russianEncoding;
-                            if (GetCount(russianEncoding.GetString(buffer), "Какво", "тук", "може", "Как", "Ваше", "какво") > 5) // Bulgarian
+                            }
+
+                            if (GetCount(russianEncoding.GetString(buffer), "Какво", "тук", "може", "Как", "Ваше", "какво") > 5)
+                            {
+                                // Bulgarian
                                 return russianEncoding;
+                            }
+
                             russianEncoding = Encoding.GetEncoding(28595); // Russian
                             if (GetCount(russianEncoding.GetString(buffer), "что", "быть", "весь", "этот", "один", "такой") > 5)
+                            {
                                 return russianEncoding;
+                            }
 
                             Encoding thaiEncoding = Encoding.GetEncoding(874); // Thai
                             if (GetCount(thaiEncoding.GetString(buffer), "โอ", "โรเบิร์ต", "วิตตอเรีย", "ดร", "คุณตำรวจ", "ราเชล") + GetCount(thaiEncoding.GetString(buffer), "ไม่", "เลดดิส", "พระเจ้า", "เท็ดดี้", "หัวหน้า", "แอนดรูว์") > 5)
+                            {
                                 return thaiEncoding;
+                            }
 
                             Encoding arabicEncoding = Encoding.GetEncoding(28596); // Arabic
                             Encoding hewbrewEncoding = Encoding.GetEncoding(28598); // Hebrew
                             if (GetCount(arabicEncoding.GetString(buffer), "من", "هل", "لا", "فى", "لقد", "ما") > 5)
                             {
                                 if (GetCount(hewbrewEncoding.GetString(buffer), "אולי", "אולי", "אולי", "אולי", "טוב", "טוב") > 10)
+                                {
                                     return hewbrewEncoding;
+                                }
+
                                 return arabicEncoding;
                             }
+
                             if (GetCount(hewbrewEncoding.GetString(buffer), "אתה", "אולי", "הוא", "בסדר", "יודע", "טוב") > 5)
+                            {
                                 return hewbrewEncoding;
+                            }
 
                             Encoding romanianEncoding = Encoding.GetEncoding(1250); // Romanian
                             if (GetCount(romanianEncoding.GetString(buffer), "să", "şi", "văzut", "regulă", "găsit", "viaţă") > 99)
+                            {
                                 return romanianEncoding;
+                            }
 
                             Encoding koreanEncoding = Encoding.GetEncoding(949); // Korean
                             if (GetCount(koreanEncoding.GetString(buffer), "그리고", "아니야", "하지만", "말이야", "그들은", "우리가") > 5)
+                            {
                                 return koreanEncoding;
+                            }
                         }
                     }
                 }
@@ -959,6 +1665,7 @@ namespace Nikse.SubtitleEdit.Logic
             catch
             {
             }
+
             return encoding;
         }
 
@@ -966,6 +1673,15 @@ namespace Nikse.SubtitleEdit.Logic
         /// Will try to determine if buffer is utf-8 encoded or not.
         /// If any non-utf8 sequences are found then false is returned, if no utf8 multibytes sequences are found then false is returned.
         /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="couldBeUtf8">
+        /// The could Be Utf 8.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool IsUtf8(byte[] buffer, out bool couldBeUtf8)
         {
             couldBeUtf8 = false;
@@ -981,15 +1697,12 @@ namespace Nikse.SubtitleEdit.Logic
                         utf8Count++;
                         i++;
                     }
-                    else if (b >= 224 && b <= 239 && buffer[i + 1] >= 128 && buffer[i + 1] <= 191 &&
-                                                     buffer[i + 2] >= 128 && buffer[i + 2] <= 191)
+                    else if (b >= 224 && b <= 239 && buffer[i + 1] >= 128 && buffer[i + 1] <= 191 && buffer[i + 2] >= 128 && buffer[i + 2] <= 191)
                     { // 3-byte sequence
                         utf8Count++;
                         i += 2;
                     }
-                    else if (b >= 240 && b <= 244 && buffer[i + 1] >= 128 && buffer[i + 1] <= 191 &&
-                                                     buffer[i + 2] >= 128 && buffer[i + 2] <= 191 &&
-                                                     buffer[i + 3] >= 128 && buffer[i + 3] <= 191)
+                    else if (b >= 240 && b <= 244 && buffer[i + 1] >= 128 && buffer[i + 1] <= 191 && buffer[i + 2] >= 128 && buffer[i + 2] <= 191 && buffer[i + 3] >= 128 && buffer[i + 3] <= 191)
                     { // 4-byte sequence
                         utf8Count++;
                         i += 3;
@@ -999,19 +1712,34 @@ namespace Nikse.SubtitleEdit.Logic
                         return false;
                     }
                 }
+
                 i++;
             }
+
             couldBeUtf8 = true;
             if (utf8Count == 0)
+            {
                 return false; // not utf-8 (no characters utf-8 encoded...)
+            }
 
             return true;
         }
 
+        /// <summary>
+        /// The detect ansi encoding.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Encoding"/>.
+        /// </returns>
         public static Encoding DetectAnsiEncoding(byte[] buffer)
         {
             if (IsRunningOnMono())
+            {
                 return Encoding.Default;
+            }
 
             try
             {
@@ -1019,32 +1747,52 @@ namespace Nikse.SubtitleEdit.Logic
 
                 Encoding greekEncoding = Encoding.GetEncoding(1253); // Greek
                 if (GetCount(greekEncoding.GetString(buffer), "μου", "είναι", "Είναι", "αυτό", "Τόμπυ", "καλά") > 5)
+                {
                     return greekEncoding;
+                }
 
                 Encoding russianEncoding = Encoding.GetEncoding(1251); // Cyrillic
-                if (GetCount(russianEncoding.GetString(buffer), "что", "быть", "весь", "этот", "один", "такой") > 5) // Russian
+                if (GetCount(russianEncoding.GetString(buffer), "что", "быть", "весь", "этот", "один", "такой") > 5)
+                {
+                    // Russian
                     return russianEncoding;
-                if (GetCount(russianEncoding.GetString(buffer), "Какво", "тук", "може", "Как", "Ваше", "какво") > 5) // Bulgarian
+                }
+
+                if (GetCount(russianEncoding.GetString(buffer), "Какво", "тук", "може", "Как", "Ваше", "какво") > 5)
+                {
+                    // Bulgarian
                     return russianEncoding;
+                }
 
                 russianEncoding = Encoding.GetEncoding(28595); // Russian
-                if (GetCount(russianEncoding.GetString(buffer), "что", "быть", "весь", "этот", "один", "такой") > 5) // Russian
+                if (GetCount(russianEncoding.GetString(buffer), "что", "быть", "весь", "этот", "один", "такой") > 5)
+                {
+                    // Russian
                     return russianEncoding;
+                }
 
                 Encoding thaiEncoding = Encoding.GetEncoding(874); // Thai
                 if (GetCount(thaiEncoding.GetString(buffer), "โอ", "โรเบิร์ต", "วิตตอเรีย", "ดร", "คุณตำรวจ", "ราเชล") + GetCount(thaiEncoding.GetString(buffer), "ไม่", "เลดดิส", "พระเจ้า", "เท็ดดี้", "หัวหน้า", "แอนดรูว์") > 5)
+                {
                     return thaiEncoding;
+                }
 
                 Encoding arabicEncoding = Encoding.GetEncoding(28596); // Arabic
                 Encoding hewbrewEncoding = Encoding.GetEncoding(28598); // Hebrew
                 if (GetCount(arabicEncoding.GetString(buffer), "من", "هل", "لا", "فى", "لقد", "ما") > 5)
                 {
                     if (GetCount(hewbrewEncoding.GetString(buffer), "אולי", "אולי", "אולי", "אולי", "טוב", "טוב") > 10)
+                    {
                         return hewbrewEncoding;
+                    }
+
                     return arabicEncoding;
                 }
+
                 if (GetCount(hewbrewEncoding.GetString(buffer), "אתה", "אולי", "הוא", "בסדר", "יודע", "טוב") > 5)
+                {
                     return hewbrewEncoding;
+                }
 
                 return encoding;
             }
@@ -1054,14 +1802,12 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
-        public static string DictionaryFolder
-        {
-            get
-            {
-                return Configuration.DictionariesFolder;
-            }
-        }
-
+        /// <summary>
+        /// The get dictionary languages.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         public static List<string> GetDictionaryLanguages()
         {
             var list = new List<string>();
@@ -1082,43 +1828,98 @@ namespace Nikse.SubtitleEdit.Logic
                             System.Diagnostics.Debug.WriteLine(exception.Message);
                             name = "[" + name + "]";
                         }
+
                         list.Add(name);
                     }
                 }
             }
+
             return list;
         }
 
+        /// <summary>
+        /// The get optimal display milliseconds.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="double"/>.
+        /// </returns>
         public static double GetOptimalDisplayMilliseconds(string text)
         {
             return GetOptimalDisplayMilliseconds(text, Configuration.Settings.General.SubtitleOptimalCharactersPerSeconds);
         }
 
+        /// <summary>
+        /// The get optimal display milliseconds.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="optimalCharactersPerSecond">
+        /// The optimal characters per second.
+        /// </param>
+        /// <returns>
+        /// The <see cref="double"/>.
+        /// </returns>
         public static double GetOptimalDisplayMilliseconds(string text, double optimalCharactersPerSecond)
         {
             if (optimalCharactersPerSecond < 2 || optimalCharactersPerSecond > 100)
+            {
                 optimalCharactersPerSecond = 14.7;
+            }
+
             double duration = (HtmlUtil.RemoveHtmlTags(text, true).Length / optimalCharactersPerSecond) * TimeCode.BaseUnit;
 
             if (duration < Configuration.Settings.General.SubtitleMinimumDisplayMilliseconds)
+            {
                 duration = Configuration.Settings.General.SubtitleMinimumDisplayMilliseconds;
+            }
 
             if (duration > Configuration.Settings.General.SubtitleMaximumDisplayMilliseconds)
+            {
                 duration = Configuration.Settings.General.SubtitleMaximumDisplayMilliseconds;
+            }
 
             return duration;
         }
 
+        /// <summary>
+        /// The get count.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="words">
+        /// The words.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private static int GetCount(string text, params string[] words)
         {
             int count = 0;
             for (int i = 0; i < words.Length; i++)
             {
-                count += Regex.Matches(text, "\\b" + words[i] + "\\b", (RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture)).Count;
+                count += Regex.Matches(text, "\\b" + words[i] + "\\b", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture).Count;
             }
+
             return count;
         }
 
+        /// <summary>
+        /// The get count contains.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="words">
+        /// The words.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private static int GetCountContains(string text, params string[] words)
         {
             int count = 0;
@@ -1127,9 +1928,19 @@ namespace Nikse.SubtitleEdit.Logic
                 var regEx = new Regex(words[i]);
                 count += regEx.Matches(text).Count;
             }
+
             return count;
         }
 
+        /// <summary>
+        /// The auto detect google language.
+        /// </summary>
+        /// <param name="encoding">
+        /// The encoding.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string AutoDetectGoogleLanguage(Encoding encoding)
         {
             switch (encoding.CodePage)
@@ -1176,11 +1987,25 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// The auto detect google language.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="bestCount">
+        /// The best count.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string AutoDetectGoogleLanguage(string text, int bestCount)
         {
             int count = GetCount(text, "we", "are", "and", "you", "your", "what");
             if (count > bestCount)
+            {
                 return "en";
+            }
 
             count = GetCount(text, "vi", "han", "og", "jeg", "var", "men", "gider", "bliver", "virkelig", "kommer", "tilbage", "Hej");
             if (count > bestCount)
@@ -1188,7 +2013,9 @@ namespace Nikse.SubtitleEdit.Logic
                 int norwegianCount = GetCount(text, "ut", "deg", "meg", "merkelig", "mye", "spørre");
                 int dutchCount = GetCount(text, "van", "een", "[Hh]et", "m(ij|ĳ)", "z(ij|ĳ)n");
                 if (norwegianCount < 2 && dutchCount < count)
+                {
                     return "da";
+                }
             }
 
             count = GetCount(text, "vi", "er", "og", "jeg", "var", "men");
@@ -1197,19 +2024,25 @@ namespace Nikse.SubtitleEdit.Logic
                 int danishCount = GetCount(text, "siger", "dig", "mig", "mærkelig", "tilbage", "spørge");
                 int dutchCount = GetCount(text, "van", "een", "[Hh]et", "m(ij|ĳ)", "z(ij|ĳ)n");
                 if (danishCount < 2 && dutchCount < count)
+                {
                     return "no";
+                }
             }
 
             count = GetCount(text, "vi", "är", "och", "Jag", "inte", "för");
             if (count > bestCount)
+            {
                 return "sv";
+            }
 
             count = GetCount(text, "el", "bien", "Vamos", "Hola", "casa", "con");
             if (count > bestCount)
             {
                 int frenchCount = GetCount(text, "[Cc]'est", "pas", "vous", "pour", "suis", "Pourquoi", "maison", "souviens", "quelque"); // not spanish words
                 if (frenchCount < 2)
+                {
                     return "es";
+                }
             }
 
             count = GetCount(text, "un", "vous", "avec", "pas", "ce", "une");
@@ -1219,171 +2052,254 @@ namespace Nikse.SubtitleEdit.Logic
                 int italianCount = GetCount(text, "Cosa", "sono", "Grazie", "Buongiorno", "bene", "questo");
                 int romanianCount = GetCount(text, "sînt", "aici", "Sînt", "domnule", "pentru", "Vreau");
                 if (spanishCount < 2 && italianCount < 2 && romanianCount < 5)
+                {
                     return "fr";
+                }
             }
 
             count = GetCount(text, "und", "auch", "sich", "bin", "hast", "möchte");
             if (count > bestCount)
+            {
                 return "de";
+            }
 
             count = GetCount(text, "van", "een", "[Hh]et", "m(ij|ĳ)", "z(ij|ĳ)n");
             if (count > bestCount)
+            {
                 return "nl";
+            }
 
             count = GetCount(text, "Czy", "ale", "ty", "siê", "jest", "mnie");
             if (count > bestCount)
+            {
                 return "pl";
+            }
 
-            count = GetCount(text, "Cosa", "sono", "Grazie", "Buongiorno", "bene", "questo", "ragazzi", "propriamente", "numero", "hanno",
-                                   "giorno", "faccio", "davvero", "negativo", "essere", "vuole", "sensitivo", "venire");
+            count = GetCount(text, "Cosa", "sono", "Grazie", "Buongiorno", "bene", "questo", "ragazzi", "propriamente", "numero", "hanno", "giorno", "faccio", "davvero", "negativo", "essere", "vuole", "sensitivo", "venire");
             if (count > bestCount)
             {
                 int frenchCount = GetCount(text, "[Cc]'est", "pas", "vous", "pour", "suis", "Pourquoi", "maison", "souviens", "quelque"); // not spanish words
                 int spanishCount = GetCount(text, "Hola", "nada", "Vamos", "pasa", "los", "como"); // not french words
                 if (frenchCount < 2 && spanishCount < 2)
+                {
                     return "it";
+                }
             }
 
             count = GetCount(text, "não", "Não", "Estás", "Então", "isso", "com");
             if (count > bestCount)
+            {
                 return "pt"; // Portuguese
+            }
 
             count = GetCount(text, "μου", "είναι", "Είναι", "αυτό", "Τόμπυ", "καλά", "Ενταξει", "Ενταξει", "πρεπει", "Λοιπον", "τιποτα", "ξερεις");
             if (count > bestCount)
+            {
                 return "el"; // Greek
+            }
 
             count = GetCount(text, "все", "это", "как", "Воробей", "сюда", "Давай");
             if (count > bestCount)
+            {
                 return "ru"; // Russian
+            }
 
             count = GetCount(text, "Какво", "тук", "може", "Как", "Ваше", "какво");
             if (count > bestCount)
+            {
                 return "bg"; // Bulgarian
+            }
 
             count = GetCount(text, "من", "هل", "لا", "فى", "لقد", "ما");
             if (count > bestCount)
             {
                 if (GetCount(text, "אולי", "אולי", "אולי", "אולי", "טוב", "טוב") > 10)
+                {
                     return "he";
+                }
 
-                int romanianCount = GetCount(text, "sînt", "aici", "Sînt", "domnule", "pentru", "Vreau", "trãiascã", "niciodatã", "înseamnã",
-                                                   "vorbesti", "oamenii", "Asteaptã", "fãcut", "Fãrã", "spune", "decât", "pentru", "vreau");
+                int romanianCount = GetCount(text, "sînt", "aici", "Sînt", "domnule", "pentru", "Vreau", "trãiascã", "niciodatã", "înseamnã", "vorbesti", "oamenii", "Asteaptã", "fãcut", "Fãrã", "spune", "decât", "pentru", "vreau");
                 if (romanianCount > count)
+                {
                     return "ro"; // Romanian
+                }
 
-                romanianCount = GetCount(text, "daca", "pentru", "acum", "soare", "trebuie", "Trebuie", "nevoie", "decat", "echilibrul",
-                                               "vorbesti", "oamenii", "zeului", "vrea", "atunci", "Poate", "Acum", "memoria", "soarele");
+                romanianCount = GetCount(text, "daca", "pentru", "acum", "soare", "trebuie", "Trebuie", "nevoie", "decat", "echilibrul", "vorbesti", "oamenii", "zeului", "vrea", "atunci", "Poate", "Acum", "memoria", "soarele");
                 if (romanianCount > count)
+                {
                     return "ro"; // Romanian
+                }
 
                 return "ar"; // Arabic
             }
 
             count = GetCount(text, "אתה", "אולי", "הוא", "בסדר", "יודע", "טוב");
             if (count > bestCount)
+            {
                 return "he"; // Hebrew
+            }
 
             count = GetCount(text, "sam", "što", "öto", "äto", "ovo", "vas", "nije", "Šta", "ovde", "za");
             if (count > bestCount)
             {
-                int croatianCount = GetCount(text, "sigurnošću", "ubojstvo", "službeni", "nedjelja", "izražava", "dogodilo", "svjetlo", "sigurno", "shvaćam",
-                                                   "obitelj", "vijest", "svijet", "sjećam", "lijepa", "dijete", "cijeli", "bijeli", "smije", "smije", "ured",
-                                                   "otok", "opći", "križ", "htio", "gdje", "auto", "sat", "kći");
-                int serbianCount = GetCount(text, "ispoljava", "porodica", "ponaosob", "bukvalno", "ubistvo", "ubediti", "suštini", "komitet", "dejstvo",
-                                                  "uopšte", "štampa", "ostrvo", "naučni", "kiriju", "kćerke", "nauka", "ivica", "čovek", "lepa", "krst",
-                                                  "kola", "hteo", "drug", "dete", "celi", "sme", "sem", "gde", "čas");
+                int croatianCount = GetCount(text, "sigurnošću", "ubojstvo", "službeni", "nedjelja", "izražava", "dogodilo", "svjetlo", "sigurno", "shvaćam", "obitelj", "vijest", "svijet", "sjećam", "lijepa", "dijete", "cijeli", "bijeli", "smije", "smije", "ured", "otok", "opći", "križ", "htio", "gdje", "auto", "sat", "kći");
+                int serbianCount = GetCount(text, "ispoljava", "porodica", "ponaosob", "bukvalno", "ubistvo", "ubediti", "suštini", "komitet", "dejstvo", "uopšte", "štampa", "ostrvo", "naučni", "kiriju", "kćerke", "nauka", "ivica", "čovek", "lepa", "krst", "kola", "hteo", "drug", "dete", "celi", "sme", "sem", "gde", "čas");
                 if (croatianCount > serbianCount)
+                {
                     return "hr"; // Croatian
+                }
 
                 return "sr"; // Serbian
             }
 
             count = GetCount(text, "không", "tôi", "anh", "đó", "Tôi", "ông");
             if (count > bestCount)
+            {
                 return "vi"; // Vietnamese
+            }
 
             count = GetCount(text, "hogy", "lesz", "tudom", "vagy", "mondtam", "még");
             if (count > bestCount)
+            {
                 return "hu"; // Hungarian
+            }
 
             count = GetCount(text, "için", "Tamam", "Hayır", "benim", "daha", "deðil", "önce", "lazým", "benim", "çalýþýyor", "burada", "efendim");
             if (count > bestCount)
+            {
                 return "tr"; // Turkish
+            }
 
             count = GetCount(text, "yang", "tahu", "bisa", "akan", "tahun", "tapi", "dengan", "untuk", "rumah", "dalam", "sudah", "bertemu");
             if (count > bestCount)
+            {
                 return "id"; // Indonesian
+            }
 
             count = GetCount(text, "โอ", "โรเบิร์ต", "วิตตอเรีย", "ดร", "คุณตำรวจ", "ราเชล", "ไม่", "เลดดิส", "พระเจ้า", "เท็ดดี้", "หัวหน้า", "แอนดรูว์");
             if (count > 10 || count > bestCount)
+            {
                 return "th"; // Thai
+            }
 
             count = GetCount(text, "그리고", "아니야", "하지만", "말이야", "그들은", "우리가");
             if (count > 10 || count > bestCount)
+            {
                 return "ko"; // Korean
+            }
 
             count = GetCount(text, "että", "kuin", "minä", "mitään", "Mutta", "siitä", "täällä", "poika", "Kiitos", "enää", "vielä", "tässä");
             if (count > bestCount)
+            {
                 return "fi"; // Finnish
+            }
 
-            count = GetCount(text, "sînt", "aici", "Sînt", "domnule", "pentru", "Vreau", "trãiascã", "niciodatã", "înseamnã", "vorbesti", "oamenii",
-                                   "Asteaptã", "fãcut", "Fãrã", "spune", "decât", "pentru", "vreau");
+            count = GetCount(text, "sînt", "aici", "Sînt", "domnule", "pentru", "Vreau", "trãiascã", "niciodatã", "înseamnã", "vorbesti", "oamenii", "Asteaptã", "fãcut", "Fãrã", "spune", "decât", "pentru", "vreau");
             if (count > bestCount)
+            {
                 return "ro"; // Romanian
+            }
 
-            count = GetCount(text, "daca", "pentru", "acum", "soare", "trebuie", "Trebuie", "nevoie", "decat", "echilibrul", "vorbesti", "oamenii",
-                                   "zeului", "vrea", "atunci", "Poate", "Acum", "memoria", "soarele");
+            count = GetCount(text, "daca", "pentru", "acum", "soare", "trebuie", "Trebuie", "nevoie", "decat", "echilibrul", "vorbesti", "oamenii", "zeului", "vrea", "atunci", "Poate", "Acum", "memoria", "soarele");
             if (count > bestCount)
+            {
                 return "ro"; // Romanian
+            }
 
             count = GetCountContains(text, "シ", "ュ", "シン", "シ", "ン", "ユ");
             count += GetCountContains(text, "イ", "ン", "チ", "ェ", "ク", "ハ");
             count += GetCountContains(text, "シ", "ュ", "う", "シ", "ン", "サ");
             count += GetCountContains(text, "シ", "ュ", "シ", "ン", "だ", "う");
             if (count > bestCount * 2)
+            {
                 return "jp"; // Japanese - not tested...
+            }
 
             count = GetCountContains(text, "是", "是早", "吧", "的", "爱", "上好");
             count += GetCountContains(text, "的", "啊", "好", "好", "亲", "的");
             count += GetCountContains(text, "谢", "走", "吧", "晚", "上", "好");
             count += GetCountContains(text, "来", "卡", "拉", "吐", "滚", "他");
             if (count > bestCount * 2)
+            {
                 return "zh"; // Chinese (simplified) - not tested...
+            }
 
             return string.Empty;
         }
 
+        /// <summary>
+        /// The auto detect google language.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string AutoDetectGoogleLanguage(Subtitle subtitle)
         {
             string languageId = AutoDetectGoogleLanguageOrNull(subtitle);
             if (languageId == null)
+            {
                 languageId = "en";
+            }
 
             return languageId;
         }
 
+        /// <summary>
+        /// The auto detect google language or null.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string AutoDetectGoogleLanguageOrNull(Subtitle subtitle)
         {
             var sb = new StringBuilder();
             foreach (Paragraph p in subtitle.Paragraphs)
+            {
                 sb.AppendLine(p.Text);
+            }
 
             string languageId = AutoDetectGoogleLanguage(sb.ToString(), subtitle.Paragraphs.Count / 14);
             if (string.IsNullOrEmpty(languageId))
+            {
                 languageId = null;
+            }
 
             return languageId;
         }
 
+        /// <summary>
+        /// The auto detect language name.
+        /// </summary>
+        /// <param name="languageName">
+        /// The language name.
+        /// </param>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string AutoDetectLanguageName(string languageName, Subtitle subtitle)
         {
             if (string.IsNullOrEmpty(languageName))
+            {
                 languageName = "en_US";
+            }
+
             int bestCount = subtitle.Paragraphs.Count / 14;
 
             var sb = new StringBuilder();
             foreach (Paragraph p in subtitle.Paragraphs)
+            {
                 sb.AppendLine(p.Text);
+            }
+
             string text = sb.ToString();
 
             List<string> dictionaryNames = GetDictionaryLanguages();
@@ -1393,9 +2309,14 @@ namespace Nikse.SubtitleEdit.Logic
             foreach (string name in dictionaryNames)
             {
                 if (name.Contains("[en_GB]"))
+                {
                     containsEnGb = true;
+                }
+
                 if (name.Contains("[en_US]"))
+                {
                     containsEnUs = true;
+                }
             }
 
             foreach (string name in dictionaryNames)
@@ -1418,8 +2339,11 @@ namespace Nikse.SubtitleEdit.Logic
                         {
                             int norweigianCount = GetCount(text, "ut", "deg", "meg", "merkelig", "mye", "spørre");
                             if (norweigianCount < 2)
+                            {
                                 languageName = shortName;
+                            }
                         }
+
                         break;
                     case "nb_NO":
                         count = GetCount(text, "vi", "er", "og", "jeg", "var", "men");
@@ -1428,8 +2352,11 @@ namespace Nikse.SubtitleEdit.Logic
                             int danishCount = GetCount(text, "siger", "dig", "mig", "mærkelig", "tilbage", "spørge");
                             int dutchCount = GetCount(text, "van", "een", "[Hh]et", "m(ij|ĳ)", "z(ij|ĳ)n");
                             if (danishCount < 2 && dutchCount < count)
+                            {
                                 languageName = shortName;
+                            }
                         }
+
                         break;
                     case "en_US":
                         count = GetCount(text, "we", "are", "and", "you", "your", "what");
@@ -1440,15 +2367,20 @@ namespace Nikse.SubtitleEdit.Logic
                                 int usCount = GetCount(text, "color", "flavor", "honor", "humor", "neighbor", "honor");
                                 int gbCount = GetCount(text, "colour", "flavour", "honour", "humour", "neighbour", "honour");
                                 if (usCount >= gbCount)
+                                {
                                     languageName = "en_US";
+                                }
                                 else
+                                {
                                     languageName = "en_GB";
+                                }
                             }
                             else
                             {
                                 languageName = shortName;
                             }
                         }
+
                         break;
                     case "en_GB":
                         count = GetCount(text, "we", "are", "and", "you", "your", "what");
@@ -1459,16 +2391,24 @@ namespace Nikse.SubtitleEdit.Logic
                                 int usCount = GetCount(text, "color", "flavor", "honor", "humor", "neighbor", "honor");
                                 int gbCount = GetCount(text, "colour", "flavour", "honour", "humour", "neighbour", "honour");
                                 if (usCount >= gbCount)
+                                {
                                     languageName = "en_US";
+                                }
                                 else
+                                {
                                     languageName = "en_GB";
+                                }
                             }
                         }
+
                         break;
                     case "sv_SE":
                         count = GetCount(text, "vi", "är", "och", "Jag", "inte", "för");
                         if (count > bestCount)
+                        {
                             languageName = shortName;
+                        }
+
                         break;
                     case "es_ES":
                         count = GetCount(text, "el", "bien", "Vamos", "Hola", "casa", "con");
@@ -1476,8 +2416,11 @@ namespace Nikse.SubtitleEdit.Logic
                         {
                             int frenchWords = GetCount(text, "[Cc]'est", "pas", "vous", "pour", "suis", "Pourquoi", "maison", "souviens", "quelque"); // not spanish words
                             if (frenchWords < 2)
+                            {
                                 languageName = shortName;
+                            }
                         }
+
                         break;
                     case "fr_FR":
                         count = GetCount(text, "un", "vous", "avec", "pas", "ce", "une");
@@ -1486,8 +2429,11 @@ namespace Nikse.SubtitleEdit.Logic
                             int spanishWords = GetCount(text, "Hola", "nada", "Vamos", "pasa", "los", "como"); // not french words
                             int italianWords = GetCount(text, "Cosa", "sono", "Grazie", "Buongiorno", "bene", "questo"); // not italian words
                             if (spanishWords < 2 && italianWords < 2)
+                            {
                                 languageName = shortName;
+                            }
                         }
+
                         break;
                     case "it_IT":
                         count = GetCount(text, "Cosa", "sono", "Grazie", "Buongiorno", "bene", "questo");
@@ -1496,80 +2442,130 @@ namespace Nikse.SubtitleEdit.Logic
                             int frenchWords = GetCount(text, "[Cc]'est", "pas", "vous", "pour", "suis", "Pourquoi", "maison", "souviens", "quelque"); // not spanish words
                             int spanishWords = GetCount(text, "Hola", "nada", "Vamos", "pasa", "los", "como"); // not french words
                             if (frenchWords < 2 && spanishWords < 2)
+                            {
                                 languageName = shortName;
+                            }
                         }
+
                         break;
                     case "de_DE":
                         count = GetCount(text, "und", "auch", "sich", "bin", "hast", "möchte");
                         if (count > bestCount)
+                        {
                             languageName = shortName;
+                        }
+
                         break;
                     case "nl_NL":
                         count = GetCount(text, "van", "een", "[Hh]et", "m(ij|ĳ)", "z(ij|ĳ)n");
                         if (count > bestCount)
+                        {
                             languageName = shortName;
+                        }
+
                         break;
                     case "pl_PL":
                         count = GetCount(text, "Czy", "ale", "ty", "siê", "jest", "mnie");
                         if (count > bestCount)
+                        {
                             languageName = shortName;
+                        }
+
                         break;
                     case "el_GR":
                         count = GetCount(text, "μου", "είναι", "Είναι", "αυτό", "Τόμπυ", "καλά");
                         if (count > bestCount)
+                        {
                             languageName = shortName;
+                        }
+
                         break;
                     case "ru_RU":
                         count = GetCount(text, "все", "это", "как", "Воробей", "сюда", "Давай");
                         if (count > bestCount)
+                        {
                             languageName = shortName;
+                        }
+
                         break;
                     case "ro_RO":
-                        count = GetCount(text, "sînt", "aici", "Sînt", "domnule", "pentru", "Vreau", "trãiascã", "niciodatã", "înseamnã", "vorbesti", "oamenii", "Asteaptã",
-                                               "fãcut", "Fãrã", "spune", "decât", "pentru", "vreau");
+                        count = GetCount(text, "sînt", "aici", "Sînt", "domnule", "pentru", "Vreau", "trãiascã", "niciodatã", "înseamnã", "vorbesti", "oamenii", "Asteaptã", "fãcut", "Fãrã", "spune", "decât", "pentru", "vreau");
                         if (count > bestCount)
                         {
                             languageName = shortName;
                         }
                         else
                         {
-                            count = GetCount(text, "daca", "pentru", "acum", "soare", "trebuie", "Trebuie", "nevoie", "decat", "echilibrul", "vorbesti", "oamenii", "zeului",
-                                                   "vrea", "atunci", "Poate", "Acum", "memoria", "soarele");
+                            count = GetCount(text, "daca", "pentru", "acum", "soare", "trebuie", "Trebuie", "nevoie", "decat", "echilibrul", "vorbesti", "oamenii", "zeului", "vrea", "atunci", "Poate", "Acum", "memoria", "soarele");
 
                             if (count > bestCount)
+                            {
                                 languageName = shortName;
+                            }
                         }
+
                         break;
                     case "hr_HR": // Croatian
                         count = GetCount(text, "sam", "öto", "äto", "ovo", "vas", "što");
                         if (count > bestCount)
+                        {
                             languageName = shortName;
+                        }
+
                         break;
                     case "pt_PT": // Portuguese
                         count = GetCount(text, "não", "Não", "Estás", "Então", "isso", "com");
                         if (count > bestCount)
+                        {
                             languageName = shortName;
+                        }
+
                         break;
                     case "pt_BR": // Portuguese (Brasil)
                         count = GetCount(text, "não", "Não", "Estás", "Então", "isso", "com");
                         if (count > bestCount)
+                        {
                             languageName = shortName;
+                        }
+
                         break;
                     case "hu_HU": // Hungarian
                         count = GetCount(text, "hogy", "lesz", "tudom", "vagy", "mondtam", "még");
                         if (count > bestCount)
+                        {
                             languageName = shortName;
+                        }
+
                         break;
                 }
             }
+
             return languageName;
         }
 
+        /// <summary>
+        /// The color to hex.
+        /// </summary>
+        /// <param name="c">
+        /// The c.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string ColorToHex(Color c)
         {
             return string.Format("#{0:x2}{1:x2}{2:x2}", c.R, c.G, c.B);
         }
 
+        /// <summary>
+        /// The get max line length.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int GetMaxLineLength(string text)
         {
             int maxLength = 0;
@@ -1577,15 +2573,29 @@ namespace Nikse.SubtitleEdit.Logic
             foreach (string line in text.SplitToLines())
             {
                 if (line.Length > maxLength)
+                {
                     maxLength = line.Length;
+                }
             }
+
             return maxLength;
         }
 
+        /// <summary>
+        /// The get characters per second.
+        /// </summary>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
+        /// <returns>
+        /// The <see cref="double"/>.
+        /// </returns>
         public static double GetCharactersPerSecond(Paragraph paragraph)
         {
             if (paragraph.Duration.TotalMilliseconds < 1)
+            {
                 return 999;
+            }
 
             const string zeroWidthSpace = "\u200B";
             const string zeroWidthNoBreakSpace = "\uFEFF";
@@ -1594,45 +2604,43 @@ namespace Nikse.SubtitleEdit.Logic
             return s.Length / paragraph.Duration.TotalSeconds;
         }
 
+        /// <summary>
+        /// The is running on mono.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public static bool IsRunningOnMono()
         {
             return Type.GetType("Mono.Runtime") != null;
         }
 
+        /// <summary>
+        /// The show help.
+        /// </summary>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
         public static void ShowHelp(string parameter)
         {
             string helpFile = Configuration.Settings.Language.General.HelpFile;
             if (string.IsNullOrEmpty(helpFile))
+            {
                 helpFile = "http://www.nikse.dk/SubtitleEdit/Help";
+            }
+
             System.Diagnostics.Process.Start(helpFile + parameter);
         }
 
-        public static string AssemblyVersion
-        {
-            get
-            {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            }
-        }
-
-        public static string AssemblyDescription
-        {
-            get
-            {
-                Assembly assy = Assembly.GetExecutingAssembly();
-                String assyName = assy.GetName().Name;
-                bool isdef = Attribute.IsDefined(assy, typeof(AssemblyDescriptionAttribute));
-                if (isdef)
-                {
-                    Console.WriteLine(assyName);
-                    var adAttr = (AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(assy, typeof(AssemblyDescriptionAttribute));
-                    if (adAttr != null)
-                        return adAttr.Description;
-                }
-                return null;
-            }
-        }
-
+        /// <summary>
+        /// The add extension.
+        /// </summary>
+        /// <param name="sb">
+        /// The sb.
+        /// </param>
+        /// <param name="extension">
+        /// The extension.
+        /// </param>
         private static void AddExtension(StringBuilder sb, string extension)
         {
             if (!sb.ToString().Contains("*" + extension + ";", StringComparison.OrdinalIgnoreCase))
@@ -1643,6 +2651,12 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
+        /// <summary>
+        /// The get open dialog filter.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GetOpenDialogFilter()
         {
             var sb = new StringBuilder();
@@ -1651,8 +2665,11 @@ namespace Nikse.SubtitleEdit.Logic
             {
                 AddExtension(sb, s.Extension);
                 foreach (string ext in s.AlternateExtensions)
+                {
                     AddExtension(sb, ext);
+                }
             }
+
             AddExtension(sb, new Pac().Extension);
             AddExtension(sb, new Cavena890().Extension);
             AddExtension(sb, new Spt().Extension);
@@ -1677,9 +2694,12 @@ namespace Nikse.SubtitleEdit.Logic
                 foreach (string ext in extraExtensions)
                 {
                     if (ext.StartsWith("*.", StringComparison.Ordinal) && !sb.ToString().Contains(ext, StringComparison.OrdinalIgnoreCase))
+                    {
                         AddExtension(sb, ext);
+                    }
                 }
             }
+
             AddExtension(sb, ".son");
 
             sb.Append('|');
@@ -1688,6 +2708,15 @@ namespace Nikse.SubtitleEdit.Logic
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The set save dialog filter.
+        /// </summary>
+        /// <param name="saveFileDialog">
+        /// The save file dialog.
+        /// </param>
+        /// <param name="currentFormat">
+        /// The current format.
+        /// </param>
         public static void SetSaveDialogFilter(SaveFileDialog saveFileDialog, SubtitleFormat currentFormat)
         {
             var sb = new StringBuilder();
@@ -1696,107 +2725,82 @@ namespace Nikse.SubtitleEdit.Logic
             {
                 sb.Append(format.Name + "|*" + format.Extension + "|");
                 if (currentFormat.Name == format.Name)
+                {
                     saveFileDialog.FilterIndex = index + 1;
+                }
+
                 index++;
             }
+
             saveFileDialog.Filter = sb.ToString().TrimEnd('|');
         }
 
-        public static bool IsQuartsDllInstalled
-        {
-            get
-            {
-                if (IsRunningOnMono())
-                    return false;
-
-                string quartzFileName = Environment.GetFolderPath(Environment.SpecialFolder.System).TrimEnd('\\') + @"\quartz.dll";
-                return File.Exists(quartzFileName);
-            }
-        }
-
-        public static bool IsManagedDirectXInstalled
-        {
-            get
-            {
-                if (IsRunningOnMono())
-                    return false;
-
-                try
-                {
-                    //Check if this folder exists: C:\WINDOWS\Microsoft.NET\DirectX for Managed Code
-                    string folderName = Environment.SystemDirectory.TrimEnd('\\');
-                    folderName = folderName.Substring(0, folderName.LastIndexOf('\\'));
-                    folderName = folderName + @"\\Microsoft.NET\DirectX for Managed Code";
-                    return Directory.Exists(folderName);
-                }
-                catch (FileNotFoundException)
-                {
-                    return false;
-                }
-            }
-        }
-
-        public static bool IsMPlayerAvailable
-        {
-            get
-            {
-                if (Configuration.IsRunningOnLinux() || IsRunningOnMono())
-                    return File.Exists(Path.Combine(Configuration.BaseDirectory, "mplayer"));
-
-                return MPlayer.GetMPlayerFileName != null;
-            }
-        }
-
-        public static bool IsMpcHcInstalled
-        {
-            get
-            {
-                if (IsRunningOnMono())
-                    return false;
-
-                try
-                {
-                    return VideoPlayers.MpcHC.MpcHc.GetMpcHcFileName() != null;
-                }
-                catch (FileNotFoundException)
-                {
-                    return false;
-                }
-            }
-        }
-
+        /// <summary>
+        /// The get video player.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="VideoPlayer"/>.
+        /// </returns>
+        /// <exception cref="NotSupportedException">
+        /// </exception>
         public static VideoPlayer GetVideoPlayer()
         {
             GeneralSettings gs = Configuration.Settings.General;
 
             if (Configuration.IsRunningOnLinux() || Configuration.IsRunningOnMac())
+            {
                 return new MPlayer();
+            }
 
-            //if (Utilities.IsRunningOnMac())
-            //    return new LibVlcMono();
-
+            // if (Utilities.IsRunningOnMac())
+            // return new LibVlcMono();
             if (gs.VideoPlayer == "VLC" && LibVlcDynamic.IsInstalled)
+            {
                 return new LibVlcDynamic();
+            }
 
-            //if (gs.VideoPlayer == "WindowsMediaPlayer" && IsWmpAvailable)
-            //    return new WmpPlayer();
-            //if (gs.VideoPlayer == "ManagedDirectX" && IsManagedDirectXInstalled)
-            //    return new ManagedDirectXPlayer();
-
+            // if (gs.VideoPlayer == "WindowsMediaPlayer" && IsWmpAvailable)
+            // return new WmpPlayer();
+            // if (gs.VideoPlayer == "ManagedDirectX" && IsManagedDirectXInstalled)
+            // return new ManagedDirectXPlayer();
             if (gs.VideoPlayer == "MPlayer" && MPlayer.IsInstalled)
+            {
                 return new MPlayer();
+            }
 
             if (gs.VideoPlayer == "MPC-HC" && VideoPlayers.MpcHC.MpcHc.IsInstalled)
+            {
                 return new VideoPlayers.MpcHC.MpcHc();
+            }
 
             if (IsQuartsDllInstalled)
+            {
                 return new QuartsPlayer();
-            //if (IsWmpAvailable)
-            //    return new WmpPlayer();
+            }
 
+            // if (IsWmpAvailable)
+            // return new WmpPlayer();
             throw new NotSupportedException("You need DirectX, VLC media player 1.1.x, or MPlayer2 installed as well as Subtitle Edit dll files in order to use the video player!");
         }
 
+        /// <summary>
+        /// The initialize video player and container.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="videoInfo">
+        /// The video info.
+        /// </param>
+        /// <param name="videoPlayerContainer">
+        /// The video player container.
+        /// </param>
+        /// <param name="onVideoLoaded">
+        /// The on video loaded.
+        /// </param>
+        /// <param name="onVideoEnded">
+        /// The on video ended.
+        /// </param>
         public static void InitializeVideoPlayerAndContainer(string fileName, VideoInfo videoInfo, VideoPlayerContainer videoPlayerContainer, EventHandler onVideoLoaded, EventHandler onVideoEnded)
         {
             try
@@ -1821,8 +2825,15 @@ namespace Nikse.SubtitleEdit.Logic
             }
         }
 
-        public static Color ColorDarkOrange = Color.FromArgb(220, 90, 10);
-
+        /// <summary>
+        /// The get line lengths.
+        /// </summary>
+        /// <param name="label">
+        /// The label.
+        /// </param>
+        /// <param name="text">
+        /// The text.
+        /// </param>
         public static void GetLineLengths(Label label, string text)
         {
             label.ForeColor = Color.Black;
@@ -1849,13 +2860,27 @@ namespace Nikse.SubtitleEdit.Logic
 
                 sb.Append(line.Length);
                 if (line.Length > Configuration.Settings.General.SubtitleLineMaximumLength)
+                {
                     label.ForeColor = Color.Red;
+                }
                 else if (line.Length > Configuration.Settings.General.SubtitleLineMaximumLength - 5)
+                {
                     label.ForeColor = ColorDarkOrange;
+                }
             }
+
             label.Text = sb.ToString();
         }
 
+        /// <summary>
+        /// The is valid regex.
+        /// </summary>
+        /// <param name="testPattern">
+        /// The test pattern.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public static bool IsValidRegex(string testPattern)
         {
             if (string.IsNullOrEmpty(testPattern))
@@ -1865,16 +2890,26 @@ namespace Nikse.SubtitleEdit.Logic
 
             try
             {
-                Regex.Match("", testPattern);
+                Regex.Match(string.Empty, testPattern);
             }
             catch (ArgumentException)
             {
                 // BAD PATTERN: Syntax error
                 return false;
             }
+
             return true;
         }
 
+        /// <summary>
+        /// The make word search regex.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Regex"/>.
+        /// </returns>
         public static Regex MakeWordSearchRegex(string word)
         {
             string s = word.Replace("\\", "\\\\");
@@ -1884,6 +2919,15 @@ namespace Nikse.SubtitleEdit.Logic
             return new Regex(@"\b" + s + @"\b", RegexOptions.Compiled);
         }
 
+        /// <summary>
+        /// The make word search regex with numbers.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Regex"/>.
+        /// </returns>
         public static Regex MakeWordSearchRegexWithNumbers(string word)
         {
             string s = word.Replace("\\", "\\\\");
@@ -1893,6 +2937,15 @@ namespace Nikse.SubtitleEdit.Logic
             return new Regex(@"[\b ,\.\?\!]" + s + @"[\b !\.,\r\n\?]", RegexOptions.Compiled);
         }
 
+        /// <summary>
+        /// The remove from user dictionary.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <param name="languageName">
+        /// The language name.
+        /// </param>
         public static void RemoveFromUserDictionary(string word, string languageName)
         {
             word = word.Trim();
@@ -1901,17 +2954,24 @@ namespace Nikse.SubtitleEdit.Logic
                 string userWordsXmlFileName = DictionaryFolder + languageName + "_user.xml";
                 var userWords = new XmlDocument();
                 if (File.Exists(userWordsXmlFileName))
+                {
                     userWords.Load(userWordsXmlFileName);
+                }
                 else
+                {
                     userWords.LoadXml("<words />");
+                }
 
                 var words = new List<string>();
                 foreach (XmlNode node in userWords.DocumentElement.SelectNodes("word"))
                 {
                     string w = node.InnerText.Trim();
                     if (w.Length > 0 && w != word)
+                    {
                         words.Add(w);
+                    }
                 }
+
                 words.Sort();
 
                 userWords.DocumentElement.RemoveAll();
@@ -1921,10 +2981,20 @@ namespace Nikse.SubtitleEdit.Logic
                     node.InnerText = w;
                     userWords.DocumentElement.AppendChild(node);
                 }
+
                 userWords.Save(userWordsXmlFileName);
             }
         }
 
+        /// <summary>
+        /// The add to user dictionary.
+        /// </summary>
+        /// <param name="word">
+        /// The word.
+        /// </param>
+        /// <param name="languageName">
+        /// The language name.
+        /// </param>
         public static void AddToUserDictionary(string word, string languageName)
         {
             word = word.Trim();
@@ -1933,17 +3003,24 @@ namespace Nikse.SubtitleEdit.Logic
                 string userWordsXmlFileName = DictionaryFolder + languageName + "_user.xml";
                 var userWords = new XmlDocument();
                 if (File.Exists(userWordsXmlFileName))
+                {
                     userWords.Load(userWordsXmlFileName);
+                }
                 else
+                {
                     userWords.LoadXml("<words />");
+                }
 
                 var words = new List<string>();
                 foreach (XmlNode node in userWords.DocumentElement.SelectNodes("word"))
                 {
                     string w = node.InnerText.Trim();
                     if (w.Length > 0)
+                    {
                         words.Add(w);
+                    }
                 }
+
                 words.Add(word);
                 words.Sort();
 
@@ -1954,10 +3031,23 @@ namespace Nikse.SubtitleEdit.Logic
                     node.InnerText = w;
                     userWords.DocumentElement.AppendChild(node);
                 }
+
                 userWords.Save(userWordsXmlFileName);
             }
         }
 
+        /// <summary>
+        /// The load user word list.
+        /// </summary>
+        /// <param name="userWordList">
+        /// The user word list.
+        /// </param>
+        /// <param name="languageName">
+        /// The language name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string LoadUserWordList(List<string> userWordList, string languageName)
         {
             userWordList.Clear();
@@ -1970,12 +3060,27 @@ namespace Nikse.SubtitleEdit.Logic
                 {
                     string s = node.InnerText.ToLower();
                     if (!userWordList.Contains(s))
+                    {
                         userWordList.Add(s);
+                    }
                 }
             }
+
             return userWordListXmlFileName;
         }
 
+        /// <summary>
+        /// The load user word list.
+        /// </summary>
+        /// <param name="userWordList">
+        /// The user word list.
+        /// </param>
+        /// <param name="languageName">
+        /// The language name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string LoadUserWordList(HashSet<string> userWordList, string languageName)
         {
             userWordList.Clear();
@@ -1988,123 +3093,226 @@ namespace Nikse.SubtitleEdit.Logic
                 {
                     string s = node.InnerText.ToLower();
                     if (!userWordList.Contains(s))
+                    {
                         userWordList.Add(s);
+                    }
                 }
             }
+
             return userWordListXmlFileName;
         }
 
-        public static readonly string UppercaseLetters = GetLetters(true, false, false);
-        public static readonly string LowercaseLetters = GetLetters(false, true, false);
-        public static readonly string LowercaseLettersWithNumbers = GetLetters(false, true, true);
-        public static readonly string AllLetters = GetLetters(true, true, false);
-        public static readonly string AllLettersAndNumbers = GetLetters(true, true, true);
-
+        /// <summary>
+        /// The get letters.
+        /// </summary>
+        /// <param name="uppercase">
+        /// The uppercase.
+        /// </param>
+        /// <param name="lowercase">
+        /// The lowercase.
+        /// </param>
+        /// <param name="numbers">
+        /// The numbers.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetLetters(bool uppercase, bool lowercase, bool numbers)
         {
             var sb = new StringBuilder();
 
             if (uppercase)
+            {
                 sb.Append(Configuration.Settings.General.UppercaseLetters.ToUpper());
+            }
 
             if (lowercase)
+            {
                 sb.Append(Configuration.Settings.General.UppercaseLetters.ToLower());
+            }
 
             if (numbers)
+            {
                 sb.Append("0123456789");
+            }
 
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The get color from user name.
+        /// </summary>
+        /// <param name="userName">
+        /// The user name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Color"/>.
+        /// </returns>
         public static Color GetColorFromUserName(string userName)
         {
             if (string.IsNullOrEmpty(userName))
+            {
                 return Color.Pink;
+            }
 
             byte[] buffer = Encoding.UTF8.GetBytes(userName);
             long number = 0;
             foreach (byte b in buffer)
+            {
                 number += b;
+            }
 
             switch (number % 20)
             {
-                case 0: return Color.Red;
-                case 1: return Color.Blue;
-                case 2: return Color.Green;
-                case 3: return Color.DarkCyan;
-                case 4: return Color.DarkGreen;
-                case 5: return Color.DarkBlue;
-                case 6: return Color.DarkTurquoise;
-                case 7: return Color.DarkViolet;
-                case 8: return Color.DeepPink;
-                case 9: return Color.DodgerBlue;
-                case 10: return Color.ForestGreen;
-                case 11: return Color.Fuchsia;
-                case 12: return Color.DarkOrange;
-                case 13: return Color.GreenYellow;
-                case 14: return Color.IndianRed;
-                case 15: return Color.Indigo;
-                case 16: return Color.LawnGreen;
-                case 17: return Color.LightBlue;
-                case 18: return Color.DarkGoldenrod;
-                case 19: return Color.Magenta;
+                case 0:
+                    return Color.Red;
+                case 1:
+                    return Color.Blue;
+                case 2:
+                    return Color.Green;
+                case 3:
+                    return Color.DarkCyan;
+                case 4:
+                    return Color.DarkGreen;
+                case 5:
+                    return Color.DarkBlue;
+                case 6:
+                    return Color.DarkTurquoise;
+                case 7:
+                    return Color.DarkViolet;
+                case 8:
+                    return Color.DeepPink;
+                case 9:
+                    return Color.DodgerBlue;
+                case 10:
+                    return Color.ForestGreen;
+                case 11:
+                    return Color.Fuchsia;
+                case 12:
+                    return Color.DarkOrange;
+                case 13:
+                    return Color.GreenYellow;
+                case 14:
+                    return Color.IndianRed;
+                case 15:
+                    return Color.Indigo;
+                case 16:
+                    return Color.LawnGreen;
+                case 17:
+                    return Color.LightBlue;
+                case 18:
+                    return Color.DarkGoldenrod;
+                case 19:
+                    return Color.Magenta;
                 default:
                     return Color.Black;
             }
         }
 
+        /// <summary>
+        /// The get number 0 to 7 from user name.
+        /// </summary>
+        /// <param name="userName">
+        /// The user name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int GetNumber0To7FromUserName(string userName)
         {
             if (string.IsNullOrEmpty(userName))
+            {
                 return 0;
+            }
 
             byte[] buffer = Encoding.UTF8.GetBytes(userName);
             long number = 0;
             foreach (byte b in buffer)
+            {
                 number += b;
+            }
 
             return (int)(number % 8);
         }
 
+        /// <summary>
+        /// The get reg ex group.
+        /// </summary>
+        /// <param name="regEx">
+        /// The reg ex.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GetRegExGroup(string regEx)
         {
             var start = regEx.IndexOf("(?<", StringComparison.Ordinal);
             if (start < 0)
+            {
                 return null;
+            }
+
             start += 3;
             var end = regEx.IndexOf('>', start);
             if (end <= start)
+            {
                 return null;
+            }
+
             return regEx.Substring(start, end - start);
         }
 
-        public static string LowercaseVowels
-        {
-            get
-            {
-                return "aeiouyæøåéóáôèòæøåäöïɤəɛʊʉɨ";
-            }
-        }
-
+        /// <summary>
+        /// The set button height.
+        /// </summary>
+        /// <param name="control">
+        /// The control.
+        /// </param>
+        /// <param name="newHeight">
+        /// The new height.
+        /// </param>
+        /// <param name="level">
+        /// The level.
+        /// </param>
         public static void SetButtonHeight(Control control, int newHeight, int level)
         {
             if (level > 6)
+            {
                 return;
+            }
 
             if (control.HasChildren)
             {
                 foreach (Control subControl in control.Controls)
                 {
                     if (subControl.HasChildren)
+                    {
                         SetButtonHeight(subControl, newHeight, level + 1);
+                    }
                     else if (subControl is Button)
+                    {
                         subControl.Height = newHeight;
+                    }
                 }
             }
             else if (control is Button)
+            {
                 control.Height = newHeight;
+            }
         }
 
+        /// <summary>
+        /// The count tag in text.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="tag">
+        /// The tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int CountTagInText(string text, string tag)
         {
             int count = 0;
@@ -2114,12 +3322,28 @@ namespace Nikse.SubtitleEdit.Logic
                 count++;
                 index = index + tag.Length;
                 if (index >= text.Length)
+                {
                     return count;
+                }
+
                 index = text.IndexOf(tag, index, StringComparison.Ordinal);
             }
+
             return count;
         }
 
+        /// <summary>
+        /// The count tag in text.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="tag">
+        /// The tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int CountTagInText(string text, char tag)
         {
             int count = 0;
@@ -2128,21 +3352,47 @@ namespace Nikse.SubtitleEdit.Logic
             {
                 count++;
                 if ((index + 1) == text.Length)
+                {
                     return count;
+                }
+
                 index = text.IndexOf(tag, index + 1);
             }
+
             return count;
         }
 
+        /// <summary>
+        /// The starts and ends with tag.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="startTag">
+        /// The start tag.
+        /// </param>
+        /// <param name="endTag">
+        /// The end tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public static bool StartsAndEndsWithTag(string text, string startTag, string endTag)
         {
             if (string.IsNullOrWhiteSpace(text))
+            {
                 return false;
+            }
+
             if (!text.Contains(startTag) || !text.Contains(endTag))
+            {
                 return false;
+            }
 
             while (text.Contains("  "))
+            {
                 text = text.Replace("  ", " ");
+            }
 
             var s1 = "- " + startTag;
             var s2 = "-" + startTag;
@@ -2158,38 +3408,73 @@ namespace Nikse.SubtitleEdit.Logic
             bool isStart = false;
             bool isEnd = false;
             if (text.StartsWith(startTag, StringComparison.Ordinal) || text.StartsWith(s1, StringComparison.Ordinal) || text.StartsWith(s2, StringComparison.Ordinal) || text.StartsWith(s3, StringComparison.Ordinal) || text.StartsWith(s4, StringComparison.Ordinal))
+            {
                 isStart = true;
+            }
+
             if (text.EndsWith(endTag, StringComparison.Ordinal) || text.EndsWith(e1, StringComparison.Ordinal) || text.EndsWith(e2, StringComparison.Ordinal) || text.EndsWith(e3, StringComparison.Ordinal) || text.EndsWith(e4, StringComparison.Ordinal) || text.EndsWith(e5, StringComparison.Ordinal))
+            {
                 isEnd = true;
+            }
+
             return isStart && isEnd;
         }
 
+        /// <summary>
+        /// The get original paragraph.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
+        /// <param name="originalParagraphs">
+        /// The original paragraphs.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Paragraph"/>.
+        /// </returns>
         public static Paragraph GetOriginalParagraph(int index, Paragraph paragraph, List<Paragraph> originalParagraphs)
         {
             if (index < 0)
+            {
                 return null;
+            }
 
             if (index < originalParagraphs.Count && Math.Abs(originalParagraphs[index].StartTime.TotalMilliseconds - paragraph.StartTime.TotalMilliseconds) < 50)
+            {
                 return originalParagraphs[index];
+            }
 
             foreach (Paragraph p in originalParagraphs)
             {
                 if (p.StartTime.TotalMilliseconds == paragraph.StartTime.TotalMilliseconds)
+                {
                     return p;
+                }
             }
 
             foreach (Paragraph p in originalParagraphs)
             {
-                if (p.StartTime.TotalMilliseconds > paragraph.StartTime.TotalMilliseconds - 200 &&
-                    p.StartTime.TotalMilliseconds < paragraph.StartTime.TotalMilliseconds + 1000)
+                if (p.StartTime.TotalMilliseconds > paragraph.StartTime.TotalMilliseconds - 200 && p.StartTime.TotalMilliseconds < paragraph.StartTime.TotalMilliseconds + 1000)
+                {
                     return p;
+                }
             }
+
             return null;
         }
 
         /// <summary>
         /// UrlEncodes a string without the requirement for System.Web
         /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string UrlEncode(string text)
         {
             return Uri.EscapeDataString(text);
@@ -2198,6 +3483,12 @@ namespace Nikse.SubtitleEdit.Logic
         /// <summary>
         /// UrlDecodes a string without requiring System.Web
         /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string UrlDecode(string text)
         {
             // pre-process for + sign space formatting since System.Uri doesn't handle it
@@ -2206,13 +3497,26 @@ namespace Nikse.SubtitleEdit.Logic
             return Uri.UnescapeDataString(text);
         }
 
+        /// <summary>
+        /// The check auto wrap.
+        /// </summary>
+        /// <param name="textBox">
+        /// The text box.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        /// <param name="numberOfNewLines">
+        /// The number of new lines.
+        /// </param>
         public static void CheckAutoWrap(TextBox textBox, KeyEventArgs e, int numberOfNewLines)
         {
             int length = HtmlUtil.RemoveHtmlTags(textBox.Text).Length;
             if (e.Modifiers == Keys.None && e.KeyCode != Keys.Enter && numberOfNewLines < 1 && length > Configuration.Settings.General.SubtitleLineMaximumLength)
             {
-                if (Configuration.Settings.General.AutoWrapLineWhileTyping) // only if auto-break-setting is true
+                if (Configuration.Settings.General.AutoWrapLineWhileTyping)
                 {
+                    // only if auto-break-setting is true
                     string newText;
                     if (length > Configuration.Settings.General.SubtitleLineMaximumLength + 30)
                     {
@@ -2222,9 +3526,13 @@ namespace Nikse.SubtitleEdit.Logic
                     {
                         int lastSpace = textBox.Text.LastIndexOf(' ');
                         if (lastSpace > 0)
+                        {
                             newText = textBox.Text.Remove(lastSpace, 1).Insert(lastSpace, Environment.NewLine);
+                        }
                         else
+                        {
                             newText = textBox.Text;
+                        }
                     }
 
                     int autobreakIndex = newText.IndexOf(Environment.NewLine, StringComparison.Ordinal);
@@ -2233,19 +3541,34 @@ namespace Nikse.SubtitleEdit.Logic
                         int selectionStart = textBox.SelectionStart;
                         textBox.Text = newText;
                         if (selectionStart > autobreakIndex)
+                        {
                             selectionStart += Environment.NewLine.Length - 1;
+                        }
+
                         if (selectionStart >= 0)
+                        {
                             textBox.SelectionStart = selectionStart;
+                        }
                     }
                 }
             }
         }
 
-        private static readonly Dictionary<string, Keys> AllKeys = new Dictionary<string, Keys>();
+        /// <summary>
+        /// The get keys.
+        /// </summary>
+        /// <param name="keysInString">
+        /// The keys in string.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Keys"/>.
+        /// </returns>
         public static Keys GetKeys(string keysInString)
         {
             if (string.IsNullOrEmpty(keysInString))
+            {
                 return Keys.None;
+            }
 
             if (AllKeys.Count == 0)
             {
@@ -2253,14 +3576,25 @@ namespace Nikse.SubtitleEdit.Logic
                 {
                     string k = val.ToString().ToLower();
                     if (!AllKeys.ContainsKey(k))
+                    {
                         AllKeys.Add(k, val);
+                    }
                 }
+
                 if (!AllKeys.ContainsKey("pagedown"))
+                {
                     AllKeys.Add("pagedown", Keys.RButton | Keys.Space);
+                }
+
                 if (!AllKeys.ContainsKey("home"))
+                {
                     AllKeys.Add("home", Keys.MButton | Keys.Space);
+                }
+
                 if (!AllKeys.ContainsKey("capslock"))
+                {
                     AllKeys.Add("capslock", Keys.CapsLock);
+                }
             }
 
             string[] parts = keysInString.ToLower().Split(new[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
@@ -2268,11 +3602,26 @@ namespace Nikse.SubtitleEdit.Logic
             foreach (string k in parts)
             {
                 if (AllKeys.ContainsKey(k))
+                {
                     resultKeys = resultKeys | AllKeys[k];
+                }
             }
+
             return resultKeys;
         }
 
+        /// <summary>
+        /// The fix english text in right to left language.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="reverseChars">
+        /// The reverse chars.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FixEnglishTextInRightToLeftLanguage(string text, string reverseChars)
         {
             var sb = new StringBuilder();
@@ -2283,9 +3632,13 @@ namespace Nikse.SubtitleEdit.Logic
                 for (int i = 0; i < s.Length; i++)
                 {
                     if (s[i] == ')')
+                    {
                         s = s.Remove(i, 1).Insert(i, "(");
+                    }
                     else if (s[i] == '(')
+                    {
                         s = s.Remove(i, 1).Insert(i, ")");
+                    }
                 }
 
                 bool numbersOn = false;
@@ -2308,6 +3661,7 @@ namespace Nikse.SubtitleEdit.Logic
                         numbersOn = true;
                     }
                 }
+
                 if (numbersOn)
                 {
                     int i = s.Length;
@@ -2316,224 +3670,194 @@ namespace Nikse.SubtitleEdit.Logic
 
                 sb.AppendLine(s);
             }
+
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// The to superscript.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string ToSuperscript(string text)
         {
             var sb = new StringBuilder();
-            var superscript = new List<char>{
-                                              '⁰',
-                                              '¹',
-                                              '²',
-                                              '³',
-                                              '⁴',
-                                              '⁵',
-                                              '⁶',
-                                              '⁷',
-                                              '⁸',
-                                              '⁹',
-                                              '⁺',
-                                              '⁻',
-                                              '⁼',
-                                              '⁽',
-                                              '⁾',
-                                              'ᵃ',
-                                              'ᵇ',
-                                              'ᶜ',
-                                              'ᵈ',
-                                              'ᵉ',
-                                              'ᶠ',
-                                              'ᵍ',
-                                              'ʰ',
-                                              'ⁱ',
-                                              'ʲ',
-                                              'ᵏ',
-                                              'ˡ',
-                                              'ᵐ',
-                                              'ⁿ',
-                                              'ᵒ',
-                                              'ᵖ',
-                                              'ʳ',
-                                              'ˢ',
-                                              'ᵗ',
-                                              'ᵘ',
-                                              'ᵛ',
-                                              'ʷ',
-                                              'ˣ',
-                                              'ʸ',
-                                              'ᶻ',
-                                              'ᴬ',
-                                              'ᴮ',
-                                              'ᴰ',
-                                              'ᴱ',
-                                              'ᴳ',
-                                              'ᴴ',
-                                              'ᴵ',
-                                              'ᴶ',
-                                              'ᴷ',
-                                              'ᴸ',
-                                              'ᴹ',
-                                              'ᴺ',
-                                              'ᴼ',
-                                              'ᴾ',
-                                              'ᴿ',
-                                              'ᵀ',
-                                              'ᵁ',
-                                              'ᵂ'
-                                            };
-            var normal = new List<char>{
-                                         '0', // "⁰"
-                                         '1', // "¹"
-                                         '2', // "²"
-                                         '3', // "³"
-                                         '4', // "⁴"
-                                         '5', // "⁵"
-                                         '6', // "⁶"
-                                         '7', // "⁷"
-                                         '8', // "⁸"
-                                         '9', // "⁹"
-                                         '+', // "⁺"
-                                         '-', // "⁻"
-                                         '=', // "⁼"
-                                         '(', // "⁽"
-                                         ')', // "⁾"
-                                         'a', // "ᵃ"
-                                         'b', // "ᵇ"
-                                         'c', // "ᶜ"
-                                         'd', // "ᵈ"
-                                         'e', // "ᵉ"
-                                         'f', // "ᶠ"
-                                         'g', // "ᵍ"
-                                         'h', // "ʰ"
-                                         'i', // "ⁱ"
-                                         'j', // "ʲ"
-                                         'k', // "ᵏ"
-                                         'l', // "ˡ"
-                                         'm', // "ᵐ"
-                                         'n', // "ⁿ"
-                                         'o', // "ᵒ"
-                                         'p', // "ᵖ"
-                                         'r', // "ʳ"
-                                         's', // "ˢ"
-                                         't', // "ᵗ"
-                                         'u', // "ᵘ"
-                                         'v', // "ᵛ"
-                                         'w', // "ʷ"
-                                         'x', // "ˣ"
-                                         'y', // "ʸ"
-                                         'z', // "ᶻ"
-                                         'A', // "ᴬ"
-                                         'B', // "ᴮ"
-                                         'D', // "ᴰ"
-                                         'E', // "ᴱ"
-                                         'G', // "ᴳ"
-                                         'H', // "ᴴ"
-                                         'I', // "ᴵ"
-                                         'J', // "ᴶ"
-                                         'K', // "ᴷ"
-                                         'L', // "ᴸ"
-                                         'M', // "ᴹ"
-                                         'N', // "ᴺ"
-                                         'O', // "ᴼ"
-                                         'P', // "ᴾ"
-                                         'R', // "ᴿ"
-                                         'T', // "ᵀ"
-                                         'U', // "ᵁ"
-                                         'W', // "ᵂ"
-                                            };
+            var superscript = new List<char> { '⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹', '⁺', '⁻', '⁼', '⁽', '⁾', 'ᵃ', 'ᵇ', 'ᶜ', 'ᵈ', 'ᵉ', 'ᶠ', 'ᵍ', 'ʰ', 'ⁱ', 'ʲ', 'ᵏ', 'ˡ', 'ᵐ', 'ⁿ', 'ᵒ', 'ᵖ', 'ʳ', 'ˢ', 'ᵗ', 'ᵘ', 'ᵛ', 'ʷ', 'ˣ', 'ʸ', 'ᶻ', 'ᴬ', 'ᴮ', 'ᴰ', 'ᴱ', 'ᴳ', 'ᴴ', 'ᴵ', 'ᴶ', 'ᴷ', 'ᴸ', 'ᴹ', 'ᴺ', 'ᴼ', 'ᴾ', 'ᴿ', 'ᵀ', 'ᵁ', 'ᵂ' };
+            var normal = new List<char> { '0', // "⁰"
+                                          '1', // "¹"
+                                          '2', // "²"
+                                          '3', // "³"
+                                          '4', // "⁴"
+                                          '5', // "⁵"
+                                          '6', // "⁶"
+                                          '7', // "⁷"
+                                          '8', // "⁸"
+                                          '9', // "⁹"
+                                          '+', // "⁺"
+                                          '-', // "⁻"
+                                          '=', // "⁼"
+                                          '(', // "⁽"
+                                          ')', // "⁾"
+                                          'a', // "ᵃ"
+                                          'b', // "ᵇ"
+                                          'c', // "ᶜ"
+                                          'd', // "ᵈ"
+                                          'e', // "ᵉ"
+                                          'f', // "ᶠ"
+                                          'g', // "ᵍ"
+                                          'h', // "ʰ"
+                                          'i', // "ⁱ"
+                                          'j', // "ʲ"
+                                          'k', // "ᵏ"
+                                          'l', // "ˡ"
+                                          'm', // "ᵐ"
+                                          'n', // "ⁿ"
+                                          'o', // "ᵒ"
+                                          'p', // "ᵖ"
+                                          'r', // "ʳ"
+                                          's', // "ˢ"
+                                          't', // "ᵗ"
+                                          'u', // "ᵘ"
+                                          'v', // "ᵛ"
+                                          'w', // "ʷ"
+                                          'x', // "ˣ"
+                                          'y', // "ʸ"
+                                          'z', // "ᶻ"
+                                          'A', // "ᴬ"
+                                          'B', // "ᴮ"
+                                          'D', // "ᴰ"
+                                          'E', // "ᴱ"
+                                          'G', // "ᴳ"
+                                          'H', // "ᴴ"
+                                          'I', // "ᴵ"
+                                          'J', // "ᴶ"
+                                          'K', // "ᴷ"
+                                          'L', // "ᴸ"
+                                          'M', // "ᴹ"
+                                          'N', // "ᴺ"
+                                          'O', // "ᴼ"
+                                          'P', // "ᴾ"
+                                          'R', // "ᴿ"
+                                          'T', // "ᵀ"
+                                          'U', // "ᵁ"
+                                          'W', // "ᵂ"
+                                        };
             for (int i = 0; i < text.Length; i++)
             {
                 char s = text[i];
                 int index = normal.IndexOf(s);
                 if (index >= 0)
+                {
                     sb.Append(superscript[index]);
+                }
                 else
+                {
                     sb.Append(s);
+                }
             }
+
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The to subscript.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string ToSubscript(string text)
         {
             var sb = new StringBuilder();
-            var subcript = new List<char>{
-                                           '₀',
-                                           '₁',
-                                           '₂',
-                                           '₃',
-                                           '₄',
-                                           '₅',
-                                           '₆',
-                                           '₇',
-                                           '₈',
-                                           '₉',
-                                           '₊',
-                                           '₋',
-                                           '₌',
-                                           '₍',
-                                           '₎',
-                                           'ₐ',
-                                           'ₑ',
-                                           'ᵢ',
-                                           'ₒ',
-                                           'ᵣ',
-                                           'ᵤ',
-                                           'ᵥ',
-                                           'ₓ',
-                                            };
-            var normal = new List<char>
-                             {
-                               '0',  // "₀"
-                               '1',  // "₁"
-                               '2',  // "₂"
-                               '3',  // "₃"
-                               '4',  // "₄"
-                               '5',  // "₅"
-                               '6',  // "₆"
-                               '7',  // "₇"
-                               '8',  // "₈"
-                               '9',  // "₉"
-                               '+',  // "₊"
-                               '-',  // "₋"
-                               '=',  // "₌"
-                               '(',  // "₍"
-                               ')',  // "₎"
-                               'a',  // "ₐ"
-                               'e',  // "ₑ"
-                               'i',  // "ᵢ"
-                               'o',  // "ₒ"
-                               'r',  // "ᵣ"
-                               'u',  // "ᵤ"
-                               'v',  // "ᵥ"
-                               'x',  // "ₓ"
-                             };
+            var subcript = new List<char> { '₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉', '₊', '₋', '₌', '₍', '₎', 'ₐ', 'ₑ', 'ᵢ', 'ₒ', 'ᵣ', 'ᵤ', 'ᵥ', 'ₓ', };
+            var normal = new List<char> { '0', // "₀"
+                                          '1', // "₁"
+                                          '2', // "₂"
+                                          '3', // "₃"
+                                          '4', // "₄"
+                                          '5', // "₅"
+                                          '6', // "₆"
+                                          '7', // "₇"
+                                          '8', // "₈"
+                                          '9', // "₉"
+                                          '+', // "₊"
+                                          '-', // "₋"
+                                          '=', // "₌"
+                                          '(', // "₍"
+                                          ')', // "₎"
+                                          'a', // "ₐ"
+                                          'e', // "ₑ"
+                                          'i', // "ᵢ"
+                                          'o', // "ₒ"
+                                          'r', // "ᵣ"
+                                          'u', // "ᵤ"
+                                          'v', // "ᵥ"
+                                          'x', // "ₓ"
+                                        };
             for (int i = 0; i < text.Length; i++)
             {
                 char s = text[i];
                 int index = normal.IndexOf(s);
                 if (index >= 0)
+                {
                     sb.Append(subcript[index]);
+                }
                 else
+                {
                     sb.Append(s);
+                }
             }
+
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The fix quotes.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FixQuotes(string text)
         {
             if (string.IsNullOrEmpty(text))
+            {
                 return text;
+            }
 
             if (text.StartsWith('"') && text.Length > 1)
+            {
                 text = text.Substring(1);
+            }
 
             if (text.EndsWith('"') && text.Length >= 1)
+            {
                 text = text.Substring(0, text.Length - 1);
+            }
 
             return text.Replace("\"\"", "\"");
         }
 
+        /// <summary>
+        /// The get color from font string.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="defaultColor">
+        /// The default color.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Color"/>.
+        /// </returns>
         public static Color GetColorFromFontString(string text, Color defaultColor)
         {
             string s = text.TrimEnd();
@@ -2548,7 +3872,10 @@ namespace Nikse.SubtitleEdit.Logic
                     {
                         int colorStart = f.IndexOf(" color=", StringComparison.OrdinalIgnoreCase);
                         if (s.IndexOf('"', colorStart + " color=".Length + 1) > 0)
+                        {
                             end = s.IndexOf('"', colorStart + " color=".Length + 1);
+                        }
+
                         s = s.Substring(colorStart, end - colorStart);
                         s = s.Replace(" color=", string.Empty);
                         s = s.Trim('\'').Trim('"').Trim('\'');
@@ -2559,6 +3886,7 @@ namespace Nikse.SubtitleEdit.Logic
                                 var arr = s.Remove(0, 4).TrimEnd(')').Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                                 return Color.FromArgb(int.Parse(arr[0]), int.Parse(arr[1]), int.Parse(arr[2]));
                             }
+
                             return ColorTranslator.FromHtml(s);
                         }
                         catch
@@ -2568,9 +3896,25 @@ namespace Nikse.SubtitleEdit.Logic
                     }
                 }
             }
+
             return defaultColor;
         }
 
+        /// <summary>
+        /// The split for changed calc.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="ignoreLineBreaks">
+        /// The ignore line breaks.
+        /// </param>
+        /// <param name="breakToLetters">
+        /// The break to letters.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string[]"/>.
+        /// </returns>
         public static string[] SplitForChangedCalc(string s, bool ignoreLineBreaks, bool breakToLetters)
         {
             const string endChars = "!?.:;,#%$£";
@@ -2579,7 +3923,9 @@ namespace Nikse.SubtitleEdit.Logic
             if (breakToLetters)
             {
                 foreach (char ch in s)
+                {
                     list.Add(ch.ToString());
+                }
             }
             else
             {
@@ -2590,14 +3936,20 @@ namespace Nikse.SubtitleEdit.Logic
                     if (ignoreLineBreaks && s.Substring(i).StartsWith(Environment.NewLine, StringComparison.Ordinal))
                     {
                         if (word.Length > 0)
+                        {
                             list.Add(word.ToString());
+                        }
+
                         word.Clear();
                         i += Environment.NewLine.Length;
                     }
                     else if (s.Substring(i).StartsWith(Environment.NewLine, StringComparison.Ordinal))
                     {
                         if (word.Length > 0)
+                        {
                             list.Add(word.ToString());
+                        }
+
                         word.Clear();
                         list.Add(Environment.NewLine);
                         i += Environment.NewLine.Length;
@@ -2605,7 +3957,10 @@ namespace Nikse.SubtitleEdit.Logic
                     else if (s[i] == ' ')
                     {
                         if (word.Length > 0)
+                        {
                             list.Add(word.ToString());
+                        }
+
                         word.Clear();
                         i++;
                     }
@@ -2617,7 +3972,10 @@ namespace Nikse.SubtitleEdit.Logic
                     else if (endChars.Contains(s[i]))
                     {
                         if (word.Length > 0)
+                        {
                             list.Add(word.ToString());
+                        }
+
                         word.Clear();
                         word.Append(s[i]);
                         i++;
@@ -2628,12 +3986,37 @@ namespace Nikse.SubtitleEdit.Logic
                         i++;
                     }
                 }
+
                 if (word.Length > 0)
+                {
                     list.Add(word.ToString());
+                }
             }
+
             return list.ToArray();
         }
 
+        /// <summary>
+        /// The get total and changed words.
+        /// </summary>
+        /// <param name="s1">
+        /// The s 1.
+        /// </param>
+        /// <param name="s2">
+        /// The s 2.
+        /// </param>
+        /// <param name="total">
+        /// The total.
+        /// </param>
+        /// <param name="change">
+        /// The change.
+        /// </param>
+        /// <param name="ignoreLineBreaks">
+        /// The ignore line breaks.
+        /// </param>
+        /// <param name="breakToLetters">
+        /// The break to letters.
+        /// </param>
         public static void GetTotalAndChangedWords(string s1, string s2, ref int total, ref int change, bool ignoreLineBreaks, bool breakToLetters)
         {
             var parts1 = SplitForChangedCalc(s1, ignoreLineBreaks, breakToLetters);
@@ -2644,6 +4027,18 @@ namespace Nikse.SubtitleEdit.Logic
             change += c;
         }
 
+        /// <summary>
+        /// The get changes advanced.
+        /// </summary>
+        /// <param name="parts1">
+        /// The parts 1.
+        /// </param>
+        /// <param name="parts2">
+        /// The parts 2.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private static int GetChangesAdvanced(string[] parts1, string[] parts2)
         {
             int i1 = 0;
@@ -2680,44 +4075,86 @@ namespace Nikse.SubtitleEdit.Logic
                         c++;
                     }
                 }
+
                 i++;
             }
+
             if (i1 == parts1.Length && i2 == parts2.Length)
+            {
                 return c;
+            }
 
             return c + Math.Abs(parts1.Length - parts2.Length);
         }
 
+        /// <summary>
+        /// The find next.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="parts">
+        /// The parts.
+        /// </param>
+        /// <param name="startIndex">
+        /// The start index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private static int FindNext(string s, string[] parts, int startIndex)
         {
             for (int i = startIndex; i < parts.Length; i++)
             {
                 if (s == parts[i])
+                {
                     return i;
+                }
             }
+
             return int.MaxValue;
         }
 
+        /// <summary>
+        /// The remove non numbers.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         internal static string RemoveNonNumbers(string p)
         {
             if (string.IsNullOrEmpty(p))
+            {
                 return p;
+            }
 
             var sb = new StringBuilder();
             foreach (var c in p)
             {
                 if (char.IsDigit(c))
+                {
                     sb.Append(c);
+                }
             }
+
             return sb.ToString();
         }
 
         /// <summary>
         /// Remove unneeded spaces
         /// </summary>
-        /// <param name="text">text string to remove unneeded spaces from</param>
-        /// <param name="language">two letter language id string</param>
-        /// <returns>text with unneeded spaces removed</returns>
+        /// <param name="text">
+        /// text string to remove unneeded spaces from
+        /// </param>
+        /// <param name="language">
+        /// two letter language id string
+        /// </param>
+        /// <returns>
+        /// text with unneeded spaces removed
+        /// </returns>
         public static string RemoveUnneededSpaces(string text, string language)
         {
             const string zeroWidthSpace = "\u200B";
@@ -2736,7 +4173,9 @@ namespace Nikse.SubtitleEdit.Logic
             text = text.FixExtraSpaces();
 
             if (text.EndsWith(' '))
+            {
                 text = text.Substring(0, text.Length - 1);
+            }
 
             const string ellipses = "...";
             text = text.Replace(". . ..", ellipses);
@@ -2748,7 +4187,9 @@ namespace Nikse.SubtitleEdit.Logic
 
             // Fix recursive: ...
             while (text.Contains("...."))
+            {
                 text = text.Replace("....", ellipses);
+            }
 
             text = text.Replace(" ..." + Environment.NewLine, "..." + Environment.NewLine);
             text = text.Replace(Environment.NewLine + "... ", Environment.NewLine + "...");
@@ -2758,18 +4199,33 @@ namespace Nikse.SubtitleEdit.Logic
             text = text.Replace(Environment.NewLine + "- ... ", Environment.NewLine + "- ...");
 
             if (text.StartsWith("... ", StringComparison.Ordinal))
-                text = text.Remove(3, 1);
-            if (text.EndsWith(" ...", StringComparison.Ordinal))
-                text = text.Remove(text.Length - 4, 1);
-            if (text.EndsWith(" ...</i>", StringComparison.Ordinal))
-                text = text.Remove(text.Length - 8, 1);
-            if (text.StartsWith("- ... ", StringComparison.Ordinal))
-                text = text.Remove(5, 1);
-            if (text.StartsWith("<i>... ", StringComparison.Ordinal))
-                text = text.Remove(6, 1);
-
-            if (language != "fr") // special rules for French
             {
+                text = text.Remove(3, 1);
+            }
+
+            if (text.EndsWith(" ...", StringComparison.Ordinal))
+            {
+                text = text.Remove(text.Length - 4, 1);
+            }
+
+            if (text.EndsWith(" ...</i>", StringComparison.Ordinal))
+            {
+                text = text.Remove(text.Length - 8, 1);
+            }
+
+            if (text.StartsWith("- ... ", StringComparison.Ordinal))
+            {
+                text = text.Remove(5, 1);
+            }
+
+            if (text.StartsWith("<i>... ", StringComparison.Ordinal))
+            {
+                text = text.Remove(6, 1);
+            }
+
+            if (language != "fr")
+            {
+                // special rules for French
                 text = text.Replace("... ?", "...?");
                 text = text.Replace("... !", "...!");
 
@@ -2778,49 +4234,76 @@ namespace Nikse.SubtitleEdit.Logic
             }
 
             if (!text.Contains("- ..."))
+            {
                 text = text.Replace(" ... ", "... ");
+            }
 
             while (text.Contains(" ,"))
+            {
                 text = text.Replace(" ,", ",");
+            }
 
             if (text.EndsWith(" .", StringComparison.Ordinal))
+            {
                 text = text.Remove(text.Length - 2, 1);
+            }
 
             if (text.EndsWith(" \"", StringComparison.Ordinal))
+            {
                 text = text.Remove(text.Length - 2, 1);
+            }
 
             if (text.Contains(" \"" + Environment.NewLine))
+            {
                 text = text.Replace(" \"" + Environment.NewLine, "\"" + Environment.NewLine);
+            }
 
             if (text.Contains(" ." + Environment.NewLine))
-                text = text.Replace(" ." + Environment.NewLine, "." + Environment.NewLine);
-
-            if (language != "fr") // special rules for French
             {
+                text = text.Replace(" ." + Environment.NewLine, "." + Environment.NewLine);
+            }
+
+            if (language != "fr")
+            {
+                // special rules for French
                 if (text.Contains(" !"))
+                {
                     text = text.Replace(" !", "!");
+                }
 
                 if (text.Contains(" ?"))
+                {
                     text = text.Replace(" ?", "?");
+                }
             }
 
             while (text.Contains("¿ "))
+            {
                 text = text.Replace("¿ ", "¿");
+            }
 
             while (text.Contains("¡ "))
+            {
                 text = text.Replace("¡ ", "¡");
+            }
 
             // Italic
             if (text.Contains("<i>", StringComparison.OrdinalIgnoreCase) && text.Contains("</i>", StringComparison.OrdinalIgnoreCase))
+            {
                 text = RemoveSpaceBeforeAfterTag(text, "<i>");
+            }
 
             // Bold
             if (text.Contains("<b>", StringComparison.OrdinalIgnoreCase) && text.Contains("</b>", StringComparison.OrdinalIgnoreCase))
+            {
                 text = RemoveSpaceBeforeAfterTag(text, "<b>");
+            }
 
             // Underline
             if (text.Contains("<u>", StringComparison.OrdinalIgnoreCase) && text.Contains("</u>", StringComparison.OrdinalIgnoreCase))
+            {
                 text = RemoveSpaceBeforeAfterTag(text, "<u>");
+            }
 
             // Font
             if (text.Contains("<font ", StringComparison.OrdinalIgnoreCase))
@@ -2833,6 +4316,7 @@ namespace Nikse.SubtitleEdit.Logic
                     text = RemoveSpaceBeforeAfterTag(text, color);
                 }
             }
+
             text = text.Trim();
             text = text.Replace(Environment.NewLine + " ", Environment.NewLine);
 
@@ -2840,7 +4324,10 @@ namespace Nikse.SubtitleEdit.Logic
             {
                 int idx = text.IndexOf("- ", 2, StringComparison.Ordinal);
                 if (text.StartsWith("<i>", StringComparison.OrdinalIgnoreCase))
+                {
                     idx = text.IndexOf("- ", 5, StringComparison.Ordinal);
+                }
+
                 while (idx > 0)
                 {
                     if (idx > 0 && idx < text.Length - 2)
@@ -2852,6 +4339,7 @@ namespace Nikse.SubtitleEdit.Logic
                             before = text[k] + before;
                             k--;
                         }
+
                         string after = string.Empty;
                         k = idx + 2;
                         while (k < text.Length && AllLetters.Contains(text[k]))
@@ -2859,20 +4347,14 @@ namespace Nikse.SubtitleEdit.Logic
                             after = after + text[k];
                             k++;
                         }
+
                         if (after.Length > 0 && after.Equals(before, StringComparison.OrdinalIgnoreCase))
+                        {
                             text = text.Remove(idx + 1, 1);
+                        }
                         else if (before.Length > 0)
                         {
-                            if ((language == "en" && (after.Equals("and", StringComparison.OrdinalIgnoreCase) || after.Equals("or", StringComparison.OrdinalIgnoreCase))) ||
-                                (language == "es" && (after.Equals("y", StringComparison.OrdinalIgnoreCase) || after.Equals("o", StringComparison.OrdinalIgnoreCase))) ||
-                                (language == "da" && (after.Equals("og", StringComparison.OrdinalIgnoreCase) || after.Equals("eller", StringComparison.OrdinalIgnoreCase))) ||
-                                (language == "de" && (after.Equals("und", StringComparison.OrdinalIgnoreCase) || after.Equals("oder", StringComparison.OrdinalIgnoreCase))) ||
-                                (language == "fi" && (after.Equals("ja", StringComparison.OrdinalIgnoreCase) || after.Equals("tai", StringComparison.OrdinalIgnoreCase))) ||
-                                (language == "fr" && (after.Equals("et", StringComparison.OrdinalIgnoreCase) || after.Equals("ou", StringComparison.OrdinalIgnoreCase))) ||
-                                (language == "it" && (after.Equals("e", StringComparison.OrdinalIgnoreCase) || after.Equals("o", StringComparison.OrdinalIgnoreCase))) ||
-                                (language == "nl" && (after.Equals("en", StringComparison.OrdinalIgnoreCase) || after.Equals("of", StringComparison.OrdinalIgnoreCase))) ||
-                                (language == "pl" && (after.Equals("i", StringComparison.OrdinalIgnoreCase) || after.Equals("czy", StringComparison.OrdinalIgnoreCase))) ||
-                                (language == "pt" && (after.Equals("e", StringComparison.OrdinalIgnoreCase) || after.Equals("ou", StringComparison.OrdinalIgnoreCase))))
+                            if ((language == "en" && (after.Equals("and", StringComparison.OrdinalIgnoreCase) || after.Equals("or", StringComparison.OrdinalIgnoreCase))) || (language == "es" && (after.Equals("y", StringComparison.OrdinalIgnoreCase) || after.Equals("o", StringComparison.OrdinalIgnoreCase))) || (language == "da" && (after.Equals("og", StringComparison.OrdinalIgnoreCase) || after.Equals("eller", StringComparison.OrdinalIgnoreCase))) || (language == "de" && (after.Equals("und", StringComparison.OrdinalIgnoreCase) || after.Equals("oder", StringComparison.OrdinalIgnoreCase))) || (language == "fi" && (after.Equals("ja", StringComparison.OrdinalIgnoreCase) || after.Equals("tai", StringComparison.OrdinalIgnoreCase))) || (language == "fr" && (after.Equals("et", StringComparison.OrdinalIgnoreCase) || after.Equals("ou", StringComparison.OrdinalIgnoreCase))) || (language == "it" && (after.Equals("e", StringComparison.OrdinalIgnoreCase) || after.Equals("o", StringComparison.OrdinalIgnoreCase))) || (language == "nl" && (after.Equals("en", StringComparison.OrdinalIgnoreCase) || after.Equals("of", StringComparison.OrdinalIgnoreCase))) || (language == "pl" && (after.Equals("i", StringComparison.OrdinalIgnoreCase) || after.Equals("czy", StringComparison.OrdinalIgnoreCase))) || (language == "pt" && (after.Equals("e", StringComparison.OrdinalIgnoreCase) || after.Equals("ou", StringComparison.OrdinalIgnoreCase))))
                             {
                             }
                             else
@@ -2881,10 +4363,15 @@ namespace Nikse.SubtitleEdit.Logic
                             }
                         }
                     }
+
                     if (idx + 1 < text.Length && idx != -1)
+                    {
                         idx = text.IndexOf("- ", idx + 1, StringComparison.Ordinal);
+                    }
                     else
+                    {
                         break;
+                    }
                 }
             }
 
@@ -2893,13 +4380,13 @@ namespace Nikse.SubtitleEdit.Logic
                 int idx = text.IndexOf(" \" ", StringComparison.Ordinal);
                 int idxp = text.IndexOf('"');
 
-                //"Foo " bar.
+                // "Foo " bar.
                 if ((idxp >= 0 && idxp < idx) && AllLettersAndNumbers.Contains(text[idx - 1]) && !" \r\n".Contains(text[idxp + 1]))
                 {
                     text = text.Remove(idx, 1);
                 }
 
-                //" Foo " bar.
+                // " Foo " bar.
                 idx = text.IndexOf(" \" ", StringComparison.Ordinal);
                 idxp = text.IndexOf('"');
                 if (idxp >= 0 && idx > idxp)
@@ -2909,12 +4396,26 @@ namespace Nikse.SubtitleEdit.Logic
                         text = text.Remove(idxp + 1, 1);
                         idx--;
                     }
+
                     text = text.Remove(idx, 1);
                 }
             }
+
             return text;
         }
 
+        /// <summary>
+        /// The remove space before after tag.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="openTag">
+        /// The open tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string RemoveSpaceBeforeAfterTag(string text, string openTag)
         {
             text = HtmlUtil.FixUpperTags(text);
@@ -2933,7 +4434,9 @@ namespace Nikse.SubtitleEdit.Logic
             }
 
             if (closeTag.Length == 0 && openTag.Contains("<font ", StringComparison.Ordinal))
+            {
                 closeTag = "</font>";
+            }
 
             // Open tags
             var open1 = openTag + " ";
@@ -2946,23 +4449,35 @@ namespace Nikse.SubtitleEdit.Logic
             var close4 = " " + closeTag + Environment.NewLine;
 
             if (text.Contains(close1, StringComparison.Ordinal))
+            {
                 text = text.Replace(close1, "!" + closeTag + Environment.NewLine);
+            }
 
             if (text.Contains(close2, StringComparison.Ordinal))
+            {
                 text = text.Replace(close2, "?" + closeTag + Environment.NewLine);
+            }
 
             if (text.EndsWith(close3, StringComparison.Ordinal))
+            {
                 text = text.Substring(0, text.Length - close3.Length) + closeTag;
+            }
 
             if (text.Contains(close4))
+            {
                 text = text.Replace(close4, closeTag + Environment.NewLine);
+            }
 
             // e.g: ! </i><br>Foobar
             if (text.StartsWith(open1, StringComparison.Ordinal))
+            {
                 text = openTag + text.Substring(open1.Length);
+            }
 
             if (text.Contains(open2, StringComparison.Ordinal))
+            {
                 text = text.Replace(open2, Environment.NewLine + openTag);
+            }
 
             // Hi <i> bad</i> man! -> Hi <i>bad</i> man!
             text = text.Replace(" " + openTag + " ", " " + openTag);
@@ -2974,7 +4489,9 @@ namespace Nikse.SubtitleEdit.Logic
 
             text = text.Trim();
             if (text.StartsWith(open1, StringComparison.Ordinal))
+            {
                 text = openTag + text.Substring(open1.Length);
+            }
 
             return text;
         }
@@ -2982,8 +4499,12 @@ namespace Nikse.SubtitleEdit.Logic
         /// <summary>
         /// Creates a task that will complete after a time delay.
         /// </summary>
-        /// <param name="millisecondsDelay">The number of milliseconds to wait before completing the returned task.</param>
-        /// <returns>A task that represents the time delay.</returns>
+        /// <param name="millisecondsDelay">
+        /// The number of milliseconds to wait before completing the returned task.
+        /// </param>
+        /// <returns>
+        /// A task that represents the time delay.
+        /// </returns>
         public static Task TaskDelay(int millisecondsDelay)
         {
             var tcs = new TaskCompletionSource<object>();
@@ -2992,10 +4513,33 @@ namespace Nikse.SubtitleEdit.Logic
             return tcs.Task;
         }
 
+        /// <summary>
+        /// The load matroska text subtitle.
+        /// </summary>
+        /// <param name="matroskaSubtitleInfo">
+        /// The matroska subtitle info.
+        /// </param>
+        /// <param name="matroska">
+        /// The matroska.
+        /// </param>
+        /// <param name="sub">
+        /// The sub.
+        /// </param>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SubtitleFormat"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
         internal static SubtitleFormat LoadMatroskaTextSubtitle(MatroskaTrackInfo matroskaSubtitleInfo, MatroskaFile matroska, List<MatroskaSubtitle> sub, Subtitle subtitle)
         {
             if (subtitle == null)
+            {
                 throw new ArgumentNullException("subtitle");
+            }
+
             subtitle.Paragraphs.Clear();
 
             var isSsa = false;
@@ -3003,9 +4547,14 @@ namespace Nikse.SubtitleEdit.Logic
             if (matroskaSubtitleInfo.CodecPrivate.Contains("[script info]", StringComparison.OrdinalIgnoreCase))
             {
                 if (matroskaSubtitleInfo.CodecPrivate.Contains("[V4 Styles]", StringComparison.OrdinalIgnoreCase))
+                {
                     format = new SubStationAlpha();
+                }
                 else
+                {
                     format = new AdvancedSubStationAlpha();
+                }
+
                 isSsa = true;
             }
 
@@ -3054,6 +4603,7 @@ namespace Nikse.SubtitleEdit.Logic
                             graphicsStarted = true;
                         }
                     }
+
                     subtitle.Header = header.ToString().TrimEnd();
                     if (!subtitle.Header.Contains("[events]", StringComparison.OrdinalIgnoreCase))
                     {
@@ -3068,16 +4618,38 @@ namespace Nikse.SubtitleEdit.Logic
                     subtitle.Paragraphs.Add(new Paragraph(p.Text, p.Start, p.End));
                 }
             }
+
             subtitle.Renumber();
             return format;
         }
 
+        /// <summary>
+        /// The load matroska ssa.
+        /// </summary>
+        /// <param name="matroskaSubtitleInfo">
+        /// The matroska subtitle info.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="format">
+        /// The format.
+        /// </param>
+        /// <param name="sub">
+        /// The sub.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Subtitle"/>.
+        /// </returns>
         internal static Subtitle LoadMatroskaSSA(MatroskaTrackInfo matroskaSubtitleInfo, string fileName, SubtitleFormat format, List<MatroskaSubtitle> sub)
         {
             var subtitle = new Subtitle { Header = matroskaSubtitleInfo.CodecPrivate };
             var lines = new List<string>();
             foreach (string l in subtitle.Header.Trim().SplitToLines())
+            {
                 lines.Add(l);
+            }
+
             var footer = new StringBuilder();
             var comments = new Subtitle();
             if (!string.IsNullOrEmpty(matroskaSubtitleInfo.CodecPrivate))
@@ -3111,8 +4683,7 @@ namespace Nikse.SubtitleEdit.Logic
                                 int min;
                                 int sec;
                                 int ms;
-                                if (int.TryParse(arr[0], out hour) && int.TryParse(arr[1], out min) &&
-                                    int.TryParse(arr[2], out sec) && int.TryParse(arr[3], out ms))
+                                if (int.TryParse(arr[0], out hour) && int.TryParse(arr[1], out min) && int.TryParse(arr[2], out sec) && int.TryParse(arr[3], out ms))
                                 {
                                     comments.Paragraphs.Add(new Paragraph(new TimeCode(hour, min, sec, ms * 10), new TimeCode(0, 0, 0, 0), line));
                                 }
@@ -3121,25 +4692,23 @@ namespace Nikse.SubtitleEdit.Logic
                     }
                 }
             }
+
             const string headerFormat = "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text";
             if (!subtitle.Header.Contains("[Events]"))
             {
-                subtitle.Header = subtitle.Header.Trim() + Environment.NewLine +
-                                   Environment.NewLine +
-                                   "[Events]" + Environment.NewLine +
-                                   headerFormat + Environment.NewLine;
+                subtitle.Header = subtitle.Header.Trim() + Environment.NewLine + Environment.NewLine + "[Events]" + Environment.NewLine + headerFormat + Environment.NewLine;
             }
             else
             {
                 subtitle.Header = subtitle.Header.Remove(subtitle.Header.IndexOf("[Events]", StringComparison.Ordinal));
-                subtitle.Header = subtitle.Header.Trim() + Environment.NewLine +
-                                   Environment.NewLine +
-                                   "[Events]" + Environment.NewLine +
-                                   headerFormat + Environment.NewLine;
+                subtitle.Header = subtitle.Header.Trim() + Environment.NewLine + Environment.NewLine + "[Events]" + Environment.NewLine + headerFormat + Environment.NewLine;
             }
+
             lines = new List<string>();
             foreach (string l in subtitle.Header.Trim().SplitToLines())
+            {
                 lines.Add(l);
+            }
 
             const string timeCodeFormat = "{0}:{1:00}:{2:00}.{3:00}"; // h:mm:ss.cc
             foreach (var mp in sub)
@@ -3148,19 +4717,23 @@ namespace Nikse.SubtitleEdit.Logic
                 string start = string.Format(timeCodeFormat, p.StartTime.Hours, p.StartTime.Minutes, p.StartTime.Seconds, p.StartTime.Milliseconds / 10);
                 string end = string.Format(timeCodeFormat, p.EndTime.Hours, p.EndTime.Minutes, p.EndTime.Seconds, p.EndTime.Milliseconds / 10);
 
-                //MKS contains this: ReadOrder, Layer, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-
+                // MKS contains this: ReadOrder, Layer, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                 for (int commentIndex = 0; commentIndex < comments.Paragraphs.Count; commentIndex++)
                 {
                     var cp = comments.Paragraphs[commentIndex];
                     if (cp.StartTime.TotalMilliseconds <= p.StartTime.TotalMilliseconds)
+                    {
                         lines.Add(cp.Text);
+                    }
                 }
+
                 for (int commentIndex = comments.Paragraphs.Count - 1; commentIndex >= 0; commentIndex--)
                 {
                     var cp = comments.Paragraphs[commentIndex];
                     if (cp.StartTime.TotalMilliseconds <= p.StartTime.TotalMilliseconds)
+                    {
                         comments.Paragraphs.RemoveAt(commentIndex);
+                    }
                 }
 
                 string text = mp.Text.Replace(Environment.NewLine, "\\N");
@@ -3173,6 +4746,7 @@ namespace Nikse.SubtitleEdit.Logic
                     lines.Add("Dialogue: " + text);
                 }
             }
+
             for (int commentIndex = 0; commentIndex < comments.Paragraphs.Count; commentIndex++)
             {
                 var cp = comments.Paragraphs[commentIndex];
@@ -3180,16 +4754,29 @@ namespace Nikse.SubtitleEdit.Logic
             }
 
             foreach (string l in footer.ToString().SplitToLines())
+            {
                 lines.Add(l);
+            }
 
             format.LoadSubtitle(subtitle, lines, fileName);
             return subtitle;
         }
 
+        /// <summary>
+        /// The get number of lines.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public static int GetNumberOfLines(string text)
         {
             if (string.IsNullOrEmpty(text))
+            {
                 return 0;
+            }
 
             int lines = 1;
             int idx = text.IndexOf('\n');
@@ -3198,9 +4785,19 @@ namespace Nikse.SubtitleEdit.Logic
                 lines++;
                 idx = text.IndexOf('\n', idx + 1);
             }
+
             return lines;
         }
 
+        /// <summary>
+        /// The fix large fonts.
+        /// </summary>
+        /// <param name="mainCtrl">
+        /// The main ctrl.
+        /// </param>
+        /// <param name="ctrl">
+        /// The ctrl.
+        /// </param>
         public static void FixLargeFonts(Control mainCtrl, Control ctrl)
         {
             using (Graphics graphics = mainCtrl.CreateGraphics())
@@ -3213,6 +4810,5 @@ namespace Nikse.SubtitleEdit.Logic
                 }
             }
         }
-
     }
 }

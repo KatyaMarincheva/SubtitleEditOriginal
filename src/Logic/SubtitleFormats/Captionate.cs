@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Captionate.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The captionate.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -9,10 +18,19 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The captionate.
+    /// </summary>
     public class Captionate : SubtitleFormat
     {
+        /// <summary>
+        /// The name of format.
+        /// </summary>
         public const string NameOfFormat = "Captionate";
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -21,6 +39,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -29,6 +50,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -37,6 +61,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -44,6 +80,18 @@
             return subtitle.Paragraphs.Count > 0;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             const string xmlStructure = @"<captionate>
@@ -87,6 +135,18 @@
             return ToUtf8XmlString(xml, true);
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             this._errorCount = 0;
@@ -161,6 +221,15 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The add paragraph.
+        /// </summary>
+        /// <param name="xml">
+        /// The xml.
+        /// </param>
+        /// <param name="p">
+        /// The p.
+        /// </param>
         private static void AddParagraph(XmlDocument xml, Paragraph p)
         {
             XmlNode paragraph = xml.CreateElement("caption");
@@ -183,12 +252,30 @@
             xml.DocumentElement.SelectSingleNode("captions").AppendChild(paragraph);
         }
 
+        /// <summary>
+        /// The decode time to milliseconds.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="double"/>.
+        /// </returns>
         private static double DecodeTimeToMilliseconds(string time)
         {
             string[] parts = time.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
             return new TimeSpan(0, int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), (int)(int.Parse(parts[3]) * 10.0)).TotalMilliseconds;
         }
 
+        /// <summary>
+        /// The encode time.
+        /// </summary>
+        /// <param name="time">
+        /// The time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string EncodeTime(TimeCode time)
         {
             return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", time.Hours, time.Minutes, time.Seconds, time.Milliseconds / 10.0);

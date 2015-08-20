@@ -1,43 +1,36 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Program.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The program.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace UpdateAssemblyInfo
 {
+    using System;
+    using System.IO;
+    using System.Text;
+
+    /// <summary>
+    /// The program.
+    /// </summary>
     internal class Program
     {
-
-        private class Template
-        {
-            private string templateFile;
-            private string templateText;
-
-            public Template(string path)
-            {
-                templateFile = path;
-            }
-
-            public void Replace(string source, string replacement)
-            {
-                if (templateText == null)
-                {
-                    templateText = File.ReadAllText(templateFile);
-                }
-                templateText = templateText.Replace(source, replacement);
-            }
-
-            public void Save(string target)
-            {
-                File.WriteAllText(target, templateText, Encoding.UTF8);
-            }
-        }
-
+        /// <summary>
+        /// The main.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private static int Main(string[] args)
         {
             var myName = Environment.GetCommandLineArgs()[0];
-            myName = Path.GetFileNameWithoutExtension(string.IsNullOrWhiteSpace(myName)
-                   ? System.Reflection.Assembly.GetEntryAssembly().Location
-                   : myName);
+            myName = Path.GetFileNameWithoutExtension(string.IsNullOrWhiteSpace(myName) ? System.Reflection.Assembly.GetEntryAssembly().Location : myName);
 
             if (args.Length != 2)
             {
@@ -58,14 +51,16 @@ namespace UpdateAssemblyInfo
             var clrTags = new CommandLineRunner();
             var gitPath = GetGitPath();
             string exceptionMessage;
-            if (clrHash.RunCommandAndGetOutput(gitPath, "rev-parse --verify HEAD", workingFolder) &&
-                clrTags.RunCommandAndGetOutput(gitPath, "describe --tags", workingFolder))
+            if (clrHash.RunCommandAndGetOutput(gitPath, "rev-parse --verify HEAD", workingFolder) && clrTags.RunCommandAndGetOutput(gitPath, "describe --tags", workingFolder))
             {
                 try
                 {
                     template.Replace("[GITHASH]", clrHash.Result);
                     if (clrTags.Result.IndexOf('-') < 0)
+                    {
                         clrTags.Result += "-0";
+                    }
+
                     template.Replace("[REVNO]", clrTags.Result.Split('-')[1]);
                     template.Save(targetFile);
                     return 0;
@@ -91,6 +86,7 @@ namespace UpdateAssemblyInfo
                     exceptionMessage = ex.Message;
                 }
             }
+
             Console.WriteLine(myName + ": Could not update AssemblyInfo: " + exceptionMessage);
             Console.WriteLine(" - Git folder: " + workingFolder);
             Console.WriteLine(" - Template: " + templateFile);
@@ -98,6 +94,12 @@ namespace UpdateAssemblyInfo
             return 1;
         }
 
+        /// <summary>
+        /// The get git path.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string GetGitPath()
         {
             var envPath = Environment.GetEnvironmentVariable("PATH");
@@ -107,7 +109,9 @@ namespace UpdateAssemblyInfo
                 {
                     var path = Path.Combine(p, "git.exe");
                     if (File.Exists(path))
+                    {
                         return path;
+                    }
                 }
             }
 
@@ -118,7 +122,9 @@ namespace UpdateAssemblyInfo
             {
                 var path = Path.Combine(envProgramFiles, gitPath);
                 if (File.Exists(path))
+                {
                     return path;
+                }
             }
 
             envProgramFiles = Environment.GetEnvironmentVariable("ProgramFiles(x86)");
@@ -126,7 +132,9 @@ namespace UpdateAssemblyInfo
             {
                 var path = Path.Combine(envProgramFiles, gitPath);
                 if (File.Exists(path))
+                {
                     return path;
+                }
             }
 
             var envSystemDrive = Environment.GetEnvironmentVariable("SystemDrive");
@@ -134,15 +142,21 @@ namespace UpdateAssemblyInfo
             {
                 var path = Path.Combine(envSystemDrive, "Program Files", gitPath);
                 if (File.Exists(path))
+                {
                     return path;
+                }
 
                 path = Path.Combine(envSystemDrive, "Program Files (x86)", gitPath);
                 if (File.Exists(path))
+                {
                     return path;
+                }
 
                 path = Path.Combine(envSystemDrive, gitPath);
                 if (File.Exists(path))
+                {
                     return path;
+                }
             }
 
             try
@@ -152,15 +166,21 @@ namespace UpdateAssemblyInfo
                 {
                     var path = Path.Combine(cRoot, "Program Files", gitPath);
                     if (File.Exists(path))
+                    {
                         return path;
+                    }
 
                     path = Path.Combine(cRoot, "Program Files (x86)", gitPath);
                     if (File.Exists(path))
+                    {
                         return path;
+                    }
 
                     path = Path.Combine(cRoot, gitPath);
                     if (File.Exists(path))
+                    {
                         return path;
+                    }
                 }
             }
             catch
@@ -171,5 +191,61 @@ namespace UpdateAssemblyInfo
             return "git";
         }
 
+        /// <summary>
+        /// The template.
+        /// </summary>
+        private class Template
+        {
+            /// <summary>
+            /// The template file.
+            /// </summary>
+            private string templateFile;
+
+            /// <summary>
+            /// The template text.
+            /// </summary>
+            private string templateText;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Template"/> class.
+            /// </summary>
+            /// <param name="path">
+            /// The path.
+            /// </param>
+            public Template(string path)
+            {
+                this.templateFile = path;
+            }
+
+            /// <summary>
+            /// The replace.
+            /// </summary>
+            /// <param name="source">
+            /// The source.
+            /// </param>
+            /// <param name="replacement">
+            /// The replacement.
+            /// </param>
+            public void Replace(string source, string replacement)
+            {
+                if (this.templateText == null)
+                {
+                    this.templateText = File.ReadAllText(this.templateFile);
+                }
+
+                this.templateText = this.templateText.Replace(source, replacement);
+            }
+
+            /// <summary>
+            /// The save.
+            /// </summary>
+            /// <param name="target">
+            /// The target.
+            /// </param>
+            public void Save(string target)
+            {
+                File.WriteAllText(target, this.templateText, Encoding.UTF8);
+            }
+        }
     }
 }

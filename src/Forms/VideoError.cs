@@ -1,26 +1,61 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="VideoError.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The video error.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Text;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The video error.
+    /// </summary>
     public partial class VideoError : Form
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VideoError"/> class.
+        /// </summary>
         public VideoError()
         {
-            InitializeComponent();
-            Utilities.FixLargeFonts(this, buttonCancel);
+            this.InitializeComponent();
+            Utilities.FixLargeFonts(this, this.buttonCancel);
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is 64 bit os.
+        /// </summary>
         public static bool Is64BitOS
         {
-            get { return false; }
-            //get { return (Environment.GetEnvironmentVariable("ProgramFiles(x86)") != null); }
+            get
+            {
+                return false;
+            }
+
+            // get { return (Environment.GetEnvironmentVariable("ProgramFiles(x86)") != null); }
         }
 
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <param name="videoInfo">
+        /// The video info.
+        /// </param>
+        /// <param name="exception">
+        /// The exception.
+        /// </param>
         public void Initialize(string fileName, VideoInfo videoInfo, Exception exception)
         {
             bool isWindowsXpOrVista = Environment.OSVersion.Version.Major < 7;
@@ -46,14 +81,14 @@ namespace Nikse.SubtitleEdit.Forms
             if (videoInfo != null && !string.IsNullOrEmpty(videoInfo.VideoCodec))
             {
                 sb.AppendLine(string.Format("The file {0} is encoded with {1}!", Path.GetFileName(fileName), videoInfo.VideoCodec.Replace('\0', ' ')));
-                sb.AppendLine("");
+                sb.AppendLine(string.Empty);
             }
 
-            sb.AppendLine("");
+            sb.AppendLine(string.Empty);
 
             sb.AppendLine("You can read more about codecs and media formats here:");
             sb.AppendLine(" - http://www.free-codecs.com/guides/What_Codecs_Should_I_Use.htm");
-            sb.AppendLine("");
+            sb.AppendLine(string.Empty);
 
             sb.AppendLine("Other useful utilities:");
             sb.AppendLine(" - http://mediaarea.net/MediaInfo");
@@ -61,32 +96,48 @@ namespace Nikse.SubtitleEdit.Forms
             sb.AppendLine(" - http://www.free-codecs.com/download/DirectShow_Filter_Manager.htm");
             sb.AppendLine(" - http://www.headbands.com/gspot/");
 
-            sb.AppendLine("");
+            sb.AppendLine(string.Empty);
             sb.Append("Note that Subtitle Edit is a " + (IntPtr.Size * 8) + "-bit program, and hence requires " + (IntPtr.Size * 8) + "-bit codecs!");
 
-            richTextBoxMessage.Text = sb.ToString();
+            this.richTextBoxMessage.Text = sb.ToString();
 
             if (exception != null)
             {
-                textBoxError.Text = "Message: " + exception.Message + Environment.NewLine +
-                                    "Source: " + exception.Source + Environment.NewLine +
-                                    Environment.NewLine +
-                                    "Stack Trace: " + Environment.NewLine +
-                                    exception.StackTrace;
+                this.textBoxError.Text = "Message: " + exception.Message + Environment.NewLine + "Source: " + exception.Source + Environment.NewLine + Environment.NewLine + "Stack Trace: " + Environment.NewLine + exception.StackTrace;
             }
-            Text += fileName;
+
+            this.Text += fileName;
         }
 
+        /// <summary>
+        /// The video error_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void VideoError_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
 
+        /// <summary>
+        /// The rich text box message_ link clicked.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void richTextBoxMessage_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             Process.Start(e.LinkText);
         }
-
     }
 }

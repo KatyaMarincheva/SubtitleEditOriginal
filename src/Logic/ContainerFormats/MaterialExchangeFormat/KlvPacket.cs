@@ -1,4 +1,14 @@
-﻿namespace Nikse.SubtitleEdit.Logic.ContainerFormats.MaterialExchangeFormat
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="KlvPacket.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   Key-Length-Value MXF package - http://en.wikipedia.org/wiki/KLV +
+//   http://en.wikipedia.org/wiki/Material_Exchange_Format
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.ContainerFormats.MaterialExchangeFormat
 {
     using System;
     using System.IO;
@@ -12,36 +22,89 @@
     /// </summary>
     public class KlvPacket
     {
+        /// <summary>
+        /// The key size.
+        /// </summary>
         private const int KeySize = 16;
 
+        /// <summary>
+        /// The partition pack.
+        /// </summary>
         public static byte[] PartitionPack = { 0x06, 0x0e, 0x2b, 0x34, 0x02, 0x05, 0x01, 0x01, 0x0D, 0x01, 0x02, 0x01, 0x01, 0xff, 0xff, 0x00 }; // 0xff can have different values
 
+        /// <summary>
+        /// The preface.
+        /// </summary>
         public static byte[] Preface = { 0x06, 0x0E, 0x2B, 0x34, 0x02, 0x53, 0x01, 0x01, 0x0d, 0x01, 0x01, 0x01, 0x01, 0x01, 0x2F, 0x00 };
 
+        /// <summary>
+        /// The essence element.
+        /// </summary>
         public static byte[] EssenceElement = { 0x06, 0x0E, 0x2B, 0x34, 0x01, 0x02, 0x01, 0x01, 0x0D, 0x01, 0x03, 0x01, 0xff, 0xff, 0xff, 0xff };
 
+        /// <summary>
+        /// The operational pattern.
+        /// </summary>
         public static byte[] OperationalPattern = { 0x06, 0x0E, 0x2B, 0x34, 0x04, 0x01, 0x01, 0x01, 0x0D, 0x01, 0x02, 0x01, 0x00, 0xff, 0xff, 0x00 };
 
+        /// <summary>
+        /// The partition metadata.
+        /// </summary>
         public static byte[] PartitionMetadata = { 0x06, 0x0e, 0x2b, 0x34, 0x02, 0x05, 0x01, 0x01, 0x0d, 0x01, 0x02, 0x01, 0x01, 0x04, 0x04, 0x00 };
 
+        /// <summary>
+        /// The structural metadata.
+        /// </summary>
         public static byte[] StructuralMetadata = { 0x06, 0x0e, 0x2b, 0x34, 0x02, 0x53, 0x01, 0x01, 0x0d, 0x01, 0x01, 0x01, 0x00, 0xff, 0xff, 0x00 };
 
+        /// <summary>
+        /// The data definition video.
+        /// </summary>
         public static byte[] DataDefinitionVideo = { 0x06, 0x0E, 0x2B, 0x34, 0x04, 0x01, 0x01, 0x01, 0x01, 0x03, 0x02, 0x02, 0x01, 0xff, 0xff, 0x00 };
 
+        /// <summary>
+        /// The data definition audio.
+        /// </summary>
         public static byte[] DataDefinitionAudio = { 0x06, 0x0E, 0x2B, 0x34, 0x04, 0x01, 0x01, 0x01, 0x01, 0x03, 0x02, 0x02, 0x02, 0xff, 0xff, 0x00 };
 
+        /// <summary>
+        /// The primer.
+        /// </summary>
         public static byte[] Primer = { 0x06, 0xe, 0x2b, 0x34, 0x02, 0x05, 0x1, 0xff, 0x0d, 0x01, 0x02, 0x01, 0x01, 0x05, 0x01, 0xff };
 
+        /// <summary>
+        /// The data position.
+        /// </summary>
         public long DataPosition;
 
+        /// <summary>
+        /// The data size.
+        /// </summary>
         public long DataSize;
 
+        /// <summary>
+        /// The key.
+        /// </summary>
         public byte[] Key;
 
+        /// <summary>
+        /// The partion status.
+        /// </summary>
         public PartitionStatus PartionStatus = PartitionStatus.Unknown;
 
+        /// <summary>
+        /// The total size.
+        /// </summary>
         public long TotalSize;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KlvPacket"/> class.
+        /// </summary>
+        /// <param name="stream">
+        /// The stream.
+        /// </param>
+        /// <exception cref="Exception">
+        /// </exception>
         public KlvPacket(Stream stream)
         {
             // read 16-bytes key
@@ -62,6 +125,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the identifier type.
+        /// </summary>
         public KeyIdentifier IdentifierType
         {
             get
@@ -115,6 +181,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the display key.
+        /// </summary>
         public string DisplayKey
         {
             get
@@ -130,12 +199,16 @@
         }
 
         /// <summary>
-        ///     Read length - never be more than 9 bytes in size (which means max 8 bytes of payload length)
+        /// Read length - never be more than 9 bytes in size (which means max 8 bytes of payload length)
         ///     There are four kinds of encoding for the Length field: 1-byte, 2-byte, 4-byte
         /// </summary>
-        /// <param name="stream"></param>
-        /// <param name="bytesInLength"></param>
-        /// <returns></returns>
+        /// <param name="stream">
+        /// </param>
+        /// <param name="bytesInLength">
+        /// </param>
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
         private long GetBasicEncodingRuleLength(Stream stream, out int bytesInLength)
         {
             int first = stream.ReadByte();
@@ -162,6 +235,15 @@
             return first;
         }
 
+        /// <summary>
+        /// The is key.
+        /// </summary>
+        /// <param name="key">
+        /// The key.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool IsKey(byte[] key)
         {
             if (KeySize != key.Length)

@@ -1,122 +1,191 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
-using System.Collections.Generic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="VobSubOcrCharacter.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The vob sub ocr character.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The vob sub ocr character.
+    /// </summary>
     public sealed partial class VobSubOcrCharacter : Form
     {
-
-        private VobSubOcr _vobSubForm;
+        /// <summary>
+        /// The _additions.
+        /// </summary>
         private List<VobSubOcr.ImageCompareAddition> _additions;
 
+        /// <summary>
+        /// The _vob sub form.
+        /// </summary>
+        private VobSubOcr _vobSubForm;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VobSubOcrCharacter"/> class.
+        /// </summary>
         public VobSubOcrCharacter()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             var language = Configuration.Settings.Language.VobSubOcrCharacter;
-            Text = language.Title;
-            labelSubtitleImage.Text = language.SubtitleImage;
-            buttonExpandSelection.Text = language.ExpandSelection;
-            buttonShrinkSelection.Text = language.ShrinkSelection;
-            labelCharacters.Text = language.Characters;
-            labelCharactersAsText.Text = language.CharactersAsText;
-            checkBoxItalic.Text = language.Italic;
-            labelItalicOn.Text = language.Italic.Replace("&", string.Empty);
-            labelItalicOn.Visible = false;
-            buttonAbort.Text = language.Abort;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = language.Skip;
-            nordicToolStripMenuItem.Text = language.Nordic;
-            spanishToolStripMenuItem.Text = language.Spanish;
-            germanToolStripMenuItem.Text = language.German;
-            checkBoxAutoSubmitOfFirstChar.Text = language.AutoSubmitOnFirstChar;
+            this.Text = language.Title;
+            this.labelSubtitleImage.Text = language.SubtitleImage;
+            this.buttonExpandSelection.Text = language.ExpandSelection;
+            this.buttonShrinkSelection.Text = language.ShrinkSelection;
+            this.labelCharacters.Text = language.Characters;
+            this.labelCharactersAsText.Text = language.CharactersAsText;
+            this.checkBoxItalic.Text = language.Italic;
+            this.labelItalicOn.Text = language.Italic.Replace("&", string.Empty);
+            this.labelItalicOn.Visible = false;
+            this.buttonAbort.Text = language.Abort;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = language.Skip;
+            this.nordicToolStripMenuItem.Text = language.Nordic;
+            this.spanishToolStripMenuItem.Text = language.Spanish;
+            this.germanToolStripMenuItem.Text = language.German;
+            this.checkBoxAutoSubmitOfFirstChar.Text = language.AutoSubmitOnFirstChar;
 
-            dataGridView1.Rows.Add("♪", "á", "é", "í", "ó", "ö", "ő", "ú", "ü", "ű");
-            dataGridView1.Rows.Add("♫", "Á", "É", "Í", "Ó", "Ö", "Ő", "Ú", "Ü", "Ű");
+            this.dataGridView1.Rows.Add("♪", "á", "é", "í", "ó", "ö", "ő", "ú", "ü", "ű");
+            this.dataGridView1.Rows.Add("♫", "Á", "É", "Í", "Ó", "Ö", "Ő", "Ú", "Ü", "Ű");
 
-            Utilities.FixLargeFonts(this, buttonCancel);
+            Utilities.FixLargeFonts(this, this.buttonCancel);
         }
 
+        /// <summary>
+        /// Gets the manual recognized characters.
+        /// </summary>
         public string ManualRecognizedCharacters
         {
             get
             {
-                return textBoxCharacters.Text;
+                return this.textBoxCharacters.Text;
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is italic.
+        /// </summary>
         public bool IsItalic
         {
             get
             {
-                return checkBoxItalic.Checked;
+                return this.checkBoxItalic.Checked;
             }
         }
 
+        /// <summary>
+        /// Gets the form position.
+        /// </summary>
         public Point FormPosition
         {
             get
             {
-                return new Point(Left, Top);
+                return new Point(this.Left, this.Top);
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether expand selection.
+        /// </summary>
         public bool ExpandSelection { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether shrink selection.
+        /// </summary>
         public bool ShrinkSelection { get; private set; }
 
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="vobSubImage">
+        /// The vob sub image.
+        /// </param>
+        /// <param name="character">
+        /// The character.
+        /// </param>
+        /// <param name="position">
+        /// The position.
+        /// </param>
+        /// <param name="italicChecked">
+        /// The italic checked.
+        /// </param>
+        /// <param name="showShrink">
+        /// The show shrink.
+        /// </param>
+        /// <param name="bestGuess">
+        /// The best guess.
+        /// </param>
+        /// <param name="additions">
+        /// The additions.
+        /// </param>
+        /// <param name="vobSubForm">
+        /// The vob sub form.
+        /// </param>
         internal void Initialize(Bitmap vobSubImage, ImageSplitterItem character, Point position, bool italicChecked, bool showShrink, VobSubOcr.CompareMatch bestGuess, List<VobSubOcr.ImageCompareAddition> additions, VobSubOcr vobSubForm)
         {
-            ShrinkSelection = false;
-            ExpandSelection = false;
+            this.ShrinkSelection = false;
+            this.ExpandSelection = false;
 
-            textBoxCharacters.Text = string.Empty;
+            this.textBoxCharacters.Text = string.Empty;
             if (bestGuess != null)
             {
-                buttonGuess.Visible = false; // hm... not too useful :(
-                buttonGuess.Text = bestGuess.Text;
+                this.buttonGuess.Visible = false; // hm... not too useful :(
+                this.buttonGuess.Text = bestGuess.Text;
             }
             else
             {
-                buttonGuess.Visible = false;
+                this.buttonGuess.Visible = false;
             }
 
-            _vobSubForm = vobSubForm;
-            _additions = additions;
+            this._vobSubForm = vobSubForm;
+            this._additions = additions;
 
-            buttonShrinkSelection.Visible = showShrink;
+            this.buttonShrinkSelection.Visible = showShrink;
 
-            checkBoxItalic.Checked = italicChecked;
+            this.checkBoxItalic.Checked = italicChecked;
             if (position.X != -1 && position.Y != -1)
             {
-                StartPosition = FormStartPosition.Manual;
-                Left = position.X;
-                Top = position.Y;
+                this.StartPosition = FormStartPosition.Manual;
+                this.Left = position.X;
+                this.Top = position.Y;
             }
 
-            pictureBoxSubtitleImage.Image = vobSubImage;
-            pictureBoxCharacter.Image = character.NikseBitmap.GetBitmap();
+            this.pictureBoxSubtitleImage.Image = vobSubImage;
+            this.pictureBoxCharacter.Image = character.NikseBitmap.GetBitmap();
 
-            if (_additions.Count > 0)
+            if (this._additions.Count > 0)
             {
-                var last = _additions[_additions.Count - 1];
-                buttonLastEdit.Visible = true;
+                var last = this._additions[this._additions.Count - 1];
+                this.buttonLastEdit.Visible = true;
                 if (last.Italic)
-                    buttonLastEdit.Font = new Font(buttonLastEdit.Font.FontFamily, buttonLastEdit.Font.Size, FontStyle.Italic);
+                {
+                    this.buttonLastEdit.Font = new Font(this.buttonLastEdit.Font.FontFamily, this.buttonLastEdit.Font.Size, FontStyle.Italic);
+                }
                 else
-                    buttonLastEdit.Font = new Font(buttonLastEdit.Font.FontFamily, buttonLastEdit.Font.Size);
-                pictureBoxLastEdit.Visible = true;
-                pictureBoxLastEdit.Image = last.Image.GetBitmap();
-                buttonLastEdit.Text = string.Format(Configuration.Settings.Language.VobSubOcrCharacter.EditLastX, last.Text);
-                pictureBoxLastEdit.Top = buttonLastEdit.Top - last.Image.Height + buttonLastEdit.Height;
+                {
+                    this.buttonLastEdit.Font = new Font(this.buttonLastEdit.Font.FontFamily, this.buttonLastEdit.Font.Size);
+                }
+
+                this.pictureBoxLastEdit.Visible = true;
+                this.pictureBoxLastEdit.Image = last.Image.GetBitmap();
+                this.buttonLastEdit.Text = string.Format(Configuration.Settings.Language.VobSubOcrCharacter.EditLastX, last.Text);
+                this.pictureBoxLastEdit.Top = this.buttonLastEdit.Top - last.Image.Height + this.buttonLastEdit.Height;
             }
             else
             {
-                buttonLastEdit.Visible = false;
-                pictureBoxLastEdit.Visible = false;
+                this.buttonLastEdit.Visible = false;
+                this.pictureBoxLastEdit.Visible = false;
             }
 
             Bitmap org = (Bitmap)vobSubImage.Clone();
@@ -125,129 +194,252 @@ namespace Nikse.SubtitleEdit.Forms
             g.DrawImage(org, 0, 0, org.Width, org.Height);
             g.DrawRectangle(Pens.Red, character.X, character.Y, character.NikseBitmap.Width, character.NikseBitmap.Height - 1);
             g.Dispose();
-            pictureBoxSubtitleImage.Image = bm;
+            this.pictureBoxSubtitleImage.Image = bm;
 
-            pictureBoxCharacter.Top = labelCharacters.Top + 16;
-            pictureBoxLastEdit.Left = buttonLastEdit.Left + buttonLastEdit.Width + 5;
+            this.pictureBoxCharacter.Top = this.labelCharacters.Top + 16;
+            this.pictureBoxLastEdit.Left = this.buttonLastEdit.Left + this.buttonLastEdit.Width + 5;
         }
 
+        /// <summary>
+        /// The button ok click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonOkClick(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The text box characters key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void TextBoxCharactersKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                DialogResult = DialogResult.OK;
+            {
+                this.DialogResult = DialogResult.OK;
+            }
             else if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
 
+        /// <summary>
+        /// The check box italic checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void CheckBoxItalicCheckedChanged(object sender, EventArgs e)
         {
-            textBoxCharacters.Focus();
+            this.textBoxCharacters.Focus();
 
-            if (checkBoxItalic.Checked)
+            if (this.checkBoxItalic.Checked)
             {
-                labelCharactersAsText.Font = new Font(labelCharactersAsText.Font.FontFamily, labelCharactersAsText.Font.Size, FontStyle.Italic);
-                textBoxCharacters.Font = new Font(textBoxCharacters.Font.FontFamily, textBoxCharacters.Font.Size, FontStyle.Italic);
-                labelItalicOn.Visible = true;
+                this.labelCharactersAsText.Font = new Font(this.labelCharactersAsText.Font.FontFamily, this.labelCharactersAsText.Font.Size, FontStyle.Italic);
+                this.textBoxCharacters.Font = new Font(this.textBoxCharacters.Font.FontFamily, this.textBoxCharacters.Font.Size, FontStyle.Italic);
+                this.labelItalicOn.Visible = true;
             }
             else
             {
-                labelCharactersAsText.Font = new Font(labelCharactersAsText.Font.FontFamily, labelCharactersAsText.Font.Size);
-                textBoxCharacters.Font = new Font(textBoxCharacters.Font.FontFamily, textBoxCharacters.Font.Size);
-                labelItalicOn.Visible = false;
+                this.labelCharactersAsText.Font = new Font(this.labelCharactersAsText.Font.FontFamily, this.labelCharactersAsText.Font.Size);
+                this.textBoxCharacters.Font = new Font(this.textBoxCharacters.Font.FontFamily, this.textBoxCharacters.Font.Size);
+                this.labelItalicOn.Visible = false;
             }
         }
 
+        /// <summary>
+        /// The button expand selection click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonExpandSelectionClick(object sender, EventArgs e)
         {
-            ExpandSelection = true;
-            DialogResult = DialogResult.OK;
+            this.ExpandSelection = true;
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The button shrink selection click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void ButtonShrinkSelectionClick(object sender, EventArgs e)
         {
-            ShrinkSelection = true;
-            DialogResult = DialogResult.OK;
+            this.ShrinkSelection = true;
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The button last edit_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonLastEdit_Click(object sender, EventArgs e)
         {
-            if (_additions.Count > 0)
+            if (this._additions.Count > 0)
             {
-                var last = _additions[_additions.Count - 1];
-                var result = _vobSubForm.EditImageCompareCharacters(last.Name, last.Text);
+                var last = this._additions[this._additions.Count - 1];
+                var result = this._vobSubForm.EditImageCompareCharacters(last.Name, last.Text);
                 if (result == DialogResult.OK)
                 {
-                    _additions.RemoveAt(_additions.Count - 1);
-                    _vobSubForm.StartOcrFromDelayed();
-                    DialogResult = DialogResult.Abort;
+                    this._additions.RemoveAt(this._additions.Count - 1);
+                    this._vobSubForm.StartOcrFromDelayed();
+                    this.DialogResult = DialogResult.Abort;
                 }
             }
         }
 
+        /// <summary>
+        /// The button guess_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonGuess_Click(object sender, EventArgs e)
         {
-            textBoxCharacters.Text = buttonGuess.Text;
-            DialogResult = DialogResult.OK;
+            this.textBoxCharacters.Text = this.buttonGuess.Text;
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The insert language character.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void InsertLanguageCharacter(object sender, EventArgs e)
         {
-            textBoxCharacters.Text = textBoxCharacters.Text.Insert(textBoxCharacters.SelectionStart, (sender as ToolStripMenuItem).Text);
+            this.textBoxCharacters.Text = this.textBoxCharacters.Text.Insert(this.textBoxCharacters.SelectionStart, (sender as ToolStripMenuItem).Text);
         }
 
+        /// <summary>
+        /// The text box characters_ text changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void textBoxCharacters_TextChanged(object sender, EventArgs e)
         {
-            if (checkBoxAutoSubmitOfFirstChar.Checked && textBoxCharacters.Text.Length > 0)
-                DialogResult = DialogResult.OK;
+            if (this.checkBoxAutoSubmitOfFirstChar.Checked && this.textBoxCharacters.Text.Length > 0)
+            {
+                this.DialogResult = DialogResult.OK;
+            }
         }
 
+        /// <summary>
+        /// The vob sub ocr character_ shown.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void VobSubOcrCharacter_Shown(object sender, EventArgs e)
         {
-            textBoxCharacters.Focus();
+            this.textBoxCharacters.Focus();
         }
 
+        /// <summary>
+        /// The check box auto submit of first char_ checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void checkBoxAutoSubmitOfFirstChar_CheckedChanged(object sender, EventArgs e)
         {
-            Focus();
-            textBoxCharacters.Focus();
-            textBoxCharacters.Focus();
+            this.Focus();
+            this.textBoxCharacters.Focus();
+            this.textBoxCharacters.Focus();
             Application.DoEvents();
-            textBoxCharacters.Focus();
-            textBoxCharacters.Focus();
+            this.textBoxCharacters.Focus();
+            this.textBoxCharacters.Focus();
         }
 
+        /// <summary>
+        /// The vob sub ocr character_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void VobSubOcrCharacter_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Modifiers == Keys.Alt && e.KeyCode == Keys.Left && buttonShrinkSelection.Visible)
+            if (e.Modifiers == Keys.Alt && e.KeyCode == Keys.Left && this.buttonShrinkSelection.Visible)
             {
-                ButtonShrinkSelectionClick(null, null);
+                this.ButtonShrinkSelectionClick(null, null);
                 e.SuppressKeyPress = true;
             }
-            else if (e.Modifiers == Keys.Alt && e.KeyCode == Keys.Right && buttonExpandSelection.Visible)
+            else if (e.Modifiers == Keys.Alt && e.KeyCode == Keys.Right && this.buttonExpandSelection.Visible)
             {
-                ButtonExpandSelectionClick(null, null);
+                this.ButtonExpandSelectionClick(null, null);
                 e.SuppressKeyPress = true;
             }
-            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Subtract && buttonShrinkSelection.Visible)
+            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Subtract && this.buttonShrinkSelection.Visible)
             {
-                ButtonShrinkSelectionClick(null, null);
+                this.ButtonShrinkSelectionClick(null, null);
                 e.SuppressKeyPress = true;
             }
-            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Add && buttonExpandSelection.Visible)
+            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Add && this.buttonExpandSelection.Visible)
             {
-                ButtonExpandSelectionClick(null, null);
+                this.ButtonExpandSelectionClick(null, null);
                 e.SuppressKeyPress = true;
             }
         }
 
+        /// <summary>
+        /// The data grid view 1_ cell content click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            textBoxCharacters.Text = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+            this.textBoxCharacters.Text = this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
         }
     }
 }

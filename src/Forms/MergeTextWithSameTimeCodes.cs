@@ -1,68 +1,146 @@
-﻿using Nikse.SubtitleEdit.Logic;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MergeTextWithSameTimeCodes.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The merge text with same time codes.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Text;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The merge text with same time codes.
+    /// </summary>
     public partial class MergeTextWithSameTimeCodes : Form
     {
-        private Subtitle _subtitle;
-        private Subtitle _mergedSubtitle;
-        private bool _loading = true;
+        /// <summary>
+        /// The _preview timer.
+        /// </summary>
         private readonly Timer _previewTimer = new Timer();
-        public int NumberOfMerges { get; private set; }
-        private string _language;
+
+        /// <summary>
+        /// The _is fix allowed list.
+        /// </summary>
         private Dictionary<int, bool> _isFixAllowedList = new Dictionary<int, bool>();
 
-        public Subtitle MergedSubtitle
-        {
-            get { return _mergedSubtitle; }
-        }
+        /// <summary>
+        /// The _language.
+        /// </summary>
+        private string _language;
 
+        /// <summary>
+        /// The _loading.
+        /// </summary>
+        private bool _loading = true;
+
+        /// <summary>
+        /// The _merged subtitle.
+        /// </summary>
+        private Subtitle _mergedSubtitle;
+
+        /// <summary>
+        /// The _subtitle.
+        /// </summary>
+        private Subtitle _subtitle;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MergeTextWithSameTimeCodes"/> class.
+        /// </summary>
         public MergeTextWithSameTimeCodes()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            _previewTimer.Tick += previewTimer_Tick;
-            _previewTimer.Interval = 250;
+            this._previewTimer.Tick += this.previewTimer_Tick;
+            this._previewTimer.Interval = 250;
 
-            Utilities.FixLargeFonts(this, buttonOK);
+            Utilities.FixLargeFonts(this, this.buttonOK);
         }
 
+        /// <summary>
+        /// Gets the number of merges.
+        /// </summary>
+        public int NumberOfMerges { get; private set; }
+
+        /// <summary>
+        /// Gets the merged subtitle.
+        /// </summary>
+        public Subtitle MergedSubtitle
+        {
+            get
+            {
+                return this._mergedSubtitle;
+            }
+        }
+
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
         public void Initialize(Subtitle subtitle)
         {
             if (subtitle.Paragraphs.Count > 0)
+            {
                 subtitle.Renumber(subtitle.Paragraphs[0].Number);
+            }
 
-            Text = Configuration.Settings.Language.MergeTextWithSameTimeCodes.Title;
-            labelMaxDifferenceMS.Text = Configuration.Settings.Language.MergeTextWithSameTimeCodes.MaxDifferenceMilliseconds;
-            checkBoxAutoBreakOn.Text = Configuration.Settings.Language.MergeTextWithSameTimeCodes.ReBreakLines;
-            listViewFixes.Columns[0].Text = Configuration.Settings.Language.General.Apply;
-            listViewFixes.Columns[1].Text = Configuration.Settings.Language.General.LineNumber;
-            listViewFixes.Columns[2].Text = Configuration.Settings.Language.MergeTextWithSameTimeCodes.MergedText;
+            this.Text = Configuration.Settings.Language.MergeTextWithSameTimeCodes.Title;
+            this.labelMaxDifferenceMS.Text = Configuration.Settings.Language.MergeTextWithSameTimeCodes.MaxDifferenceMilliseconds;
+            this.checkBoxAutoBreakOn.Text = Configuration.Settings.Language.MergeTextWithSameTimeCodes.ReBreakLines;
+            this.listViewFixes.Columns[0].Text = Configuration.Settings.Language.General.Apply;
+            this.listViewFixes.Columns[1].Text = Configuration.Settings.Language.General.LineNumber;
+            this.listViewFixes.Columns[2].Text = Configuration.Settings.Language.MergeTextWithSameTimeCodes.MergedText;
 
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
-            SubtitleListview1.InitializeLanguage(Configuration.Settings.Language.General, Configuration.Settings);
-            Utilities.InitializeSubtitleFont(SubtitleListview1);
-            SubtitleListview1.AutoSizeAllColumns(this);
-            NumberOfMerges = 0;
-            _subtitle = subtitle;
-            MergeTextWithSameTimeCodes_ResizeEnd(null, null);
-            _language = Utilities.AutoDetectGoogleLanguage(subtitle);
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            this.SubtitleListview1.InitializeLanguage(Configuration.Settings.Language.General, Configuration.Settings);
+            Utilities.InitializeSubtitleFont(this.SubtitleListview1);
+            this.SubtitleListview1.AutoSizeAllColumns(this);
+            this.NumberOfMerges = 0;
+            this._subtitle = subtitle;
+            this.MergeTextWithSameTimeCodes_ResizeEnd(null, null);
+            this._language = Utilities.AutoDetectGoogleLanguage(subtitle);
         }
 
+        /// <summary>
+        /// The preview timer_ tick.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void previewTimer_Tick(object sender, EventArgs e)
         {
-            _previewTimer.Stop();
-            Cursor = Cursors.WaitCursor;
-            GeneratePreview();
-            Cursor = Cursors.Default;
+            this._previewTimer.Stop();
+            this.Cursor = Cursors.WaitCursor;
+            this.GeneratePreview();
+            this.Cursor = Cursors.Default;
         }
 
+        /// <summary>
+        /// The add to list view.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <param name="lineNumbers">
+        /// The line numbers.
+        /// </param>
+        /// <param name="newText">
+        /// The new text.
+        /// </param>
         private void AddToListView(Paragraph p, string lineNumbers, string newText)
         {
             var item = new ListViewItem(string.Empty) { Tag = p, Checked = true };
@@ -72,88 +150,150 @@ namespace Nikse.SubtitleEdit.Forms
             subItem = new ListViewItem.ListViewSubItem(item, newText.Replace(Environment.NewLine, Configuration.Settings.General.ListViewLineSeparatorString));
             item.SubItems.Add(subItem);
 
-            listViewFixes.Items.Add(item);
+            this.listViewFixes.Items.Add(item);
 
             foreach (string number in lineNumbers.TrimEnd(',').Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 int key = Convert.ToInt32(number);
-                if (!_isFixAllowedList.ContainsKey(key))
-                    _isFixAllowedList.Add(key, true);
+                if (!this._isFixAllowedList.ContainsKey(key))
+                {
+                    this._isFixAllowedList.Add(key, true);
+                }
             }
         }
 
+        /// <summary>
+        /// The generate preview.
+        /// </summary>
         private void GeneratePreview()
         {
-            if (_subtitle == null)
+            if (this._subtitle == null)
+            {
                 return;
+            }
 
             var mergedIndexes = new List<int>();
 
-            NumberOfMerges = 0;
-            SubtitleListview1.Items.Clear();
-            SubtitleListview1.BeginUpdate();
+            this.NumberOfMerges = 0;
+            this.SubtitleListview1.Items.Clear();
+            this.SubtitleListview1.BeginUpdate();
             int count;
-            _mergedSubtitle = MergeLinesWithSameTimeCodes(_subtitle, mergedIndexes, out count, true, checkBoxAutoBreakOn.Checked, (int)numericUpDownMaxMillisecondsBetweenLines.Value);
-            NumberOfMerges = count;
+            this._mergedSubtitle = this.MergeLinesWithSameTimeCodes(this._subtitle, mergedIndexes, out count, true, this.checkBoxAutoBreakOn.Checked, (int)this.numericUpDownMaxMillisecondsBetweenLines.Value);
+            this.NumberOfMerges = count;
 
-            SubtitleListview1.Fill(_subtitle);
+            this.SubtitleListview1.Fill(this._subtitle);
             foreach (var index in mergedIndexes)
             {
-                SubtitleListview1.SetBackgroundColor(index, Color.Green);
+                this.SubtitleListview1.SetBackgroundColor(index, Color.Green);
             }
-            SubtitleListview1.EndUpdate();
-            groupBoxLinesFound.Text = string.Format(Configuration.Settings.Language.MergeTextWithSameTimeCodes.NumberOfMergesX, NumberOfMerges);
+
+            this.SubtitleListview1.EndUpdate();
+            this.groupBoxLinesFound.Text = string.Format(Configuration.Settings.Language.MergeTextWithSameTimeCodes.NumberOfMergesX, this.NumberOfMerges);
         }
 
+        /// <summary>
+        /// The is fix allowed.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool IsFixAllowed(Paragraph p)
         {
-            if (_isFixAllowedList.ContainsKey(p.Number))
-                return _isFixAllowedList[p.Number];
+            if (this._isFixAllowedList.ContainsKey(p.Number))
+            {
+                return this._isFixAllowedList[p.Number];
+            }
+
             return true;
         }
 
+        /// <summary>
+        /// The list view fixes_ item checked.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void listViewFixes_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
-            if (_loading)
+            if (this._loading)
+            {
                 return;
+            }
 
             foreach (string number in e.Item.SubItems[1].Text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 int no = Convert.ToInt32(number);
-                if (_isFixAllowedList.ContainsKey(no))
-                    _isFixAllowedList[no] = e.Item.Checked;
+                if (this._isFixAllowedList.ContainsKey(no))
+                {
+                    this._isFixAllowedList[no] = e.Item.Checked;
+                }
             }
 
             var mergedIndexes = new List<int>();
 
-            NumberOfMerges = 0;
-            Cursor = Cursors.WaitCursor;
-            SubtitleListview1.Items.Clear();
-            SubtitleListview1.BeginUpdate();
+            this.NumberOfMerges = 0;
+            this.Cursor = Cursors.WaitCursor;
+            this.SubtitleListview1.Items.Clear();
+            this.SubtitleListview1.BeginUpdate();
             int count;
-            _mergedSubtitle = MergeLinesWithSameTimeCodes(_subtitle, mergedIndexes, out count, false, checkBoxAutoBreakOn.Checked, (int)numericUpDownMaxMillisecondsBetweenLines.Value);
-            NumberOfMerges = count;
-            SubtitleListview1.Fill(_subtitle);
+            this._mergedSubtitle = this.MergeLinesWithSameTimeCodes(this._subtitle, mergedIndexes, out count, false, this.checkBoxAutoBreakOn.Checked, (int)this.numericUpDownMaxMillisecondsBetweenLines.Value);
+            this.NumberOfMerges = count;
+            this.SubtitleListview1.Fill(this._subtitle);
             foreach (var index in mergedIndexes)
             {
-                SubtitleListview1.SetBackgroundColor(index, Color.Green);
+                this.SubtitleListview1.SetBackgroundColor(index, Color.Green);
             }
-            SubtitleListview1.EndUpdate();
-            Cursor = Cursors.Default;
-            groupBoxLinesFound.Text = string.Format(Configuration.Settings.Language.MergeTextWithSameTimeCodes.NumberOfMergesX, NumberOfMerges);
+
+            this.SubtitleListview1.EndUpdate();
+            this.Cursor = Cursors.Default;
+            this.groupBoxLinesFound.Text = string.Format(Configuration.Settings.Language.MergeTextWithSameTimeCodes.NumberOfMergesX, this.NumberOfMerges);
         }
 
+        /// <summary>
+        /// The merge lines with same time codes.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="mergedIndexes">
+        /// The merged indexes.
+        /// </param>
+        /// <param name="numberOfMerges">
+        /// The number of merges.
+        /// </param>
+        /// <param name="clearFixes">
+        /// The clear fixes.
+        /// </param>
+        /// <param name="reBreak">
+        /// The re break.
+        /// </param>
+        /// <param name="maxMsBetween">
+        /// The max ms between.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Subtitle"/>.
+        /// </returns>
         public Subtitle MergeLinesWithSameTimeCodes(Subtitle subtitle, List<int> mergedIndexes, out int numberOfMerges, bool clearFixes, bool reBreak, int maxMsBetween)
         {
-            listViewFixes.BeginUpdate();
+            this.listViewFixes.BeginUpdate();
             var removed = new List<int>();
-            if (!_loading)
-                listViewFixes.ItemChecked -= listViewFixes_ItemChecked;
+            if (!this._loading)
+            {
+                this.listViewFixes.ItemChecked -= this.listViewFixes_ItemChecked;
+            }
+
             if (clearFixes)
             {
-                listViewFixes.Items.Clear();
-                _isFixAllowedList = new Dictionary<int, bool>();
+                this.listViewFixes.Items.Clear();
+                this._isFixAllowedList = new Dictionary<int, bool>();
             }
+
             numberOfMerges = 0;
             var mergedSubtitle = new Subtitle();
             bool lastMerged = false;
@@ -166,10 +306,11 @@ namespace Nikse.SubtitleEdit.Forms
                     p = new Paragraph(subtitle.GetParagraphOrDefault(i - 1));
                     mergedSubtitle.Paragraphs.Add(p);
                 }
+
                 Paragraph next = subtitle.GetParagraphOrDefault(i);
                 if (next != null)
                 {
-                    if (QualifiesForMerge(p, next, maxMsBetween) && IsFixAllowed(p))
+                    if (QualifiesForMerge(p, next, maxMsBetween) && this.IsFixAllowed(p))
                     {
                         if (p.Text.StartsWith("<i>", StringComparison.Ordinal) && p.Text.EndsWith("</i>", StringComparison.Ordinal) && next.Text.StartsWith("<i>", StringComparison.Ordinal) && next.Text.EndsWith("</i>", StringComparison.Ordinal))
                         {
@@ -179,21 +320,31 @@ namespace Nikse.SubtitleEdit.Forms
                         {
                             p.Text = p.Text + Environment.NewLine + next.Text;
                         }
+
                         if (reBreak)
-                            p.Text = Utilities.AutoBreakLine(p.Text, _language);
+                        {
+                            p.Text = Utilities.AutoBreakLine(p.Text, this._language);
+                        }
+
                         lastMerged = true;
                         removed.Add(i);
                         numberOfMerges++;
                         if (!mergedIndexes.Contains(i))
+                        {
                             mergedIndexes.Add(i);
+                        }
+
                         if (!mergedIndexes.Contains(i - 1))
+                        {
                             mergedIndexes.Add(i - 1);
+                        }
 
                         if (!("," + lineNumbers).Contains("," + p.Number + ","))
                         {
                             lineNumbers.Append(p.Number);
                             lineNumbers.Append(',');
                         }
+
                         if (!("," + lineNumbers).Contains("," + next.Number + ","))
                         {
                             lineNumbers.Append(next.Number);
@@ -212,78 +363,167 @@ namespace Nikse.SubtitleEdit.Forms
 
                 if (!removed.Contains(i) && lineNumbers.Length > 0 && clearFixes)
                 {
-                    AddToListView(p, lineNumbers.ToString(), p.Text);
+                    this.AddToListView(p, lineNumbers.ToString(), p.Text);
                     lineNumbers = new StringBuilder();
                 }
             }
+
             if (lineNumbers.Length > 0 && clearFixes && p != null)
             {
-                AddToListView(p, lineNumbers.ToString(), p.Text);
+                this.AddToListView(p, lineNumbers.ToString(), p.Text);
             }
-            if (!lastMerged)
-                mergedSubtitle.Paragraphs.Add(new Paragraph(subtitle.GetParagraphOrDefault(subtitle.Paragraphs.Count - 1)));
 
-            listViewFixes.EndUpdate();
-            if (!_loading)
-                listViewFixes.ItemChecked += listViewFixes_ItemChecked;
+            if (!lastMerged)
+            {
+                mergedSubtitle.Paragraphs.Add(new Paragraph(subtitle.GetParagraphOrDefault(subtitle.Paragraphs.Count - 1)));
+            }
+
+            this.listViewFixes.EndUpdate();
+            if (!this._loading)
+            {
+                this.listViewFixes.ItemChecked += this.listViewFixes_ItemChecked;
+            }
 
             mergedSubtitle.Renumber();
             return mergedSubtitle;
         }
 
+        /// <summary>
+        /// The qualifies for merge.
+        /// </summary>
+        /// <param name="p">
+        /// The p.
+        /// </param>
+        /// <param name="next">
+        /// The next.
+        /// </param>
+        /// <param name="maxMsBetween">
+        /// The max ms between.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool QualifiesForMerge(Paragraph p, Paragraph next, int maxMsBetween)
         {
             if (p == null || next == null)
+            {
                 return false;
+            }
 
-            return Math.Abs(next.StartTime.TotalMilliseconds - p.StartTime.TotalMilliseconds) <= maxMsBetween &&
-                   Math.Abs(next.EndTime.TotalMilliseconds - p.EndTime.TotalMilliseconds) <= maxMsBetween;
+            return Math.Abs(next.StartTime.TotalMilliseconds - p.StartTime.TotalMilliseconds) <= maxMsBetween && Math.Abs(next.EndTime.TotalMilliseconds - p.EndTime.TotalMilliseconds) <= maxMsBetween;
         }
 
+        /// <summary>
+        /// The merge text with same time codes_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void MergeTextWithSameTimeCodes_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
         }
 
+        /// <summary>
+        /// The button o k_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// The button cancel_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
         }
 
+        /// <summary>
+        /// The merge text with same time codes_ resize end.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void MergeTextWithSameTimeCodes_ResizeEnd(object sender, EventArgs e)
         {
-            columnHeaderText.Width = -2;
+            this.columnHeaderText.Width = -2;
         }
 
+        /// <summary>
+        /// The merge text with same time codes_ shown.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void MergeTextWithSameTimeCodes_Shown(object sender, EventArgs e)
         {
-            GeneratePreview();
-            listViewFixes.Focus();
-            if (listViewFixes.Items.Count > 0)
-                listViewFixes.Items[0].Selected = true;
-            _loading = false;
-            listViewFixes.ItemChecked += listViewFixes_ItemChecked;
+            this.GeneratePreview();
+            this.listViewFixes.Focus();
+            if (this.listViewFixes.Items.Count > 0)
+            {
+                this.listViewFixes.Items[0].Selected = true;
+            }
+
+            this._loading = false;
+            this.listViewFixes.ItemChecked += this.listViewFixes_ItemChecked;
         }
 
+        /// <summary>
+        /// The check box auto break on_ checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void checkBoxAutoBreakOn_CheckedChanged(object sender, EventArgs e)
         {
-            Cursor = Cursors.WaitCursor;
-            GeneratePreview();
-            Cursor = Cursors.Default;
+            this.Cursor = Cursors.WaitCursor;
+            this.GeneratePreview();
+            this.Cursor = Cursors.Default;
         }
 
+        /// <summary>
+        /// The numeric up down max milliseconds between lines_ value changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void numericUpDownMaxMillisecondsBetweenLines_ValueChanged(object sender, EventArgs e)
         {
-            Cursor = Cursors.WaitCursor;
-            GeneratePreview();
-            Cursor = Cursors.Default;
+            this.Cursor = Cursors.WaitCursor;
+            this.GeneratePreview();
+            this.Cursor = Cursors.Default;
         }
-
     }
 }

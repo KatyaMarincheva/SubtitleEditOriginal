@@ -1,16 +1,12 @@
-﻿// Author: Adalberto L. Simeone (Taranto, Italy)
-// E-Mail: avengerdragon@gmail.com
-// Website: http://www.avengersutd.com/blog
-//
-// This source code is Intellectual property of the Author
-// and is released under the Creative Commons Attribution
-// NonCommercial License, available at:
-// http://creativecommons.org/licenses/by-nc/3.0/
-// You can alter and use this source code as you wish,
-// provided that you do not use the results in commercial
-// projects, without the express and written consent of
-// the Author.
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright company="" file="ColorWheel.cs">
+//   
+// </copyright>
+// <summary>
+//   The color wheel.
+// </summary>
+// 
+// --------------------------------------------------------------------------------------------------------------------
 namespace Nikse.SubtitleEdit.Logic.ColorChooser
 {
     using System;
@@ -21,12 +17,24 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
 
     using Nikse.SubtitleEdit.Properties;
 
+    /// <summary>
+    /// The color wheel.
+    /// </summary>
     public class ColorWheel : IDisposable
     {
         // These resources should be disposed
         // of when you're done with them.
         #region Delegates
 
+        /// <summary>
+        /// The color changed event handler.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         public delegate void ColorChangedEventHandler(object sender, ColorChangedEventArgs e);
 
         #endregion Delegates
@@ -34,20 +42,44 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
         // Keep track of the current mouse state.
         #region MouseState enum
 
+        /// <summary>
+        /// The mouse state.
+        /// </summary>
         public enum MouseState
         {
+            /// <summary>
+            /// The mouse up.
+            /// </summary>
             MouseUp, 
 
+            /// <summary>
+            /// The click on color.
+            /// </summary>
             ClickOnColor, 
 
+            /// <summary>
+            /// The drag in color.
+            /// </summary>
             DragInColor, 
 
+            /// <summary>
+            /// The click on brightness.
+            /// </summary>
             ClickOnBrightness, 
 
+            /// <summary>
+            /// The drag in brightness.
+            /// </summary>
             DragInBrightness, 
 
+            /// <summary>
+            /// The click outside region.
+            /// </summary>
             ClickOutsideRegion, 
 
+            /// <summary>
+            /// The drag outside region.
+            /// </summary>
             DragOutsideRegion
         }
 
@@ -57,6 +89,9 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
         // degrees and radians. There are 2*PI radians in a
         // full circle, and 360 degrees. This constant allows
         // you to convert back and forth.
+        /// <summary>
+        /// The degree s_ pe r_ radian.
+        /// </summary>
         private const double DEGREES_PER_RADIAN = 180.0 / Math.PI;
 
         // COLOR_COUNT represents the number of distinct colors
@@ -68,56 +103,137 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
         // attempting to generate the image. The color wheel
         // contains 6 sections, and each section displays
         // 256 colors. Seems like a reasonable compromise.
+        /// <summary>
+        /// The colo r_ count.
+        /// </summary>
         private const int COLOR_COUNT = 6 * 256;
 
+        /// <summary>
+        /// The brightness max.
+        /// </summary>
         private readonly int brightnessMax;
 
+        /// <summary>
+        /// The brightness min.
+        /// </summary>
         private readonly int brightnessMin;
 
+        /// <summary>
+        /// The brightness rectangle.
+        /// </summary>
         private readonly Rectangle brightnessRectangle;
 
+        /// <summary>
+        /// The brightness region.
+        /// </summary>
         private readonly Region brightnessRegion;
 
+        /// <summary>
+        /// The brightness scaling.
+        /// </summary>
         private readonly double brightnessScaling;
 
+        /// <summary>
+        /// The brightness x.
+        /// </summary>
         private readonly int brightnessX;
 
+        /// <summary>
+        /// The color region.
+        /// </summary>
         private readonly Region colorRegion;
 
+        /// <summary>
+        /// The radius.
+        /// </summary>
         private readonly int radius;
 
+        /// <summary>
+        /// The selected color rectangle.
+        /// </summary>
         private readonly Rectangle selectedColorRectangle;
 
+        /// <summary>
+        /// The argb.
+        /// </summary>
         private ColorHandler.ARGB argb;
 
         // Locations for the two "pointers" on the form.
+        /// <summary>
+        /// The brightness.
+        /// </summary>
         private int brightness = byte.MaxValue;
 
+        /// <summary>
+        /// The brightness point.
+        /// </summary>
         private Point brightnessPoint;
 
+        /// <summary>
+        /// The center point.
+        /// </summary>
         private Point centerPoint;
 
+        /// <summary>
+        /// The color changed.
+        /// </summary>
         public ColorChangedEventHandler ColorChanged;
 
+        /// <summary>
+        /// The color image.
+        /// </summary>
         private Bitmap colorImage;
 
+        /// <summary>
+        /// The color point.
+        /// </summary>
         private Point colorPoint;
 
+        /// <summary>
+        /// The color rectangle.
+        /// </summary>
         private Rectangle colorRectangle;
 
+        /// <summary>
+        /// The current state.
+        /// </summary>
         private MouseState currentState = MouseState.MouseUp;
 
+        /// <summary>
+        /// The full color.
+        /// </summary>
         private Color fullColor;
 
+        /// <summary>
+        /// The g.
+        /// </summary>
         private Graphics g;
 
         // selectedColor is the actual value selected
         // by the user. fullColor is the same color,
         // with its brightness set to 255.
+        /// <summary>
+        /// The hsv.
+        /// </summary>
         private ColorHandler.HSV HSV;
 
+        /// <summary>
+        /// The selected color.
+        /// </summary>
         private Color selectedColor = Color.White;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ColorWheel"/> class.
+        /// </summary>
+        /// <param name="colorRectangle">
+        /// The color rectangle.
+        /// </param>
+        /// <param name="brightnessRectangle">
+        /// The brightness rectangle.
+        /// </param>
+        /// <param name="selectedColorRectangle">
+        /// The selected color rectangle.
+        /// </param>
         public ColorWheel(Rectangle colorRectangle, Rectangle brightnessRectangle, Rectangle selectedColorRectangle)
         {
             // Caller must provide locations for color wheel
@@ -179,6 +295,9 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             }
         }
 
+        /// <summary>
+        /// Gets the color.
+        /// </summary>
         public Color Color
         {
             get
@@ -187,12 +306,18 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             }
         }
 
+        /// <summary>
+        /// The dispose.
+        /// </summary>
         public void Dispose()
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// The set mouse up.
+        /// </summary>
         public void SetMouseUp()
         {
             // Indicate that the user has
@@ -200,6 +325,15 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             this.currentState = MouseState.MouseUp;
         }
 
+        /// <summary>
+        /// The draw.
+        /// </summary>
+        /// <param name="g">
+        /// The g.
+        /// </param>
+        /// <param name="HSV">
+        /// The hsv.
+        /// </param>
         public void Draw(Graphics g, ColorHandler.HSV HSV)
         {
             // Given HSV values, update the screen.
@@ -209,6 +343,15 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             this.UpdateDisplay();
         }
 
+        /// <summary>
+        /// The draw.
+        /// </summary>
+        /// <param name="g">
+        /// The g.
+        /// </param>
+        /// <param name="argb">
+        /// The argb.
+        /// </param>
         public void Draw(Graphics g, ColorHandler.ARGB argb)
         {
             // Given RGB values, calculate HSV and then update the screen.
@@ -218,6 +361,15 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             this.UpdateDisplay();
         }
 
+        /// <summary>
+        /// The draw.
+        /// </summary>
+        /// <param name="g">
+        /// The g.
+        /// </param>
+        /// <param name="mousePoint">
+        /// The mouse point.
+        /// </param>
         public void Draw(Graphics g, Point mousePoint)
         {
             try
@@ -368,12 +520,27 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             }
         }
 
+        /// <summary>
+        /// The on color changed.
+        /// </summary>
+        /// <param name="argb">
+        /// The argb.
+        /// </param>
+        /// <param name="HSV">
+        /// The hsv.
+        /// </param>
         protected void OnColorChanged(ColorHandler.ARGB argb, ColorHandler.HSV HSV)
         {
             ColorChangedEventArgs e = new ColorChangedEventArgs(argb, HSV);
             this.ColorChanged(this, e);
         }
 
+        /// <summary>
+        /// The dispose.
+        /// </summary>
+        /// <param name="disposing">
+        /// The disposing.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -401,6 +568,15 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             }
         }
 
+        /// <summary>
+        /// The calc degrees.
+        /// </summary>
+        /// <param name="pt">
+        /// The pt.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         private static int CalcDegrees(Point pt)
         {
             int degrees;
@@ -449,6 +625,12 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             return degrees;
         }
 
+        /// <summary>
+        /// The get colors.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Color[]"/>.
+        /// </returns>
         private static Color[] GetColors()
         {
             // Create an array of COLOR_COUNT
@@ -468,6 +650,18 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             return Colors;
         }
 
+        /// <summary>
+        /// The get points.
+        /// </summary>
+        /// <param name="radius">
+        /// The radius.
+        /// </param>
+        /// <param name="centerPoint">
+        /// The center point.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Point[]"/>.
+        /// </returns>
         private static Point[] GetPoints(double radius, Point centerPoint)
         {
             // Generate the array of points that describe
@@ -483,6 +677,21 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             return Points;
         }
 
+        /// <summary>
+        /// The get point.
+        /// </summary>
+        /// <param name="degrees">
+        /// The degrees.
+        /// </param>
+        /// <param name="radius">
+        /// The radius.
+        /// </param>
+        /// <param name="centerPoint">
+        /// The center point.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Point"/>.
+        /// </returns>
         private static Point GetPoint(double degrees, double radius, Point centerPoint)
         {
             // Given the center of a circle and its radius, along
@@ -493,6 +702,15 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             return new Point((int)(centerPoint.X + Math.Floor(radius * Math.Cos(radians))), (int)(centerPoint.Y - Math.Floor(radius * Math.Sin(radians))));
         }
 
+        /// <summary>
+        /// The calc brightness point.
+        /// </summary>
+        /// <param name="brightness">
+        /// The brightness.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Point"/>.
+        /// </returns>
         private Point CalcBrightnessPoint(int brightness)
         {
             // Take the value for brightness (0 to 255), scale to the
@@ -502,6 +720,9 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             return new Point(this.brightnessX, (int)(this.brightnessMax - brightness / this.brightnessScaling));
         }
 
+        /// <summary>
+        /// The update display.
+        /// </summary>
         private void UpdateDisplay()
         {
             // Update the gradients, and place the
@@ -530,6 +751,12 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             }
         }
 
+        /// <summary>
+        /// The calc coords and update.
+        /// </summary>
+        /// <param name="HSV">
+        /// The hsv.
+        /// </param>
         private void CalcCoordsAndUpdate(ColorHandler.HSV HSV)
         {
             // Convert color to real-world coordinates and then calculate
@@ -560,6 +787,12 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             this.fullColor = ColorHandler.HSVtoColor(HSV.Alpha, HSV.Hue, HSV.Saturation, 255);
         }
 
+        /// <summary>
+        /// The draw linear gradient.
+        /// </summary>
+        /// <param name="TopColor">
+        /// The top color.
+        /// </param>
         private void DrawLinearGradient(Color TopColor)
         {
             // Given the top color, draw a linear gradient
@@ -571,6 +804,9 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             }
         }
 
+        /// <summary>
+        /// The create gradient.
+        /// </summary>
         private void CreateGradient()
         {
             // Create a new PathGradientBrush, supplying
@@ -600,6 +836,12 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             }
         }
 
+        /// <summary>
+        /// The draw color pointer.
+        /// </summary>
+        /// <param name="pt">
+        /// The pt.
+        /// </param>
         private void DrawColorPointer(Point pt)
         {
             // Given a point, draw the color selector.
@@ -610,6 +852,12 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             this.g.DrawRectangle(Pens.Black, pt.X - SIZE, pt.Y - SIZE, SIZE * 2, SIZE * 2);
         }
 
+        /// <summary>
+        /// The draw brightness pointer.
+        /// </summary>
+        /// <param name="pt">
+        /// The pt.
+        /// </param>
         private void DrawBrightnessPointer(Point pt)
         {
             // Draw a triangle for the

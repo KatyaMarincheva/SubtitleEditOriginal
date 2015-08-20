@@ -1,77 +1,135 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Interjections.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The interjections.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Windows.Forms;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The interjections.
+    /// </summary>
     public sealed partial class Interjections : Form
     {
+        /// <summary>
+        /// The _interjections.
+        /// </summary>
         private List<string> _interjections;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Interjections"/> class.
+        /// </summary>
         public Interjections()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <summary>
+        /// The get interjections semi colon seperated string.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public string GetInterjectionsSemiColonSeperatedString()
         {
             var sb = new StringBuilder();
-            foreach (string s in _interjections)
+            foreach (string s in this._interjections)
             {
                 sb.Append(';');
                 sb.Append(s.Trim());
             }
+
             return sb.ToString().Trim(';');
         }
 
+        /// <summary>
+        /// The interjections_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void Interjections_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                DialogResult = DialogResult.Cancel;
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
             else if (e.KeyCode == Keys.F1)
+            {
                 Utilities.ShowHelp("#remove_text_for_hi");
+            }
         }
 
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="semiColonSeperatedList">
+        /// The semi colon seperated list.
+        /// </param>
         public void Initialize(string semiColonSeperatedList)
         {
-            _interjections = new List<string>();
+            this._interjections = new List<string>();
             string[] arr = semiColonSeperatedList.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string s in arr)
             {
-                _interjections.Add(s.Trim());
+                this._interjections.Add(s.Trim());
             }
-            FillListBox();
-            Text = Configuration.Settings.Language.Interjections.Title;
+
+            this.FillListBox();
+            this.Text = Configuration.Settings.Language.Interjections.Title;
 
             // Add to interjections (or general)
-            buttonRemove.Text = Configuration.Settings.Language.Settings.Remove;
-            buttonAdd.Text = Configuration.Settings.Language.MultipleReplace.Add;
+            this.buttonRemove.Text = Configuration.Settings.Language.Settings.Remove;
+            this.buttonAdd.Text = Configuration.Settings.Language.MultipleReplace.Add;
 
-            buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            Utilities.FixLargeFonts(this, buttonOK);
+            this.buttonCancel.Text = Configuration.Settings.Language.General.Cancel;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            Utilities.FixLargeFonts(this, this.buttonOK);
         }
 
+        /// <summary>
+        /// The button add_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            string text = textBoxInterjection.Text.Trim();
-            if (text.Length > 1 && !_interjections.Contains(text))
+            string text = this.textBoxInterjection.Text.Trim();
+            if (text.Length > 1 && !this._interjections.Contains(text))
             {
-                _interjections.Add(text);
-                FillListBox();
-                textBoxInterjection.Text = string.Empty;
-                textBoxInterjection.Focus();
-                for (int i = 0; i < listBoxInterjections.Items.Count; i++)
+                this._interjections.Add(text);
+                this.FillListBox();
+                this.textBoxInterjection.Text = string.Empty;
+                this.textBoxInterjection.Focus();
+                for (int i = 0; i < this.listBoxInterjections.Items.Count; i++)
                 {
-                    if (listBoxInterjections.Items[i].ToString() == text)
+                    if (this.listBoxInterjections.Items[i].ToString() == text)
                     {
-                        listBoxInterjections.SelectedIndex = i;
+                        this.listBoxInterjections.SelectedIndex = i;
                         int top = i - 5;
                         if (top < 0)
+                        {
                             top = 0;
-                        listBoxInterjections.TopIndex = top;
+                        }
+
+                        this.listBoxInterjections.TopIndex = top;
                         break;
                     }
                 }
@@ -82,50 +140,88 @@ namespace Nikse.SubtitleEdit.Forms
             }
         }
 
+        /// <summary>
+        /// The fill list box.
+        /// </summary>
         private void FillListBox()
         {
-            _interjections.Sort();
-            listBoxInterjections.BeginUpdate();
-            listBoxInterjections.Items.Clear();
-            foreach (string s in _interjections)
+            this._interjections.Sort();
+            this.listBoxInterjections.BeginUpdate();
+            this.listBoxInterjections.Items.Clear();
+            foreach (string s in this._interjections)
             {
-                listBoxInterjections.Items.Add(s);
+                this.listBoxInterjections.Items.Add(s);
             }
-            listBoxInterjections.EndUpdate();
+
+            this.listBoxInterjections.EndUpdate();
         }
 
+        /// <summary>
+        /// The button remove_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonRemove_Click(object sender, EventArgs e)
         {
-            int index = listBoxInterjections.SelectedIndex;
-            string text = listBoxInterjections.Items[index].ToString();
+            int index = this.listBoxInterjections.SelectedIndex;
+            string text = this.listBoxInterjections.Items[index].ToString();
             if (index >= 0)
             {
                 if (MessageBox.Show(string.Format(Configuration.Settings.Language.Settings.RemoveX, text), null, MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    _interjections.Remove(text);
-                    listBoxInterjections.Items.RemoveAt(index);
-                    if (index < listBoxInterjections.Items.Count)
-                        listBoxInterjections.SelectedIndex = index;
-                    else if (listBoxInterjections.Items.Count > 0)
-                        listBoxInterjections.SelectedIndex = index - 1;
-                    listBoxInterjections.Focus();
+                    this._interjections.Remove(text);
+                    this.listBoxInterjections.Items.RemoveAt(index);
+                    if (index < this.listBoxInterjections.Items.Count)
+                    {
+                        this.listBoxInterjections.SelectedIndex = index;
+                    }
+                    else if (this.listBoxInterjections.Items.Count > 0)
+                    {
+                        this.listBoxInterjections.SelectedIndex = index - 1;
+                    }
+
+                    this.listBoxInterjections.Focus();
 
                     return;
                 }
+
                 MessageBox.Show(Configuration.Settings.Language.Settings.WordNotFound);
             }
         }
 
+        /// <summary>
+        /// The list box interjections_ selected index changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void listBoxInterjections_SelectedIndexChanged(object sender, EventArgs e)
         {
-            buttonRemove.Enabled = listBoxInterjections.SelectedIndex >= 0;
+            this.buttonRemove.Enabled = this.listBoxInterjections.SelectedIndex >= 0;
         }
 
+        /// <summary>
+        /// The text box interjection_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void textBoxInterjection_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                buttonAdd_Click(null, null);
+            {
+                this.buttonAdd_Click(null, null);
+            }
         }
-
     }
 }

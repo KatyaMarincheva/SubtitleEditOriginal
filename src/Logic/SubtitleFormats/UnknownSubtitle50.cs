@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="UnknownSubtitle50.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The unknown subtitle 50.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -16,19 +25,19 @@
     // 00.00.11.12-00.00.13.29
     // We don't have sacred rock stars
     // that we put above others.
+    /// <summary>
+    /// The unknown subtitle 50.
+    /// </summary>
     public class UnknownSubtitle50 : SubtitleFormat
     {
+        /// <summary>
+        /// The regex time codes.
+        /// </summary>
         private static readonly Regex RegexTimeCodes = new Regex(@"^\d\d\.\d\d\.\d\d\.\d\d-\d\d\.\d\d\.\d\d\.\d\d$", RegexOptions.Compiled);
 
-        private enum ExpectingLine
-        {
-            TimeCodes,
-
-            Text1,
-
-            Text2
-        }
-
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -37,6 +46,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -45,6 +57,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -53,6 +68,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             Subtitle subtitle = new Subtitle();
@@ -60,6 +87,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             const string paragraphWriteFormat = "{0}-{1}\r\n{2}";
@@ -100,6 +139,18 @@
             return sb.ToString();
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             ExpectingLine expecting = ExpectingLine.TimeCodes;
@@ -170,11 +221,32 @@
             subtitle.Renumber();
         }
 
+        /// <summary>
+        /// The format time.
+        /// </summary>
+        /// <param name="timeCode">
+        /// The time code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string FormatTime(TimeCode timeCode)
         {
             return string.Format("{0:00}.{1:00}.{2:00}.{3:00}", timeCode.Hours, timeCode.Minutes, timeCode.Seconds, MillisecondsToFramesMaxFrameRate(timeCode.Milliseconds));
         }
 
+        /// <summary>
+        /// The try read time codes line.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool TryReadTimeCodesLine(string line, Paragraph paragraph)
         {
             string[] parts = line.Replace("-", ".").Split('.');
@@ -196,6 +268,27 @@
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// The expecting line.
+        /// </summary>
+        private enum ExpectingLine
+        {
+            /// <summary>
+            /// The time codes.
+            /// </summary>
+            TimeCodes, 
+
+            /// <summary>
+            /// The text 1.
+            /// </summary>
+            Text1, 
+
+            /// <summary>
+            /// The text 2.
+            /// </summary>
+            Text2
         }
     }
 }

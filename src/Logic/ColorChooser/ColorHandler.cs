@@ -1,42 +1,95 @@
-﻿// Author: Adalberto L. Simeone (Taranto, Italy)
-// E-Mail: avengerdragon@gmail.com
-// Website: http://www.avengersutd.com/blog
-//
-// This source code is Intellectual property of the Author
-// and is released under the Creative Commons Attribution
-// NonCommercial License, available at:
-// http://creativecommons.org/licenses/by-nc/3.0/
-// You can alter and use this source code as you wish,
-// provided that you do not use the results in commercial
-// projects, without the express and written consent of
-// the Author.
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright company="" file="ColorHandler.cs">
+//   
+// </copyright>
+// <summary>
+//   The color handler.
+// </summary>
+// 
+// --------------------------------------------------------------------------------------------------------------------
 namespace Nikse.SubtitleEdit.Logic.ColorChooser
 {
     using System;
     using System.Drawing;
 
+    /// <summary>
+    /// The color handler.
+    /// </summary>
     public class ColorHandler
     {
         // Handle conversions between RGB and HSV
         // (and Color types, as well).
+        /// <summary>
+        /// The hs vto rgb.
+        /// </summary>
+        /// <param name="a">
+        /// The a.
+        /// </param>
+        /// <param name="h">
+        /// The h.
+        /// </param>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="v">
+        /// The v.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ARGB"/>.
+        /// </returns>
         public static ARGB HSVtoRGB(int a, int h, int s, int v)
         {
             // H, S, and V must all be between 0 and 255.
             return HSVtoRGB(new HSV(a, h, s, v));
         }
 
+        /// <summary>
+        /// The hs vto color.
+        /// </summary>
+        /// <param name="hsv">
+        /// The hsv.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Color"/>.
+        /// </returns>
         public static Color HSVtoColor(HSV hsv)
         {
             ARGB argb = HSVtoRGB(hsv);
             return Color.FromArgb(argb.Alpha, argb.Red, argb.Green, argb.Blue);
         }
 
+        /// <summary>
+        /// The hs vto color.
+        /// </summary>
+        /// <param name="a">
+        /// The a.
+        /// </param>
+        /// <param name="h">
+        /// The h.
+        /// </param>
+        /// <param name="s">
+        /// The s.
+        /// </param>
+        /// <param name="v">
+        /// The v.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Color"/>.
+        /// </returns>
         public static Color HSVtoColor(int a, int h, int s, int v)
         {
             return HSVtoColor(new HSV(a, h, s, v));
         }
 
+        /// <summary>
+        /// The hs vto rgb.
+        /// </summary>
+        /// <param name="HSV">
+        /// The hsv.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ARGB"/>.
+        /// </returns>
         public static ARGB HSVtoRGB(HSV HSV)
         {
             // HSV contains values scaled as in the color wheel:
@@ -129,6 +182,15 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
             return new ARGB(HSV.Alpha, (int)(r * 255), (int)(g * 255), (int)(b * 255));
         }
 
+        /// <summary>
+        /// The rg bto hsv.
+        /// </summary>
+        /// <param name="argb">
+        /// The argb.
+        /// </param>
+        /// <returns>
+        /// The <see cref="HSV"/>.
+        /// </returns>
         public static HSV RGBtoHSV(ARGB argb)
         {
             // In this function, R, G, and B values must be scaled
@@ -193,9 +255,27 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
 
         #region Nested type: ARGB
 
+        /// <summary>
+        /// The argb.
+        /// </summary>
         public struct ARGB
         {
             // All values are between 0 and 255.
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ARGB"/> struct.
+            /// </summary>
+            /// <param name="a">
+            /// The a.
+            /// </param>
+            /// <param name="r">
+            /// The r.
+            /// </param>
+            /// <param name="g">
+            /// The g.
+            /// </param>
+            /// <param name="b">
+            /// The b.
+            /// </param>
             public ARGB(int a, int r, int g, int b)
                 : this()
             {
@@ -205,14 +285,32 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
                 this.Blue = b;
             }
 
+            /// <summary>
+            /// Gets or sets the alpha.
+            /// </summary>
             public int Alpha { get; set; }
 
+            /// <summary>
+            /// Gets or sets the red.
+            /// </summary>
             public int Red { get; set; }
 
+            /// <summary>
+            /// Gets or sets the green.
+            /// </summary>
             public int Green { get; set; }
 
+            /// <summary>
+            /// Gets or sets the blue.
+            /// </summary>
             public int Blue { get; set; }
 
+            /// <summary>
+            /// The to string.
+            /// </summary>
+            /// <returns>
+            /// The <see cref="string"/>.
+            /// </returns>
             public override string ToString()
             {
                 return string.Format("({0}, {1}, {2} {3})", this.Alpha, this.Red, this.Green, this.Blue);
@@ -223,9 +321,27 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
 
         #region Nested type: HSV
 
+        /// <summary>
+        /// The hsv.
+        /// </summary>
         public struct HSV
         {
             // All values are between 0 and 255.
+            /// <summary>
+            /// Initializes a new instance of the <see cref="HSV"/> struct.
+            /// </summary>
+            /// <param name="a">
+            /// The a.
+            /// </param>
+            /// <param name="h">
+            /// The h.
+            /// </param>
+            /// <param name="s">
+            /// The s.
+            /// </param>
+            /// <param name="v">
+            /// The v.
+            /// </param>
             public HSV(int a, int h, int s, int v)
                 : this()
             {
@@ -235,14 +351,32 @@ namespace Nikse.SubtitleEdit.Logic.ColorChooser
                 this.Value = v;
             }
 
+            /// <summary>
+            /// Gets or sets the alpha.
+            /// </summary>
             public int Alpha { get; set; }
 
+            /// <summary>
+            /// Gets or sets the hue.
+            /// </summary>
             public int Hue { get; set; }
 
+            /// <summary>
+            /// Gets or sets the saturation.
+            /// </summary>
             public int Saturation { get; set; }
 
+            /// <summary>
+            /// Gets or sets the value.
+            /// </summary>
             public int Value { get; set; }
 
+            /// <summary>
+            /// The to string.
+            /// </summary>
+            /// <returns>
+            /// The <see cref="string"/>.
+            /// </returns>
             public override string ToString()
             {
                 return string.Format("({0}, {1}, {2})", this.Hue, this.Saturation, this.Value);

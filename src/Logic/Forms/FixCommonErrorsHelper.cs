@@ -1,12 +1,33 @@
-﻿namespace Nikse.SubtitleEdit.Logic.Forms
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="FixCommonErrorsHelper.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The fix common errors helper.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.Forms
 {
     using System;
     using System.Linq;
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The fix common errors helper.
+    /// </summary>
     public static class FixCommonErrorsHelper
     {
+        /// <summary>
+        /// The fix ellipses start helper.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FixEllipsesStartHelper(string text)
         {
             if (string.IsNullOrEmpty(text) || text.Trim().Length < 4 || !(text.Contains("..", StringComparison.Ordinal) || text.Contains(". .", StringComparison.Ordinal)))
@@ -138,6 +159,18 @@
             return pre + text;
         }
 
+        /// <summary>
+        /// The fix dialogs on one line.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <param name="language">
+        /// The language.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FixDialogsOnOneLine(string text, string language)
         {
             if (text.Contains(" - ") && !text.Contains(Environment.NewLine))
@@ -217,6 +250,15 @@
             return text;
         }
 
+        /// <summary>
+        /// The is previous text end of paragraph.
+        /// </summary>
+        /// <param name="prevText">
+        /// The prev text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public static bool IsPreviousTextEndOfParagraph(string prevText)
         {
             if (string.IsNullOrEmpty(prevText) || prevText.Length < 3)
@@ -226,7 +268,7 @@
 
             prevText = prevText.Replace("♪", string.Empty).Replace("♫", string.Empty).Trim();
             bool isPrevEndOfLine = prevText.Length > 1 && !prevText.EndsWith("...", StringComparison.Ordinal) && (".!?—".Contains(prevText[prevText.Length - 1]) || // em dash, unicode character
-               prevText.EndsWith("--", StringComparison.Ordinal));
+                                                                                                                  prevText.EndsWith("--", StringComparison.Ordinal));
 
             if (isPrevEndOfLine && prevText.Length > 5 && prevText.EndsWith('.') && prevText[prevText.Length - 3] == '.' && Utilities.AllLetters.Contains(prevText[prevText.Length - 2]))
             {
@@ -236,6 +278,18 @@
             return isPrevEndOfLine;
         }
 
+        /// <summary>
+        /// The fix hyphens remove.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="i">
+        /// The i.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FixHyphensRemove(Subtitle subtitle, int i)
         {
             Paragraph p = subtitle.Paragraphs[i];
@@ -329,6 +383,15 @@
             return text;
         }
 
+        /// <summary>
+        /// The remove spaces begin line after ellipses.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string RemoveSpacesBeginLineAfterEllipses(string line)
         {
             if (line.StartsWith("... ", StringComparison.Ordinal))
@@ -370,6 +433,21 @@
             return line;
         }
 
+        /// <summary>
+        /// The fix hyphens add.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="i">
+        /// The i.
+        /// </param>
+        /// <param name="language">
+        /// The language.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FixHyphensAdd(Subtitle subtitle, int i, string language)
         {
             Paragraph p = subtitle.Paragraphs[i];
@@ -462,6 +540,15 @@
             return text;
         }
 
+        /// <summary>
+        /// The fix double greater than helper.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string FixDoubleGreaterThanHelper(string text)
         {
             string post = string.Empty;
@@ -489,6 +576,15 @@
             return post + text;
         }
 
+        /// <summary>
+        /// The fix short lines.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         internal static string FixShortLines(string text)
         {
             if (string.IsNullOrWhiteSpace(text) || !text.Contains(Environment.NewLine, StringComparison.Ordinal))
@@ -510,6 +606,15 @@
             return text;
         }
 
+        /// <summary>
+        /// The remove spaces begin line.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveSpacesBeginLine(string text)
         {
             text = text.TrimStart();

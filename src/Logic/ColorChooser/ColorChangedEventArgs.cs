@@ -1,30 +1,44 @@
-﻿// Author: Adalberto L. Simeone (Taranto, Italy)
-// E-Mail: avengerdragon@gmail.com
-// Website: http://www.avengersutd.com/blog
-//
-// This source code is Intellectual property of the Author
-// and is released under the Creative Commons Attribution
-// NonCommercial License, available at:
-// http://creativecommons.org/licenses/by-nc/3.0/
-// You can alter and use this source code as you wish,
-// provided that you do not use the results in commercial
-// projects, without the express and written consent of
-// the Author.
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright company="" file="ColorChangedEventArgs.cs">
+//   
+// </copyright>
+// <summary>
+//   The color changed event args.
+// </summary>
+// 
+// --------------------------------------------------------------------------------------------------------------------
 namespace Nikse.SubtitleEdit.Logic.ColorChooser
 {
     using System;
 
+    /// <summary>
+    /// The color changed event args.
+    /// </summary>
     public class ColorChangedEventArgs : EventArgs
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ColorChangedEventArgs"/> class.
+        /// </summary>
+        /// <param name="argb">
+        /// The argb.
+        /// </param>
+        /// <param name="hsv">
+        /// The hsv.
+        /// </param>
         public ColorChangedEventArgs(ColorHandler.ARGB argb, ColorHandler.HSV hsv)
         {
             this.ARGB = argb;
             this.HSV = hsv;
         }
 
+        /// <summary>
+        /// Gets the argb.
+        /// </summary>
         public ColorHandler.ARGB ARGB { get; private set; }
 
+        /// <summary>
+        /// Gets the hsv.
+        /// </summary>
         public ColorHandler.HSV HSV { get; private set; }
     }
 }

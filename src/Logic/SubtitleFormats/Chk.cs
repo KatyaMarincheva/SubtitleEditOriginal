@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Chk.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   .CHK subtitle file format - 128 bytes blocks, first byte in block is id (01==text)
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -11,13 +20,25 @@
     /// </summary>
     public class Chk : SubtitleFormat
     {
+        /// <summary>
+        /// The name of format.
+        /// </summary>
         public const string NameOfFormat = "CHK";
 
+        /// <summary>
+        /// The _code page.
+        /// </summary>
         private readonly Encoding _codePage = Encoding.GetEncoding(850);
 
+        /// <summary>
+        /// The _time code queue.
+        /// </summary>
         private Queue<Paragraph> _timeCodeQueue = new Queue<Paragraph>();
 
         // private string _languageId = "DEN"; // English
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -26,6 +47,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -34,6 +58,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -42,6 +69,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (fileName.EndsWith(".chk", StringComparison.OrdinalIgnoreCase))
@@ -53,11 +92,35 @@
             return false;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             return "Not implemented!";
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             byte[] buffer = FileUtil.ReadAllBytesShared(fileName);
@@ -76,6 +139,15 @@
             }
         }
 
+        /// <summary>
+        /// The apply font.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string ApplyFont(string text)
         {
             StringBuilder sb = new StringBuilder();
@@ -162,6 +234,18 @@
             return text;
         }
 
+        /// <summary>
+        /// The read paragraph.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Paragraph"/>.
+        /// </returns>
         private Paragraph ReadParagraph(byte[] buffer, int index)
         {
             if (buffer[index] == 1 && this._timeCodeQueue.Count > 0)
@@ -242,6 +326,21 @@
             return null;
         }
 
+        /// <summary>
+        /// The get text.
+        /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="start">
+        /// The start.
+        /// </param>
+        /// <param name="end">
+        /// The end.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string GetText(byte[] buffer, int start, int end)
         {
             string text = string.Empty;

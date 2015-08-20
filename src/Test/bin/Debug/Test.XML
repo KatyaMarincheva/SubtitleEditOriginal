@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Test</name>
+    </assembly>
+    <members>
+        <member name="T:Test.Logic.LanguageTest">
+            <summary>
+            Summary description for languageTest
+            </summary>
+        </member>
+        <member name="M:Test.Logic.LanguageTest.#ctor">
+            <summary>
+            Load a list of currently existing languages
+            </summary>
+        </member>
+        <member name="T:Test.Logic.Forms.RemoveTextForHearImpairedTest">
+            <summary>
+            This is a test class for FormRemoveTextForHearImpairedTest and is intended
+            to contain all FormRemoveTextForHearImpairedTest Unit Tests
+            </summary>
+        </member>
+        <member name="P:Test.Logic.Forms.RemoveTextForHearImpairedTest.TestContext">
+            <summary>
+            Gets or sets the test context which provides
+            information about and functionality for the current test run.
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveColonTest">
+            <summary>
+            A test for RemoveColon
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveHIInsideLine">
+            <summary>
+            A test for RemoveHIInsideLine
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveHI1">
+            <summary>
+            A test for RemoveHI
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveHI2">
+            <summary>
+            A test for RemoveHI
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveHINot">
+            <summary>
+            A test for no removal
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveHIMultilineItalic">
+            <summary>
+            A test for RemoveHI
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveHIMultilineBold">
+            <summary>
+            A test for RemoveHI
+            </summary>
+        </member>
+        <member name="M:Test.Logic.Forms.RemoveTextForHearImpairedTest.RemoveHISecondLineDelay">
+            <summary>
+            A test for RemoveHI
+            </summary>
+        </member>
+        <member name="T:Test.Logic.SubtitleFormats.SubtitleFormatsTest">
+             <summary>
+            This is a test class for subtitle formats and is intended
+            to contain all subtitle formats Unit Tests
+            </summary>
+        </member>
+        <member name="P:Test.Logic.SubtitleFormats.SubtitleFormatsTest.TestContext">
+             <summary>
+            Gets or sets the test context which provides
+            information about and functionality for the current test run.
+            </summary>
+        </member>
+        <member name="T:Test.FixCommonErrorsTest">
+             <summary>
+            This is a test class for FixCommonErrors and is intended
+            to contain all FixCommonErrorsTest Unit Tests
+            </summary>
+        </member>
+        <member name="P:Test.FixCommonErrorsTest.TestContext">
+             <summary>
+            Gets or sets the test context which provides
+            information about and functionality for the current test run.
+            </summary>
+        </member>
+        <member name="M:Test.FixCommonErrorsTest.CopyStream(System.IO.Stream,System.IO.Stream)">
+            <summary>
+            Copies the contents of input to output. Doesn't close either stream.
+            </summary>
+        </member>
+    </members>
+</doc>

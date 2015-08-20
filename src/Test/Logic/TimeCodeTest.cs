@@ -1,12 +1,29 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TimeCodeTest.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The time code test.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Test.Logic
 {
+    using System;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The time code test.
+    /// </summary>
     [TestClass]
     public class TimeCodeTest
     {
+        /// <summary>
+        /// The time code add time 1.
+        /// </summary>
         [TestMethod]
         public void TimeCodeAddTime1()
         {
@@ -16,6 +33,9 @@ namespace Test.Logic
             Assert.AreEqual(tc.TotalMilliseconds, 2000);
         }
 
+        /// <summary>
+        /// The time code add time 2.
+        /// </summary>
         [TestMethod]
         public void TimeCodeAddTime2()
         {
@@ -25,6 +45,9 @@ namespace Test.Logic
             Assert.AreEqual(tc.TotalMilliseconds, 0);
         }
 
+        /// <summary>
+        /// The time code add time 3.
+        /// </summary>
         [TestMethod]
         public void TimeCodeAddTime3()
         {
@@ -34,6 +57,9 @@ namespace Test.Logic
             Assert.AreEqual(tc.TotalMilliseconds, 2000);
         }
 
+        /// <summary>
+        /// The time code add time 4.
+        /// </summary>
         [TestMethod]
         public void TimeCodeAddTime4()
         {
@@ -43,6 +69,9 @@ namespace Test.Logic
             Assert.AreEqual(tc.TotalMilliseconds, 2000);
         }
 
+        /// <summary>
+        /// The time code add time 5.
+        /// </summary>
         [TestMethod]
         public void TimeCodeAddTime5()
         {
@@ -52,6 +81,9 @@ namespace Test.Logic
             Assert.AreEqual(tc.TotalMilliseconds, 60000 + 1000);
         }
 
+        /// <summary>
+        /// The time code add time 6.
+        /// </summary>
         [TestMethod]
         public void TimeCodeAddTime6()
         {
@@ -61,7 +93,9 @@ namespace Test.Logic
             Assert.AreEqual(tc.TotalMilliseconds, 2000);
         }
 
-
+        /// <summary>
+        /// The time code add time 7.
+        /// </summary>
         [TestMethod]
         public void TimeCodeAddTime7()
         {
@@ -71,6 +105,9 @@ namespace Test.Logic
             Assert.AreEqual(tc.TotalMilliseconds, 2000);
         }
 
+        /// <summary>
+        /// The time code milliseconds.
+        /// </summary>
         [TestMethod]
         public void TimeCodeMilliseconds()
         {
@@ -79,6 +116,9 @@ namespace Test.Logic
             Assert.AreEqual(tc.TotalMilliseconds, new TimeSpan(0, 1, 2, 3, 9).TotalMilliseconds);
         }
 
+        /// <summary>
+        /// The time code seconds 1.
+        /// </summary>
         [TestMethod]
         public void TimeCodeSeconds1()
         {
@@ -87,6 +127,9 @@ namespace Test.Logic
             Assert.AreEqual(tc.TotalMilliseconds, new TimeSpan(0, 1, 2, 9, 4).TotalMilliseconds);
         }
 
+        /// <summary>
+        /// The time code minutes 1.
+        /// </summary>
         [TestMethod]
         public void TimeCodeMinutes1()
         {
@@ -95,6 +138,9 @@ namespace Test.Logic
             Assert.AreEqual(tc.TotalMilliseconds, new TimeSpan(0, 1, 9, 3, 4).TotalMilliseconds);
         }
 
+        /// <summary>
+        /// The time code hours 1.
+        /// </summary>
         [TestMethod]
         public void TimeCodeHours1()
         {
@@ -103,6 +149,9 @@ namespace Test.Logic
             Assert.AreEqual(tc.TotalMilliseconds, new TimeSpan(0, 9, 2, 3, 4).TotalMilliseconds);
         }
 
+        /// <summary>
+        /// The time code parse to milliseconds 1.
+        /// </summary>
         [TestMethod]
         public void TimeCodeParseToMilliseconds1()
         {
@@ -111,14 +160,16 @@ namespace Test.Logic
             Assert.AreEqual(ms, new TimeSpan(0, 1, 2, 3, 999).TotalMilliseconds);
         }
 
+        /// <summary>
+        /// The time code get total milliseconds.
+        /// </summary>
         [TestMethod]
         public void TimeCodeGetTotalMilliseconds()
         {
             var tc = new TimeCode(1, 2, 3, 4);
 
             Assert.AreEqual(tc.TotalMilliseconds, 3723004);
-            Assert.IsTrue(Math.Abs(tc.TotalMilliseconds -  (tc.TotalSeconds * 1000.0)) < 0.001);
+            Assert.IsTrue(Math.Abs(tc.TotalMilliseconds - (tc.TotalSeconds * 1000.0)) < 0.001);
         }
-
     }
 }

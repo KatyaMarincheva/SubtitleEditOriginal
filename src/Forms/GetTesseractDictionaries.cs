@@ -1,45 +1,79 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Net;
-using System.Windows.Forms;
-using System.Xml;
-using Nikse.SubtitleEdit.Logic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="GetTesseractDictionaries.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The get tesseract dictionaries.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Forms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Net;
+    using System.Reflection;
+    using System.Windows.Forms;
+    using System.Xml;
+
+    using Nikse.SubtitleEdit.Logic;
+
+    /// <summary>
+    /// The get tesseract dictionaries.
+    /// </summary>
     public partial class GetTesseractDictionaries : Form
     {
-        private List<string> _dictionaryDownloadLinks = new List<string>();
+        /// <summary>
+        /// The _descriptions.
+        /// </summary>
         private List<string> _descriptions = new List<string>();
+
+        /// <summary>
+        /// The _dictionary download links.
+        /// </summary>
+        private List<string> _dictionaryDownloadLinks = new List<string>();
+
+        /// <summary>
+        /// The _xml name.
+        /// </summary>
         private string _xmlName = null;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GetTesseractDictionaries"/> class.
+        /// </summary>
         public GetTesseractDictionaries()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            Text = Configuration.Settings.Language.GetTesseractDictionaries.Title;
-            labelDescription1.Text = Configuration.Settings.Language.GetTesseractDictionaries.DescriptionLine1;
-            linkLabelOpenDictionaryFolder.Text = Configuration.Settings.Language.GetTesseractDictionaries.OpenDictionariesFolder;
-            labelChooseLanguageAndClickDownload.Text = Configuration.Settings.Language.GetTesseractDictionaries.ChooseLanguageAndClickDownload;
-            buttonDownload.Text = Configuration.Settings.Language.GetTesseractDictionaries.Download;
-            labelPleaseWait.Text = string.Empty;
-            buttonOK.Text = Configuration.Settings.Language.General.Ok;
-            LoadDictionaryList("Nikse.SubtitleEdit.Resources.TesseractDictionaries.xml.gz");
-            FixLargeFonts();
+            this.Text = Configuration.Settings.Language.GetTesseractDictionaries.Title;
+            this.labelDescription1.Text = Configuration.Settings.Language.GetTesseractDictionaries.DescriptionLine1;
+            this.linkLabelOpenDictionaryFolder.Text = Configuration.Settings.Language.GetTesseractDictionaries.OpenDictionariesFolder;
+            this.labelChooseLanguageAndClickDownload.Text = Configuration.Settings.Language.GetTesseractDictionaries.ChooseLanguageAndClickDownload;
+            this.buttonDownload.Text = Configuration.Settings.Language.GetTesseractDictionaries.Download;
+            this.labelPleaseWait.Text = string.Empty;
+            this.buttonOK.Text = Configuration.Settings.Language.General.Ok;
+            this.LoadDictionaryList("Nikse.SubtitleEdit.Resources.TesseractDictionaries.xml.gz");
+            this.FixLargeFonts();
         }
 
+        /// <summary>
+        /// The load dictionary list.
+        /// </summary>
+        /// <param name="xmlRessourceName">
+        /// The xml ressource name.
+        /// </param>
         private void LoadDictionaryList(string xmlRessourceName)
         {
-            _dictionaryDownloadLinks = new List<string>();
-            _descriptions = new List<string>();
-            _xmlName = xmlRessourceName;
-            System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
-            Stream strm = asm.GetManifestResourceStream(_xmlName);
+            this._dictionaryDownloadLinks = new List<string>();
+            this._descriptions = new List<string>();
+            this._xmlName = xmlRessourceName;
+            Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
+            Stream strm = asm.GetManifestResourceStream(this._xmlName);
             if (strm != null)
             {
-                comboBoxDictionaries.Items.Clear();
+                this.comboBoxDictionaries.Items.Clear();
                 XmlDocument doc = new XmlDocument();
                 using (var rdr = new StreamReader(strm))
                 using (var zip = new GZipStream(rdr.BaseStream, CompressionMode.Decompress))
@@ -56,72 +90,101 @@ namespace Nikse.SubtitleEdit.Forms
 
                     string description = string.Empty;
                     if (node.SelectSingleNode("Description") != null)
+                    {
                         description = node.SelectSingleNode("Description").InnerText;
+                    }
 
                     if (!string.IsNullOrEmpty(downloadLink))
                     {
                         string name = englishName;
 
-                        comboBoxDictionaries.Items.Add(name);
-                        _dictionaryDownloadLinks.Add(downloadLink);
-                        _descriptions.Add(description);
+                        this.comboBoxDictionaries.Items.Add(name);
+                        this._dictionaryDownloadLinks.Add(downloadLink);
+                        this._descriptions.Add(description);
                     }
-                    comboBoxDictionaries.SelectedIndex = 0;
+
+                    this.comboBoxDictionaries.SelectedIndex = 0;
                 }
             }
         }
 
+        /// <summary>
+        /// The fix large fonts.
+        /// </summary>
         private void FixLargeFonts()
         {
-            if (labelDescription1.Left + labelDescription1.Width + 5 > Width)
-                Width = labelDescription1.Left + labelDescription1.Width + 5;
-            Utilities.FixLargeFonts(this, buttonOK);
+            if (this.labelDescription1.Left + this.labelDescription1.Width + 5 > this.Width)
+            {
+                this.Width = this.labelDescription1.Left + this.labelDescription1.Width + 5;
+            }
+
+            Utilities.FixLargeFonts(this, this.buttonOK);
         }
 
+        /// <summary>
+        /// The button download_ click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void buttonDownload_Click(object sender, EventArgs e)
         {
             try
             {
-                labelPleaseWait.Text = Configuration.Settings.Language.General.PleaseWait;
-                buttonOK.Enabled = false;
-                buttonDownload.Enabled = false;
-                comboBoxDictionaries.Enabled = false;
+                this.labelPleaseWait.Text = Configuration.Settings.Language.General.PleaseWait;
+                this.buttonOK.Enabled = false;
+                this.buttonDownload.Enabled = false;
+                this.comboBoxDictionaries.Enabled = false;
                 this.Refresh();
-                Cursor = Cursors.WaitCursor;
+                this.Cursor = Cursors.WaitCursor;
 
-                int index = comboBoxDictionaries.SelectedIndex;
-                string url = _dictionaryDownloadLinks[index];
+                int index = this.comboBoxDictionaries.SelectedIndex;
+                string url = this._dictionaryDownloadLinks[index];
 
                 var wc = new WebClient { Proxy = Utilities.GetProxy() };
-                wc.DownloadDataCompleted += wc_DownloadDataCompleted;
+                wc.DownloadDataCompleted += this.wc_DownloadDataCompleted;
                 wc.DownloadDataAsync(new Uri(url));
-                Cursor = Cursors.Default;
+                this.Cursor = Cursors.Default;
             }
             catch (Exception exception)
             {
-                labelPleaseWait.Text = string.Empty;
-                buttonOK.Enabled = true;
-                buttonDownload.Enabled = true;
-                comboBoxDictionaries.Enabled = true;
-                Cursor = Cursors.Default;
+                this.labelPleaseWait.Text = string.Empty;
+                this.buttonOK.Enabled = true;
+                this.buttonDownload.Enabled = true;
+                this.comboBoxDictionaries.Enabled = true;
+                this.Cursor = Cursors.Default;
                 MessageBox.Show(exception.Message + Environment.NewLine + Environment.NewLine + exception.StackTrace);
             }
         }
 
+        /// <summary>
+        /// The wc_ download data completed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void wc_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
         {
             if (e.Error != null)
             {
                 MessageBox.Show(Configuration.Settings.Language.GetTesseractDictionaries.DownloadFailed);
-                DialogResult = DialogResult.Cancel;
+                this.DialogResult = DialogResult.Cancel;
                 return;
             }
 
             string dictionaryFolder = Configuration.TesseractDataFolder;
             if (!Directory.Exists(dictionaryFolder))
+            {
                 Directory.CreateDirectory(dictionaryFolder);
+            }
 
-            int index = comboBoxDictionaries.SelectedIndex;
+            int index = this.comboBoxDictionaries.SelectedIndex;
 
             var tempFileName = Path.GetTempFileName() + ".tar";
             using (var ms = new MemoryStream(e.Result))
@@ -144,30 +207,51 @@ namespace Nikse.SubtitleEdit.Forms
                     th.WriteData(fn);
                 }
             }
+
             File.Delete(tempFileName);
 
-            Cursor = Cursors.Default;
-            labelPleaseWait.Text = string.Empty;
-            buttonOK.Enabled = true;
-            buttonDownload.Enabled = true;
-            comboBoxDictionaries.Enabled = true;
-            MessageBox.Show(string.Format(Configuration.Settings.Language.GetDictionaries.XDownloaded, comboBoxDictionaries.Items[index]));
+            this.Cursor = Cursors.Default;
+            this.labelPleaseWait.Text = string.Empty;
+            this.buttonOK.Enabled = true;
+            this.buttonDownload.Enabled = true;
+            this.comboBoxDictionaries.Enabled = true;
+            MessageBox.Show(string.Format(Configuration.Settings.Language.GetDictionaries.XDownloaded, this.comboBoxDictionaries.Items[index]));
         }
 
+        /// <summary>
+        /// The link label open dictionary folder_ link clicked.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void linkLabelOpenDictionaryFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string dictionaryFolder = Configuration.TesseractDataFolder;
             if (!Directory.Exists(dictionaryFolder))
+            {
                 Directory.CreateDirectory(dictionaryFolder);
+            }
 
             System.Diagnostics.Process.Start(dictionaryFolder);
         }
 
+        /// <summary>
+        /// The get tesseract dictionaries_ key down.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void GetTesseractDictionaries_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                DialogResult = DialogResult.Cancel;
+                this.DialogResult = DialogResult.Cancel;
             }
             else if (e.KeyCode == Keys.F1)
             {
@@ -175,6 +259,5 @@ namespace Nikse.SubtitleEdit.Forms
                 e.SuppressKeyPress = true;
             }
         }
-
     }
 }

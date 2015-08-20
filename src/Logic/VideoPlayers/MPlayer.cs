@@ -1,158 +1,392 @@
-﻿using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Windows.Forms;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MPlayer.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The m player.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nikse.SubtitleEdit.Logic.VideoPlayers
 {
+    using System;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.IO;
+    using System.Windows.Forms;
+
+    /// <summary>
+    /// The m player.
+    /// </summary>
     public class MPlayer : VideoPlayer, IDisposable
     {
-        private Process _mplayer;
-        private Timer _timer;
-        private TimeSpan _lengthInSeconds;
-        private TimeSpan _lastLengthInSeconds = TimeSpan.FromDays(0);
-        private bool _paused;
-        private bool _loaded = false;
+        /// <summary>
+        /// The _ended.
+        /// </summary>
         private bool _ended = false;
-        private string _videoFileName;
-        private bool _waitForChange = false;
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-        public float FramesPerSecond { get; private set; }
-        public string VideoFormat { get; private set; }
-        public string VideoCodec { get; private set; }
-        private double? _pausePosition = null; // Hack to hold precise seeking when paused
+
+        /// <summary>
+        /// The _last length in seconds.
+        /// </summary>
+        private TimeSpan _lastLengthInSeconds = TimeSpan.FromDays(0);
+
+        /// <summary>
+        /// The _length in seconds.
+        /// </summary>
+        private TimeSpan _lengthInSeconds;
+
+        /// <summary>
+        /// The _loaded.
+        /// </summary>
+        private bool _loaded = false;
+
+        /// <summary>
+        /// The _mplayer.
+        /// </summary>
+        private Process _mplayer;
+
+        /// <summary>
+        /// The _pause counts.
+        /// </summary>
         private int _pauseCounts = 0;
+
+        /// <summary>
+        /// The _paused.
+        /// </summary>
+        private bool _paused;
+
+        /// <summary>
+        /// The _pause position.
+        /// </summary>
+        private double? _pausePosition = null; // Hack to hold precise seeking when paused
+
+        /// <summary>
+        /// The _speed.
+        /// </summary>
         private double _speed = 1.0;
 
+        /// <summary>
+        /// The _time position.
+        /// </summary>
+        private double _timePosition;
+
+        /// <summary>
+        /// The _timer.
+        /// </summary>
+        private Timer _timer;
+
+        /// <summary>
+        /// The _video file name.
+        /// </summary>
+        private string _videoFileName;
+
+        /// <summary>
+        /// The _volume.
+        /// </summary>
+        private float _volume;
+
+        /// <summary>
+        /// The _wait for change.
+        /// </summary>
+        private bool _waitForChange = false;
+
+        /// <summary>
+        /// Gets the width.
+        /// </summary>
+        public int Width { get; private set; }
+
+        /// <summary>
+        /// Gets the height.
+        /// </summary>
+        public int Height { get; private set; }
+
+        /// <summary>
+        /// Gets the frames per second.
+        /// </summary>
+        public float FramesPerSecond { get; private set; }
+
+        /// <summary>
+        /// Gets the video format.
+        /// </summary>
+        public string VideoFormat { get; private set; }
+
+        /// <summary>
+        /// Gets the video codec.
+        /// </summary>
+        public string VideoCodec { get; private set; }
+
+        /// <summary>
+        /// Gets the player name.
+        /// </summary>
         public override string PlayerName
         {
-            get { return "MPlayer"; }
+            get
+            {
+                return "MPlayer";
+            }
         }
 
-        private float _volume;
+        /// <summary>
+        /// Gets or sets the volume.
+        /// </summary>
         public override int Volume
         {
             get
             {
-                return (int)_volume;
+                return (int)this._volume;
             }
+
             set
             {
                 if (value >= 0 && value <= 100)
                 {
-                    _volume = value;
-                    SetProperty("volume", value.ToString(), true);
+                    this._volume = value;
+                    this.SetProperty("volume", value.ToString(), true);
                 }
             }
         }
 
+        /// <summary>
+        /// Gets the duration.
+        /// </summary>
         public override double Duration
         {
-            get { return _lengthInSeconds.TotalSeconds; }
+            get
+            {
+                return this._lengthInSeconds.TotalSeconds;
+            }
         }
 
-        private double _timePosition;
+        /// <summary>
+        /// Gets or sets the current position.
+        /// </summary>
         public override double CurrentPosition
         {
             get
             {
-                if (_paused && _pausePosition != null)
+                if (this._paused && this._pausePosition != null)
                 {
-                    if (_pausePosition < 0)
+                    if (this._pausePosition < 0)
+                    {
                         return 0;
-                    return _pausePosition.Value;
+                    }
+
+                    return this._pausePosition.Value;
                 }
-                return _timePosition;
+
+                return this._timePosition;
             }
+
             set
             {
                 // NOTE: FOR ACCURATE SEARCH USE MPlayer2 - http://www.mplayer2.org/)
-                _timePosition = value;
-                if (IsPaused && value <= Duration)
-                    _pausePosition = value;
-                _mplayer.StandardInput.WriteLine(string.Format("pausing_keep seek {0:0.0} 2", value));
+                this._timePosition = value;
+                if (this.IsPaused && value <= this.Duration)
+                {
+                    this._pausePosition = value;
+                }
+
+                this._mplayer.StandardInput.WriteLine(string.Format("pausing_keep seek {0:0.0} 2", value));
             }
         }
 
+        /// <summary>
+        /// Gets or sets the play rate.
+        /// </summary>
         public override double PlayRate
         {
             get
             {
-                return _speed;
+                return this._speed;
             }
+
             set
             {
                 if (value >= 0 && value <= 2.0)
                 {
-                    _speed = value;
-                    SetProperty("speed", value.ToString(CultureInfo.InvariantCulture), true);
+                    this._speed = value;
+                    this.SetProperty("speed", value.ToString(CultureInfo.InvariantCulture), true);
                 }
             }
         }
 
-        public override void Play()
-        {
-            _mplayer.StandardInput.WriteLine("pause");
-            _pauseCounts = 0;
-            _paused = false;
-            _pausePosition = null;
-        }
-
-        public override void Pause()
-        {
-            if (!_paused)
-                _mplayer.StandardInput.WriteLine("pause");
-            _pauseCounts = 0;
-            _paused = true;
-        }
-
-        public override void Stop()
-        {
-            CurrentPosition = 0;
-            Pause();
-            _mplayer.StandardInput.WriteLine("pausing_keep_force seek 0 2");
-            _pauseCounts = 0;
-            _paused = true;
-            _lastLengthInSeconds = _lengthInSeconds;
-            _pausePosition = null;
-        }
-
+        /// <summary>
+        /// Gets a value indicating whether is paused.
+        /// </summary>
         public override bool IsPaused
         {
-            get { return _paused; }
+            get
+            {
+                return this._paused;
+            }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is playing.
+        /// </summary>
         public override bool IsPlaying
         {
-            get { return !_paused; }
+            get
+            {
+                return !this._paused;
+            }
         }
 
+        /// <summary>
+        /// Gets the get m player file name.
+        /// </summary>
+        public static string GetMPlayerFileName
+        {
+            get
+            {
+                if (Configuration.IsRunningOnLinux() || Configuration.IsRunningOnMac())
+                {
+                    return "mplayer";
+                }
+
+                string fileName = Path.Combine(Configuration.BaseDirectory, "mplayer2.exe");
+                if (File.Exists(fileName))
+                {
+                    return fileName;
+                }
+
+                fileName = Path.Combine(Configuration.BaseDirectory, "mplayer.exe");
+                if (File.Exists(fileName))
+                {
+                    return fileName;
+                }
+
+                fileName = @"C:\Program Files (x86)\SMPlayer\mplayer\mplayer.exe";
+                if (File.Exists(fileName))
+                {
+                    return fileName;
+                }
+
+                fileName = @"C:\Program Files (x86)\mplayer\mplayer.exe";
+                if (File.Exists(fileName))
+                {
+                    return fileName;
+                }
+
+                fileName = @"C:\Program Files\mplayer\mplayer.exe";
+                if (File.Exists(fileName))
+                {
+                    return fileName;
+                }
+
+                fileName = @"C:\Program Files\SMPlayer\mplayer\mplayer.exe";
+                if (File.Exists(fileName))
+                {
+                    return fileName;
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether is installed.
+        /// </summary>
+        public static bool IsInstalled
+        {
+            get
+            {
+                return GetMPlayerFileName != null;
+            }
+        }
+
+        /// <summary>
+        /// The dispose.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// The play.
+        /// </summary>
+        public override void Play()
+        {
+            this._mplayer.StandardInput.WriteLine("pause");
+            this._pauseCounts = 0;
+            this._paused = false;
+            this._pausePosition = null;
+        }
+
+        /// <summary>
+        /// The pause.
+        /// </summary>
+        public override void Pause()
+        {
+            if (!this._paused)
+            {
+                this._mplayer.StandardInput.WriteLine("pause");
+            }
+
+            this._pauseCounts = 0;
+            this._paused = true;
+        }
+
+        /// <summary>
+        /// The stop.
+        /// </summary>
+        public override void Stop()
+        {
+            this.CurrentPosition = 0;
+            this.Pause();
+            this._mplayer.StandardInput.WriteLine("pausing_keep_force seek 0 2");
+            this._pauseCounts = 0;
+            this._paused = true;
+            this._lastLengthInSeconds = this._lengthInSeconds;
+            this._pausePosition = null;
+        }
+
+        /// <summary>
+        /// The initialize.
+        /// </summary>
+        /// <param name="ownerControl">
+        /// The owner control.
+        /// </param>
+        /// <param name="videoFileName">
+        /// The video file name.
+        /// </param>
+        /// <param name="onVideoLoaded">
+        /// The on video loaded.
+        /// </param>
+        /// <param name="onVideoEnded">
+        /// The on video ended.
+        /// </param>
         public override void Initialize(Control ownerControl, string videoFileName, EventHandler onVideoLoaded, EventHandler onVideoEnded)
         {
-            _loaded = false;
-            _videoFileName = videoFileName;
+            this._loaded = false;
+            this._videoFileName = videoFileName;
             string mplayerExeName = GetMPlayerFileName;
             if (!string.IsNullOrEmpty(mplayerExeName))
             {
-                _mplayer = new Process();
-                _mplayer.StartInfo.FileName = mplayerExeName;
-                //vo options: gl, gl2, directx:noaccel
-                if (Configuration.IsRunningOnLinux() || Configuration.IsRunningOnMac())
-                    _mplayer.StartInfo.Arguments = "-nofs -quiet -slave -idle -nosub -noautosub -loop 0 -osdlevel 0 -vsync -wid " + ownerControl.Handle.ToInt32() + " \"" + videoFileName + "\" ";
-                else
-                    _mplayer.StartInfo.Arguments = "-nofs -quiet -slave -idle -nosub -noautosub -loop 0 -osdlevel 0 -vo direct3d -wid " + (int)ownerControl.Handle + " \"" + videoFileName + "\" ";
+                this._mplayer = new Process();
+                this._mplayer.StartInfo.FileName = mplayerExeName;
 
-                _mplayer.StartInfo.UseShellExecute = false;
-                _mplayer.StartInfo.RedirectStandardInput = true;
-                _mplayer.StartInfo.RedirectStandardOutput = true;
-                _mplayer.StartInfo.CreateNoWindow = true;
-                _mplayer.OutputDataReceived += MPlayerOutputDataReceived;
+                // vo options: gl, gl2, directx:noaccel
+                if (Configuration.IsRunningOnLinux() || Configuration.IsRunningOnMac())
+                {
+                    this._mplayer.StartInfo.Arguments = "-nofs -quiet -slave -idle -nosub -noautosub -loop 0 -osdlevel 0 -vsync -wid " + ownerControl.Handle.ToInt32() + " \"" + videoFileName + "\" ";
+                }
+                else
+                {
+                    this._mplayer.StartInfo.Arguments = "-nofs -quiet -slave -idle -nosub -noautosub -loop 0 -osdlevel 0 -vo direct3d -wid " + (int)ownerControl.Handle + " \"" + videoFileName + "\" ";
+                }
+
+                this._mplayer.StartInfo.UseShellExecute = false;
+                this._mplayer.StartInfo.RedirectStandardInput = true;
+                this._mplayer.StartInfo.RedirectStandardOutput = true;
+                this._mplayer.StartInfo.CreateNoWindow = true;
+                this._mplayer.OutputDataReceived += this.MPlayerOutputDataReceived;
 
                 try
                 {
-                    _mplayer.Start();
+                    this._mplayer.Start();
                 }
                 catch
                 {
@@ -160,83 +394,109 @@ namespace Nikse.SubtitleEdit.Logic.VideoPlayers
                     throw;
                 }
 
-                _mplayer.StandardInput.NewLine = "\n";
-                _mplayer.BeginOutputReadLine(); // Async reading of output to prevent deadlock
+                this._mplayer.StandardInput.NewLine = "\n";
+                this._mplayer.BeginOutputReadLine(); // Async reading of output to prevent deadlock
 
                 // static properties
-                GetProperty("width", true);
-                GetProperty("height", true);
-                GetProperty("fps", true);
-                GetProperty("video_format", true);
-                GetProperty("video_codec", true);
-                GetProperty("length", true);
+                this.GetProperty("width", true);
+                this.GetProperty("height", true);
+                this.GetProperty("fps", true);
+                this.GetProperty("video_format", true);
+                this.GetProperty("video_codec", true);
+                this.GetProperty("length", true);
 
                 // semi static variable
-                GetProperty("volume", true);
+                this.GetProperty("volume", true);
 
                 // start timer to collect variable properties
-                _timer = new Timer();
-                _timer.Interval = 1000;
-                _timer.Tick += timer_Tick;
-                _timer.Start();
+                this._timer = new Timer();
+                this._timer.Interval = 1000;
+                this._timer.Tick += this.timer_Tick;
+                this._timer.Start();
 
-                OnVideoLoaded = onVideoLoaded;
-                OnVideoEnded = onVideoEnded;
+                this.OnVideoLoaded = onVideoLoaded;
+                this.OnVideoEnded = onVideoEnded;
             }
         }
 
+        /// <summary>
+        /// The timer_ tick.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void timer_Tick(object sender, EventArgs e)
         {
             // variable properties
-            _mplayer.StandardInput.WriteLine("pausing_keep_force get_property time_pos");
-            _mplayer.StandardInput.WriteLine("pausing_keep_force get_property pause");
+            this._mplayer.StandardInput.WriteLine("pausing_keep_force get_property time_pos");
+            this._mplayer.StandardInput.WriteLine("pausing_keep_force get_property pause");
 
-            if (!_ended && OnVideoEnded != null && _lengthInSeconds.TotalSeconds == Duration)
+            if (!this._ended && this.OnVideoEnded != null && this._lengthInSeconds.TotalSeconds == this.Duration)
             {
-                //  _ended = true;
-                //  OnVideoEnded.Invoke(this, null);
+                // _ended = true;
+                // OnVideoEnded.Invoke(this, null);
             }
-            else if (_lengthInSeconds.TotalSeconds < Duration)
+            else if (this._lengthInSeconds.TotalSeconds < this.Duration)
             {
-                _ended = false;
-            }
-
-            if (OnVideoLoaded != null && _loaded)
-            {
-                _timer.Stop();
-                _loaded = false;
-                OnVideoLoaded.Invoke(this, null);
-                _timer.Interval = 100;
-                _timer.Start();
+                this._ended = false;
             }
 
-            if (_lengthInSeconds != _lastLengthInSeconds)
-                _paused = false;
-            _lastLengthInSeconds = _lengthInSeconds;
+            if (this.OnVideoLoaded != null && this._loaded)
+            {
+                this._timer.Stop();
+                this._loaded = false;
+                this.OnVideoLoaded.Invoke(this, null);
+                this._timer.Interval = 100;
+                this._timer.Start();
+            }
+
+            if (this._lengthInSeconds != this._lastLengthInSeconds)
+            {
+                this._paused = false;
+            }
+
+            this._lastLengthInSeconds = this._lengthInSeconds;
         }
 
+        /// <summary>
+        /// The m player output data received.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void MPlayerOutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             if (e.Data == null)
+            {
                 return;
+            }
 
-            System.Diagnostics.Debug.WriteLine("MPlayer: " + e.Data);
+            Debug.WriteLine("MPlayer: " + e.Data);
 
             if (e.Data.StartsWith("Playing "))
             {
-                _loaded = true;
+                this._loaded = true;
                 return;
             }
 
             if (e.Data.StartsWith("Exiting..."))
             {
-                _ended = true;
-                if (_loaded)
+                this._ended = true;
+                if (this._loaded)
                 {
-                    _mplayer.StandardInput.WriteLine("loadfile " + _videoFileName);
-                    if (OnVideoEnded != null)
-                        OnVideoEnded.Invoke(this, null);
+                    this._mplayer.StandardInput.WriteLine("loadfile " + this._videoFileName);
+                    if (this.OnVideoEnded != null)
+                    {
+                        this.OnVideoEnded.Invoke(this, null);
+                    }
                 }
+
                 return;
             }
 
@@ -249,168 +509,182 @@ namespace Nikse.SubtitleEdit.Logic.VideoPlayers
                 switch (code)
                 {
                     // Examples:
-                    //  ANS_time_pos=8.299958, ANS_width=624, ANS_height=352, ANS_fps=23.976025, ANS_video_format=1145656920, ANS_video_format=1145656920, ANS_video_codec=ffodivx,
-                    //  ANS_length=1351.600213, ANS_volume=100.000000
+                    // ANS_time_pos=8.299958, ANS_width=624, ANS_height=352, ANS_fps=23.976025, ANS_video_format=1145656920, ANS_video_format=1145656920, ANS_video_codec=ffodivx,
+                    // ANS_length=1351.600213, ANS_volume=100.000000
                     case "ANS_time_pos":
-                        _timePosition = Convert.ToDouble(value.Replace(",", "."), CultureInfo.InvariantCulture);
+                        this._timePosition = Convert.ToDouble(value.Replace(",", "."), CultureInfo.InvariantCulture);
                         break;
                     case "ANS_width":
-                        Width = Convert.ToInt32(value);
+                        this.Width = Convert.ToInt32(value);
                         break;
                     case "ANS_height":
-                        Height = Convert.ToInt32(value);
+                        this.Height = Convert.ToInt32(value);
                         break;
                     case "ANS_fps":
                         double d;
                         if (double.TryParse(value, out d))
-                            FramesPerSecond = (float)Convert.ToDouble(value.Replace(",", "."), CultureInfo.InvariantCulture);
+                        {
+                            this.FramesPerSecond = (float)Convert.ToDouble(value.Replace(",", "."), CultureInfo.InvariantCulture);
+                        }
                         else
-                            FramesPerSecond = 25.0f;
+                        {
+                            this.FramesPerSecond = 25.0f;
+                        }
+
                         break;
                     case "ANS_video_format":
-                        VideoFormat = value;
+                        this.VideoFormat = value;
                         break;
                     case "ANS_video_codec":
-                        VideoCodec = value;
+                        this.VideoCodec = value;
                         break;
                     case "ANS_length":
-                        _lengthInSeconds = TimeSpan.FromSeconds(Convert.ToDouble(value.Replace(",", "."), CultureInfo.InvariantCulture));
+                        this._lengthInSeconds = TimeSpan.FromSeconds(Convert.ToDouble(value.Replace(",", "."), CultureInfo.InvariantCulture));
                         break;
                     case "ANS_volume":
-                        _volume = (float)Convert.ToDouble(value.Replace(",", "."), CultureInfo.InvariantCulture);
+                        this._volume = (float)Convert.ToDouble(value.Replace(",", "."), CultureInfo.InvariantCulture);
                         break;
                     case "ANS_pause":
                         if (value == "yes" || value == "1")
-                            _pauseCounts++;
-                        else
-                            _pauseCounts--;
-                        if (_pauseCounts > 3)
-                            _paused = true;
-                        else if (_pauseCounts < -3)
                         {
-                            _paused = false;
-                            _pausePosition = null;
+                            this._pauseCounts++;
                         }
-                        else if (Math.Abs(_pauseCounts) > 10)
-                            _pauseCounts = 0;
+                        else
+                        {
+                            this._pauseCounts--;
+                        }
+
+                        if (this._pauseCounts > 3)
+                        {
+                            this._paused = true;
+                        }
+                        else if (this._pauseCounts < -3)
+                        {
+                            this._paused = false;
+                            this._pausePosition = null;
+                        }
+                        else if (Math.Abs(this._pauseCounts) > 10)
+                        {
+                            this._pauseCounts = 0;
+                        }
+
                         break;
                 }
-                _waitForChange = false;
+
+                this._waitForChange = false;
             }
         }
 
-        public static string GetMPlayerFileName
-        {
-            get
-            {
-                if (Configuration.IsRunningOnLinux() || Configuration.IsRunningOnMac())
-                    return "mplayer";
-
-                string fileName = Path.Combine(Configuration.BaseDirectory, "mplayer2.exe");
-                if (File.Exists(fileName))
-                    return fileName;
-
-                fileName = Path.Combine(Configuration.BaseDirectory, "mplayer.exe");
-                if (File.Exists(fileName))
-                    return fileName;
-
-                fileName = @"C:\Program Files (x86)\SMPlayer\mplayer\mplayer.exe";
-                if (File.Exists(fileName))
-                    return fileName;
-
-                fileName = @"C:\Program Files (x86)\mplayer\mplayer.exe";
-                if (File.Exists(fileName))
-                    return fileName;
-
-                fileName = @"C:\Program Files\mplayer\mplayer.exe";
-                if (File.Exists(fileName))
-                    return fileName;
-
-                fileName = @"C:\Program Files\SMPlayer\mplayer\mplayer.exe";
-                if (File.Exists(fileName))
-                    return fileName;
-
-                return null;
-            }
-        }
-
-        public static bool IsInstalled
-        {
-            get
-            {
-                return GetMPlayerFileName != null;
-            }
-        }
-
+        /// <summary>
+        /// The get property.
+        /// </summary>
+        /// <param name="propertyName">
+        /// The property name.
+        /// </param>
+        /// <param name="keepPause">
+        /// The keep pause.
+        /// </param>
         private void GetProperty(string propertyName, bool keepPause)
         {
             if (keepPause)
-                _mplayer.StandardInput.WriteLine("pausing_keep get_property " + propertyName);
+            {
+                this._mplayer.StandardInput.WriteLine("pausing_keep get_property " + propertyName);
+            }
             else
-                _mplayer.StandardInput.WriteLine("get_property " + propertyName);
+            {
+                this._mplayer.StandardInput.WriteLine("get_property " + propertyName);
+            }
         }
 
+        /// <summary>
+        /// The set property.
+        /// </summary>
+        /// <param name="propertyName">
+        /// The property name.
+        /// </param>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="keepPause">
+        /// The keep pause.
+        /// </param>
         private void SetProperty(string propertyName, string value, bool keepPause)
         {
             if (keepPause)
-                _mplayer.StandardInput.WriteLine("pausing_keep set_property " + propertyName + " " + value);
+            {
+                this._mplayer.StandardInput.WriteLine("pausing_keep set_property " + propertyName + " " + value);
+            }
             else
-                _mplayer.StandardInput.WriteLine("set_property " + propertyName + " " + value);
+            {
+                this._mplayer.StandardInput.WriteLine("set_property " + propertyName + " " + value);
+            }
 
-            UglySleep();
+            this.UglySleep();
         }
 
+        /// <summary>
+        /// The ugly sleep.
+        /// </summary>
         private void UglySleep()
         {
-            _waitForChange = true;
+            this._waitForChange = true;
             int i = 0;
 
-            while (i < 100 && _waitForChange)
+            while (i < 100 && this._waitForChange)
             {
                 Application.DoEvents();
                 System.Threading.Thread.Sleep(2);
                 i++;
             }
-            _waitForChange = false;
+
+            this._waitForChange = false;
         }
 
+        /// <summary>
+        /// The dispose video player.
+        /// </summary>
         public override void DisposeVideoPlayer()
         {
-            _timer.Stop();
-            if (_mplayer != null)
+            this._timer.Stop();
+            if (this._mplayer != null)
             {
-                _mplayer.OutputDataReceived -= MPlayerOutputDataReceived;
-                _mplayer.StandardInput.WriteLine("quit");
+                this._mplayer.OutputDataReceived -= this.MPlayerOutputDataReceived;
+                this._mplayer.StandardInput.WriteLine("quit");
             }
         }
 
+        /// <summary>
+        /// The on video loaded.
+        /// </summary>
         public override event EventHandler OnVideoLoaded;
 
+        /// <summary>
+        /// The on video ended.
+        /// </summary>
         public override event EventHandler OnVideoEnded;
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
+        /// <summary>
+        /// The dispose.
+        /// </summary>
+        /// <param name="disposing">
+        /// The disposing.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                if (_mplayer != null)
+                if (this._mplayer != null)
                 {
-                    _mplayer.Dispose();
-                    _mplayer = null;
+                    this._mplayer.Dispose();
+                    this._mplayer = null;
                 }
 
-                if (_timer != null)
+                if (this._timer != null)
                 {
-                    _timer.Dispose();
-                    _timer = null;
+                    this._timer.Dispose();
+                    this._timer = null;
                 }
             }
         }
-
     }
 }

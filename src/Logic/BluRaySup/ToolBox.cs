@@ -1,30 +1,36 @@
-﻿/*
- * Copyright 2009 Volker Oth (0xdeadbeef)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * NOTE: Converted to C# and modified by Nikse.dk@gmail.com
- */
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright company="" file="ToolBox.cs">
+//   
+// </copyright>
+// <summary>
+//   The tool box.
+// </summary>
+// 
+// --------------------------------------------------------------------------------------------------------------------
 namespace Nikse.SubtitleEdit.Logic.BluRaySup
 {
     using System.Text;
 
+    /// <summary>
+    /// The tool box.
+    /// </summary>
     public static class ToolBox
     {
         /// <summary>
-        ///     Convert bytes to a C-style hex string with leading zeroes
+        /// Convert bytes to a C-style hex string with leading zeroes
         /// </summary>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="digits">
+        /// The digits.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string ToHex(byte[] buffer, int index, int digits)
         {
             StringBuilder sb = new StringBuilder();
@@ -43,8 +49,17 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
         }
 
         /// <summary>
-        ///     Convert a long integer to a C-style hex string with leading zeroes
+        /// Convert a long integer to a C-style hex string with leading zeroes
         /// </summary>
+        /// <param name="number">
+        /// The number.
+        /// </param>
+        /// <param name="digits">
+        /// The digits.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string ToHex(int number, int digits)
         {
             string s = string.Format("{0:X}", number);
@@ -61,6 +76,16 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
          * @param ms Time in milliseconds
          * @return Array containing hours, minutes, seconds and milliseconds (in this order)
          */
+
+        /// <summary>
+        /// The milliseconds to time.
+        /// </summary>
+        /// <param name="ms">
+        /// The ms.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int[]"/>.
+        /// </returns>
         public static int[] MillisecondsToTime(long ms)
         {
             int[] time = new int[4];
@@ -81,10 +106,14 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
         }
 
         /// <summary>
-        ///     Convert time in 90kHz ticks to string hh:mm:ss.ms
+        /// Convert time in 90kHz ticks to string hh:mm:ss.ms
         /// </summary>
-        /// <param name="pts">Time in 90kHz resolution</param>
-        /// <returns>String in format hh:mm:ss:ms</returns>
+        /// <param name="pts">
+        /// Time in 90kHz resolution
+        /// </param>
+        /// <returns>
+        /// String in format hh:mm:ss:ms
+        /// </returns>
         public static string PtsToTimeString(long pts)
         {
             int[] time = MillisecondsToTime((pts + 45) / 90);
@@ -92,11 +121,17 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
         }
 
         /// <summary>
-        ///     Write (big endian) double word to buffer[index] (index points at most significant byte)
+        /// Write (big endian) double word to buffer[index] (index points at most significant byte)
         /// </summary>
-        /// <param name="buffer">Byte array</param>
-        /// <param name="index">Index to write to</param>
-        /// <param name="val">Integer value of double word to write</param>
+        /// <param name="buffer">
+        /// Byte array
+        /// </param>
+        /// <param name="index">
+        /// Index to write to
+        /// </param>
+        /// <param name="val">
+        /// Integer value of double word to write
+        /// </param>
         public static void SetDWord(byte[] buffer, int index, int val)
         {
             buffer[index] = (byte)(val >> 24);
@@ -106,11 +141,17 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
         }
 
         /// <summary>
-        ///     Write (big endian) word to buffer[index] (index points at most significant byte)
+        /// Write (big endian) word to buffer[index] (index points at most significant byte)
         /// </summary>
-        /// <param name="buffer">Byte array</param>
-        /// <param name="index">index Index to write to</param>
-        /// <param name="val">val Integer value of word to write</param>
+        /// <param name="buffer">
+        /// Byte array
+        /// </param>
+        /// <param name="index">
+        /// index Index to write to
+        /// </param>
+        /// <param name="val">
+        /// val Integer value of word to write
+        /// </param>
         public static void SetWord(byte[] buffer, int index, int val)
         {
             buffer[index] = (byte)(val >> 8);
@@ -118,11 +159,17 @@ namespace Nikse.SubtitleEdit.Logic.BluRaySup
         }
 
         /// <summary>
-        ///     Write byte to buffer[index]
+        /// Write byte to buffer[index]
         /// </summary>
-        /// <param name="buffer">Byte array</param>
-        /// <param name="index">Index to write to</param>
-        /// <param name="val">Integer value of byte to write</param>
+        /// <param name="buffer">
+        /// Byte array
+        /// </param>
+        /// <param name="index">
+        /// Index to write to
+        /// </param>
+        /// <param name="val">
+        /// Integer value of byte to write
+        /// </param>
         public static void SetByte(byte[] buffer, int index, int val)
         {
             buffer[index] = (byte)val;

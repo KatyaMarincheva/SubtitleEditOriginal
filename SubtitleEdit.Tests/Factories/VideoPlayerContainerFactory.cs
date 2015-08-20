@@ -1,23 +1,31 @@
-using Nikse.SubtitleEdit.Logic;
-using System.ComponentModel;
-using System.Drawing;
-using Nikse.SubtitleEdit.Logic.VideoPlayers;
-using System.Windows.Forms;
-using Nikse.SubtitleEdit.Controls;
-// <copyright file="VideoPlayerContainerFactory.cs" company="Nikse">Nikse</copyright>
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="VideoPlayerContainerFactory.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   A factory for Nikse.SubtitleEdit.Controls.VideoPlayerContainer instances
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-using System;
-using Microsoft.Pex.Framework;
-using Moq;
+// <copyright file="VideoPlayerContainerFactory.cs" company="Nikse">Nikse</copyright>
 
 namespace Nikse.SubtitleEdit.Controls
 {
+    using Microsoft.Pex.Framework;
+
+    using Moq;
+
     using Nikse.SubtitleEdit.Controls.Interfaces;
 
     /// <summary>A factory for Nikse.SubtitleEdit.Controls.VideoPlayerContainer instances</summary>
     public static partial class VideoPlayerContainerFactory
     {
-        /// <summary>A factory for Nikse.SubtitleEdit.Controls.VideoPlayerContainer instances</summary>
+        /// <summary>
+        /// A factory for Nikse.SubtitleEdit.Controls.VideoPlayerContainer instances
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IVideoPlayerContainer"/>.
+        /// </returns>
         [PexFactoryMethod(typeof(MockVideoPlayerContainer))]
         public static IVideoPlayerContainer Create()
         {

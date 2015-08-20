@@ -1,4 +1,13 @@
-﻿namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SubRip.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The sub rip.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nikse.SubtitleEdit.Logic.SubtitleFormats
 {
     using System;
     using System.Collections.Generic;
@@ -8,35 +17,59 @@
 
     using Nikse.SubtitleEdit.Core;
 
+    /// <summary>
+    /// The sub rip.
+    /// </summary>
     public class SubRip : SubtitleFormat
     {
+        /// <summary>
+        /// The name of format.
+        /// </summary>
         public const string NameOfFormat = "SubRip";
 
+        /// <summary>
+        /// The _regex time codes.
+        /// </summary>
         private static readonly Regex _regexTimeCodes = new Regex(@"^-?\d+:-?\d+:-?\d+[:,]-?\d+\s*-->\s*-?\d+:-?\d+:-?\d+[:,]-?\d+$", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The _regex time codes 2.
+        /// </summary>
         private static readonly Regex _regexTimeCodes2 = new Regex(@"^\d+:\d+:\d+,\d+\s*-->\s*\d+:\d+:\d+,\d+$", RegexOptions.Compiled);
 
+        /// <summary>
+        /// The _errors.
+        /// </summary>
         private StringBuilder _errors;
 
+        /// <summary>
+        /// The _expecting.
+        /// </summary>
         private ExpectingLine _expecting = ExpectingLine.Number;
 
+        /// <summary>
+        /// The _last paragraph.
+        /// </summary>
         private Paragraph _lastParagraph;
 
+        /// <summary>
+        /// The _line number.
+        /// </summary>
         private int _lineNumber;
 
+        /// <summary>
+        /// The _paragraph.
+        /// </summary>
         private Paragraph _paragraph;
 
-        private enum ExpectingLine
-        {
-            Number,
-
-            TimeCodes,
-
-            Text
-        }
-
+        /// <summary>
+        /// Gets the errors.
+        /// </summary>
         public string Errors { get; private set; }
 
+        /// <summary>
+        /// Gets the extension.
+        /// </summary>
         public override string Extension
         {
             get
@@ -45,6 +78,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name
         {
             get
@@ -53,6 +89,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether is time based.
+        /// </summary>
         public override bool IsTimeBased
         {
             get
@@ -61,6 +100,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the alternate extensions.
+        /// </summary>
         public override List<string> AlternateExtensions
         {
             get
@@ -69,6 +111,18 @@
             }
         }
 
+        /// <summary>
+        /// The is mine.
+        /// </summary>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public override bool IsMine(List<string> lines, string fileName)
         {
             if (lines.Count > 0 && lines[0].StartsWith("WEBVTT", StringComparison.OrdinalIgnoreCase))
@@ -82,6 +136,18 @@
             return subtitle.Paragraphs.Count > this._errorCount;
         }
 
+        /// <summary>
+        /// The to text.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="title">
+        /// The title.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToText(Subtitle subtitle, string title)
         {
             const string paragraphWriteFormat = "{0}\r\n{1} --> {2}\r\n{3}\r\n\r\n";
@@ -96,6 +162,18 @@
             return sb.ToString().Trim() + Environment.NewLine + Environment.NewLine;
         }
 
+        /// <summary>
+        /// The load subtitle.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="lines">
+        /// The lines.
+        /// </param>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             bool doRenum = false;
@@ -158,6 +236,15 @@
             this.Errors = this._errors.ToString();
         }
 
+        /// <summary>
+        /// The is text.
+        /// </summary>
+        /// <param name="text">
+        /// The text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool IsText(string text)
         {
             if (string.IsNullOrWhiteSpace(text) || Utilities.IsInteger(text) || _regexTimeCodes.IsMatch(text))
@@ -168,11 +255,32 @@
             return true;
         }
 
+        /// <summary>
+        /// The remove bad chars.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private static string RemoveBadChars(string line)
         {
             return line.Replace('\0', ' ');
         }
 
+        /// <summary>
+        /// The try read time codes line.
+        /// </summary>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <param name="paragraph">
+        /// The paragraph.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool TryReadTimeCodesLine(string line, Paragraph paragraph)
         {
             line = line.Replace('،', ',');
@@ -249,6 +357,21 @@
             return false;
         }
 
+        /// <summary>
+        /// The read line.
+        /// </summary>
+        /// <param name="subtitle">
+        /// The subtitle.
+        /// </param>
+        /// <param name="line">
+        /// The line.
+        /// </param>
+        /// <param name="next">
+        /// The next.
+        /// </param>
+        /// <param name="nextNext">
+        /// The next next.
+        /// </param>
         private void ReadLine(Subtitle subtitle, string line, string next, string nextNext)
         {
             switch (this._expecting)
@@ -336,6 +459,27 @@
 
                     break;
             }
+        }
+
+        /// <summary>
+        /// The expecting line.
+        /// </summary>
+        private enum ExpectingLine
+        {
+            /// <summary>
+            /// The number.
+            /// </summary>
+            Number, 
+
+            /// <summary>
+            /// The time codes.
+            /// </summary>
+            TimeCodes, 
+
+            /// <summary>
+            /// The text.
+            /// </summary>
+            Text
         }
     }
 }

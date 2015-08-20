@@ -1,11 +1,24 @@
-using System.Runtime.Versioning;
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="PexAssemblyInfo.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   PexAssemblyInfo.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+
+
 using System;
-// <copyright file="PexAssemblyInfo.cs" company="Nikse">Nikse</copyright>
+using System.Runtime.Versioning;
+
 using Microsoft.Pex.Framework.Coverage;
 using Microsoft.Pex.Framework.Creatable;
 using Microsoft.Pex.Framework.Instrumentation;
 using Microsoft.Pex.Framework.Settings;
 using Microsoft.Pex.Framework.Validation;
+
+// <copyright file="PexAssemblyInfo.cs" company="Nikse">Nikse</copyright>
 
 // Microsoft.Pex.Framework.Settings
 [assembly: PexAssemblySettings(TestFramework = "VisualStudioUnitTest")]
@@ -34,4 +47,3 @@ using Microsoft.Pex.Framework.Validation;
 [assembly: PexInstrumentType(typeof(OperatingSystem))]
 [assembly: PexInstrumentType(typeof(Environment))]
 [assembly: PexInstrumentType(typeof(VersioningHelper))]
-
